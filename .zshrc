@@ -1,8 +1,8 @@
 # Automatically start tmux if not already in a tmux session
-if [ -z "$TMUX" ]; then
+#if [ -z "$TMUX" ]; then
     # Create a new session with a unique name (using the date for uniqueness)
-    tmux new-session -s "session_$(date +%Y%m%d_%H%M%S)"
-fi
+    #tmux new-session -s "session_$(date +%Y%m%d_%H%M%S)"
+#fi
 
 # Start timer for loading plugins
 TIME_START=$(date +%s)
@@ -117,6 +117,22 @@ alias cr='cargo run'
 alias cb='cargo build'
 alias ct='cargo test'
 
+# Android
+export ANDROID_HOME=$HOME/.android/sdk/
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# VPN
+function vpnconnect() {
+	cd /home/shahid/Documents/vpn && \
+	SELECTED_CONFIG="$(fzf --height 40% --reverse --preview 'cat {}' --preview-window=up:10%)" && \
+	echo "Selected Configuration: '$SELECTED_CONFIG'" && \
+	sudo openvpn --config "$SELECTED_CONFIG" --daemon
+}
+
 # Docker shortcuts
 alias d='docker'
 alias dc='docker-compose'
@@ -128,7 +144,7 @@ alias dr='docker run'
 alias dp='docker pull'
 
 # Edit .zshrc
-alias zshrc='nano ~/.zshrc'
+alias zshrc='nvim ~/.zshrc'
 
 # System aliases
 alias c='clear'
@@ -168,7 +184,7 @@ bindkey '^[o' execute-named-cmd
 bindkey '^@' autosuggest-accept
 
 ################################ BAT theme ################################
-export BAT_THEME="Catppuccin Mocha"
+export BAT_THEME="Solarized"
 
 ################################ Zoxide + FZF Setup ################################
 eval "$(zoxide init zsh)"
@@ -184,6 +200,9 @@ export FZF_DEFAULT_OPTS=" \
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+################################ GO setup ################################
+export PATH=$PATH:~/go/bin
 
 ################################ Deno environment setup ################################
 . "/home/shahid/.deno/env"
@@ -207,3 +226,11 @@ elif (( TIME_DIFF < 3 )); then
 else
     echo "🐢 Zsh took $TIME_DIFF seconds to load. Patience is a virtue!"
 fi
+
+# pnpm
+export PNPM_HOME="/home/shahid/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
