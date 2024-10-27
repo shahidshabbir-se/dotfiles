@@ -12,9 +12,12 @@ return {
 
     mason_tool_installer.setup({
       ensure_installed = {
+
         "prettier", -- Prettier formatter
         "stylua", -- Lua formatter
         "eslint_d", -- ESLint D
+        "goimports",
+        "gofumpt",
       },
     })
 
@@ -41,8 +44,9 @@ return {
         "graphql",
         "emmet_ls",
         "prismals",
-        "rust_analyzer",
+        "astro",
         "azure_pipelines_ls",
+        "gopls",
       },
     })
 

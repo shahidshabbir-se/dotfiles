@@ -13,6 +13,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   end
 end
 vim.opt.rtp:prepend(lazypath)
+
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
@@ -28,9 +29,6 @@ require("lazy").setup({
     -- have outdated releases, which may break your Neovim install.
     version = false, -- always use the latest git commit
     -- version = "*", -- try installing the latest stable version for plugins that support semver
-  },
-  ui = {
-    border = "rounded",
   },
   install = { colorscheme = { "tokyonight", "habamax" } },
   checker = {

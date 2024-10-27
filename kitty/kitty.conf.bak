@@ -1,31 +1,7 @@
 include my-theme.conf
-
+#include dracula.conf
 font_size 10.5
-# font_family      FiraCode Nerd Font
-font_family      JuliaMono Nerd Font
-
-cursor_shape block
-cursor_stop_blinking_after 0
-
-scrollback_lines 2000
-
-copy_on_select yes
-
-mouse_hide_wait 0
-
-select_by_word_characters @-./_~?&=%+#a
-
-enable_audio_bell no
-bell_on_tab "🔔 "
-
-
-remember_window_size  no
-window_border_width 1pt
-draw_minimal_borders yes
-
-window_padding_width 5
-
-inactive_text_alpha 0.6
+# modify_font cell_height 110%
 
 hide_window_decorations yes
 
@@ -33,7 +9,22 @@ confirm_os_window_close 0
 
 tab_bar_style powerline
 
-background_image /home/shahid/Pictures/a2.jpg
+detect_urls yes
 
-background_tint 0.979
+copy_on_select clipboard
+
+background_image /home/shahid/Pictures/a12.jpg
+background_tint 0.9985
 background_image_layout cscaled
+
+window_padding_width 5
+
+remember_window_size  no
+
+
+# BEGIN_KITTY_FONTS
+font_family      family="GeistMono Nerd Font"
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+# END_KITTY_FONTS
