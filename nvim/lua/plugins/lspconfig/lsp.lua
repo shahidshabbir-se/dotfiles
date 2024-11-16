@@ -1,4 +1,3 @@
--- lsp.lua
 return {
   "neovim/nvim-lspconfig",
   dependencies = {
@@ -10,53 +9,51 @@ return {
     },
   },
   config = function()
-    require("lspconfig").ts_ls.setup({
-      on_attach = function(client, buffer)
-        require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
-      end,
+    local lspconfig = require("lspconfig")
+    local on_attach = function(client, buffer)
+      require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
+    end
+    local capabilities = require("cmp_nvim_lsp").update_capabilities(
+      vim.lsp.protocol.make_client_capabilities()
+    )
+
+    lspconfig.ts_ls.setup({
+      on_attach = on_attach,
     })
 
-    require("lspconfig").prismals.setup({
-      on_attach = function(client, buffer)
-        require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
-      end,
+    lspconfig.prismals.setup({
+      on_attach = on_attach,
       settings = {
         prisma = {
-          prismaFmtBinPath = "", -- Leave this empty to use default Prisma formatter
+          prismaFmtBinPath = "",
         },
       },
     })
 
-    -- Astro Language Server setup
-    require("lspconfig").astro.setup({
-      on_attach = function(client, buffer)
-        require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
-      end,
-      capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    lspconfig.astro.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
     })
 
-    -- Tailwind CSS Language Server setup
-    require("lspconfig").tailwindcss.setup({
-      on_attach = function(client, buffer)
-        require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
-      end,
-      capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    lspconfig.tailwindcss.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
       filetypes = { "html", "css", "typescriptreact", "typescript", "javascriptreact", "javascript", "astro" },
-      root_dir = require("lspconfig.util").root_pattern("tailwind.config.mjs", "tailwind.config.js"), -- Include both mjs and js
+      root_dir = require("lspconfig.util").root_pattern(
+        "tailwind.config.mjs",
+        "tailwind.config.ts",
+        "tailwind.config.js"
+      ),
     })
 
-    require("lspconfig").emmet_ls.setup({
-      on_attach = function(client, buffer)
-        require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
-      end,
-      capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    lspconfig.emmet_ls.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
       filetypes = {
         "html",
         "css",
         "typescriptreact",
-        "typescript",
         "javascriptreact",
-        "javascript",
         "vue",
         "svelte",
         "astro",
@@ -65,8 +62,6 @@ return {
         emmet = {
           html = { enable = true },
           css = { enable = true },
-          javascript = { enable = true },
-          typescript = { enable = true },
           typescriptreact = { enable = true },
           javascriptreact = { enable = true },
           vue = { enable = true },
@@ -75,19 +70,31 @@ return {
       },
     })
 
-    -- require("lspconfig").eslint.setup({
-    --   on_attach = function(client, buffer)
-    --     require("lazyvim.plugins.lsp.keymaps").on_attach(client, buffer)
-    --   end,
-    --   settings = {
-    --     workingDirectories = { mode = "auto" },
-    --   },
-    -- })
+    lspconfig.pyright.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      settings = {
+        python = {
+          analysis = {
+            autoSearchPaths = true,
+            useLibraryCodeForTypes = true,
+            diagnosticMode = "workspace",
+          },
+        },
+      },
+    })
 
     require("mason-lspconfig").setup_handlers({
       ["ts_ls"] = function()
         require("typescript-tools").setup({})
       end,
     })
+
+    -- lspconfig.eslint.setup({
+    --   on_attach = on_attach,
+    --   settings = {
+    --     workingDirectories = { mode = "auto" },
+    --   },
+    -- })
   end,
 }

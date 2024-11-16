@@ -1,23 +1,21 @@
 return {
   "williamboman/mason.nvim",
   dependencies = {
-    "williamboman/mason-lspconfig.nvim", -- Ensure this is listed in dependencies
-    "WhoIsSethDaniel/mason-tool-installer.nvim", -- Ensure this is also included
+    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
   },
   config = function()
-    -- Import mason and its modules
     local mason = require("mason")
     local mason_lspconfig = require("mason-lspconfig")
     local mason_tool_installer = require("mason-tool-installer")
 
     mason_tool_installer.setup({
       ensure_installed = {
-
-        "prettier", -- Prettier formatter
-        "stylua", -- Lua formatter
-        "eslint_d", -- ESLint D
-        "goimports",
-        "gofumpt",
+        "prettier",
+        "stylua",
+        "eslint_d",
+        "black",
+        "pylint",
       },
     })
 
@@ -45,11 +43,8 @@ return {
         "emmet_ls",
         "prismals",
         "astro",
-        "azure_pipelines_ls",
-        "gopls",
+        "pyright",
       },
     })
-
-    -- Setup Mason Tool Installer
   end,
 }

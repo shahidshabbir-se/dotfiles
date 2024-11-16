@@ -1,8 +1,8 @@
 # Automatically start tmux if not already in a tmux session
-#if [ -z "$TMUX" ]; then
+if [ -z "$TMUX" ]; then
     # Create a new session with a unique name (using the date for uniqueness)
-    #tmux new-session -s "session_$(date +%Y%m%d_%H%M%S)"
-#fi
+    tmux new-session -s "session_$(date +%Y%m%d_%H%M%S)"
+fi
 
 # Start timer for loading plugins
 TIME_START=$(date +%s)
@@ -56,11 +56,12 @@ zinit snippet OMZP::git
 zinit snippet OMZP::sudo
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::node
+zinit snippet OMZP::asdf
 zinit snippet OMZP::azure
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::docker-compose
 
-################################ Add Deno completions to the search path ################################
+################################ Add completions to the search path ################################
 if [[ ":$FPATH:" != *":/home/shahid/.zsh/completions:"* ]]; then
     export FPATH="/home/shahid/.zsh/completions:$FPATH"
 fi
@@ -73,15 +74,19 @@ alias ....='cd ../../..'
 alias ~='cd ~'
 
 # List files
-alias ll='ls -la'
-alias la='ls -A'
-alias l='ls -CF'
 alias t='tree'
 alias t1='tree -L 1'
 alias t2='tree -L 2'
-# Clear terminal
-alias c='clear'
+alias t3='tree -L 3'
 
+# Terminal
+alias c='clear'
+alias kc='nvim ~/.config/kitty/kitty.conf'
+alias tc='nvim ~/.config/tmux/tmux.conf'
+alias bspwm='nvim ~/.config/bspwm/ .'
+
+# Git Graph
+alias ggr='git-graph --model git-flow'
 # Grep with color
 alias grep='grep --color=auto'
 
@@ -105,33 +110,12 @@ alias gup='git pull --rebase'
 alias gcs='function _gitclone() { git clone git@github.com:shahidshabbir-se/$1.git; }; _gitclone'
 alias gch='function _gch() { git clone $1; }; _gch'
 
-# NPM shortcuts
-alias ni='npm install'
-alias nid='npm install --save-dev'
-alias nrun='npm run'
-alias nstart='npm start'
-alias ntest='npm test'
-
-# Rust Aliases
-alias cr='cargo run'
-alias cb='cargo build'
-alias ct='cargo test'
-
-# Android
-export ANDROID_HOME=$HOME/.android/sdk/
-export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-
-# VPN
-function vpnconnect() {
-	cd /home/shahid/Documents/vpn && \
-	SELECTED_CONFIG="$(fzf --height 40% --reverse --preview 'cat {}' --preview-window=up:10%)" && \
-	echo "Selected Configuration: '$SELECTED_CONFIG'" && \
-	sudo openvpn --config "$SELECTED_CONFIG" --daemon
-}
+# PNPM shortcuts
+alias ni='pnpm install'
+alias nd='pnpm install --save-dev'
+alias nr='pnpm run dev'
+alias ns='pnpm start'
+alias nt='pnpm test'
 
 # Docker shortcuts
 alias d='docker'
@@ -147,14 +131,14 @@ alias dp='docker pull'
 alias zshrc='nvim ~/.zshrc'
 
 # System aliases
-alias c='clear'
-#alias fzf='/usr/bin/fzf --preview "bat --style=numbers --color=always --line-range :500 {}; \fi" --preview-window=right:50%'
+alias rm='rm -rf'
+alias cd='z'
+alias fzf='/usr/bin/fzf --preview "bat --style=numbers --color=always --line-range :500 {}" --preview-window=right:50%'
 alias e='exit'
 alias bc='better-commits'
 alias cat="bat --style=plain"
-alias ls='eza --long --icons=always --git --no-time --no-user --no-permissions'
+alias l='eza --icons=always --git -a --no-time --no-user --no-permissions'
 alias nv="nvim"
-alias lg="lazygit"
 alias pi="sudo pacman -S"
 alias pu="sudo pacman -Syu"
 alias pc="sudo pacman -Sc"
@@ -183,36 +167,35 @@ bindkey '^Y' yank
 bindkey '^[o' execute-named-cmd
 bindkey '^@' autosuggest-accept
 
+# VPN
+function vpnconnect() {
+    cd /home/shahid/.vpn/config/ && \
+    SELECTED_CONFIG="$(fzf --height 40% --reverse --preview 'cat {}' --preview-window=up:10%)" && \
+    echo "Selected Configuration: '$SELECTED_CONFIG'" && \
+    sudo openvpn --config "$SELECTED_CONFIG" --daemon --auth-user-pass /home/shahid/.vpn/credentials
+}
+
 ################################ BAT theme ################################
-export BAT_THEME="Solarized"
+export BAT_THEME="Catppuccin-Mocha"
 
 ################################ Zoxide + FZF Setup ################################
 eval "$(zoxide init zsh)"
 # FZF Default Options
 export FZF_DEFAULT_OPTS=" \
---color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8 \
 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
 --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
 --color=selected-bg:#45475a \
 --multi"
 
-################################ NVM setup ################################
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+################################# Custom sudo message #################################
+export SUDO_PROMPT="Your love unlocks all doors... and this too: "
 
-################################ GO setup ################################
-export PATH=$PATH:~/go/bin
-
-################################ Deno environment setup ################################
-. "/home/shahid/.deno/env"
-
-################################ PNPM setup ################################
-export PNPM_HOME="/home/shahid/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+################################ asdf ##################################
+. "$HOME/.asdf/asdf.sh"
+fpath=(${ASDF_DIR:-$HOME/.asdf}/completions $fpath)
+autoload -Uz compinit && compinit
+export PATH="$HOME/.asdf/shims:$PATH"
 
 # End timer and calculate duration
 TIME_END=$(date +%s)
@@ -227,10 +210,4 @@ else
     echo "🐢 Zsh took $TIME_DIFF seconds to load. Patience is a virtue!"
 fi
 
-# pnpm
-export PNPM_HOME="/home/shahid/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+export PATH=$PATH:/home/shahid/.spicetify
