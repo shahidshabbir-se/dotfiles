@@ -1,0 +1,3 @@
+return {
+	"decaycs/decay.nvim",
+}
