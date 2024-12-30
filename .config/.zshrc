@@ -1,5 +1,5 @@
 # Automatically start tmux if not already in a tmux session
-[ -z "$TMUX" ] && tmux new-session -s "session_$(date +%Y%m%d_%H%M%S)"
+[ -z "$TMUX" ] && tmux
 
 # Start timer for loading plugins
 # TIME_START=$(date +%s)
@@ -60,7 +60,7 @@ alias gch='function _gch() { git clone $1; }; _gch' ggr='git-graph --model git-f
 alias ni='pnpm install' nd='pnpm install --save-dev' nr='pnpm run dev' ns='pnpm start' nt='pnpm test'
 alias d='docker' dc='docker-compose' dps='docker ps' di='docker images' dcu='docker-compose up' dcd='docker-compose down'
 alias dr='docker run' dp='docker pull'
-alias rm='rm -rf' cd='z' fzf='/usr/bin/fzf --preview "bat --style=numbers --color=always --line-range :500 {}" --preview-window=right:50%'
+alias rm='rm -rf' cd='z' fzf='fzf --preview "bat --style=numbers --color=always --line-range :500 {}" --preview-window=right:50%'
 alias e='exit' bc='better-commits' cat="bat --style=plain"
 alias l='eza --icons=always --git -a --no-time --no-user --no-permissions'
 alias nv="nvim" pi="sudo pacman -S" pu="sudo pacman -Syu" pc="sudo pacman -Sc"

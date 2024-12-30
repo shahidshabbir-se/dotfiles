@@ -18,7 +18,7 @@ return {
 			end
 		end
 		opts.options.theme = auto
-		opts.options.section_separators = { left = "", right = "" }
-		opts.options.component_separators = { left = "", right = "" } -- Add component separators if needed
+		-- opts.options.section_separators = { left = "", right = "" }
+		-- opts.options.component_separators = { left = "", right = "" } -- Add component separators if needed
 	end,
 }
