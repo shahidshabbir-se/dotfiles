@@ -2,34 +2,47 @@
   description = "My NixOS Configuration Flake";
 
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/634fd46801442d760e09493a794c4f15db2d0cbb";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # home-manager, used for managing user configuration
     home-manager = {
       url = "github:nix-community/home-manager";
-      # The `follows` keyword in inputs is used for inheritance.
-      # Here, `inputs.nixpkgs` of home-manager is kept consistent with
-      # the `inputs.nixpkgs` of the current flake,
-      # to avoid problems caused by different versions of nixpkgs.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+    };
+    hyprpanel = { 
+      url = "github:jas-singhfsu/hyprpanel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, ... }: {
+  outputs = { self, nixpkgs, home-manager, spicetify-nix, zen-browser, hyprpanel, ... } @ inputs: let
+    inherit (self) outputs;
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { system = "x86_64-linux"; };
+    lib = nixpkgs.lib;
+  in {
     nixosConfigurations = {
+      overlay.enable = true;
+
       nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
+                {nixpkgs.overlays = [inputs.hyprpanel.overlay];}  
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
 
-            # TODO replace ryan with your own username
-            home-manager.users.shahid = import ./home.nix;
-
-            # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
+            # Let Home Manager derive config automatically
+            home-manager.users.shahid = import ./home.nix {
+              inherit pkgs nixpkgs lib system inputs;
+            };
           }
         ];
       };

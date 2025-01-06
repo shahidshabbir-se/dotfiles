@@ -24,6 +24,8 @@ for plugin in sudosubin/zsh-poetry zsh-users/zsh-syntax-highlighting zsh-users/z
   zinit light $plugin
 done
 
+source <(fzf --zsh)
+
 # >>> History settings <<<
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
@@ -92,7 +94,7 @@ function vpn_disconnect() {
 }
 
 # >>> BAT theme <<<
-export BAT_THEME="Catppuccin-Mocha"
+export BAT_THEME="Catppuccin Mocha"
 
 # >>> Zoxide + FZF Setup <<<
 eval "$(zoxide init zsh)"
@@ -116,8 +118,8 @@ if (( ! ${+functions[command_not_found_handler]} )); then
   functions[command_not_found_handler]="${(z)$(functions command_not_found_handler)}"
 fi
 
-# >>> Spicetify <<<
-export PATH=$PATH:$HOME/.spicetify
+export PRISMA_QUERY_ENGINE_LIBRARY=/nix/store/8qn3lm4mhc6gyly8axawp20k8gynd26y-prisma-engines-6.0.1/lib/libquery_engine.node
+export PRISMA_SCHEMA_ENGINE_BINARY=/nix/store/8qn3lm4mhc6gyly8axawp20k8gynd26y-prisma-engines-6.0.1/bin/schema-engine
 
 # End timer and calculate duration
 TIME_END=$(date +%s)
@@ -131,24 +133,4 @@ TIME_DIFF=$(( TIME_END - TIME_START ))
 # else
 #     echo "🐢 Zsh took $TIME_DIFF seconds to load. Patience is a virtue!"
 # fi
-
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/shahid/.miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/shahid/.miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/shahid/.miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/shahid/.miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 

@@ -16,3 +16,4 @@ vim.opt.synmaxcol = 200
 vim.opt.pumblend = 0
 vim.o.swapfile = false
 vim.cmd.colorscheme("tokyonight")
+vim.opt.wrap = true

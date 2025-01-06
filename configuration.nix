@@ -12,7 +12,6 @@
   nixpkgs.config.allowUnfree = true;
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true;
-
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -63,13 +62,13 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.shahid = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "docker" "audio" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
-      firefox
       hyprland
       zsh
       git
       sddm
+      home-manager
     ];
     shell = pkgs.zsh;
   };
@@ -88,12 +87,22 @@ services.keyd = {
       settings = {
         # The main layer, if you choose to declare it in Nix
         main = {
-          capslock = "layer(control)"; # you might need to also enclose the key in quotes if it contains non-alphabetical symbols
+          # capslock = "layer(control)"; # you might need to also enclose the key in quotes if it contains non-alphabetical symbols
         };
         otherlayer = {};
       };
       extraConfig = ''
-        # put here any extra-config, e.g. you can copy/paste here directly a configuration, just remove the ids part
+      [ids]
+
+*
+
+[main]
+
+# Maps capslock to escape when pressed and control when held.
+capslock = overload(control, esc)
+
+# Remaps the escape key to capslock
+esc = capslock
       '';
     };
   };
