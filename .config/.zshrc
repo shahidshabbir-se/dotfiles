@@ -2,7 +2,7 @@
 [ -z "$TMUX" ] && tmux
 
 # Start timer for loading plugins
-# TIME_START=$(date +%s)
+TIME_START=$(date +%s)
 
 # >>> Zinit Setup <<<
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -75,24 +75,6 @@ bindkey '^S' history-incremental-search-forward '^D' delete-char '^H' backward-d
 bindkey '^T' transpose-chars '^[t' transpose-words '^L' clear-screen '^Y' yank
 bindkey '^[o' execute-named-cmd '^@' autosuggest-accept
 
-# >>> VPN <<< 
-function vpn_connect() {
-    cd /home/shahid/.vpn/config/ && \
-    SELECTED_CONFIG="$(fzf --height 40% --reverse --preview 'cat {}' --preview-window=up:10%)" && \
-    echo "Selected Configuration: '$SELECTED_CONFIG'"
-
-    # Comment out the block-outside-dns line if present
-    sed -i '/block-outside-dns/d' "$SELECTED_CONFIG"
-
-    # Run OpenVPN with the selected config
-    sudo openvpn --config "$SELECTED_CONFIG" --daemon --auth-user-pass /home/shahid/.vpn/credentials
-}
-
-function vpn_disconnect() {
-    sudo pkill openvpn
-    echo "VPN connection has been closed."
-}
-
 # >>> BAT theme <<<
 export BAT_THEME="Catppuccin Mocha"
 
@@ -106,12 +88,6 @@ export FZF_DEFAULT_OPTS=" \
 --color=selected-bg:#45475a \
 --multi"
 
-# >>> Custom terminal message <<<
-export SUDO_PROMPT="Your love unlocks all doors... and this too: "
-command_not_found_handler() {
-    echo "💖 'Command not found'? Don't worry, love will find it. Try: sudo $1."
-}
-
 # Ensure Zsh uses the custom handler for missing commands
 zmodload zsh/parameter
 if (( ! ${+functions[command_not_found_handler]} )); then
@@ -120,17 +96,18 @@ fi
 
 export PRISMA_QUERY_ENGINE_LIBRARY=/nix/store/8qn3lm4mhc6gyly8axawp20k8gynd26y-prisma-engines-6.0.1/lib/libquery_engine.node
 export PRISMA_SCHEMA_ENGINE_BINARY=/nix/store/8qn3lm4mhc6gyly8axawp20k8gynd26y-prisma-engines-6.0.1/bin/schema-engine
+ export PATH=~/npm-global/bin:$PATH
+
 
 # End timer and calculate duration
 TIME_END=$(date +%s)
 TIME_DIFF=$(( TIME_END - TIME_START ))
 
-# # Display loading time
-# if (( TIME_DIFF <= 1 )); then
-#     echo "🚀 Zsh loaded super fast in less than 1 second!"
-# elif (( TIME_DIFF < 3 )); then
-#     echo "⚡ Zsh loaded in $TIME_DIFF seconds!"
-# else
-#     echo "🐢 Zsh took $TIME_DIFF seconds to load. Patience is a virtue!"
-# fi
-
+# Display loading time
+if (( TIME_DIFF <= 1 )); then
+    echo "🚀 Zsh loaded super fast in less than 1 second!"
+elif (( TIME_DIFF < 3 )); then
+    echo "⚡ Zsh loaded in $TIME_DIFF seconds!"
+else
+    echo "🐢 Zsh took $TIME_DIFF seconds to load. Patience is a virtue!"
+fi

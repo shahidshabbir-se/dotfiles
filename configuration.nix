@@ -27,7 +27,15 @@
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.theme = "sddm-astronaut-theme";
   services.blueman.enable = true;
+
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
+
+  networking.wireguard.enable = true;
 
   services.pipewire = {
     enable = true;
@@ -47,6 +55,7 @@
       sddm
       home-manager
       discord
+      sddm-astronaut
     ];
     shell = pkgs.zsh;
   };

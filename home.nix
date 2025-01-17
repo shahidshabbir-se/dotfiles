@@ -89,7 +89,6 @@
     alacritty
     kanshi
     nodePackages.prisma
-    swaylock-effects
     gcc
     feh
     nitch
@@ -97,6 +96,7 @@
     rustup
     nixpkgs-fmt
     firefox
+    hyprlock
 
     # hyprpanel dependencies
     ags
@@ -170,7 +170,12 @@
       bar.bluetooth.label = false;
       bar.network.label = false;
       bar.clock.format = "%a %b %d %I:%M %p";
-      bar.media.show_active_only = false;
+      bar.media.show_active_only = true;
+      bar.customModules.cava.showIcon = false;
+      bar.customModules.cava.showActiveOnly = true;
+      menus.dashboard.powermenu.avatar.image = "/home/shahid/Pictures/unnamed.png";
+      menus.dashboard.powermenu.avatar.name = "Shahid Shabbir";
+
       theme.bar.menus.menu.clock.scaling = 80;
       theme.bar.menus.menu.dashboard.scaling = 80;
       bar.media.truncation_size = 20;
@@ -179,6 +184,7 @@
       theme.bar.buttons.modules.power.spacing = "0";
       bar.workspaces.monitorSpecific = false;
       bar.workspaces.applicationIconEmptyWorkspace = "";
+
       menus.clock = {
         time = {
           military = true;
@@ -201,9 +207,12 @@
     ".config/yazi".source = ./.config/yazi;
     # ".config/nvim".source = ./.config/nvim;
     ".local/share/fonts".source = ./.local/share/fonts;
+    ".local/share/themes".source = ./.local/share/themes;
+    ".local/share/icons".source = ./.local/share/icons;
     # ".config/hypr".source = ./config/hypr;
     ".config/bat".source = ./.config/bat;
-    ".config/swaylock".source = ./.config/swaylock;
+    ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
+    ".config/hypr/mocha.conf".source = ./.config/hypr/mocha.conf;
   };
   home.stateVersion = "24.11";
   programs.home-manager.enable = true;

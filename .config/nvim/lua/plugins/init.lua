@@ -73,12 +73,6 @@ return {
   },
 
   {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-  },
-
-  {
     "hrsh7th/nvim-cmp",
     dependencies = {
       {
