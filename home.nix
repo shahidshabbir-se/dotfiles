@@ -95,8 +95,9 @@
     stylua
     rustup
     nixpkgs-fmt
-    firefox
     hyprlock
+    power-profiles-daemon
+    inputs.zen-browser.packages."x86_64-linux".default
 
     # hyprpanel dependencies
     ags
@@ -205,11 +206,11 @@
     ".config/kitty".source = ./.config/kitty;
     ".config/alacritty".source = ./.config/alacritty;
     ".config/yazi".source = ./.config/yazi;
-    # ".config/nvim".source = ./.config/nvim;
+    ".config/nvim".source = ./.config/nvim;
     ".local/share/fonts".source = ./.local/share/fonts;
     ".local/share/themes".source = ./.local/share/themes;
     ".local/share/icons".source = ./.local/share/icons;
-    # ".config/hypr".source = ./config/hypr;
+    ".config/hypr".source = ./config/hypr;
     ".config/bat".source = ./.config/bat;
     ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
     ".config/hypr/mocha.conf".source = ./.config/hypr/mocha.conf;

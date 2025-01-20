@@ -27,8 +27,8 @@
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.theme = "sddm-astronaut-theme";
   services.blueman.enable = true;
+  # services.power-profiles-daemon.enable = true;
 
   security.sudo = {
     enable = true;
@@ -55,7 +55,8 @@
       sddm
       home-manager
       discord
-      sddm-astronaut
+      vscode
+      gnumake
     ];
     shell = pkgs.zsh;
   };
@@ -81,6 +82,7 @@
           [main]
           capslock = overload(control, esc)
           esc = capslock
+          ctrl+equal = page_up
         '';
       };
     };

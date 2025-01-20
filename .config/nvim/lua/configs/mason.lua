@@ -6,8 +6,6 @@ mason_tool_installer.setup({
 	ensure_installed = {
 		"prettier",
 		"eslint_d",
-		"black",
-		"pylint",
 	},
 	automatic_installation = true,
 })
@@ -37,7 +35,6 @@ mason_lspconfig.setup({
 		"emmet_ls",
 		"prismals",
 		"astro",
-		"pyright",
 	},
 	automatic_installation = true,
 })

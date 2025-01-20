@@ -4,6 +4,7 @@ local options = {
     css = { "prettier" },
     html = { "prettier" },
     nix = { "nixpkgs-fmt" },
+    lua = { "stylua" },
   },
 
   format_on_save = {
