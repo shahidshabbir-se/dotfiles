@@ -26,7 +26,6 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   services.xserver.enable = true;
-  services.displayManager.sddm.enable = true;
   services.blueman.enable = true;
   # services.power-profiles-daemon.enable = true;
 
@@ -55,11 +54,22 @@
       sddm
       home-manager
       discord
-      vscode
-      gnumake
+      catppuccin-sddm
     ];
     shell = pkgs.zsh;
   };
+
+  environment.systemPackages = with pkgs; [
+    (
+      catppuccin-sddm.override {
+        flavor = "mocha";
+        font = "";
+        fontSize = "9";
+        background = ./wallpapers/gradient.jpg;
+        loginBackground = true;
+      }
+    )
+  ];
 
   home-manager.backupFileExtension = "backup";
   programs.hyprland.enable = true;
@@ -88,5 +98,11 @@
     };
   };
 
+  services.displayManager.sddm = {
+    enable = true;
+    theme = "catppuccin-mocha";
+    package = pkgs.kdePackages.sddm;
+    autoNumlock = true;
+  };
   system.stateVersion = "25.05";
 }

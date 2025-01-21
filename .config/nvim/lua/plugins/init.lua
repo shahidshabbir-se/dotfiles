@@ -127,6 +127,7 @@ return {
 					"dockerfile",
 					"gitignore",
 					"query",
+					"go",
 				},
 				incremental_selection = {
 					enable = true,
@@ -673,9 +674,11 @@ return {
 		dependencies = {
 			{
 				"williamboman/mason.nvim",
+			},
+			{
+				"leoluz/nvim-dap-go",
 				config = function()
-					require("mason").setup()
-					require("mason").ensure_installed({ "js-debug-adapter" })
+					require("dap-go").setup()
 				end,
 			},
 		},

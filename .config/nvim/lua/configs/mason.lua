@@ -6,6 +6,11 @@ mason_tool_installer.setup({
 	ensure_installed = {
 		"prettier",
 		"eslint_d",
+		"js-debug-adapter",
+		"gofumpt",
+		"goimports-reviser",
+		"golines",
+		"delve",
 	},
 	automatic_installation = true,
 })
@@ -35,6 +40,7 @@ mason_lspconfig.setup({
 		"emmet_ls",
 		"prismals",
 		"astro",
+		"gopls",
 	},
 	automatic_installation = true,
 })

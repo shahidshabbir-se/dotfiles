@@ -59,7 +59,7 @@
     yazi
     brightnessctl
     wget
-    wofi
+    rofi
     btrfs-progs
     zip
     xz
@@ -72,7 +72,7 @@
     fzf
     docker
     zoxide
-    nodejs_23
+    nodejs_22
     btop
     mtr
     iperf3
@@ -93,11 +93,11 @@
     feh
     nitch
     stylua
-    rustup
+    go
     nixpkgs-fmt
     hyprlock
     power-profiles-daemon
-    inputs.zen-browser.packages."x86_64-linux".default
+    firefox
 
     # hyprpanel dependencies
     ags
@@ -204,13 +204,16 @@
     ".zshrc".source = ./.config/.zshrc;
     ".p10k.zsh".source = ./.config/.p10k.zsh;
     ".config/kitty".source = ./.config/kitty;
+    ".config/gtk-3.0".source = ./.config/gtk-3.0;
+    ".config/gtk-4.0".source = ./.config/gtk-4.0;
+    ".config/rofi".source = ./.config/rofi;
     ".config/alacritty".source = ./.config/alacritty;
     ".config/yazi".source = ./.config/yazi;
-    ".config/nvim".source = ./.config/nvim;
+    # ".config/nvim".source = ./.config/nvim;
     ".local/share/fonts".source = ./.local/share/fonts;
     ".local/share/themes".source = ./.local/share/themes;
     ".local/share/icons".source = ./.local/share/icons;
-    ".config/hypr".source = ./config/hypr;
+    # ".config/hypr".source = ./config/hypr;
     ".config/bat".source = ./.config/bat;
     ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
     ".config/hypr/mocha.conf".source = ./.config/hypr/mocha.conf;
