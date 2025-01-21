@@ -22,7 +22,7 @@
 ### qBittorrent
 ![snapshot_2025-01-17_09-44-02](assets/snapshot_2025-01-17_09-44-02.png)
 
-### Launcher
+### Clipboard Manager
 ![snapshot_2025-01-21_23-12-01.png](assets/snapshot_2025-01-21_23-12-01.png)
 
 ### Launcher
