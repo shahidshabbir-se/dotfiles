@@ -22,5 +22,9 @@
 ### qBittorrent
 ![snapshot_2025-01-17_09-44-02](assets/snapshot_2025-01-17_09-44-02.png)
 
-### Firefox with NightTab
-![snapshot_2025-01-17_10-25-42](assets/snapshot_2025-01-17_10-25-42.png)
+### Launcher
+![snapshot_2025-01-21_23-12-01.png](assets/snapshot_2025-01-21_23-12-01.png)
+
+### Launcher
+![snapshot_2025-01-21_23-12-09.png](assets/snapshot_2025-01-21_23-12-09.png)
+
