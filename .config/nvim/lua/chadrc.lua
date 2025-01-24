@@ -1,13 +1,16 @@
 local options = {
 
 	base46 = {
-		theme = "catppuccin", -- default theme
+		theme = "tokyonight", -- default theme
 		hl_add = {},
 		hl_override = {},
 		integrations = {},
 		changed_themes = {},
 		transparency = false,
-		theme_toggle = { "catppuccin", "one_light" },
+		hl_override = {
+			["@comment"] = { italic = true },
+		},
+		theme_toggle = { "tokyonight", "one_light" },
 	},
 
 	ui = {
@@ -28,7 +31,7 @@ local options = {
 			theme = "default", -- default/vscode/vscode_colored/minimal
 			-- default/round/block/arrow separators work only for default statusline theme
 			-- round and block will work for minimal theme only
-			separator_style = "block",
+			separator_style = "round",
 			order = nil,
 			modules = nil,
 		},

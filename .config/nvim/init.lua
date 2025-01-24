@@ -45,3 +45,5 @@ end)
 
 vim.opt.wrap = true
 vim.o.swapfile = false
+-- provided by rust-analyzer.
+vim.g.lazyvim_rust_diagnostics = "rust-analyzer"

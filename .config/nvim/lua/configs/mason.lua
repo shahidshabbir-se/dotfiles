@@ -7,10 +7,7 @@ mason_tool_installer.setup({
 		"prettier",
 		"eslint_d",
 		"js-debug-adapter",
-		"gofumpt",
-		"goimports-reviser",
-		"golines",
-		"delve",
+		"codelldb",
 	},
 	automatic_installation = true,
 })
@@ -18,9 +15,9 @@ mason_tool_installer.setup({
 mason.setup({
 	ui = {
 		icons = {
-			package_installed = "✓",
-			package_pending = "➜",
-			package_uninstalled = "✗",
+			package_installed = "",
+			package_pending = "",
+			package_uninstalled = "",
 		},
 		border = "single",
 		winhighlight = "Normal:MyHighlight,FloatBorder:FloatBorder",
@@ -40,7 +37,6 @@ mason_lspconfig.setup({
 		"emmet_ls",
 		"prismals",
 		"astro",
-		"gopls",
 	},
 	automatic_installation = true,
 })

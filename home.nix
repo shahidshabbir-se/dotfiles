@@ -1,49 +1,22 @@
-{ pkgs, lib, inputs, nixpkgs, ... }:
+{ pkgs, lib, inputs, nixpkgs, config, ... }:
 
+let
+  bananaCursor = import ./modules/banana-cursor-dreams.nix { inherit pkgs; };
+in
 {
   home.username = "shahid";
   home.homeDirectory = "/home/shahid";
-
 
   imports = [
     inputs.spicetify-nix.homeManagerModules.default
     inputs.hyprpanel.homeManagerModules.hyprpanel
   ];
 
-  programs.spicetify =
-    let
-      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-    in
-    {
-      enable = true;
-
-      enabledExtensions = with spicePkgs.extensions; [
-        adblock
-        hidePodcasts
-        shuffle
-      ];
-      enabledCustomApps = with spicePkgs.apps; [
-        newReleases
-        ncsVisualizer
-      ];
-      enabledSnippets = with spicePkgs.snippets; [
-        rotatingCoverart
-        pointer
-      ];
-
-      theme = spicePkgs.themes.text;
-      colorScheme = "TokyoNight";
-    };
-
-
-  xresources.properties = {
-    "Xcursor.size" = 16;
-    "Xft.dpi" = 172;
-  };
 
   home.packages = with pkgs; [
-    kitty
     tmux
+    discord
+    xfce.thunar
     neovim
     git
     swww
@@ -56,7 +29,7 @@
     wl-clipboard
     bat
     keyd
-    yazi
+    # yazi
     brightnessctl
     wget
     rofi
@@ -87,13 +60,12 @@
     tree
     noto-fonts-emoji
     alacritty
-    kanshi
     nodePackages.prisma
     gcc
     feh
     nitch
     stylua
-    go
+    rustup
     nixpkgs-fmt
     hyprlock
     power-profiles-daemon
@@ -110,7 +82,6 @@
     gvfs
 
     # additional dependencies
-    # power-profiles-daemon
     grimblast
     gpu-screen-recorder
     hyprpicker
@@ -119,100 +90,11 @@
     cava
   ];
 
-  programs.git = {
-    enable = true;
-    userName = "shahidshabbir-se";
-    userEmail = "shahidshabbirse@gmail.com";
-  };
-
-  programs.hyprpanel = {
-    enable = true;
-    systemd.enable = true;
-    overwrite.enable = true;
-    theme = "tokyo_night";
-    layout = {
-      "bar.layouts" = {
-        "*" = {
-          "left" = [
-            "dashboard"
-            "media"
-            "windowtitle"
-          ];
-          "middle" = [
-            "cava"
-            "workspaces"
-            "cava"
-          ];
-          "right" = [
-            "network"
-            "bluetooth"
-            "volume"
-            "battery"
-            "clock"
-            "power"
-          ];
-        };
-      };
-    };
-
-
-
-    settings = {
-      bar.workspaces.show_icons = true;
-      theme = {
-        font.size = "13px";
-        font.name = "JetBrainsMono Nerd Font";
-        bar = {
-          transparent = true;
-          outer_spacing = "0.4rem";
-        };
-      };
-      wallpaper.enable = false;
-      bar.bluetooth.label = false;
-      bar.network.label = false;
-      bar.clock.format = "%a %b %d %I:%M %p";
-      bar.media.show_active_only = true;
-      bar.customModules.cava.showIcon = false;
-      bar.customModules.cava.showActiveOnly = true;
-      menus.dashboard.powermenu.avatar.image = "/home/shahid/Pictures/unnamed.png";
-      menus.dashboard.powermenu.avatar.name = "Shahid Shabbir";
-
-      theme.bar.menus.menu.clock.scaling = 80;
-      theme.bar.menus.menu.dashboard.scaling = 80;
-      bar.media.truncation_size = 20;
-      bar.launcher.autoDetectIcon = true;
-      bar.workspaces.showApplicationIcons = false;
-      theme.bar.buttons.modules.power.spacing = "0";
-      bar.workspaces.monitorSpecific = false;
-      bar.workspaces.applicationIconEmptyWorkspace = "";
-
-      menus.clock = {
-        time = {
-          military = true;
-          hideSeconds = true;
-        };
-        weather = {
-          enabled = false;
-          location = "14000";
-          unit = "metric";
-        };
-      };
-    };
-  };
-
   home.file = {
-    ".zshrc".source = ./.config/.zshrc;
-    ".p10k.zsh".source = ./.config/.p10k.zsh;
-    ".config/kitty".source = ./.config/kitty;
-    ".config/gtk-3.0".source = ./.config/gtk-3.0;
-    ".config/gtk-4.0".source = ./.config/gtk-4.0;
     ".config/rofi".source = ./.config/rofi;
-    ".config/alacritty".source = ./.config/alacritty;
-    ".config/yazi".source = ./.config/yazi;
     # ".config/nvim".source = ./.config/nvim;
     ".local/share/fonts".source = ./.local/share/fonts;
     ".local/share/themes".source = ./.local/share/themes;
-    ".local/share/icons".source = ./.local/share/icons;
     # ".config/hypr".source = ./config/hypr;
     ".config/bat".source = ./.config/bat;
     ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
@@ -220,4 +102,39 @@
   };
   home.stateVersion = "24.11";
   programs.home-manager.enable = true;
+  programs = {
+    tmux = import ./modules/tmux.nix { inherit pkgs; };
+    zsh = import ./modules/zsh.nix { inherit config pkgs lib; };
+    git = import ./modules/git.nix { inherit config pkgs; };
+    alacritty = import ./modules/alacritty.nix { inherit pkgs; };
+    fzf = import ./modules/fzf.nix { inherit pkgs; };
+    zoxide = import ./modules/zoxide.nix { inherit pkgs; };
+    spicetify = import ./modules/spicetify.nix { inherit inputs pkgs; };
+    # yazi = import ./modules/yazi.nix { inherit pkgs; };
+    hyprpanel = import ./modules/hyprpanel.nix { inherit pkgs; };
+  };
+
+  home.pointerCursor = {
+    x11.enable = true;
+    gtk.enable = true;
+    package = bananaCursor;
+    size = 48;
+    name = "Banana-Catppuccin-Mocha";
+  };
+
+  dconf = {
+    enable = true;
+    settings = {
+      "org/gnome/desktop/interface" = {
+        color-scheme = "prefer-dark";
+      };
+    };
+  };
+
+  gtk = {
+    enable = true;
+    iconTheme.name = "Papirus-Dark";
+    iconTheme.package = pkgs.papirus-icon-theme;
+    theme.name = "Catppuccin-Dark";
+  };
 }

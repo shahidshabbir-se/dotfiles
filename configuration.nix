@@ -3,7 +3,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./modules/tmux.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -27,7 +26,9 @@
 
   services.xserver.enable = true;
   services.blueman.enable = true;
-  # services.power-profiles-daemon.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.gvfs.enable = true; # Mount, trash, and other functionalities
+  services.tumbler.enable = true; # Thumbnail support for images
 
   security.sudo = {
     enable = true;
@@ -53,17 +54,17 @@
       git
       sddm
       home-manager
-      discord
       catppuccin-sddm
     ];
     shell = pkgs.zsh;
   };
 
+
   environment.systemPackages = with pkgs; [
     (
       catppuccin-sddm.override {
         flavor = "mocha";
-        font = "";
+        font = "SF Pro Display Regular";
         fontSize = "9";
         background = ./wallpapers/gradient.jpg;
         loginBackground = true;

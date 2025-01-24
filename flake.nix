@@ -11,25 +11,27 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-    };
     hyprpanel = {
       url = "github:jas-singhfsu/hyprpanel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    alacritty-theme.url = "github:alexghr/alacritty-theme.nix";
+    alacritty-theme.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, spicetify-nix, zen-browser, hyprpanel, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprpanel, ... } @ inputs:
     let
       inherit (self) outputs;
       system = "x86_64-linux";
-      pkgs = import nixpkgs { system = "x86_64-linux"; };
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
       lib = nixpkgs.lib;
+      config = nixpkgs.config;
     in
     {
       nixosConfigurations = {
-        overlay.enable = true;
 
         nixos = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
@@ -41,9 +43,8 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
 
-              # Let Home Manager derive config automatically
               home-manager.users.shahid = import ./home.nix {
-                inherit pkgs nixpkgs lib system inputs;
+                inherit pkgs config nixpkgs lib system inputs;
               };
             }
           ];
