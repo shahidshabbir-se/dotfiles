@@ -28,7 +28,7 @@
     };
   fileSystems."/mnt/shared" = {
     device = "/dev/nvme0n1p3";
-    fsType = "btrfs";
+    fsType = "ext4";
   };
 
   swapDevices = [ ];

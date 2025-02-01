@@ -22,11 +22,7 @@
 ### qBittorrent
 ![snapshot_2025-01-17_09-44-02](assets/snapshot_2025-01-17_09-44-02.png)
 
-<<<<<<< HEAD
-### Clipboard Manager
-=======
 ### Clipboard
->>>>>>> 5334461f (modularize config files)
 ![snapshot_2025-01-21_23-12-01.png](assets/snapshot_2025-01-21_23-12-01.png)
 
 ### Launcher

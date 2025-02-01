@@ -128,8 +128,7 @@ return {
 					"dockerfile",
 					"gitignore",
 					"query",
-					"rust",
-					"ron",
+					"go",
 				},
 				incremental_selection = {
 					enable = true,
@@ -185,10 +184,6 @@ return {
 		"hrsh7th/nvim-cmp",
 		dependencies = {
 			{
-				"supermaven-inc/supermaven-nvim",
-				opts = {},
-			},
-			{
 				"L3MON4D3/LuaSnip",
 				config = function(_, opts)
 					require("luasnip").config.set_config(opts)
@@ -224,8 +219,12 @@ return {
 		},
 
 		opts = function(_, opts)
-			table.insert(opts.sources, 1, { name = "supermaven" })
-			table.insert(opts.sources, { name = "crates" })
+			table.insert(opts.sources, 1, {
+				name = "copilot",
+				group_index = 1,
+				priority = 100,
+			})
+			-- table.insert(opts.sources, { name = "crates" })
 		end,
 	},
 
@@ -270,42 +269,6 @@ return {
 				},
 			})
 		end,
-	},
-
-	{
-		"folke/persistence.nvim",
-		event = "BufReadPre",
-		opts = {},
-		keys = {
-			{
-				"<leader>qs",
-				function()
-					require("persistence").load()
-				end,
-				desc = "Restore Session",
-			},
-			{
-				"<leader>qS",
-				function()
-					require("persistence").select()
-				end,
-				desc = "Select Session",
-			},
-			{
-				"<leader>ql",
-				function()
-					require("persistence").load({ last = true })
-				end,
-				desc = "Restore Last Session",
-			},
-			{
-				"<leader>qd",
-				function()
-					require("persistence").stop()
-				end,
-				desc = "Don't Save Current Session",
-			},
-		},
 	},
 
 	{
@@ -364,7 +327,7 @@ return {
 		"razak17/tailwind-fold.nvim",
 		ft = { "html", "svelte", "astro", "vue", "typescriptreact" },
 		opts = {
-			min_chars = 50,
+			min_chars = 40,
 		},
 	},
 
@@ -696,20 +659,6 @@ return {
 				},
 			}
 
-			dap.configurations.rust = {
-				{
-					name = "Launch Rust Program",
-					type = "lldb",
-					request = "launch",
-					program = function()
-						return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
-					end,
-					cwd = "${workspaceFolder}",
-					stopOnEntry = false,
-					args = {},
-				},
-			}
-
 			-- PWA Node.js Adapter
 			if not dap.adapters["pwa-node"] then
 				dap.adapters["pwa-node"] = {
@@ -760,116 +709,92 @@ return {
 	},
 
 	{
-		"mrcjkb/rustaceanvim",
-		version = vim.fn.has("nvim-0.10.0") == 0 and "^4" or false,
-		ft = { "rust" },
-		opts = {
-			server = {
-				on_attach = function(_, bufnr)
-					vim.keymap.set("n", "<leader>cR", function()
-						vim.cmd.RustLsp("codeAction")
-					end, { desc = "Code Action", buffer = bufnr })
-					vim.keymap.set("n", "<leader>dr", function()
-						vim.cmd.RustLsp("debuggables")
-					end, { desc = "Rust Debuggables", buffer = bufnr })
-				end,
-				default_settings = {
-					["rust-analyzer"] = {
-						cargo = {
-							allFeatures = true,
-							loadOutDirsFromCheck = true,
-							buildScripts = {
-								enable = true,
-							},
-						},
-						checkOnSave = true,
-						diagnostics = {
-							enable = true,
-						},
-						procMacro = {
-							enable = true,
-							ignored = {
-								["async-trait"] = { "async_trait" },
-								["napi-derive"] = { "napi" },
-								["async-recursion"] = { "async_recursion" },
-							},
-						},
-						files = {
-							excludeDirs = {
-								".direnv",
-								".git",
-								".github",
-								".gitlab",
-								"bin",
-								"node_modules",
-								"target",
-								"venv",
-								".venv",
-							},
-						},
-					},
-				},
-			},
-		},
-		config = function(_, opts)
-			local function error_msg(msg)
-				vim.api.nvim_err_writeln(msg)
-			end
-
-			-- Locate codelldb if mason.nvim is installed
-			local mason_registry_ok, mason_registry = pcall(require, "mason-registry")
-			if mason_registry_ok then
-				local package_path = mason_registry.get_package("codelldb"):get_install_path()
-				local codelldb = package_path .. "~/.local/share/nvim/mason/bin/codelldb"
-				local library_path = "/nix/store/ash0c4lw7j10s36wkfn8vcklaxyl2cg0-lldb-19.1.5-lib/lib/liblldb.so"
-
-				if vim.fn.has("unix") == 1 and io.popen("uname"):read("*l") == "Linux" then
-					library_path = package_path .. "/extension/lldb/lib/liblldb.so"
-				end
-
-				opts.dap = {
-					adapter = require("rustaceanvim.config").get_codelldb_adapter(codelldb, library_path),
-				}
-			else
-				error_msg("mason.nvim is not installed. Debugging support may not work.")
-			end
-
-			vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
-
-			if vim.fn.executable("rust-analyzer") == 0 then
-				error_msg("**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/")
-			end
-		end,
-	},
-	{
-		"Saecki/crates.nvim",
-		event = { "BufRead Cargo.toml" },
-		opts = {
-			completion = {
-				crates = {
-					enabled = true,
-				},
-			},
-			lsp = {
-				enabled = true,
-				actions = true,
-				completion = true,
-				hover = true,
-			},
-		},
-	},
-	{
-		"rust-lang/rust.vim",
-		ft = "rust",
-		init = function()
-			vim.g.rustfmt_autosave = 1
-		end,
-	},
-	{
 		"theHamsta/nvim-dap-virtual-text",
 		lazy = false,
 		config = function(_, opts)
 			require("nvim-dap-virtual-text").setup()
 		end,
+	},
+
+	{
+		"kdheepak/lazygit.nvim",
+		cmd = {
+			"LazyGit",
+			"LazyGitConfig",
+			"LazyGitCurrentFile",
+			"LazyGitFilter",
+			"LazyGitFilterCurrentFile",
+		},
+		-- optional for floating window border decoration
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		-- setting the keybinding for LazyGit with 'keys' is recommended in
+		-- order to load the plugin when the command is run for the first time
+		keys = {
+			{ "<leader>lg", "<cmd>LazyGit<cr>", desc = "Open lazy git" },
+		},
+	},
+	{
+		"rmagatti/auto-session",
+		lazy = false,
+
+		opts = {
+			-- Specify a directory to store all session files.
+			root_dir = vim.fn.stdpath("data") .. "/sessions/", -- Store all sessions in this directory (e.g., ~/.local/share/nvim/sessions/)
+
+			-- Auto-save and auto-restore settings
+			auto_save = true, -- Enable auto-save of sessions on exit
+			auto_restore = false, -- Enable auto-restore of sessions on startup
+			auto_create = true, -- Enable automatic creation of a new session if no session exists
+			auto_restore_last_session = true, -- Restore the last session automatically on startup, if no session for cwd exists
+
+			-- Control the directories where sessions are not handled
+			suppressed_dirs = { "~/", "~/Downloads", "/" }, -- Don't manage sessions in these directories
+
+			-- Manual session control (you can choose to save, restore, or delete a session based on cwd or session name)
+			session_lens = {
+				load_on_setup = true, -- Enable session picker for sessions (requires Telescope)
+				previewer = false, -- Disable session file preview
+			},
+
+			-- Logging and error handling options
+			log_level = "error", -- Set the log level to "error" to reduce log noise
+
+			-- Optionally, configure any other settings
+			lazy_support = true, -- Automatically detect if Lazy.nvim is used and wait for it to finish loading
+		},
+	},
+
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		build = ":Copilot auth",
+		opts = {
+			suggestion = {
+				enabled = true,
+				auto_trigger = true,
+				hide_during_completion = false,
+				keymap = {
+					accept = "<Tab>", -- Accept suggestion (VS Code-like)
+					next = "<M-]>", -- Next suggestion
+					prev = "<M-[>", -- Previous suggestion
+					dismiss = "<C-]>", -- Dismiss suggestion
+				},
+			},
+			panel = {
+				enabled = false, -- Disable Copilot Panel (optional)
+			},
+			filetypes = {
+				markdown = true,
+				help = true,
+				lua = true,
+				go = true,
+				javascript = true,
+				typescript = true,
+				python = true,
+			},
+		},
 	},
 }

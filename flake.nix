@@ -15,11 +15,12 @@
       url = "github:jas-singhfsu/hyprpanel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    alacritty-theme.url = "github:alexghr/alacritty-theme.nix";
-    alacritty-theme.inputs.nixpkgs.follows = "nixpkgs";
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprpanel, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, spicetify-nix, zen-browser, hyprpanel, ... } @ inputs:
     let
       inherit (self) outputs;
       system = "x86_64-linux";
@@ -36,7 +37,7 @@
         nixos = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            { nixpkgs.overlays = [ inputs.hyprpanel.overlay ]; }
+            # { nixpkgs.overlays = [ inputs.hyprpanel.overlay ]; }
             ./configuration.nix
             home-manager.nixosModules.home-manager
             {

@@ -20,6 +20,8 @@
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
+  programs.adb.enable = true;
+
   time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -37,9 +39,14 @@
 
   networking.wireguard.enable = true;
 
-  services.pipewire = {
+  services.pulseaudio = {
     enable = true;
-    pulse.enable = true;
+    package = pkgs.pulseaudioFull;
+  };
+
+  services.pipewire = {
+    enable = false;
+    # pulse.enable = true;
   };
 
   services.libinput.enable = true;
@@ -47,12 +54,11 @@
 
   users.users.shahid = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "audio" ];
+    extraGroups = [ "wheel" "docker" "audio" "kvm" "adbusers" ];
     packages = with pkgs; [
       hyprland
       zsh
       git
-      sddm
       home-manager
       catppuccin-sddm
     ];
@@ -64,9 +70,9 @@
     (
       catppuccin-sddm.override {
         flavor = "mocha";
-        font = "SF Pro Display Regular";
+        font = "JetBrainsMono Nerd Font";
         fontSize = "9";
-        background = ./wallpapers/gradient.jpg;
+        background = ./wallpapers/lockscreen.jpg;
         loginBackground = true;
       }
     )
@@ -76,6 +82,10 @@
   programs.hyprland.enable = true;
   virtualisation.docker.enable = true;
   programs.zsh.enable = true;
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
+
 
   services.keyd = {
     enable = true;
@@ -98,6 +108,17 @@
       };
     };
   };
+
+  programs.hyprland.xwayland.enable = true;
+
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than +1";
+  };
+
+  nix.settings.auto-optimise-store = true;
+
 
   services.displayManager.sddm = {
     enable = true;

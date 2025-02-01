@@ -1,13 +1,13 @@
 { config
 , pkgs
+, userGmail
+, userGithub
 , ...
 }: {
   enable = true;
   lfs.enable = true;
-  userName = "shahidshabbir-se";
-  userEmail = "shahidshabbirse@gmail.com";
-  signing.key = null;
-  signing.signByDefault = true;
+  userName = userGithub;
+  userEmail = userGmail;
 
   extraConfig = {
     pull = {

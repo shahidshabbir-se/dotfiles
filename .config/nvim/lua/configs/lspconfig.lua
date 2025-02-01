@@ -2,7 +2,7 @@ require("nvchad.configs.lspconfig").defaults()
 
 local lspconfig = require("lspconfig")
 
-local servers = { "html", "cssls", "lua_ls", "ts_ls", "rnix", "prismals" }
+local servers = { "html", "cssls", "lua_ls", "ts_ls", "rnix", "prismals", "svelte" }
 local nvlsp = require("nvchad.configs.lspconfig")
 
 for _, lsp in ipairs(servers) do
@@ -53,6 +53,23 @@ lspconfig.emmet_ls.setup({
 			javascriptreact = { enable = true },
 			vue = { enable = true },
 			svelte = { enable = true },
+		},
+	},
+})
+
+lspconfig.gopls.setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	cmd = { "gopls" },
+	filetypes = { "go", "gomod", "gowork", "gotmpl" },
+	root_dir = require("lspconfig.util").root_pattern("go.work", "go.mod", ".git"),
+	settings = {
+		gopls = {
+			completeUnimported = true,
+			usePlaceholders = true,
+			analyses = {
+				unusedparams = true,
+			},
 		},
 	},
 })
