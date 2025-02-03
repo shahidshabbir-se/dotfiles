@@ -10,7 +10,7 @@
     sqlc
 
     # ────────────────────── Android Development ──────────────────────
-    android-studio
+    watchman
 
     # ────────────────────── DevOps & Containerization ──────────────────────
     docker

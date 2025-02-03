@@ -26,7 +26,7 @@ in
     gtk.enable = true;
     name = "catppuccin-mocha-dark-cursors";
     package = pkgs.catppuccin-cursors.mochaDark;
-    size = 28;
+    size = 24;
   };
 
   dconf = {
