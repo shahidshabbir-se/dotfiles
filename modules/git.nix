@@ -5,22 +5,50 @@
 , ...
 }: {
   enable = true;
+  delta.enable = true;
   lfs.enable = true;
   userName = userGithub;
   userEmail = userGmail;
 
   extraConfig = {
-    pull = {
-      rebase = true;
-    };
     init = {
       defaultBranch = "master";
     };
-
-    # url = {
-    #   "git@github.com:" = {
-    #     insteadOf = "https://github.com/";
-    #   };
-    # };
+    color = {
+      ui = "auto";
+    };
+    diff = {
+      tool = "vimdiff";
+      mnemonicprefix = true;
+    };
+    merge = {
+      tool = "splice";
+    };
+    push = {
+      default = "simple";
+    };
+    pull = {
+      rebase = true;
+    };
+    core = {
+      excludesfile = "~/.gitignore_global";
+    };
+    branch = {
+      autosetupmerge = true;
+    };
+    rerere = {
+      enabled = true;
+    };
+    delta = {
+      side-by-side = true;
+      line-numbers = true;
+      syntax-theme = "Nord";
+    };
+    pager = {
+      diff = "delta";
+      log = "delta";
+      reflog = "delta";
+      show = "delta";
+    };
   };
 }

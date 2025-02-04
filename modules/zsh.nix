@@ -131,8 +131,8 @@
       --color=selected-bg:#45475a \
       --multi"
     export BAT_THEME="Catppuccin Mocha"
-    export ANDROID_HOME=$HOME/Android/Sdk
-    export ANDROID_SDK_ROOT=$ANDROID_HOME
-    export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+    export ANDROID_HOME=/nix/store/1q1xrsgynhsgy8h9azvyhb30fh3qkkd1-android-sdk-env/share/android-sdk
+    export ANDROID_SDK_ROOT=/nix/store/1q1xrsgynhsgy8h9azvyhb30fh3qkkd1-android-sdk-env/share/android-sdk
+    export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$PATH
   '';
 }

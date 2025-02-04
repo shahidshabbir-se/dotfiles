@@ -24,5 +24,6 @@
     nixpkgs-fmt
     gitleaks
     git-graph
+    delta
   ];
 }
