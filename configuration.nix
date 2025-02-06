@@ -57,7 +57,7 @@
     extraGroups = [ "wheel" "docker" "audio" "kvm" "adbusers" ];
     packages = with pkgs; [
       hyprland
-      zsh
+      starship
       git
       home-manager
       catppuccin-sddm
@@ -72,7 +72,7 @@
         flavor = "mocha";
         font = "JetBrainsMono Nerd Font";
         fontSize = "9";
-        background = ./wallpapers/lockscreen.jpg;
+        background = ./wallpapers/blue-gradient.png;
         loginBackground = true;
       }
     )

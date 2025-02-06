@@ -1,15 +1,15 @@
 local options = {
 
 	base46 = {
-		theme = "tokyonight", -- default theme
+		theme = "catppuccin", -- default theme
 		hl_add = {},
 		integrations = {},
 		changed_themes = {},
-		transparency = false,
+		transparency = true,
 		hl_override = {
 			["@comment"] = { italic = true },
 		},
-		theme_toggle = { "tokyonight", "one_light" },
+		theme_toggle = { "catppuccin", "one_light" },
 	},
 
 	ui = {

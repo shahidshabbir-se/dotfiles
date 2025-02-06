@@ -7,6 +7,7 @@
     playerctl
     noto-fonts-emoji
     alacritty
+    ghostty
     feh
     kitty
   ];

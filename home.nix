@@ -58,12 +58,17 @@ in
 
   programs = {
     tmux = import ./modules/tmux.nix { inherit pkgs; };
+    starship = import ./modules/starship.nix { inherit pkgs; };
     zsh = import ./modules/zsh.nix { inherit config pkgs lib; };
     git = import ./modules/git.nix { inherit config pkgs userGmail userGithub; };
     alacritty = import ./modules/alacritty.nix { inherit pkgs; };
     fzf = import ./modules/fzf.nix { inherit pkgs; };
     zoxide = import ./modules/zoxide.nix { inherit pkgs; };
     spicetify = import ./modules/spicetify.nix { inherit inputs pkgs; };
+    atuin = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     home-manager.enable = true;
     # hyprpanel = import ./modules/hyprpanel.nix { inherit pkgs; };
   };
@@ -74,9 +79,12 @@ in
     ".local/share/fonts".source = ./fonts;
     # ".config/hypr".source = ./config/hypr;
     ".config/yazi".source = ./.config/yazi;
+    ".config/ghostty".source = ./.config/ghostty;
     ".config/bat".source = ./.config/bat;
     ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
     ".config/hypr/mocha.conf".source = ./.config/hypr/mocha.conf;
+    ".config/hypr/theme.toml".source = ./.config/atac/theme.toml;
+    ".config/hypr/key_bindings.toml".source = ./.config/atac/key_bindings.toml;
   };
 
   home.stateVersion = "24.11";

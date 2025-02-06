@@ -10,7 +10,8 @@
     sqlc
 
     # ────────────────────── Android Development ──────────────────────
-    watchman
+    jdk23
+    android-studio
 
     # ────────────────────── DevOps & Containerization ──────────────────────
     docker
@@ -25,5 +26,8 @@
     gitleaks
     git-graph
     delta
+    nushell
+    atac
+    atuin
   ];
 }

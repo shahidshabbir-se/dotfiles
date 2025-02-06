@@ -42,7 +42,7 @@
     delta = {
       side-by-side = true;
       line-numbers = true;
-      syntax-theme = "Nord";
+      syntax-theme = "Dracula";
     };
     pager = {
       diff = "delta";

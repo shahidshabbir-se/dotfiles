@@ -1,21 +1,19 @@
 { config, pkgs, lib, ... }:
 {
   enable = true;
-  history.size = 10000;
-  history.ignoreAllDups = true;
-  history.path = "$HOME/.zsh_history";
-  history.ignorePatterns = [ "rm *" "pkill *" ];
+  history.size = 0;
+  history.ignoreAllDups = false;
+  history.path = "/dev/null";
   shellAliases = {
-    t = "tree -L";
-    t1 = "tree -L 1";
-    t2 = "tree -L 2";
-    t3 = "tree -L 3";
+    t = "tree -l";
+    t1 = "tree -l 1";
+    t2 = "tree -l 2";
+    t3 = "tree -l 3";
 
     c = "clear";
     l = "eza --icons=always --git -a --no-time --no-user --no-permissions";
 
     grep = "grep --color=auto";
-    pwd = "pwd -P";
     gs = "git status";
     gl = "git log --oneline --graph --decorate";
     gco = "git checkout";
@@ -53,6 +51,7 @@
     bc = "better-commits";
     cat = "bat --style=plain";
     nv = "nvim";
+    onv = "nvim $(fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%)";
 
     ".." = "cd ..";
     "..." = "cd ../..";
@@ -72,21 +71,28 @@
       "pass"
     ];
   };
-  zplug = {
-    enable = true;
-    plugins = [
-      { name = "zsh-users/zsh-autosuggestions"; } # Simple plugin installation
-      { name = "zsh-users/zsh-completions"; } # Simple plugin installation
-      { name = "zsh-users/zsh-syntax-highlighting"; } # Simple plugin installation
-      { name = "zsh-users/zsh-history-substring-search"; } # Simple plugin installation
-      { name = "junegunn/fzf"; } # Simple plugin installation
-      { name = "Aloxaf/fzf-tab"; } # Simple plugin installation
-      {
-        name = "romkatv/powerlevel10k";
-        tags = [ "as:theme" "depth:1" ];
-      } # Installations with additional options. For the list of options, please refer to Zplug README.
-    ];
-  };
+  plugins = [
+    {
+      name = "zsh-autosuggestions";
+      src = pkgs.zsh-autosuggestions;
+      file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+    }
+    {
+      name = "zsh-completions";
+      src = pkgs.zsh-completions;
+      file = "share/zsh-completions/zsh-completions.zsh";
+    }
+    {
+      name = "zsh-syntax-highlighting";
+      src = pkgs.zsh-syntax-highlighting;
+      file = "share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
+    }
+    {
+      name = "fzf-tab";
+      src = pkgs.zsh-fzf-tab;
+      file = "share/fzf-tab/fzf-tab.plugin.zsh";
+    }
+  ];
 
   initExtra = ''
     bindkey '^A' beginning-of-line
@@ -105,7 +111,6 @@
     bindkey '^[o' execute-named-cmd
     bindkey '^@' autosuggest-accept
 
-    [[ ! -f ${./p10k.zsh} ]] || source ${./p10k.zsh}
     # disable sort when completing `git checkout`
     zstyle ':completion:*:git-checkout:*' sort false
     # set descriptions format to enable group support
@@ -131,8 +136,5 @@
       --color=selected-bg:#45475a \
       --multi"
     export BAT_THEME="Catppuccin Mocha"
-    export ANDROID_HOME=/nix/store/1q1xrsgynhsgy8h9azvyhb30fh3qkkd1-android-sdk-env/share/android-sdk
-    export ANDROID_SDK_ROOT=/nix/store/1q1xrsgynhsgy8h9azvyhb30fh3qkkd1-android-sdk-env/share/android-sdk
-    export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$PATH
   '';
 }
