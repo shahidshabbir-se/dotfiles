@@ -6,9 +6,11 @@
     spicetify-cli
     playerctl
     noto-fonts-emoji
-    alacritty
-    ghostty
+    vlc
+    # alacritty
+    # ghostty
+    wezterm
     feh
-    kitty
+    # kitty
   ];
 }

@@ -58,11 +58,12 @@
     packages = with pkgs; [
       hyprland
       starship
+      zsh
       git
       home-manager
       catppuccin-sddm
     ];
-    shell = pkgs.zsh;
+    shell = pkgs.nushell;
   };
 
 

@@ -8,8 +8,11 @@
     # ────────────────────── Backend Development ──────────────────────
     go
     sqlc
+    air
+    go-migrate
 
     # ────────────────────── Android Development ──────────────────────
+    watchman
     jdk23
     android-studio
 
@@ -20,6 +23,7 @@
     # ────────────────────── General Development Tools ──────────────────────
     stylua
     lazygit
+    lazydocker
     fzf
     zoxide
     nixpkgs-fmt
@@ -27,7 +31,15 @@
     git-graph
     delta
     nushell
+    oh-my-posh
     atac
     atuin
+    gnumake
+    python314
+    rustup
+    gcc
+
+    # ────────────────────── Database ──────────────────────
+    # postgresql
   ];
 }

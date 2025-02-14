@@ -5,46 +5,11 @@
   history.ignoreAllDups = false;
   history.path = "/dev/null";
   shellAliases = {
-    t = "tree -l";
-    t1 = "tree -l 1";
-    t2 = "tree -l 2";
-    t3 = "tree -l 3";
-
+    l = "eza -l --icons --git -a";
+    lt = "eza --tree --level=2 --long --icons --git";
+    ltree = "eza --tree --level=2  --icons --git";
     c = "clear";
-    l = "eza --icons=always --git -a --no-time --no-user --no-permissions";
-
     grep = "grep --color=auto";
-    gs = "git status";
-    gl = "git log --oneline --graph --decorate";
-    gco = "git checkout";
-    gc = "git commit";
-    gca = "git commit -a";
-    gcm = "git commit -m";
-    gp = "git push";
-    gpo = "git push origin";
-    gpl = "git pull";
-    ga = "git add";
-    gb = "git branch";
-    gup = "git pull --rebase";
-    gcs = "function _gitclone() { git clone git@github.com:shahidshabbir-se/$1.git; }; _gitclone";
-    gch = "function _gch() { git clone $1; }; _gch";
-    ggr = "git-graph --model git-flow";
-
-    ni = "pnpm install";
-    nd = "pnpm install --save-dev";
-    nr = "pnpm run dev";
-    ns = "pnpm start";
-    nt = "pnpm test";
-
-    d = "docker";
-    dc = "docker-compose";
-    dps = "docker ps";
-    di = "docker images";
-    dcu = "docker-compose up";
-    dcd = "docker-compose down";
-    dr = "docker run";
-    dp = "docker pull";
-
     rm = "rm -rf";
     fzf = "fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%";
     e = "exit";
@@ -52,6 +17,46 @@
     cat = "bat --style=plain";
     nv = "nvim";
     onv = "nvim $(fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%)";
+
+    gs = "git status";
+    glog = "git log --oneline --graph --decorate";
+    gc = "git commit -m";
+    gca = "git commit -a -m";
+    gp = "git push origin HEAD";
+    gpu = "git pull origin";
+    gdiff = "git diff";
+    gco = "git checkout";
+    gb = "git branch";
+    gba = "git branch -a";
+    gadd = "git add";
+    ga = "git add -p";
+    gcoall = "git checkout -- .";
+    gr = "git remote";
+    gre = "git reset";
+    gcs = "function _gitclone() { git clone git@github.com:shahidshabbir-se/$1.git; }; _gitclone";
+    gch = "function _gch() { if [[ -n \$1 && \$1 =~ ^[0-9]+$ ]]; then git clone --depth \$1 \$2; else git clone \$1; fi; }; _gch";
+    ggr = "git-graph --model git-flow";
+    lzg = "lazygit";
+
+    pi = "pnpm install";
+    pd = "pnpm install --save-dev";
+    pr = "pnpm run dev";
+    ps = "pnpm start";
+    pt = "pnpm test";
+
+    d = "docker";
+    dc = "docker compose";
+    dco = "docker compose";
+    dcu = "docker compose up";
+    dcd = "docker compose down";
+    dps = "docker ps";
+    dpa = "docker ps -a";
+    dl = "docker ps -l -q";
+    di = "docker images";
+    dr = "docker run";
+    dp = "docker pull";
+    dx = "docker exec -it";
+    lzd = "lazydocker";
 
     ".." = "cd ..";
     "..." = "cd ../..";

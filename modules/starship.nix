@@ -2,38 +2,29 @@
 
 {
   enable = true;
-  enableFishIntegration = true;
   enableNushellIntegration = true;
   enableBashIntegration = true;
   enableZshIntegration = true;
   settings = {
-    add_newline = false;
+    add_newline = true;
     command_timeout = 1000;
-    format = ''
-      [](fg:blue)$directory[](fg:blue) $character
-    '';
+    format = ''$directory $character'';
     palette = "catppuccin_mocha";
-    right_format = "
-      $all [](fg:mauve)$time[](fg:mauve)
-    ";
+    right_format = "$git_branch$git_status$nodejs$golang$docker_context";
 
     character = {
       disabled = false;
       success_symbol = "[➜](bold green)";
       error_symbol = "[➜](bold fg:red)";
-      vimcmd_symbol = "[](bold fg:green)";
-      vimcmd_replace_one_symbol = "[](bold fg:purple)";
-      vimcmd_replace_symbol = "[](bold fg:purple)";
-      vimcmd_visual_symbol = "[](bold fg:yellow)";
+      vimcmd_symbol = "[N] >>>";
     };
 
     directory = {
       disabled = false;
-      style = "fg:mantle bg:blue";
-      format = "[$path]($style)[$read_only]($read_only_style)";
+      format = " [$path]($style)[$read_only]($read_only_style)";
       read_only = " ";
       read_only_style = "red";
-      repo_root_format = "[$before_root_path]($style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) ";
+      repo_root_format = "[$before_root_path]($style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style)";
       truncate_to_repo = true;
       truncation_length = 3;
       truncation_symbol = "…/";
@@ -65,14 +56,11 @@
     };
 
     nodejs = {
-      symbol = "";
-      style = "bg:green";
-      format = "[](fg:green)[$symbol ($version)](fg:mantle bg:green)[](fg:green)";
+      format = "[ $version](bold green)";
     };
 
     golang = {
-      symbol = "";
-      format = "[](fg:#769ff0)[$symbol ($version)](fg:mantle bg:#769ff0)[](fg:#769ff0)";
+      format = "[ $version](bold cyan)";
     };
 
     docker_context = {
@@ -109,14 +97,6 @@
         crust = "#11111b";
       };
     };
-    time = {
-      format = "[ $time]($style)";
-      style = "fg:mantle bg:mauve";
-      use_12hr = true;
-      disabled = false;
-      utc_time_offset = "local";
-      time_format = "%-I:%M %p"; # Hour:Minute:Seconds Format
-      time_range = "-";
-    };
   };
 }
+

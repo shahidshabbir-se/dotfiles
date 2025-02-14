@@ -4,10 +4,10 @@ let
     pluginName = "catppuccin";
     version = "unstable-2023-01-06";
     src = pkgs.fetchFromGitHub {
-      owner = "dreamsofcode-io";
+      owner = "omerxx";
       repo = "catppuccin-tmux";
       rev = "main";
-      sha256 = "sha256-FJHM6LJkiAwxaLd5pnAoF3a7AE1ZqHWoCpUJE0ncCA8=";
+      sha256 = "sha256-Ig6+pB8us6YSMHwSRU3sLr9sK+L7kbx2kgxzgmpR920=";
     };
   };
   tokyo-night = pkgs.tmuxPlugins.mkTmuxPlugin {
@@ -28,6 +28,7 @@ in
   terminal = "screen-256color";
 
   plugins = with pkgs.tmuxPlugins; [
+    catppuccin
     tokyo-night
     yank
     sensible
@@ -71,12 +72,26 @@ in
     bind -n M-H previous-window
     bind -n M-L next-window
 
-    set -g @tokyo-night-tmux_transparent 0
-    set -g @tokyo-night-tmux_window_id_style hsquare
-    set -g @tokyo-night-tmux_show_datetime 0
-    set -g @tokyo-night-tmux_show_git 0
+    set -g @catppuccin_window_left_separator ""
+    set -g @catppuccin_window_right_separator " "
+    set -g @catppuccin_window_middle_separator " █"
+    set -g @catppuccin_window_number_position "right"
+    set -g @catppuccin_window_default_fill "number"
+    set -g @catppuccin_window_default_text "#W"
+    set -g @catppuccin_window_current_fill "number"
+    set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),}"
+    set -g @catppuccin_status_modules_right "directory date_time"
+    set -g @catppuccin_status_modules_left "session"
+    set -g @catppuccin_status_left_separator  " "
+    set -g @catppuccin_status_right_separator " "
+    set -g @catppuccin_status_right_separator_inverse "no"
+    set -g @catppuccin_status_fill "icon"
+    set -g @catppuccin_status_connect_separator "no"
+    set -g @catppuccin_directory_text "#{b:pane_current_path}"
+    set -g status-position top 
+    set -g @catppuccin_date_time_text "%H:%M"
 
-    run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
+    run-shell ${catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux
 
     # set vi-mode
     set-window-option -g mode-keys vi
@@ -91,7 +106,7 @@ in
     bind c new-window -c "#{pane_current_path}"
 
     # Set the shell inside tmux itself
-    set -g default-shell "${pkgs.zsh}/bin/zsh"
+    set -g default-shell "${pkgs.nushell}/bin/nu"
 
     set -g default-terminal "alacritty"
     set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'

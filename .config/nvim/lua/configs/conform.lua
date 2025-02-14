@@ -1,19 +1,25 @@
 local options = {
-	formatters_by_ft = {
-		lua = { "stylua" },
-		css = { "prettierd" },
-		html = { "prettierd" },
-		nix = { "nixpkgs-fmt" },
-		lua = { "stylua" },
-		go = { "gofmt" },
-		svelte = { "prettierd" },
-		kotlin = { "ktlint" },
-	},
+  formatters_by_ft = {
+    lua = { "stylua" },
+    css = { "prettierd" },
+    html = { "prettierd" },
+    nix = { "nixpkgs-fmt" },
+    go = { "gofmt" },
+    svelte = { "prettierd" },
+    toml = { "taplo" },
+    sql = { "sqlfluff" },
+  },
 
-	format_on_save = {
-		timeout_ms = 2000,
-		lsp_fallback = true,
-	},
+  formatters = {
+    sqlfluff = {
+      args = { "format", "--dialect=ansi", "-" },
+    },
+  },
+
+  format_on_save = {
+    timeout_ms = 2000,
+    lsp_fallback = true,
+  },
 }
 
 return options

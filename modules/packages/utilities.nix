@@ -5,7 +5,7 @@
     # eww
     hyprlock
     power-profiles-daemon
-    # ntfs3g
+    ntfs3g
     qbittorrent
     rofi
     cliphist
@@ -15,5 +15,6 @@
     noto-fonts-emoji
     btop
     hyprcursor
+    carapace
   ];
 }

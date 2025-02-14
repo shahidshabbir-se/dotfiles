@@ -15,6 +15,10 @@ in
 {
   home.username = userName;
   home.homeDirectory = homeDirectory;
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
 
   imports = [
     inputs.spicetify-nix.homeManagerModules.default
@@ -59,33 +63,56 @@ in
   programs = {
     tmux = import ./modules/tmux.nix { inherit pkgs; };
     starship = import ./modules/starship.nix { inherit pkgs; };
-    zsh = import ./modules/zsh.nix { inherit config pkgs lib; };
+    # zsh = import ./modules/zsh.nix { inherit config pkgs lib; };
     git = import ./modules/git.nix { inherit config pkgs userGmail userGithub; };
-    alacritty = import ./modules/alacritty.nix { inherit pkgs; };
+    # alacritty = import ./modules/alacritty.nix { inherit pkgs; };
     fzf = import ./modules/fzf.nix { inherit pkgs; };
     zoxide = import ./modules/zoxide.nix { inherit pkgs; };
     spicetify = import ./modules/spicetify.nix { inherit inputs pkgs; };
+    eza = { enableNushellIntegration = true; };
+    carapace = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
     atuin = {
       enable = true;
       enableZshIntegration = true;
+      enableNushellIntegration = true;
     };
+    nushell = import ./modules/nushell.nix { inherit pkgs; };
     home-manager.enable = true;
     # hyprpanel = import ./modules/hyprpanel.nix { inherit pkgs; };
   };
 
-  home.file = {
+  home.file = builtins.listToAttrs
+    (map
+      (name: {
+        name = ".config/nushell/${name}";
+        value.text = builtins.readFile ./modules/nushell/${name};
+      }) [
+      "adb-completions.nu"
+      "docker-completions.nu"
+      "git-completions.nu"
+      "nix-completions.nu"
+      "npm-completions.nu"
+      "pnpm-completions.nu"
+      "rg-completions.nu"
+      "winget-completions.nu"
+    ]) // {
     ".config/rofi".source = ./.config/rofi;
     # ".config/nvim".source = ./.config/nvim;
     ".local/share/fonts".source = ./fonts;
     # ".config/hypr".source = ./config/hypr;
     ".config/yazi".source = ./.config/yazi;
-    ".config/ghostty".source = ./.config/ghostty;
+    # ".config/ghostty".source = ./.config/ghostty;
+    ".wezterm.lua".source = ./.config/wezterm.lua;
     ".config/bat".source = ./.config/bat;
     ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
     ".config/hypr/mocha.conf".source = ./.config/hypr/mocha.conf;
-    ".config/hypr/theme.toml".source = ./.config/atac/theme.toml;
-    ".config/hypr/key_bindings.toml".source = ./.config/atac/key_bindings.toml;
+    ".config/atac/theme.toml".source = ./.config/atac/theme.toml;
+    ".config/atac/key_bindings.toml".source = ./.config/atac/key_bindings.toml;
   };
+
 
   home.stateVersion = "24.11";
 }
