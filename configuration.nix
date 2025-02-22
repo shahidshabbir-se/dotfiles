@@ -29,8 +29,49 @@
   services.xserver.enable = true;
   services.blueman.enable = true;
   services.power-profiles-daemon.enable = true;
-  services.gvfs.enable = true; # Mount, trash, and other functionalities
+  # services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
+  # services.kanata = {
+  #   enable = true;
+  #   keyboards = {
+  #     internalKeyboard = {
+  #       devices = [
+  #         "/dev/input/by-path/pci-0000:00:14.0-usb-0:1:1.1-event-kbd"
+  #         "/dev/input/by-path/pci-0000:00:14.0-usbv2-0:1:1.1-event-kbd"
+  #         "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
+  #       ];
+  #       extraDefCfg = "process-unmapped-keys yes";
+  #       config = ''
+  #         (defsrc
+  #           esc caps a s d f j k l ;
+  #         )
+  #         (defvar
+  #           tap-time 180
+  #           hold-time 230
+  #         )
+  #
+  #         (defalias
+  #           esc caps
+  #           caps (tap-hold 100 100 esc lctl)
+  #           a (multi f24 (tap-hold $tap-time $hold-time a lmet))
+  #           s (multi f24 (tap-hold $tap-time $hold-time s lalt))
+  #           d (multi f24 (tap-hold $tap-time $hold-time d lsft))
+  #           f (multi f24 (tap-hold $tap-time $hold-time f lctl))
+  #           j (multi f24 (tap-hold $tap-time $hold-time j rctl))
+  #           k (multi f24 (tap-hold $tap-time $hold-time k rsft))
+  #           l (multi f24 (tap-hold $tap-time $hold-time l ralt))
+  #           ; (multi f24 (tap-hold $tap-time $hold-time ; rmet))
+  #         )
+  #
+  #         (deflayer base
+  #           @esc @caps @a @s @d @f @j @k @l @;
+  #         )
+  #       '';
+  #     };
+  #   };
+  # };
+
+
 
   security.sudo = {
     enable = true;

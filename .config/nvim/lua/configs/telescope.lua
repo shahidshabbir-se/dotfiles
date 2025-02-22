@@ -38,7 +38,7 @@ local files = function(filetype, opts)
   }
 
   local oldfiles_opts = {
-    previewer = false,
+    previewer = true,
     layout_config = {
       prompt_position = "top",
       width = 0.4,
@@ -258,7 +258,7 @@ local buffers = function(previewer, opts)
   local buf_opts = {
     bufnr_width = 0,
     layout_strategy = "horizontal",
-    previewer = false,
+    previewer = true,
     layout_config = {
       horizontal = {
         width = 0.35,

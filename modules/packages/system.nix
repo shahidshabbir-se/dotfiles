@@ -13,6 +13,7 @@
 
     # ────────────────────── File Management ──────────────────────
     zip
+    rar
     xz
     parted
     unzip
@@ -27,6 +28,6 @@
     ripgrep
 
     # ────────────────────── Web Browser ──────────────────────
-    inputs.zen-browser.packages."x86_64-linux".default
+    brave
   ];
 }

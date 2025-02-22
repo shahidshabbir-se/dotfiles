@@ -13,6 +13,10 @@ mason_tool_installer.setup {
     "delve",
     "taplo",
     "sqlfluff",
+    "hadolint",
+    "dockerls",
+    "jsonls",
+    "yamlls",
   },
   automatic_installation = true,
 }

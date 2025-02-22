@@ -20,6 +20,8 @@ return {
       svelte = { "prettierd" },
       toml = { "taplo" },
       sql = { "sqlfluff" },
+      astro = { "prettierd" },
+      json = { "prettierd" },
     },
     format_on_save = function(bufnr)
       -- Disable autoformat with a global or buffer-local variable
@@ -31,9 +33,6 @@ return {
     formatters = {
       sqlfluff = {
         args = { "format", "--dialect=ansi", "-" },
-      },
-      yamlfmt = {
-        args = { "--formatter", "retain_line_breaks_single=true" },
       },
     },
   },

@@ -31,15 +31,16 @@
     git-graph
     delta
     nushell
-    oh-my-posh
     atac
     atuin
     gnumake
     python314
     rustup
     gcc
+    openssl
 
     # ────────────────────── Database ──────────────────────
     # postgresql
+    mongodb-compass
   ];
 }

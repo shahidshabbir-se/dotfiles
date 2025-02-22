@@ -2,7 +2,7 @@ require("nvchad.configs.lspconfig").defaults()
 
 local lspconfig = require "lspconfig"
 
-local servers = { "html", "cssls", "lua_ls", "ts_ls", "rnix", "prismals", "svelte", "taplo" }
+local servers = { "html", "cssls", "lua_ls", "ts_ls", "rnix", "prismals", "svelte", "taplo", "jsonls", "dockerls" }
 local nvlsp = require "nvchad.configs.lspconfig"
 
 for _, lsp in ipairs(servers) do
@@ -76,4 +76,37 @@ lspconfig.sqlls.setup {
   root_dir = function(_)
     return vim.loop.cwd()
   end,
+}
+
+lspconfig.yamlls.setup {
+  capabilities = {
+    textDocument = {
+      foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      },
+    },
+  },
+  -- lazy-load schemastore when needed
+  on_new_config = function(new_config)
+    new_config.settings.yaml.schemas =
+      vim.tbl_deep_extend("force", new_config.settings.yaml.schemas or {}, require("schemastore").yaml.schemas())
+  end,
+  settings = {
+    redhat = { telemetry = { enabled = false } },
+    yaml = {
+      keyOrdering = false, -- Disable key ordering validation
+      format = { enable = true }, -- Enable auto-formatting
+      validate = true,
+      foldingRange = { -- Enable line folding
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      },
+      schemaStore = {
+        enable = false, -- Disable built-in schema store
+        url = "", -- Prevent errors
+      },
+      schemas = vim.tbl_deep_extend("force", {}, require("schemastore").yaml.schemas()),
+    },
+  },
 }

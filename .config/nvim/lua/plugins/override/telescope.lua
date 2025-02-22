@@ -89,7 +89,7 @@ return {
     opts = vim.tbl_deep_extend("force", opts, {
       defaults = {
         preview = {
-          hide_on_startup = true,
+          hide_on_startup = false,
         },
         results_title = false,
         selection_caret = " ",

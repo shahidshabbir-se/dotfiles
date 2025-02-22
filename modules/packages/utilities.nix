@@ -4,6 +4,7 @@
     hyprpicker
     # eww
     hyprlock
+    cloudflare-warp
     power-profiles-daemon
     ntfs3g
     qbittorrent

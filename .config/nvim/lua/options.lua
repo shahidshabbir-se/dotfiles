@@ -46,3 +46,13 @@ autocmd("BufRead", {
     vim.lsp.buf_detach_client(0, require("lspconfig").sqlls.get_id())
   end,
 })
+
+local function open_nvim_tree()
+  -- Check if Neovim was opened with exactly one argument and that it's a directory
+  local args = vim.fn.argv()
+  if #args == 1 and vim.fn.isdirectory(args[1]) == 1 then
+    require("nvim-tree.api").tree.open()
+  end
+end
+
+vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
