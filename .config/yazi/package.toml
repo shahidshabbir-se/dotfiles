@@ -1,0 +1,10 @@
+[plugin]
+deps = [
+  { use = "wekauwau/yatline-tokyo-night", rev = "5a8d026" },
+  { use = "imsi32/yatline", rev = "9328205" },
+  { use = "Rolv-Apneseth/yatline-catppuccin", rev = "latest" },
+  { use = "grappas/wl-clipboard", rev = "c4edc4f" }, { use = "Rolv-Apneseth/starship", rev = "6c639b4" },            # Ensure this is present
+]
+
+[flavor]
+deps = [{ use = "yazi-rs/flavors:catppuccin-mocha", rev = "c023460" }]

@@ -2,6 +2,7 @@
 , pkgs
 , userGmail
 , userGithub
+, homeDirectory
 , ...
 }: {
   enable = true;
@@ -51,4 +52,7 @@
       show = "delta";
     };
   };
+  includes = [
+    { path = "$homeDirectory/.config/themes.gitconfig"; }
+  ];
 }

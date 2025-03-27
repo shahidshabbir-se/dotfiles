@@ -68,6 +68,26 @@
     };
 
     palettes = {
+      tokyonight = {
+        red = "#f7768e";
+        orange = "#ff9e64";
+        yellow = "#e0af68";
+        gold = "#cfc9c2";
+        green = "#9ece6a";
+        teal = "#73daca";
+        cyan = "#b4f9f8";
+        light_blue = "#2ac3de";
+        blue = "#7dcfff";
+        dark_blue = "#7aa2f7";
+        magenta = "#bb9af7";
+        white = "#c0caf5";
+        foreground = "#a9b1d6";
+        subtext = "#9aa5ce";
+        comment = "#565f89";
+        black = "#414868";
+        background = "#24283b";
+        mantle = "#1a1b26";
+      };
       catppuccin_mocha = {
         rosewater = "#f5e0dc";
         flamingo = "#f2cdcd";

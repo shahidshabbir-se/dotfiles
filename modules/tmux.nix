@@ -1,15 +1,5 @@
 { pkgs, ... }:
 let
-  catppuccin = pkgs.tmuxPlugins.mkTmuxPlugin {
-    pluginName = "catppuccin";
-    version = "unstable-2023-01-06";
-    src = pkgs.fetchFromGitHub {
-      owner = "omerxx";
-      repo = "catppuccin-tmux";
-      rev = "main";
-      sha256 = "sha256-Ig6+pB8us6YSMHwSRU3sLr9sK+L7kbx2kgxzgmpR920=";
-    };
-  };
   tokyo-night = pkgs.tmuxPlugins.mkTmuxPlugin {
     pluginName = "tokyo-night";
     version = "unstable-2023-01-06";
@@ -17,7 +7,7 @@ let
       owner = "janoamaral";
       repo = "tokyo-night-tmux";
       rev = "master";
-      sha256 = "sha256-3rMYYzzSS2jaAMLjcQoKreE0oo4VWF9dZgDtABCUOtY=";
+      sha256 = "sha256-TOS9+eOEMInAgosB3D9KhahudW2i1ZEH+IXEc0RCpU0=";
     };
   };
 in
@@ -28,7 +18,6 @@ in
   terminal = "screen-256color";
 
   plugins = with pkgs.tmuxPlugins; [
-    catppuccin
     tokyo-night
     yank
     sensible
@@ -72,26 +61,21 @@ in
     bind -n M-H previous-window
     bind -n M-L next-window
 
-    set -g @catppuccin_window_left_separator ""
-    set -g @catppuccin_window_right_separator " "
-    set -g @catppuccin_window_middle_separator " █"
-    set -g @catppuccin_window_number_position "right"
-    set -g @catppuccin_window_default_fill "number"
-    set -g @catppuccin_window_default_text "#W"
-    set -g @catppuccin_window_current_fill "number"
-    set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),}"
-    set -g @catppuccin_status_modules_right "directory date_time"
-    set -g @catppuccin_status_modules_left "session"
-    set -g @catppuccin_status_left_separator  " "
-    set -g @catppuccin_status_right_separator " "
-    set -g @catppuccin_status_right_separator_inverse "no"
-    set -g @catppuccin_status_fill "icon"
-    set -g @catppuccin_status_connect_separator "no"
-    set -g @catppuccin_directory_text "#{b:pane_current_path}"
-    set -g status-position top 
-    set -g @catppuccin_date_time_text "%H:%M"
+    set -g @tokyo-night-tmux_window_id_style digital
+    set -g @tokyo-night-tmux_pane_id_style hsquare
+    set -g @tokyo-night-tmux_zoom_id_style dsquare
 
-    run-shell ${catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux
+    set -g @tokyo-night-tmux_terminal_icon 
+    set -g @tokyo-night-tmux_active_terminal_icon 
+    set -g @tokyo-night-tmux_time_format 12H
+    set -g @tokyo-night-tmux_show_netspeed 1
+    set -g @tokyo-night-tmux_netspeed_iface "wlp1s0"
+    set -g @tokyo-night-tmux_show_hostname 1
+    set -g @tokyo-night-tmux_show_git 1
+
+    set -g @tokyo-night-tmux_window_tidy_icons 0
+
+    run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
 
     # set vi-mode
     set-window-option -g mode-keys vi
@@ -108,7 +92,8 @@ in
     # Set the shell inside tmux itself
     set -g default-shell "${pkgs.nushell}/bin/nu"
 
-    set -g default-terminal "alacritty"
+    
+    set -g default-terminal "wezterm"
     set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
     set -as terminal-overrides ',alacritty:RGB'
   '';

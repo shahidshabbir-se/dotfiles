@@ -7,8 +7,9 @@
     bat
     keyd
     wget
-    nitch
-    neovim
+    fastfetch
+    bc
+    # neovim
     yazi
 
     # ────────────────────── File Management ──────────────────────
@@ -19,6 +20,7 @@
     unzip
     tree
     eza
+    fd
 
     # ────────────────────── Data Processing ──────────────────────
     jq
@@ -28,6 +30,8 @@
     ripgrep
 
     # ────────────────────── Web Browser ──────────────────────
-    brave
+    # inputs.zen-browser.packages."x86_64-linux".default
+    # google-chrome
+    firefox
   ];
 }

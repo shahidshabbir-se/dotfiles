@@ -1,6 +1,6 @@
 { pkgs }: {
   multimediaPackages = with pkgs; [
-    discord
+    # discord
     obsidian
     pavucontrol
     spicetify-cli

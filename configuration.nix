@@ -91,6 +91,7 @@
   };
 
   services.libinput.enable = true;
+  services.libinput.touchpad.accelSpeed = "1.0";
   services.upower.enable = true;
 
   users.users.shahid = {
@@ -114,7 +115,7 @@
         flavor = "mocha";
         font = "JetBrainsMono Nerd Font";
         fontSize = "9";
-        background = ./wallpapers/blue-gradient.png;
+        background = ./wallpapers/main.png;
         loginBackground = true;
       }
     )

@@ -2,7 +2,7 @@ local wezterm = require("wezterm")
 return {
 	adjust_window_size_when_changing_font_size = false,
 	-- color_scheme = 'termnial.sexy',
-	color_scheme = "Catppuccin Mocha",
+	color_scheme = "tokyonight",
 	enable_tab_bar = false,
 	font_size = 10.0,
 	font = wezterm.font("JetBrains Mono"),

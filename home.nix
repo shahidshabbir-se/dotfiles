@@ -64,11 +64,12 @@ in
     tmux = import ./modules/tmux.nix { inherit pkgs; };
     starship = import ./modules/starship.nix { inherit pkgs; };
     # zsh = import ./modules/zsh.nix { inherit config pkgs lib; };
-    git = import ./modules/git.nix { inherit config pkgs userGmail userGithub; };
+    git = import ./modules/git.nix { inherit config pkgs homeDirectory userGmail userGithub; };
     # alacritty = import ./modules/alacritty.nix { inherit pkgs; };
     fzf = import ./modules/fzf.nix { inherit pkgs; };
     zoxide = import ./modules/zoxide.nix { inherit pkgs; };
     spicetify = import ./modules/spicetify.nix { inherit inputs pkgs; };
+    neovim = import ./modules/neovim.nix { inherit config pkgs; };
     eza = { enableNushellIntegration = true; };
     carapace = {
       enable = true;
@@ -91,6 +92,7 @@ in
         value.text = builtins.readFile ./modules/nushell/${name};
       }) [
       "adb-completions.nu"
+      "poetry-completions.nu"
       "docker-completions.nu"
       "git-completions.nu"
       "nix-completions.nu"
@@ -109,6 +111,7 @@ in
     ".config/bat".source = ./.config/bat;
     ".config/hypr/hyprlock.conf".source = ./.config/hypr/hyprlock.conf;
     ".config/hypr/mocha.conf".source = ./.config/hypr/mocha.conf;
+    ".config/git/themes.gitconfig".source = ./.config/themes.gitconfig;
     ".config/atac/theme.toml".source = ./.config/atac/theme.toml;
     ".config/atac/key_bindings.toml".source = ./.config/atac/key_bindings.toml;
   };

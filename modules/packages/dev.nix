@@ -2,25 +2,27 @@
   devPackages = with pkgs; [
     # ────────────────────── Web Development ──────────────────────
     nodejs_22
-    nodePackages.prisma
+    prisma
     prisma-engines
 
     # ────────────────────── Backend Development ──────────────────────
-    go
-    sqlc
-    air
-    go-migrate
+    # go
+    # sqlc
+    # air
+    # go-migrate
+    poetry
 
     # ────────────────────── Android Development ──────────────────────
-    watchman
-    jdk23
-    android-studio
+    # watchman
+    # jdk23
+    # android-studio
 
     # ────────────────────── DevOps & Containerization ──────────────────────
     docker
     docker-compose
 
     # ────────────────────── General Development Tools ──────────────────────
+    dnsutils
     stylua
     lazygit
     lazydocker
@@ -38,9 +40,10 @@
     rustup
     gcc
     openssl
+    sqlfluff
 
     # ────────────────────── Database ──────────────────────
     # postgresql
-    mongodb-compass
+    # mongodb-compass
   ];
 }

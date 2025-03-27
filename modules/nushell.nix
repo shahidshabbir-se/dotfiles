@@ -12,7 +12,6 @@
     e = "exit";
     bc = "better-commits";
     cat = "bat --style=plain";
-    v = "nvim";
     ov = "nvim (fzf --preview 'bat --style=numbers --color=always --line-range :500 {}' --preview-window=right:50%)";
 
     gs = "git status";
@@ -64,9 +63,9 @@
     source ~/.config/nushell/winget-completions.nu
     source ~/.config/nushell/docker-completions.nu
     source ~/.config/nushell/pnpm-completions.nu
-    source ~/.config/nushell/docker-completions.nu
     source ~/.config/nushell/rg-completions.nu
     source ~/.config/nushell/adb-completions.nu
+    source ~/.config/nushell/poetry-completions.nu
     source ~/.config/nushell/nix-completions.nu
     
     # Set Prisma environment variables
@@ -103,5 +102,17 @@
     def gca [message: string] {
       git commit -a -m $message
     }
+
+    def --env y [...args] {
+    	let tmp = (mktemp -t "yazi-cwd.XXXXXX")
+    	yazi ...$args --cwd-file $tmp
+    	let cwd = (open $tmp)
+    	if $cwd != "" and $cwd != $env.PWD {
+    		cd $cwd
+    	}
+    	rm -fp $tmp
+    }
+    source ~/.config/nushell/env.nu
+    source ~/.zoxide.nu
   '';
 }
