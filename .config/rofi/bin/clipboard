@@ -1,0 +1,13 @@
+rofi \
+  -show drun \
+  -modi run,drun,ssh \
+  -scroll-method 0 \
+  -drun-match-fields all \
+  -drun-display-format "{name}" \
+  -no-drun-show-actions \
+  -terminal alacritty \
+  -kb-cancel Escape \
+  -theme "$HOME/.config/rofi/config/launcher.rasi" \
+  -lines 10 \
+  -p "Clipboard History" \
+  -dmenu <<< "$(cliphist list -p)" | cliphist decode | wl-copy

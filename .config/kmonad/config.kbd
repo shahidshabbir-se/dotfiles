@@ -1,0 +1,26 @@
+(defcfg
+  input (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")  ; Update for your keyboard
+  output (uinput-sink "kmonad-virtual-keyboard")
+  fallthrough true
+  allow-cmd true
+)
+
+(defsrc
+  esc  a    s    d    f    j    k    l    semicolon
+)
+
+(defalias
+  escctrl (tap-hold 100 100 esc lctl)
+  ahold   (tap-hold 150 200 a lmet)
+  shold   (tap-hold 150 200 s lalt)
+  dhold   (tap-hold 150 200 d lsft)
+  fhold   (tap-hold 150 200 f lctl)
+  jhold   (tap-hold 150 200 j rctl)
+  khold   (tap-hold 150 200 k rsft)
+  lhold   (tap-hold 150 200 l ralt)
+  ;hold   (tap-hold 150 200 semicolon rmet)
+)
+
+(deflayer base
+  escctrl ahold shold dhold fhold jhold khold lhold ;hold
+)
