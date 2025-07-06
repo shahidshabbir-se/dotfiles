@@ -94,7 +94,6 @@
               skhd
               minikube
               kubectl
-              tailscale
               # alacritty
               # mkalias
             ];
@@ -147,7 +146,7 @@
                 "openvpn-connect"
                 "qbittorrent"
                 "docker-desktop"
-                "tailscale"
+                "tailscale-app"
                 "raycast"
                 "whatsapp"
                 "obsidian"
@@ -186,9 +185,7 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
 
-            home-manager.users.${username} = import ./home.nix {
-              inherit pkgs config nixpkgs lib system inputs;
-            };
+            home-manager.users.${username} = ./home.nix;
           }
 
           # ───────────────────────────────────────────────

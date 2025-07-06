@@ -12,6 +12,8 @@ let
   homeDirectory = "/Users/shahid";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
+  wallpaperPath = "/Users/shahid/dotfiles/wallpapers/abstract.png";
+  inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
   # ───────────────────────────────────────────────
@@ -35,7 +37,17 @@ in
       jq
       htop
     ];
+    activation.setWallpaper = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      echo "Setting macOS wallpaper to ${wallpaperPath}"
+      /usr/bin/osascript -e 'tell application "System Events" to set picture of every desktop to POSIX file "${wallpaperPath}"'
+    '';
   };
+
+  # ───────────────────────────────────────────────
+  # ▶ XDG Configuration
+  # ───────────────────────────────────────────────
+  xdg.enable = true;
+  xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/.config/nvim";
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
@@ -47,7 +59,7 @@ in
   # ▶ Program Configurations
   # ───────────────────────────────────────────────
   programs = {
-    git = import ./modules/git.nix {
+    git = import ../modules/git.nix {
       inherit
         config
         pkgs
