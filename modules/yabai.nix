@@ -47,7 +47,7 @@
       yabai -m rule --add app="^Calculator$" manage=off
 
       # App-to-space assignments
-      yabai -m rule --add app="^Firefox$" title!=".*Private.*" space=1
+      yabai -m rule --add app="^Zen$" title!=".*Private.*" space=1
       yabai -m rule --add title=".*Private.*Inactive tab.*" space=9
       yabai -m rule --add app="^WezTerm$" space=2
       yabai -m rule --add app="^Spotify$" space=9

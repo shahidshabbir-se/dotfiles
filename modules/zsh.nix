@@ -8,73 +8,11 @@
 
 { config, pkgs, lib, ... }:
 
-{
-  enable = true;
+let
+  isMac = pkgs.stdenv.isDarwin;
+  isLinux = pkgs.stdenv.isLinux;
 
-  # ───────────────────────────────────────────────
-  # ▶ ZSH History
-  # ───────────────────────────────────────────────
-  history.size = 0;
-  history.ignoreAllDups = false;
-  history.path = "/dev/null";
-
-  # ───────────────────────────────────────────────
-  # ▶ Shell Aliases
-  # ───────────────────────────────────────────────
-  shellAliases = {
-    # File navigation
-    ls = "eza --icons=always --color=always -a";
-    ll = " eza --icons=always --color=always -la";
-    lt = "eza --tree --level=2 --long --icons --git";
-    lt3 = "eza --tree --level=3 --long --icons --git";
-    lt4 = "eza --tree --level=4 --long --icons --git";
-
-    # System
-    c = "clear";
-    grep = "grep --color=auto";
-    copy = "pbcopy";
-    rm = "rm -rf";
-
-    # FZF / Better Commits
-    fzf = "fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%";
-    onv = "nvim $(fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%)";
-    bc = "better-commits";
-
-    # Exit
-    e = "exit";
-
-    # Git Aliases
-    gs = "git status";
-    gc = "git commit -m";
-    gca = "git commit -a -m";
-    gp = "git push origin HEAD";
-    gpu = "git pull origin";
-    gdiff = "git diff";
-    gco = "git checkout";
-    gb = "git branch";
-    gba = "git branch -a";
-    gadd = "git add";
-    ga = "git add -p";
-    gcoall = "git checkout -- .";
-    gr = "git remote";
-    gre = "git reset";
-    glog = "git log --oneline --graph --decorate";
-
-    gcs = "function _gitclone() { git clone git@github.com:shahidshabbir-se/$1.git; }; _gitclone";
-    gch = "function _gch() { if [[ -n \$1 && \$1 =~ ^[0-9]+$ ]]; then git clone --depth \$1 \$2; else git clone \$1; fi; }; _gch";
-
-    killport = "f(){ kill -9 $(lsof -ti tcp:$1); }; f";
-
-    lzg = "lazygit";
-
-    # PNPM
-    pi = "pnpm install";
-    pd = "pnpm install --save-dev";
-    pr = "pnpm run dev";
-    ps = "pnpm start";
-    pt = "pnpm test";
-
-    # Docker
+  dockerAliases = {
     d = "docker";
     dc = "docker compose";
     dco = "docker compose";
@@ -88,13 +26,94 @@
     dp = "docker pull";
     dx = "docker exec -it";
     lzd = "lazydocker";
-
-    # Directory navigation
-    ".." = "cd ..";
-    "..." = "cd ../.. ";
-    "...." = "cd ../../..";
-    "~" = "cd ~";
   };
+
+  podmanAliases = {
+    docker = "podman";
+    d = "podman";
+    dc = "podman-compose";
+    dco = "podman-compose";
+    dcu = "podman-compose up";
+    dcd = "podman-compose down";
+    dps = "podman ps";
+    dpa = "podman ps -a";
+    dl = "podman ps -l -q";
+    di = "podman images";
+    dr = "podman run";
+    dp = "podman pull";
+    dx = "podman exec -it";
+    lzd = "podman-tui";
+  };
+in
+{
+  enable = true;
+
+  # ───────────────────────────────────────────────
+  # ▶ ZSH History
+  # ───────────────────────────────────────────────
+  history.size = 0;
+  history.ignoreAllDups = false;
+  history.path = "/dev/null";
+
+  # ───────────────────────────────────────────────
+  # ▶ Shell Aliases
+  # ───────────────────────────────────────────────
+  shellAliases = lib.mkMerge [
+    {
+      # ───────────── Shared Aliases ─────────────
+      ls = "eza --icons=always --color=always -a";
+      ll = " eza --icons=always --color=always -la";
+      lt = "eza --tree --level=2 --long --icons --git";
+      lt3 = "eza --tree --level=3 --long --icons --git";
+      lt4 = "eza --tree --level=4 --long --icons --git";
+
+      c = "clear";
+      grep = "grep --color=auto";
+      copy = "pbcopy";
+      rm = "rm -rf";
+
+      fzf = "fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%";
+      onv = "nvim $(fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%)";
+      bc = "better-commits";
+      e = "exit";
+
+      gs = "git status";
+      gc = "git commit -m";
+      gca = "git commit -a -m";
+      gp = "git push origin HEAD";
+      gpu = "git pull origin";
+      gdiff = "git diff";
+      gco = "git checkout";
+      gb = "git branch";
+      gba = "git branch -a";
+      gadd = "git add";
+      ga = "git add -p";
+      gcoall = "git checkout -- .";
+      gr = "git remote";
+      gre = "git reset";
+      glog = "git log --oneline --graph --decorate";
+
+      gcs = "function _gitclone() { git clone git@github.com:shahidshabbir-se/$1.git; }; _gitclone";
+      gch = "function _gch() { if [[ -n \$1 && \$1 =~ ^[0-9]+$ ]]; then git clone --depth \$1 \$2; else git clone \$1; fi; }; _gch";
+
+      killport = "f(){ kill -9 $(lsof -ti tcp:$1); }; f";
+      lzg = "lazygit";
+
+      pi = "pnpm install";
+      pd = "pnpm install --save-dev";
+      pr = "pnpm run dev";
+      ps = "pnpm start";
+      pt = "pnpm test";
+
+      ".." = "cd ..";
+      "..." = "cd ../.. ";
+      "...." = "cd ../../..";
+      "~" = "cd ~";
+    }
+
+    (lib.mkIf isLinux dockerAliases)
+    (lib.mkIf isMac podmanAliases)
+  ];
 
   # ───────────────────────────────────────────────
   # ▶ Oh-My-Zsh Plugins (optional)
@@ -187,5 +206,7 @@
       --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
       --color=selected-bg:#45475a \
       --multi"
+
+    export COMPOSE_DOCKER_CLI_BUILD=1
   '';
 }

@@ -75,7 +75,7 @@
                 "/Applications/Spotify.app"
                 "/Applications/WezTerm.app"
                 "/Applications/Xcode.app"
-                "/Applications/Firefox.app"
+                "/Applications/Zen.app"
               ];
               finder.FXPreferredViewStyle = "clmv";
               loginwindow.GuestEnabled = false;
@@ -88,8 +88,6 @@
 
             # System-wide packages
             environment.systemPackages = with pkgs; [
-              browserpass
-              gnupg
               yabai
               skhd
               minikube
@@ -128,7 +126,7 @@
             # Homebrew configuration
             homebrew = {
               enable = true;
-              taps = [ "amar1729/formulae" ];
+              # taps = [ "amar1729/formulae" ];
 
               brews = [
                 "node"
@@ -138,8 +136,9 @@
                 "lazygit"
                 "golang-migrate"
                 "ncdu"
-                "browserpass"
                 "bitwarden-cli"
+                "podman"
+                "podman-tui"
               ];
 
               casks = [
@@ -151,11 +150,10 @@
                 "whatsapp"
                 "obsidian"
                 "karabiner-elements"
-                "anythingllm"
                 "vlc"
                 "wezterm"
                 "spotify"
-                "firefox"
+                "zen-browser"
               ];
 
               masApps = {

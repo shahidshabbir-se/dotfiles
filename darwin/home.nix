@@ -12,7 +12,7 @@ let
   homeDirectory = "/Users/shahid";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
-  wallpaperPath = "/Users/shahid/dotfiles/wallpapers/abstract.png";
+  wallpaperPath = "/Users/shahid/dotfiles/wallpapers/lake.png";
   inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
@@ -93,7 +93,5 @@ in
     zoxide = import ../modules/zoxide.nix {
       inherit pkgs;
     };
-
-    password-store.enable = true;
   };
 }
