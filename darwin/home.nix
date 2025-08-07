@@ -12,7 +12,7 @@ let
   homeDirectory = "/Users/shahid";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
-  wallpaperPath = "/Users/shahid/dotfiles/wallpapers/lake.png";
+  wallpaperPath = "/Users/shahid/dotfiles/wallpapers/lighthouse.jpg";
   inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
@@ -37,10 +37,10 @@ in
       jq
       htop
     ];
-    activation.setWallpaper = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      echo "Setting macOS wallpaper to ${wallpaperPath}"
-      /usr/bin/osascript -e 'tell application "System Events" to set picture of every desktop to POSIX file "${wallpaperPath}"'
-    '';
+    # activation.setWallpaper = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    #   echo "Setting macOS wallpaper to ${wallpaperPath}"
+    #   /usr/bin/osascript -e 'tell application "System Events" to set picture of every desktop to POSIX file "${wallpaperPath}"'
+    # '';
   };
 
   # ───────────────────────────────────────────────
@@ -48,12 +48,13 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/.config/nvim";
+  xdg.configFile.".zshrc".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/.zshrc";
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
   # ───────────────────────────────────────────────
   home.file.".p10k.zsh".source = ../.p10k.zsh;
-  home.file.".wezterm.lua".source = ../.wezterm.lua;
+  # home.file.".wezterm.lua".source = ../.wezterm.lua;
 
   # ───────────────────────────────────────────────
   # ▶ Program Configurations
@@ -68,9 +69,9 @@ in
         userGithub;
     };
 
-    zsh = import ../modules/zsh.nix {
-      inherit config pkgs lib;
-    };
+    # zsh = import ../modules/zsh.nix {
+    #   inherit config pkgs lib;
+    # };
 
     tmux = import ../modules/tmux.nix {
       inherit pkgs;
@@ -95,3 +96,4 @@ in
     };
   };
 }
+

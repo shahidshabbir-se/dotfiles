@@ -25,11 +25,11 @@
       layout = "bsp";
       window_placement = "second_child";
 
-      top_padding = 10;
-      bottom_padding = 10;
-      left_padding = 10;
-      right_padding = 10;
-      window_gap = 10;
+      top_padding = 15;
+      bottom_padding = 15;
+      left_padding = 15;
+      right_padding = 15;
+      window_gap = 15;
 
       mouse_follows_focus = "on";
       mouse_modifier = "alt";
@@ -45,12 +45,13 @@
       yabai -m rule --add app="^System Settings$" manage=off
       yabai -m rule --add app="^Finder$" manage=off
       yabai -m rule --add app="^Calculator$" manage=off
+      yabai -m rule --add app="Vivaldi" title="Picture in Picture" manage=off
 
       # App-to-space assignments
-      yabai -m rule --add app="^Zen$" title!=".*Private.*" space=1
-      yabai -m rule --add title=".*Private.*Inactive tab.*" space=9
-      yabai -m rule --add app="^WezTerm$" space=2
+      yabai -m rule --add title=".*New Tab - Vivaldi*." space=2
+      yabai -m rule --add app="^ghostty$" space=1
       yabai -m rule --add app="^Spotify$" space=9
+      yabai -m rule --add  title=".*Private Window Introduction - Vivaldi.*" space=8
 
       # Reload scripting addition if dock restarts
       yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"

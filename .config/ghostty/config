@@ -1,0 +1,25 @@
+font-family = GeistMono Nerd Font
+font-style = Light
+font-size = 14
+# background-opacity = 0.95
+theme = tokyonight
+shell-integration-features = no-cursor,sudo,no-title
+cursor-style = block
+
+confirm-close-surface = false
+
+window-padding-balance = true
+window-save-state = always
+
+command = "zsh -l -c 'tmux attach || tmux new '"
+macos-option-as-alt = true
+macos-titlebar-style = hidden
+mouse-hide-while-typing = true
+
+window-padding-x = 8
+window-padding-y = 8
+
+keybind = "global:unconsumed:ctrl+shift+,=reload_config"
+keybind = "global:cmd+grave_accent=toggle_quick_terminal"
+
+font-feature = "+liga,clig"

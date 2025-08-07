@@ -36,12 +36,10 @@
       # ───────────────────────────────────────────────
       # ▶ App Launchers by Space
       # ───────────────────────────────────────────────
-      cmd - b             : yabai -m space --focus 1; open -na "Zen"
-      cmd + shift - b     : yabai -m space --focus 9; open -na "Zen" --args --private-window
+      cmd - b             : yabai -m space --focus 2; open -na "Vivaldi"
+      cmd + shift - b     : yabai -m space --focus 8; open -na "Vivaldi" --args --incognito
       cmd - m             : yabai -m space --focus 9; open -na "Spotify"
-      cmd - return        : yabai -m space --focus 2; open -na "Wezterm"
-      cmd + shift - l     : yabai -m space --focus 3; open -na "AnythingLLM"
-      cmd - q             : yabai -m window --close
+      cmd - return        : yabai -m space --focus 1; open -na "ghostty"
 
       # ───────────────────────────────────────────────
       # ▶ Window Focus Movement

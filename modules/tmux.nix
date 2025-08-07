@@ -54,7 +54,7 @@ in
     # ▶ Terminal Features
     # ─────────────────────────────────────────────────────────
     set -as terminal-features ",xterm-256color:RGB"
-    set -as terminal-overrides ',wezterm:RGB'
+    set -as terminal-overrides ',alacritty:RGB'
     set -g mouse on
 
     # ─────────────────────────────────────────────────────────
@@ -98,8 +98,8 @@ in
     # ─────────────────────────────────────────────────────────
     bind -n S-Left previous-window
     bind -n S-Right next-window
-    bind -n M-H previous-window
-    bind -n M-L next-window
+    bind -n M-h previous-window
+    bind -n M-l next-window
 
     # ─────────────────────────────────────────────────────────
     # ▶ Theme Configuration (tokyo-night)

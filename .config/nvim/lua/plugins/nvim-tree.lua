@@ -5,4 +5,3 @@ return {
     return require("config.nvim-tree")
   end,
 }
-

@@ -10,9 +10,8 @@ return {
     sidebars = "transparent",
     floats = "transparent",
   },
-  sidebars = { "qf", "help", "nvimtree", "terminal", "packer" },
-  hide_inactive_statusline = false,
+  sidebars = { "qf", "help", "nvimtree", "lualine", "terminal", "packer" },
+  hide_inactive_statusline = true,
   dim_inactive = false,
   lualine_bold = true,
 }
-

@@ -1,5 +1,6 @@
 return {
   "nvim-tree/nvim-web-devicons",
+  event = "VeryLazy",
   opts = {
     override = {
       md = { icon = "󰽛", color = "#FFFFFF", name = "Md" },
@@ -16,7 +17,21 @@ return {
       prettierrc = { icon = "", color = "#F7B93E", name = "PrettierRC" }, -- added
     },
     override_by_filename = {
+      [".vscode"] = {
+        icon = "", -- VS Code icon
+        color = "#007ACC", -- VS Code blue
+        name = "VscodeFolder",
+      },
       ["stylua.toml"] = { icon = "", color = "#6D8086", name = "stylua" },
+      ["drizzle.config.ts"] = { icon = "󱙌", color = "#A78BFA", name = "DrizzleConfig" },
+      ["orval.config.js"] = { icon = "", color = "#6f40c9", name = "OrvalConfig" },
+      ["orval.config.ts"] = { icon = "", color = "#6f40c9", name = "OrvalConfig" },
+      ["next.config.ts"] = { icon = "", color = "#ffffff", name = "NextConfig" },
+      ["nest-cli.json"] = { icon = "", color = "#E0234E", name = "NestConfig" },
+      ["main.ts"] = { icon = "", color = "#E0234E", name = "NestMain" },
+      ["app.module.ts"] = { icon = "", color = "#E0234E", name = "NestModule" },
+      ["app.controller.ts"] = { icon = "", color = "#E0234E", name = "NestController" },
+      ["app.service.ts"] = { icon = "", color = "#E0234E", name = "NestService" },
       ["Makefile"] = { icon = "", color = "#FBBF24", name = "Makefile" },
       ["makefile"] = { icon = "", color = "#FBBF24", name = "Makefile" },
       [".gitignore"] = { icon = "", color = "#F44D27", name = "gitignore" },

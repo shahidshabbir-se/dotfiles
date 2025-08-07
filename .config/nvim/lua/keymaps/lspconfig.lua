@@ -9,10 +9,11 @@ function M.on_attach(_, bufnr)
   map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
   map("n", "gr", vim.lsp.buf.references, "Show References")
   map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
-  map("n", "K", "<cmd>Lspsaga hover_doc<CR>", "Lspsaga Hover")
   map("n", "<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
   map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Actions")
   map("n", "<leader>cf", function() vim.lsp.buf.format({ async = true }) end, "Format Buffer")
+
+  map("n", "gh", "<cmd>Lspsaga finder<CR>", "LSP Finder")
 end
 
 return M

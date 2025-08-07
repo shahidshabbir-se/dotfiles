@@ -13,7 +13,24 @@ map("n", "<Leader>bp", "<Cmd>BufferLineMovePrev<CR>", opts)
 map("n", "<Leader>bb", "<Cmd>BufferLinePick<CR>", opts)
 
 -- Close current buffer
-map("n", "<Leader>bd", "<Cmd>bdelete<CR>", opts)
+map("n", "<Leader>bd", function()
+  local current = vim.api.nvim_get_current_buf()
+  local buffers = vim.fn.getbufinfo({ buflisted = 1 })
+  local target
+
+  for i, buf in ipairs(buffers) do
+    if buf.bufnr == current then
+      target = buffers[i - 1] and buffers[i - 1].bufnr or buffers[i + 1] and buffers[i + 1].bufnr
+      break
+    end
+  end
+
+  if target then
+    vim.api.nvim_set_current_buf(target)
+  end
+
+  vim.cmd("bdelete " .. current)
+end, opts)
 
 -- Close all but current
 map("n", "<Leader>bo", "<Cmd>BufferLineCloseOthers<CR>", opts)

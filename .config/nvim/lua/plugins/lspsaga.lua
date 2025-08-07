@@ -1,15 +1,13 @@
 return {
   'nvimdev/lspsaga.nvim',
+  event = "InsertEnter",
   config = function()
     require('lspsaga').setup({
-      ui = {
-        border = "rounded",
-      },
       code_action = {
-        enable = false,
+        enable = true,
       },
       lightbulb = {
-        enable = false,
+        enable = true,
         enable_in_insert = false,
         sign = false,
         virtual_text = false,

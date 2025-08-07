@@ -4,14 +4,20 @@ local templ = require("lang.templ")
 require("conform").setup({
   formatters_by_ft = vim.tbl_extend("force", {
       lua = { "stylua" },
-      css = { "prettierd" },
-      html = { "prettierd" },
       -- nix = { "nixpkgs-fmt" },
-      svelte = { "prettierd" },
+      svelte = { "prettier" },
       toml = { "taplo" },
       sql = { "sqlfluff" },
-      astro = { "prettierd" },
-      json = { "prettierd" },
+      astro = { "prettier" },
+      javascript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescript = { "prettier" },
+      typescriptreact = { "prettier" },
+      json = { "prettier" },
+      css = { "prettier" },
+      html = { "prettier" },
+      markdown = { "prettier" },
+      yaml = { "prettier" },
       -- python = { "black" },
     }, go.conform.formatters_by_ft,
     templ.conform.formatters_by_ft
@@ -25,6 +31,12 @@ require("conform").setup({
   end,
 
   formatters = vim.tbl_extend("force", {
+    -- prettier = {
+    --   command = "prettier",
+    --   args = { "--stdin-filepath", "$FILENAME" },
+    --   stdin = true,
+    --   cwd = require("conform.util").root_file({ ".prettierrc", "package.json", ".git" }),
+    -- },
     sqlfluff = {
       args = { "format", "--dialect=ansi", "-" },
       stdin = true,

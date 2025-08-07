@@ -8,43 +8,6 @@
 
 { config, pkgs, lib, ... }:
 
-let
-  isMac = pkgs.stdenv.isDarwin;
-  isLinux = pkgs.stdenv.isLinux;
-
-  dockerAliases = {
-    d = "docker";
-    dc = "docker compose";
-    dco = "docker compose";
-    dcu = "docker compose up";
-    dcd = "docker compose down";
-    dps = "docker ps";
-    dpa = "docker ps -a";
-    dl = "docker ps -l -q";
-    di = "docker images";
-    dr = "docker run";
-    dp = "docker pull";
-    dx = "docker exec -it";
-    lzd = "lazydocker";
-  };
-
-  podmanAliases = {
-    docker = "podman";
-    d = "podman";
-    dc = "podman-compose";
-    dco = "podman-compose";
-    dcu = "podman-compose up";
-    dcd = "podman-compose down";
-    dps = "podman ps";
-    dpa = "podman ps -a";
-    dl = "podman ps -l -q";
-    di = "podman images";
-    dr = "podman run";
-    dp = "podman pull";
-    dx = "podman exec -it";
-    lzd = "podman-tui";
-  };
-in
 {
   enable = true;
 
@@ -66,6 +29,22 @@ in
       lt = "eza --tree --level=2 --long --icons --git";
       lt3 = "eza --tree --level=3 --long --icons --git";
       lt4 = "eza --tree --level=4 --long --icons --git";
+
+      dc = "docker compose";
+      dco = "docker compose";
+      dcu = "docker compose up";
+      dcd = "docker compose down";
+
+      d = "docker";
+      dps = "docker ps";
+      dpa = "docker ps -a";
+      dl = "docker ps -l -q";
+      di = "docker images";
+      dr = "docker run";
+      dp = "docker pull";
+      dx = "docker exec -it";
+      lzd = "lazydocker";
+
 
       c = "clear";
       grep = "grep --color=auto";
@@ -110,9 +89,6 @@ in
       "...." = "cd ../../..";
       "~" = "cd ~";
     }
-
-    (lib.mkIf isLinux dockerAliases)
-    (lib.mkIf isMac podmanAliases)
   ];
 
   # ───────────────────────────────────────────────
@@ -124,12 +100,16 @@ in
       "git"
       "sudo"
       "command-not-found"
-      "pass"
-      "poetry"
       "tmux"
-      # "kubectl"
-      # "kubectx"
-      # "rust"
+      "docker"
+      "fzf"
+      "nvim"
+      "kubectl"
+      "kubectx"
+      "go"
+      "npm"
+      "macos"
+      "tailscale"
     ];
   };
 
@@ -156,6 +136,11 @@ in
       name = "fzf-tab";
       src = pkgs.zsh-fzf-tab;
       file = "share/fzf-tab/fzf-tab.plugin.zsh";
+    }
+    {
+      name = "zsh-you-should-use";
+      src = pkgs.zsh-you-should-use;
+      file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
     }
   ];
 
@@ -206,7 +191,5 @@ in
       --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
       --color=selected-bg:#45475a \
       --multi"
-
-    export COMPOSE_DOCKER_CLI_BUILD=1
   '';
 }

@@ -1,7 +1,11 @@
 [font]
-size = 14
-
+size = 15
 builtin_box_drawing = true
 
 [font.normal]
 family = "JetBrainsMono Nerd Font"
+style = "Thin"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Thin"

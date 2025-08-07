@@ -43,6 +43,7 @@
           # ▶ Mac-specific modules
           # ───────────────────────────────────────────────
           ../modules/yabai.nix
+          # ../modules/aerospace.nix
           ../modules/skhd.nix
 
           # ───────────────────────────────────────────────
@@ -58,7 +59,9 @@
               shell = pkgs.zsh;
             };
 
-            fonts.packages = [ pkgs.nerd-fonts.blex-mono ];
+            fonts.packages = with pkgs; [
+              nerd-fonts.geist-mono
+            ];
 
             # System defaults (macOS settings)
             system.defaults = {
@@ -72,10 +75,9 @@
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
-                "/Applications/Spotify.app"
-                "/Applications/WezTerm.app"
+                "/Applications/Ghostty.app"
                 "/Applications/Xcode.app"
-                "/Applications/Zen.app"
+                "/Applications/Vivaldi.app"
               ];
               finder.FXPreferredViewStyle = "clmv";
               loginwindow.GuestEnabled = false;
@@ -88,8 +90,9 @@
 
             # System-wide packages
             environment.systemPackages = with pkgs; [
-              yabai
-              skhd
+              # yabai
+              # skhd
+              aerospace
               minikube
               kubectl
               # alacritty
@@ -133,27 +136,28 @@
                 "go"
                 "git-graph"
                 "sqlc"
+                "gitleaks"
+                "git-filter-repo"
                 "lazygit"
                 "golang-migrate"
                 "ncdu"
+                "pre-commit"
                 "bitwarden-cli"
-                "podman"
-                "podman-tui"
               ];
 
               casks = [
-                "openvpn-connect"
                 "qbittorrent"
-                "docker-desktop"
+                "notunes"
+                "betterdisplay"
                 "tailscale-app"
                 "raycast"
                 "whatsapp"
                 "obsidian"
                 "karabiner-elements"
                 "vlc"
-                "wezterm"
-                "spotify"
-                "zen-browser"
+                "vivaldi"
+                "ghostty"
+                "orbstack"
               ];
 
               masApps = {

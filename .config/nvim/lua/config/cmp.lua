@@ -20,14 +20,15 @@ cmp.setup({
       col_offset = 0,
       max_width = 63,
       max_height = 7,
-      winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+      winhighlight = "normal:normal,floatborder:floatborder,cursorline:pmenusel,search:none",
     }),
-    documentation = {
+    documentation = cmp.config.window.bordered({
       border = { "┌", "─", "┐", "│", "┘", "─", "└", "│" }, -- square border
-      winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+      winhighlight = "normal:normal,floatborder:floatborder,cursorline:pmenusel,search:none",
+      side_padding = 0,
       max_width = 60,
-      max_height = 20,
-    },
+      max_height = 40,
+    }),
   },
   mapping = cmp.mapping.preset.insert({
     ["<CR>"] = cmp.mapping.confirm({ select = true }),
@@ -36,6 +37,7 @@ cmp.setup({
   }),
   formatting = {
     format = function(entry, vim_item)
+      vim_item = require("tailwind-tools.cmp").lspkind_format(entry, vim_item)
       -- Inject custom kinds based on source
       if entry.source.name == "copilot" then
         vim_item.kind = "Copilot"
@@ -47,7 +49,7 @@ cmp.setup({
       local icon = icons[kind] or ""
 
       vim_item.kind = icon .. " " .. kind
-      vim_item.kind_hl_group = "CmpItemKind" .. kind
+      -- vim_item.kind_hl_group = "CmpItemKind" .. kind
       vim_item.abbr_hl_group = "CmpItemAbbr"
       vim_item.menu_hl_group = "CmpItemMenu"
 
@@ -55,10 +57,11 @@ cmp.setup({
     end,
   },
   sources = cmp.config.sources({
-    { name = "luasnip" },
-    { name = "nvim_lsp" },
-    -- { name = "supermaven" },
-    { name = "copilot", group_index = 2 },
+    { name = "nvim_lsp",   group_index = 1, priority = 100 },
+    { name = "copilot",    group_index = 2, priority = 300 },
+    { name = "supermaven", group_index = 2, priority = 300 },
+    { name = "luasnip",    group_index = 3, priority = 500 },
+    { name = "path",       group_index = 4, priority = 600 },
   }, {
     { name = "buffer" },
   }),

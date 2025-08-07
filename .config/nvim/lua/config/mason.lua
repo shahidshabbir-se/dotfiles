@@ -2,7 +2,7 @@ local mason = require("mason")
 local mason_lspconfig = require("mason-lspconfig")
 local mason_tool_installer = require("mason-tool-installer")
 local go = require("lang.go")
-local templ = require("lang.templ")
+-- local templ = require("lang.templ")
 mason.setup({
   ui = {
     icons = {
@@ -32,7 +32,7 @@ mason_lspconfig.setup({
       "sqlls",
     },
     go.mason,
-    templ.mason,
+    -- templ.mason,
   }),
   automatic_installation = true,
 })
@@ -47,12 +47,12 @@ mason_tool_installer.setup({
       -- "rust-analyzer",
       "taplo",
       "sqlfluff",
-      "hadolint",
+      -- "hadolint",
       "dockerls",
       "jsonls",
-      "rnix-lsp",
+      -- "rnix-lsp",
       "yamlls",
-      "nixpkgs-fmt"
+      -- "nixpkgs-fmt"
       -- "ruff",
       -- "black",
       -- "mypy",

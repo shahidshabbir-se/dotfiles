@@ -12,7 +12,7 @@ local wezterm = require("wezterm")
 -- ▶ Appearance
 return {
   color_scheme = "tokyonight_night",
-  font = wezterm.font("BlexMono Nerd Font"),
+  font = wezterm.font("blexmono nerd font"),
   font_size = 13.7,
   window_padding = {
     left = 24,
@@ -25,8 +25,8 @@ return {
   adjust_window_size_when_changing_font_size = false,
   native_macos_fullscreen_mode = true,
   macos_window_background_blur = 30,
-  -- window_background_opacity = 0.92,
-  -- window_background_image = "/Users/shahid/Pictures/Wallpapers/sfd.jpg",
+  -- window_background_opacity = 0.09,
+  -- window_background_image = "/Users/shahid/Pictures/Wallpapers/tessa.jpg",
   -- window_background_image_hsb = {
   --   brightness = 0.43,
   --   hue = 0.88,
