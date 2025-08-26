@@ -29,10 +29,17 @@ in
       zoxide
       atuin
       tmux
-      eza
+      lsd
+      fd
       fzf
       bat
+      yazi
       ripgrep
+      wrk
+      act
+      dogdns
+      fastfetch
+      onefetch
       coreutils
       jq
       htop
@@ -69,9 +76,9 @@ in
         userGithub;
     };
 
-    # zsh = import ../modules/zsh.nix {
-    #   inherit config pkgs lib;
-    # };
+    zsh = import ../modules/zsh.nix {
+      inherit config pkgs lib;
+    };
 
     tmux = import ../modules/tmux.nix {
       inherit pkgs;

@@ -61,6 +61,7 @@
 
             fonts.packages = with pkgs; [
               nerd-fonts.geist-mono
+              nerd-fonts.jetbrains-mono
             ];
 
             # System defaults (macOS settings)
@@ -75,9 +76,9 @@
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
-                "/Applications/Ghostty.app"
+                "/Applications/Kitty.app"
                 "/Applications/Xcode.app"
-                "/Applications/Vivaldi.app"
+                "/Applications/Edge.app"
               ];
               finder.FXPreferredViewStyle = "clmv";
               loginwindow.GuestEnabled = false;
@@ -104,7 +105,8 @@
             # ───────────────────────────────────────────────
             # system.activationScripts.applications.text = let
             #   systemPackages = [
-            #     pkgs.alacritty
+            #     # pkgs.alacritty
+            #     pkgs.kitty
             #     pkgs.mkalias
             #   ];
             #
@@ -129,20 +131,22 @@
             # Homebrew configuration
             homebrew = {
               enable = true;
-              # taps = [ "amar1729/formulae" ];
+              taps = [ "oven-sh/bun" ];
 
               brews = [
                 "node"
+                "bun"
                 "go"
+                "spicetify-cli"
+                "gh"
                 "git-graph"
                 "sqlc"
                 "gitleaks"
-                "git-filter-repo"
                 "lazygit"
                 "golang-migrate"
                 "ncdu"
-                "pre-commit"
                 "bitwarden-cli"
+                "act"
               ];
 
               casks = [
@@ -155,9 +159,11 @@
                 "obsidian"
                 "karabiner-elements"
                 "vlc"
-                "vivaldi"
-                "ghostty"
+                "figma"
+                "spotify"
+                "kitty"
                 "orbstack"
+                "zen"
               ];
 
               masApps = {

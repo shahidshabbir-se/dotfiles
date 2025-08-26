@@ -18,9 +18,9 @@ mason.setup({
 mason_lspconfig.setup({
   ensure_installed = vim.tbl_flatten({
     {
-      "ts_ls",
+      -- "ts_ls",
       "html",
-      -- "cssls",
+      "cssls",
       "tailwindcss",
       "svelte",
       "lua_ls",

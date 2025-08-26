@@ -3,7 +3,6 @@ return {
     dotfiles = false,
     custom = { "^.git$", "^node_modules", ".mypy_cache", "__pycache__" },
   },
-  -- disable_netrw = true,
   hijack_cursor = true,
   sync_root_with_cwd = true,
   update_focused_file = {
@@ -12,7 +11,24 @@ return {
   },
   view = {
     width = 30,
-    preserve_window_proportions = true,
+    float = {
+      enable = true,
+      open_win_config = function()
+        local columns = vim.o.columns
+        local lines = vim.o.lines
+        local width = 30
+        local height = math.floor(lines * 0.8) -- 80% of screen height
+
+        return {
+          relative = "editor",
+          border = "single",
+          width = width,
+          height = height,
+          row = (lines - height) / 2,
+          col = (columns - width),
+        }
+      end,
+    },
   },
   filesystem_watchers = {
     ignore_dirs = {

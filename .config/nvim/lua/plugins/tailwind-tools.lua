@@ -18,7 +18,7 @@ return {
       highlight = "background", -- color preview style, "foreground" | "background"
     },
     conceal = {
-      enabled = true, -- can be toggled by commands
+      enabled = false, -- can be toggled by commands
       min_length = nil, -- only conceal classes exceeding the provided length
       symbol = "󱏿", -- only a single character is allowed
       highlight = { -- extmark highlight options, see :h 'highlight'

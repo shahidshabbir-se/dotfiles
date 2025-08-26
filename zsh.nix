@@ -170,51 +170,14 @@
       lsd --tree --depth "$depth" --long --icon=always --git --ignore-glob=node_modules
     }
 
-    ghc() {
-      local repo="''$1"
-      local target_dir="''$2"
-  
-      if [[ -z "''$repo" ]]; then
-        echo "Usage: ghc <repo-name> [target-directory]"
-        echo "Examples:"
-        echo "  ghc my-repo"
-        echo "  ghc my-repo custom-folder"
-        echo "  ghc user/repo"
-        return 1
-      fi
-  
-      # If repo doesn't contain '/', prepend your username
-      if [[ "''$repo" != *"/"* ]]; then
-        repo="shahidshabbir-se/''$repo"
-      fi
-  
-      # Use target directory if provided, otherwise use repo name
-      local dir="''${target_dir:-$(basename "''$repo")}"
-      
-      echo " Cloning repository: ''$repo"
-      echo " Target directory: ''$dir"
-  
-      # Try SSH first, fallback to HTTPS if it fails
-      echo " Attempting SSH clone..."
-      if git clone --progress "git@github.com:''${repo}.git" "''$dir" 2>&1; then
-        echo " Successfully cloned via SSH"
-      else
-        echo " SSH clone failed, trying HTTPS..."
-        if git clone --progress "https://github.com/''${repo}.git" "''$dir" 2>&1; then
-          echo " Successfully cloned via HTTPS"
-        else
-          echo " Clone failed. Check repository name and permissions."
-          return 1
-        fi
-      fi
-      
-      echo " Repository cloned to: ''$dir"
-    }
+    # Tool initializations
+    eval "$(atuin init zsh --disable-up-arrow)"
+    eval "$(fzf --zsh)"
+    eval "$(zoxide init --cmd cd zsh)"
 
     # Environment variables
     export PATH="$HOME/.bun/bin:$PATH"
     export EDITOR="nvim"
-    export BROWSER="Zen"
 
     # Docker completion (if available)
     if command -v docker &>/dev/null; then

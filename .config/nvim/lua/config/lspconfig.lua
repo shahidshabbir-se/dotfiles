@@ -97,10 +97,10 @@ lspconfig.templ.setup(vim.tbl_deep_extend("force", {
 --   capabilities = capabilities,
 -- })
 
-lspconfig.ts_ls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
+-- lspconfig.ts_ls.setup({
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+-- })
 
 lspconfig.html.setup({
   on_attach = on_attach,

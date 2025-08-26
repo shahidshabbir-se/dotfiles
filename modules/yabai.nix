@@ -45,13 +45,13 @@
       yabai -m rule --add app="^System Settings$" manage=off
       yabai -m rule --add app="^Finder$" manage=off
       yabai -m rule --add app="^Calculator$" manage=off
-      yabai -m rule --add app="Vivaldi" title="Picture in Picture" manage=off
+      yabai -m rule --add app="Zen" title="Extension: (Bitwarden Password Manager) - Bitwarden" manage=off
 
       # App-to-space assignments
-      yabai -m rule --add title=".*New Tab - Vivaldi*." space=2
-      yabai -m rule --add app="^ghostty$" space=1
+      yabai -m rule --add title=".*Zen Browser*" space=2
+      yabai -m rule --add app="^Kitty$" space=1
       yabai -m rule --add app="^Spotify$" space=9
-      yabai -m rule --add  title=".*Private Window Introduction - Vivaldi.*" space=8
+      yabai -m rule --add  title=".*Zen Browser — Private Browsing*" space=8
 
       # Reload scripting addition if dock restarts
       yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
