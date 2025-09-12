@@ -1,0 +1,132 @@
+/* Tab contents */
+@-moz-document url-prefix("chrome://devtools/content/")
+{
+  .computed-property-view {
+    justify-content: space-between;
+    column-gap: 20px;
+  }
+
+  .computed-property-name-container {
+    width: auto !important;
+  }
+
+  .computed-property-value-container {
+    flex: 0 0 auto !important;
+    padding-right: 5px;
+  }
+
+  .computed-property-value {
+    padding-inline-start: 0 !important;
+  }
+
+  /* Font styling for DevTools */
+  .devtools-monospace,
+  .CodeMirror,
+  .cm-s-mozilla {
+    font-family: "JetBrainsMono Nerd Font Mono", Consolas, monospace !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+  }
+
+  /* HTML Inspector - larger font */
+  #markup-view,
+  .markup-view,
+  .html-editor,
+  .tag-line,
+  .editor {
+    font-family: "JetBrainsMono Nerd Font Mono", Consolas, monospace !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+  }
+
+  /* Right side panels - smaller font */
+  .computed-property-name,
+  .computed-property-value,
+  .theme-sidebar,
+  .sidebar-panel {
+    font-family: "JetBrainsMono Nerd Font Mono", Consolas, monospace !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+  }
+
+  /* Tokyo Night syntax highlighting */
+  .tag-name {
+    color: #f7768e !important;
+  } /* Red tags */
+  .attr-name {
+    color: #ff9e64 !important;
+  } /* Orange attributes */
+  .attr-value {
+    color: #9ece6a !important;
+  } /* Green values */
+  .comment {
+    color: #565f89 !important;
+  } /* Blue-gray comments */
+  .text-node {
+    color: #c0caf5 !important;
+  } /* Light blue text */
+
+  /* CSS syntax */
+  .cm-property {
+    color: #7dcfff !important;
+  } /* Cyan properties */
+  .cm-string {
+    color: #9ece6a !important;
+  } /* Green strings */
+  .cm-number {
+    color: #ff9e64 !important;
+  } /* Orange numbers */
+  .cm-keyword {
+    color: #bb9af7 !important;
+  } /* Purple keywords */
+  .cm-variable {
+    color: #f7768e !important;
+  } /* Red variables */
+  .cm-atom {
+    color: #ff9e64 !important;
+  } /* Orange atoms */
+  .cm-def {
+    color: #7aa2f7 !important;
+  } /* Blue definitions */
+  .cm-tag {
+    color: #f7768e !important;
+  } /* Red HTML tags */
+  .cm-attribute {
+    color: #ff9e64 !important;
+  } /* Orange HTML attributes */
+
+  /* JavaScript */
+  .cm-js-keyword {
+    color: #bb9af7 !important;
+  } /* const, let, var, function */
+  .cm-js-def {
+    color: #7aa2f7 !important;
+  } /* function names */
+  .cm-js-variable {
+    color: #c0caf5 !important;
+  } /* variables */
+  .cm-js-property {
+    color: #7dcfff !important;
+  } /* object properties */
+  .cm-js-string {
+    color: #9ece6a !important;
+  } /* strings */
+  .cm-js-number {
+    color: #ff9e64 !important;
+  } /* numbers */
+  .cm-js-atom {
+    color: #ff9e64 !important;
+  } /* true, false, null */
+  .cm-js-comment {
+    color: #565f89 !important;
+  } /* comments */
+  .cm-operator {
+    color: #89ddff !important;
+  } /* operators */
+  .cm-bracket {
+    color: #c0caf5 !important;
+  } /* brackets */
+  .cm-builtin {
+    color: #e0af68 !important;
+  } /* console, document, etc */
+}

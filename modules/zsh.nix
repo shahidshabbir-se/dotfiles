@@ -14,108 +14,62 @@
   # ───────────────────────────────────────────────
   # ▶ ZSH History
   # ───────────────────────────────────────────────
-  history.size = 0;
-  history.ignoreAllDups = false;
-  history.path = "/dev/null";
+  history.size = 10000;
+  history.ignoreAllDups = true;
+  history.path = "${config.xdg.dataHome}/zsh/history";
 
   # ───────────────────────────────────────────────
   # ▶ Shell Aliases
   # ───────────────────────────────────────────────
   shellAliases = {
-    # File navigation
-    ls = "eza --icons=always --color=always -a";
-    ll = " eza --icons=always --color=always -la";
-    lt = "eza --tree --level=2 --long --icons --git";
-    lt3 = "eza --tree --level=3 --long --icons --git";
-    lt4 = "eza --tree --level=4 --long --icons --git";
-
-    # System
-    c = "clear";
-    grep = "grep --color=auto";
-    copy = "pbcopy";
+    ls="lsd --icon=always --color=always --ignore-glob=node_modules --ignore-glob=.DS_Store --ignore-glob=. --ignore-glob=..";
+    ll="lsd --icon=always --color=always -l --ignore-glob=node_modules --ignore-glob=.DS_Store --ignore-glob=. --ignore-glob=..";
+    
+    # Basic utilities
     rm = "rm -rf";
-
-    # FZF / Better Commits
-    fzf = "fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%";
-    onv = "nvim $(fzf --preview \"bat --style=numbers --color=always --line-range :500 {}\" --preview-window=right:50%)";
-    bc = "better-commits";
-
-    # Exit
+    c = "clear";
+    vi = "nvim";
+    ".." = "cd ..";
     e = "exit";
+    copy = "pbcopy";
+    cat = "bat";
+    bc = "better-commits";
+    viconf = "cd ~/.config/nvim && nvim .";
+    yz = "yazi";
+    cc = "claude";
+    cr = "crush";
 
-    # Git Aliases
-    gs = "git status";
-    gc = "git commit -m";
-    gca = "git commit -a -m";
-    gp = "git push origin HEAD";
-    gpu = "git pull origin";
-    gdiff = "git diff";
-    gco = "git checkout";
-    gb = "git branch";
-    gba = "git branch -a";
-    gadd = "git add";
-    ga = "git add -p";
-    gcoall = "git checkout -- .";
-    gr = "git remote";
-    gre = "git reset";
-    glog = "git log --oneline --graph --decorate";
-
-    gcs = "function _gitclone() { git clone git@github.com:shahidshabbir-se/$1.git; }; _gitclone";
-    gch = "function _gch() { if [[ -n \$1 && \$1 =~ ^[0-9]+$ ]]; then git clone --depth \$1 \$2; else git clone \$1; fi; }; _gch";
-
-    killport = "f(){ kill -9 $(lsof -ti tcp:$1); }; f";
-
+    # Git aliases
+    ggr = "git-graph --model git-flow";
     lzg = "lazygit";
 
-    # PNPM
-    pi = "pnpm install";
-    pd = "pnpm install --save-dev";
-    pr = "pnpm run dev";
+    # pnpm aliases
+    pa = "pnpm add";
+    pad = "pnpm install --save-dev";
     ps = "pnpm start";
     pt = "pnpm test";
+    pi = "pnpm install";
+    pr = "pnpm run dev";
+    pl = "pnpm run lint";
+    pf = "pnpm run format";
+    pd = "pnpm run debug";
+    pb = "pnpm run build";
 
-    # Docker
-    d = "docker";
-    dc = "docker compose";
-    dco = "docker compose";
-    dcu = "docker compose up";
-    dcd = "docker compose down";
-    dps = "docker ps";
-    dpa = "docker ps -a";
-    dl = "docker ps -l -q";
-    di = "docker images";
-    dr = "docker run";
-    dp = "docker pull";
-    dx = "docker exec -it";
-    lzd = "lazydocker";
-
-    # Directory navigation
-    ".." = "cd ..";
-    "..." = "cd ../.. ";
-    "...." = "cd ../../..";
-    "~" = "cd ~";
+    # bun aliases
+    ba = "bun add";
+    bad = "bun add --dev";
+    bs = "bun start";
+    bt = "bun test";
+    bi = "bun install";
+    br = "bun run dev";
+    bl = "bun run lint";
+    bf = "bun run format";
+    bd = "bun run debug";
+    bb = "bun run build";
   };
 
   # ───────────────────────────────────────────────
-  # ▶ Oh-My-Zsh Plugins (optional)
-  # ───────────────────────────────────────────────
-  oh-my-zsh = {
-    enable = false;
-    plugins = [
-      "git"
-      "sudo"
-      "command-not-found"
-      "pass"
-      "poetry"
-      "tmux"
-      # "kubectl"
-      # "kubectx"
-      # "rust"
-    ];
-  };
-
-  # ───────────────────────────────────────────────
-  # ▶ Zsh Plugin List
+  # ▶ Zinit Plugin Manager Setup
   # ───────────────────────────────────────────────
   plugins = [
     {
@@ -124,14 +78,24 @@
       file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
     }
     {
+      name = "zsh-syntax-highlighting";
+      src = pkgs.zsh-syntax-highlighting;
+      file = "share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
+    }
+    {
+      name = "zsh-completions";
+      src = pkgs.zsh-completions;
+      file = "share/zsh-completions/zsh-completions.plugin.zsh";
+    }
+    {
       name = "zsh-autosuggestions";
       src = pkgs.zsh-autosuggestions;
       file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
     }
     {
-      name = "zsh-syntax-highlighting";
-      src = pkgs.zsh-syntax-highlighting;
-      file = "share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
+      name = "zsh-you-should-use";
+      src = pkgs.zsh-you-should-use;
+      file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
     }
     {
       name = "fzf-tab";
@@ -141,10 +105,47 @@
   ];
 
   # ───────────────────────────────────────────────
+  # ▶ Oh-My-Zsh Plugin Snippets
+  # ───────────────────────────────────────────────
+  oh-my-zsh = {
+    enable = true;
+    plugins = [
+      "git"
+      "docker"
+      "docker-compose"
+      "npm"
+      "kubectl"
+      "tmux"
+    ];
+  };
+
+  # ───────────────────────────────────────────────
   # ▶ Zsh Init Content
   # ───────────────────────────────────────────────
   initContent = ''
-    # Bindings
+    # Powerlevel10k configuration
+    [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+    # Completion styling
+    zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+    zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+    zstyle ':completion:*' menu no
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --color=always --icon=always $realpath'
+    zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'lsd --color=always --icon=always $realpath'
+    zstyle ':fzf-tab:complete:*' fzf-preview '[[ -d $realpath ]] && lsd --color=always --icon=always $realpath || bat --style=numbers --color=always --paging=never $realpath'
+
+    # FZF colors (Tokyo Night theme)
+    export FZF_DEFAULT_OPTS="\
+      --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 \
+      --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff \
+      --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff \
+      --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
+
+    fvim() {
+      nvim "$(fzf)"
+      }
+
+    # Key bindings
     bindkey '^r' atuin-search
     bindkey '^[[A' atuin-up-search
     bindkey '^[OA' atuin-up-search
@@ -159,33 +160,72 @@
     bindkey '^?' backward-delete-char
     bindkey '^T' transpose-chars
     bindkey '^[t' transpose-words
+    bindkey '^L' clear-screen
     bindkey '^Y' yank
     bindkey '^[o' execute-named-cmd
     bindkey '^F' autosuggest-accept
 
-    # Load Powerlevel10k theme
-    [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+    # Load completions
+    autoload -Uz compinit && compinit
 
-    # Completion styles for fzf-tab
-    zstyle ':completion:*:git-checkout:*' sort false
-    zstyle ':completion:*:descriptions' format '[%d]'
-    zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
-    zstyle ':completion:*' menu no
+    # Custom lt function for tree view
+    lt() {
+      local depth=''${1:-2}
+      lsd --tree --depth "$depth" --long --icon=always --git --ignore-glob=node_modules
+    }
 
-    zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $realpath'
-    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-    zstyle ':fzf-tab:complete:ls:*' fzf-preview 'cat $realpath'
-    zstyle ':fzf-tab:*' switch-group '<' '>'
+    ghc() {
+      local repo="''$1"
+      local target_dir="''$2"
+  
+      if [[ -z "''$repo" ]]; then
+        echo "Usage: ghc <repo-name> [target-directory]"
+        echo "Examples:"
+        echo "  ghc my-repo"
+        echo "  ghc my-repo custom-folder"
+        echo "  ghc user/repo"
+        return 1
+      fi
+  
+      # If repo doesn't contain '/', prepend your username
+      if [[ "''$repo" != *"/"* ]]; then
+        repo="shahidshabbir-se/''$repo"
+      fi
+  
+      # Use target directory if provided, otherwise use repo name
+      local dir="''${target_dir:-$(basename "''$repo")}"
+      
+      echo " Cloning repository: ''$repo"
+      echo " Target directory: ''$dir"
+  
+      # Try SSH first, fallback to HTTPS if it fails
+      echo " Attempting SSH clone..."
+      if git clone --progress "git@github.com:''${repo}.git" "''$dir" 2>&1; then
+        echo " Successfully cloned via SSH"
+      else
+        echo " SSH clone failed, trying HTTPS..."
+        if git clone --progress "https://github.com/''${repo}.git" "''$dir" 2>&1; then
+          echo " Successfully cloned via HTTPS"
+        else
+          echo " Clone failed. Check repository name and permissions."
+          return 1
+        fi
+      fi
+      
+      echo " Repository cloned to: ''$dir"
+    }
 
-    # Extra PATHs
-    export PATH=$PATH:$HOME/go/bin
+    # Environment variables
+    export PATH="$HOME/.bun/bin:$PATH"
+    export PATH="$HOME/.cache/.bun/bin:$PATH"
+    export PATH="$PATH:$(go env GOPATH)/bin"
+    export EDITOR="nvim"
+    export BROWSER="Zen"
+    export _ZO_DOCTOR=0
 
-    # FZF colors
-    export FZF_DEFAULT_OPTS=" \
-      --color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8 \
-      --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
-      --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
-      --color=selected-bg:#45475a \
-      --multi"
+    # Docker completion (if available)
+    if command -v docker &>/dev/null; then
+      eval "$(docker completion zsh)"
+    fi
   '';
 }

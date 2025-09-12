@@ -54,7 +54,7 @@ in
     # ▶ Terminal Features
     # ─────────────────────────────────────────────────────────
     set -as terminal-features ",xterm-256color:RGB"
-    set -as terminal-overrides ',wezterm:RGB'
+    set -as terminal-overrides ',alacritty:RGB'
     set -g mouse on
 
     # ─────────────────────────────────────────────────────────
@@ -93,25 +93,27 @@ in
     bind -n M-Up select-pane -U
     bind -n M-Down select-pane -D
 
+
     # ─────────────────────────────────────────────────────────
     # ▶ Window Switching (Shift + Arrow or Alt + Vim)
     # ─────────────────────────────────────────────────────────
     bind -n S-Left previous-window
     bind -n S-Right next-window
-    bind -n M-H previous-window
-    bind -n M-L next-window
+    bind -n M-h previous-window
+    bind -n M-l next-window
 
     # ─────────────────────────────────────────────────────────
     # ▶ Theme Configuration (tokyo-night)
     # ─────────────────────────────────────────────────────────
-    set -g @tokyo-night-tmux_window_id_style hsquare
+    set -g @tokyo-night-tmux_window_id_style dsquare
     set -g @tokyo-night-tmux_show_datetime 0
     set -g @tokyo-night-tmux_show_path 1
     set -g @tokyo-night-tmux_path_format relative
     set -g @tokyo-night-tmux_show_git 1
     set -g @tokyo-night-tmux_terminal_icon 
     set -g @tokyo-night-tmux_active_terminal_icon 
-    set -g @tokyo-night-tmux_show_hostname 0
+    set -g @tokyo-night-tmux_show_hostname "macos"
+    set -g @tokyo-night-tmux_show_music 1
     set -g @tokyo-night-tmux_window_tidy_icons 0
     set -g @tokyo-night-tmux_transparent 1
 
