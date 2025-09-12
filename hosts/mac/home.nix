@@ -29,6 +29,7 @@ in
       zoxide
       atuin
       tmux
+      nushell
       lsd
       typtea
       btop
@@ -57,8 +58,6 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-  xdg.configFile.kitty.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/kitty";
-  # xdg.configFile.alacritty.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/alacritty";
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
