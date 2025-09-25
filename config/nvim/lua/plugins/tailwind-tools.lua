@@ -40,7 +40,7 @@ return {
       }
     },
     server = {
-      override = true, -- auto-setup tailwindcss LSP (disable yours if conflicting)
+      override = false, -- auto-setup tailwindcss LSP (disable yours if conflicting)
       settings = {
         tailwindCSS = {
           experimental = {

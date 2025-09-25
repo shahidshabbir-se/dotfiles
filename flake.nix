@@ -77,8 +77,8 @@
       darwinConfigurations.${host} = nix-darwin.lib.darwinSystem {
         system = systemDarwin;
         modules = [
-          ./modules/yabai.nix
-          ./modules/skhd.nix
+          # ./modules/yabai.nix
+          # ./modules/skhd.nix
 
           # ───────────────────────────────────────────────
           # ▶ Core System Configuration
@@ -95,13 +95,14 @@
 
             fonts.packages = with pkgsDarwin; [
               nerd-fonts.jetbrains-mono
+              nerd-fonts.geist-mono
             ];
 
             # System defaults (macOS settings)
             system.defaults = {
               dock.autohide = true;
               dock.persistent-apps = [
-                "/System/Applications/Launchpad.app"
+                "/System/Applications/Apps.app"
                 "/System/Applications/System Settings.app"
                 "/Applications/Microsoft Excel.app"
                 "/Applications/Microsoft PowerPoint.app"
@@ -109,7 +110,8 @@
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
-                "${pkgsDarwin.alacritty}/Applications/Alacritty.app"
+                # "${pkgsDarwin.alacritty}/Applications/Alacritty.app"
+                "/Applications/Ghostty.app"
                 "/Applications/Xcode.app"
                 "/Applications/Zen.app"
               ];
@@ -127,7 +129,8 @@
             # ───────────────────────────────────────────────
             system.activationScripts.applications.text = let
               systemPackages = [
-                pkgsDarwin.alacritty
+                # pkgsDarwin.alacritty
+                # pkgsDarwin.kitty
                 pkgsDarwin.mkalias
               ];
 
@@ -151,41 +154,35 @@
 
             homebrew = {
               enable = true;
-              taps = [ "oven-sh/bun" ];
+              taps = [];
 
               brews = [
-                "node"
-                "bun"
-                "go"
-                "spicetify-cli"
-                "gh"
                 "git-graph"
                 "sqlc"
                 "gitleaks"
                 "lazygit"
                 "golang-migrate"
-                "protobuf"
+                "node"
                 "ncdu"
-                "bitwarden-cli"
-                "infisical"
               ];
 
               casks = [
                 "qbittorrent"
                 "notunes"
                 "betterdisplay"
-                "google-chrome"
                 "tailscale-app"
                 "raycast"
                 "whatsapp"
                 "obsidian"
                 "karabiner-elements"
                 "vlc"
+                "arc"
+                "visual-studio-code"
+                "zen"
+                "ghostty"
                 "figma"
-                "spotify"
                 "localsend"
                 "orbstack"
-                "zen"
               ];
 
               masApps = {
@@ -206,6 +203,8 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
 
             home-manager.users.${user} = import ./hosts/mac/home.nix;
           }

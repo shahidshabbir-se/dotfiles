@@ -14,7 +14,7 @@ M.lsp = {
     cmd = { "templ", "lsp" },
     filetypes = { "templ" },
     root_dir = function(fname)
-      return require("lspconfig.util").root_pattern("go.mod", ".git")(fname)
+      return vim.lsp.util.root_pattern("go.mod", ".git")(fname)
     end,
     settings = {},
   },

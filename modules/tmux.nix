@@ -9,7 +9,7 @@
 { pkgs, ... }:
 
 # ─────────────────────────────────────────────────────────────
-# ▶ Custom Plugin: tokyonight-tmux theme
+#  Custom Plugin: tokyonight-tmux theme
 # ─────────────────────────────────────────────────────────────
 let
   tokyo-night = pkgs.tmuxPlugins.mkTmuxPlugin {
@@ -25,8 +25,8 @@ let
 in
 
 # ─────────────────────────────────────────────────────────────
-  # ▶ Main Tmux Configuration
-  # ─────────────────────────────────────────────────────────────
+#  Main Tmux Configuration
+# ─────────────────────────────────────────────────────────────
 {
   enable = true;
 
@@ -51,21 +51,21 @@ in
   # Raw tmux configuration
   extraConfig = ''
     # ─────────────────────────────────────────────────────────
-    # ▶ Terminal Features
+    #  Terminal Features
     # ─────────────────────────────────────────────────────────
-    set -as terminal-features ",xterm-256color:RGB"
-    set -as terminal-overrides ',alacritty:RGB'
+    # set -g default-terminal "xterm-256color"
+    # set -ga terminal-overrides ",-256color:Tc"
     set -g mouse on
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Prefix Customization
+    #  Prefix Customization
     # ─────────────────────────────────────────────────────────
     unbind C-b
     set -g prefix C-n
     bind C-n send-prefix
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Pane Navigation (Vim style)
+    #  Pane Navigation (Vim style)
     # ─────────────────────────────────────────────────────────
     bind h select-pane -L
     bind j select-pane -D
@@ -73,7 +73,7 @@ in
     bind l select-pane -R
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Window and Pane Indexing
+    #  Window and Pane Indexing
     # ─────────────────────────────────────────────────────────
     set -g base-index 1
     set -g pane-base-index 1
@@ -81,12 +81,12 @@ in
     set-option -g renumber-windows on
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Clear Screen Binding
+    #  Clear Screen Binding
     # ─────────────────────────────────────────────────────────
     bind L send-keys '^L'
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Pane Switching (Alt + Arrow)
+    #  Pane Switching (Alt + Arrow)
     # ─────────────────────────────────────────────────────────
     bind -n M-Left select-pane -L
     bind -n M-Right select-pane -R
@@ -95,7 +95,7 @@ in
 
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Window Switching (Shift + Arrow or Alt + Vim)
+    #  Window Switching (Shift + Arrow or Alt + Vim)
     # ─────────────────────────────────────────────────────────
     bind -n S-Left previous-window
     bind -n S-Right next-window
@@ -103,7 +103,7 @@ in
     bind -n M-l next-window
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Theme Configuration (tokyo-night)
+    #  Theme Configuration (tokyo-night)
     # ─────────────────────────────────────────────────────────
     set -g @tokyo-night-tmux_window_id_style dsquare
     set -g @tokyo-night-tmux_show_datetime 0
@@ -121,7 +121,7 @@ in
     run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Vim-Tmux Navigator Integration
+    #  Vim-Tmux Navigator Integration
     # ─────────────────────────────────────────────────────────
     set -g @vim_navigator_mapping_left "C-Left C-h"
     set -g @vim_navigator_mapping_right "C-Right C-l"
@@ -130,7 +130,7 @@ in
     set -g @vim_navigator_mapping_prev ""
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Copy Mode (vi style)
+    #  Copy Mode (vi style)
     # ─────────────────────────────────────────────────────────
     set-window-option -g mode-keys vi
     bind-key -T copy-mode-vi v send-keys -X begin-selection
@@ -138,14 +138,14 @@ in
     bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Smart Directory Context
+    #  Smart Directory Context
     # ─────────────────────────────────────────────────────────
-    bind '"' split-window -v -c "#{pane_current_path}"
-    bind % split-window -h -c "#{pane_current_path}"
+    bind v split-window -v -c "#{pane_current_path}"
+    bind h split-window -h -c "#{pane_current_path}"
     bind c new-window -c "#{pane_current_path}"
 
     # ─────────────────────────────────────────────────────────
-    # ▶ Shell Inside Tmux
+    #  Set default shell for new panes/windows
     # ─────────────────────────────────────────────────────────
     set -g default-shell "${pkgs.zsh}/bin/zsh"
     set -g default-command "${pkgs.zsh}/bin/zsh"

@@ -38,23 +38,36 @@
     };
 
     # ───────────────────────────────────────────────
-    # ▶ Window Management Rules & Signals
+    # ▶ Rules & Signals
     # ───────────────────────────────────────────────
     extraConfig = ''
-      # Do not manage some macOS apps
+      # ───────────────────────────────────────────────
+      # ▶ Window Rules (Exclude from Management)
+      # ───────────────────────────────────────────────
       yabai -m rule --add app="^System Settings$" manage=off
       yabai -m rule --add app="^Finder$" manage=off
       yabai -m rule --add app="^Calculator$" manage=off
       yabai -m rule --add app="Zen" title="Extension: (Bitwarden Password Manager) - Bitwarden" manage=off
 
-      # App-to-space assignments
-      yabai -m rule --add title=".*Zen Browser*" space=2
-      yabai -m rule --add app="^Alacritty$" space=1
-      yabai -m rule --add app="^Spotify$" space=9
-      yabai -m rule --add  title=".*Zen Browser — Private Browsing*" space=8
+      # ───────────────────────────────────────────────
+      # ▶ Signals (Move + Focus App Windows)
+      # ───────────────────────────────────────────────
 
-      # Reload scripting addition if dock restarts
+      # Auto-reload scripting addition if Dock restarts
       yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+
+      # Move Kitty to space 1 and focus
+      yabai -m signal --add event=window_created app="^Kitty$" action="yabai -m window --space 1; yabai -m space --focus 1"
+
+      # Move Zen Browser to space 2 and focus
+      yabai -m signal --add event=window_created title="Zen Browser$" action="yabai -m window --space 2; yabai -m space --focus 2"
+
+      # Move Zen Browser (Private) to space 8 and focus
+      yabai -m signal --add event=window_created title="Zen Browser — Private Browsing" action="yabai -m window --space 8; yabai -m space --focus 8"
+
+      # Move Spotify to space 9 and focus
+      yabai -m signal --add event=window_created app="^Spotify$" action="yabai -m window --space 9; yabai -m space --focus 9"
     '';
   };
 }
+

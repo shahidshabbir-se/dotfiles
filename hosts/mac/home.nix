@@ -6,7 +6,7 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
   homeDirectory = "/Users/shahid";
@@ -29,11 +29,15 @@ in
       zoxide
       atuin
       tmux
-      nushell
       lsd
       typtea
+      bun
+      go
+      doppler
       btop
+      aerospace
       fd
+      gnupg
       fzf
       bat
       yazi
@@ -58,6 +62,8 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
+  xdg.configFile.ghostty.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/ghostty";
+  home.file.".aerospace.toml".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/aerospace.toml";
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
@@ -74,17 +80,12 @@ in
     };
 
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
-
     tmux = import ../../modules/tmux.nix { inherit pkgs; };
-
     atuin = import ../../modules/atuin.nix;
-
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
-
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
-
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-
-    alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
+    spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
+    # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

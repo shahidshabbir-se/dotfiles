@@ -22,8 +22,10 @@
   # ▶ Shell Aliases
   # ───────────────────────────────────────────────
   shellAliases = {
-    ls="lsd --icon=always --color=always --ignore-glob=node_modules --ignore-glob=.DS_Store --ignore-glob=. --ignore-glob=..";
-    ll="lsd --icon=always --color=always -l --ignore-glob=node_modules --ignore-glob=.DS_Store --ignore-glob=. --ignore-glob=..";
+    ls="lsd --icon=always --color=always -a --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ll="lsd --icon=always --color=always -la --ignore-glob=node_modules --ignore-glob=.DS_Store";
+
+    tree = "lsd --tree --depth 1";
     
     # Basic utilities
     rm = "rm -rf";
@@ -67,6 +69,7 @@
     bd = "bun run debug";
     bb = "bun run build";
   };
+  
 
   # ───────────────────────────────────────────────
   # ▶ Zinit Plugin Manager Setup
@@ -214,6 +217,11 @@
       
       echo " Repository cloned to: ''$dir"
     }
+
+    pw() {
+      python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | pbcopy
+    }
+
 
     # Environment variables
     export PATH="$HOME/.bun/bin:$PATH"

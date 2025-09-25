@@ -35,6 +35,10 @@ mason_lspconfig.setup({
     -- templ.mason,
   }),
   automatic_installation = true,
+  handlers = {
+    -- Disable automatic setup since we're using vim.lsp.config
+    function() end,
+  },
 })
 
 mason_tool_installer.setup({

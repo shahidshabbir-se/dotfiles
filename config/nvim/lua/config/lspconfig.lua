@@ -1,7 +1,6 @@
 
 local go = require("lang.go")
 local templ = require("lang.templ")
-local lspconfig = require("lspconfig")
 local on_attach = function(client, bufnr)
   -- Attach tailwindcss-colors
   -- if client.name == "tailwindcss" then
@@ -17,10 +16,11 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   callback = function() vim.lsp.buf.format({ async = false }) end,
 })
 
-lspconfig.cssls.setup({
+vim.lsp.config.cssls = {
+  cmd = { "vscode-css-language-server", "--stdio" },
+  filetypes = { "css", "templ" },
   on_attach = on_attach,
   capabilities = capabilities,
-  filetypes = { "css", "templ" },
   settings = {
     css = {
       validate = true,
@@ -41,30 +41,34 @@ lspconfig.cssls.setup({
       },
     },
   },
-})
+}
 
 
-lspconfig.lua_ls.setup({
+vim.lsp.config.lua_ls = {
+  cmd = { "lua-language-server" },
+  filetypes = { "lua" },
   on_attach = on_attach,
   capabilities = capabilities,
-})
+}
 
 -- lspconfig.rust_analyzer.setup({
 --   on_attach = on_attach,
 --   capabilities = capabilities,
 -- })
 
-lspconfig.gopls.setup(vim.tbl_deep_extend("force", {
+vim.lsp.config.gopls = vim.tbl_deep_extend("force", {
+  cmd = { "gopls" },
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
   on_attach = on_attach,
   capabilities = capabilities,
-}, go.lsp.gopls))
+}, go.lsp.gopls)
 
 
 
-lspconfig.templ.setup(vim.tbl_deep_extend("force", {
+vim.lsp.config.templ = vim.tbl_deep_extend("force", {
   on_attach = on_attach,
   capabilities = capabilities,
-}, templ.lsp.templ))
+}, templ.lsp.templ)
 
 -- require("lspconfig").tailwindcss.setup({
 --   on_attach = function(client, bufnr)
@@ -102,11 +106,12 @@ lspconfig.templ.setup(vim.tbl_deep_extend("force", {
 --   capabilities = capabilities,
 -- })
 
-lspconfig.html.setup({
+vim.lsp.config.html = {
+  cmd = { "vscode-html-language-server", "--stdio" },
+  filetypes = { "html", "templ" },
   on_attach = on_attach,
   capabilities = capabilities,
-  filetypes = { "html", "templ" },
-})
+}
 
 -- lspconfig.htmx.setup({
 --   on_attach = on_attach,

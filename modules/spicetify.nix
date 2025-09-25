@@ -39,7 +39,6 @@ in
   # ───────────────────────────────────────────────
   enabledSnippets = with spicePkgs.snippets; [
     rotatingCoverart
-    pointer
   ];
 
   # ───────────────────────────────────────────────

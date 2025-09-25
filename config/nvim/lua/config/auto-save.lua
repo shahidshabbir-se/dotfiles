@@ -1,7 +1,8 @@
 return {
   condition = function(buf)
     local ft = vim.api.nvim_buf_get_option(buf, "filetype")
-    return ft ~= "go"
+    -- return ft ~= "go"
+    return ft ~= nil
   end,
 
   callbacks = {
