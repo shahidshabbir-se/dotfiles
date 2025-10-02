@@ -30,6 +30,7 @@ in
       atuin
       tmux
       lsd
+      rustup
       typtea
       bun
       go
@@ -62,20 +63,19 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-  xdg.configFile.ghostty.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/ghostty";
   home.file.".aerospace.toml".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/aerospace.toml";
+
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
   # ───────────────────────────────────────────────
   home.file.".p10k.zsh".source = ../../config/p10k.zsh;
-  # home.file.".wezterm.lua".source = ../.wezterm.lua;
 
   # ───────────────────────────────────────────────
   # ▶ Program Configurations
   # ───────────────────────────────────────────────
   programs = {
-    git = import ./git.nix {
+    git = import ../../modules/git.nix {
       inherit config pkgs homeDirectory userGmail userGithub;
     };
 
@@ -86,6 +86,7 @@ in
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
+    kitty = import ../../modules/kitty.nix { inherit pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

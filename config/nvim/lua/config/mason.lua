@@ -54,9 +54,9 @@ mason_tool_installer.setup({
       -- "hadolint",
       "dockerls",
       "jsonls",
-      -- "rnix-lsp",
+      "rnix-lsp",
       "yamlls",
-      -- "nixpkgs-fmt"
+      "nixpkgs-fmt"
       -- "ruff",
       -- "black",
       -- "mypy",

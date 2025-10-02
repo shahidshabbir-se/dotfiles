@@ -4,7 +4,7 @@ local templ = require("lang.templ")
 require("conform").setup({
   formatters_by_ft = vim.tbl_extend("force", {
       lua = { "stylua" },
-      -- nix = { "nixpkgs-fmt" },
+      nix = { "nixpkgs-fmt" },
       svelte = { "prettierd" },
       toml = { "taplo" },
       sql = { "sqlfluff" },

@@ -39,20 +39,21 @@
 
       # Users
       user = "shahid";
-      host= "mini";
+      host = "mini";
 
       # Packages
       pkgsLinux = import nixpkgs {
         system = systemLinux;
         config.allowUnfree = true;
       };
-      
+
       pkgsDarwin = import nixpkgs {
         system = systemDarwin;
         config.allowUnfree = true;
       };
 
-    in {
+    in
+    {
       # ──────────────────────────────
       # ▶ Linux (NixOS)
       # ──────────────────────────────
@@ -65,7 +66,8 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
             home-manager.users.shahid = import ./hosts/nix/home.nix;
           }
         ];
@@ -127,34 +129,36 @@
             # ───────────────────────────────────────────────
             # ▶ Create /Applications aliases for Nix Apps
             # ───────────────────────────────────────────────
-            system.activationScripts.applications.text = let
-              systemPackages = [
-                # pkgsDarwin.alacritty
-                # pkgsDarwin.kitty
-                pkgsDarwin.mkalias
-              ];
+            system.activationScripts.applications.text =
+              let
+                systemPackages = [
+                  # pkgsDarwin.alacritty
+                  # pkgsDarwin.kitty
+                  pkgsDarwin.mkalias
+                ];
 
-              env = pkgsDarwin.buildEnv {
-                name = "system-applications";
-                paths = systemPackages;
-                pathsToLink = "/Applications";
-              };
-            in pkgsDarwin.lib.mkForce ''
-              echo "Setting up /Applications..." >&2
-              rm -rf /Applications/Nix\ Apps
-              mkdir -p /Applications/Nix\ Apps
+                env = pkgsDarwin.buildEnv {
+                  name = "system-applications";
+                  paths = systemPackages;
+                  pathsToLink = "/Applications";
+                };
+              in
+              pkgsDarwin.lib.mkForce ''
+                echo "Setting up /Applications..." >&2
+                rm -rf /Applications/Nix\ Apps
+                mkdir -p /Applications/Nix\ Apps
 
-              find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-              while IFS= read -r src; do
-                app_name=$(basename "$src")
-                echo "Copying $src to /Applications/Nix Apps/$app_name" >&2
-                ${pkgsDarwin.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-              done
-            '';
+                find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
+                while IFS= read -r src; do
+                  app_name=$(basename "$src")
+                  echo "Copying $src to /Applications/Nix Apps/$app_name" >&2
+                  ${pkgsDarwin.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
+                done
+              '';
 
             homebrew = {
               enable = true;
-              taps = [];
+              taps = [ ];
 
               brews = [
                 "git-graph"

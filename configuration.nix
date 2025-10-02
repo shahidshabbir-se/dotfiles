@@ -1,3 +1,7 @@
+# Edit this configuration file to define what should be installed on
+# your system. Help is available in the configuration.nix(5) man page, on
+# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+
 { config, lib, pkgs, ... }:
 
 {
@@ -5,42 +9,111 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
+  nixpkgs.config.allowUnfree = true;
+  # configuration.nix
+programs.nix-ld.enable = true;
+programs.nix-ld.libraries = with pkgs; [
+   fnm # Add fnm here
+];
+  services.xserver.videoDrivers = [ "amdgpu" ];
+  
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+
+
+  networking.hostName = "nixos";
+  networking.networkmanager.enable = true;
 
   # Use the systemd-boot EFI boot loader.
-  programs.nix-ld = {
-  enable = true;
-  libraries = with pkgs; [
-    lua-language-server
-  ];
-};
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+boot.loader.efi.efiSysMountPoint = "/boot";
+services.openssh.enable = true;
+  services.tailscale.enable = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
   # Set your time zone.
-  time.timeZone = "Asia/Karachi";
+  # time.timeZone = "Europe/Amsterdam";
 
-    hardware.bluetooth.enable = true;
-    services.blueman.enable = true;
-  
-  fonts.packages = [
-    pkgs.roboto
-    pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.geist-mono
+  # Configure network proxy if necessary
+  # networking.proxy.default = "http://user:password@proxy:port/";
+  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+  # Select internationalisation properties.
+  # i18n.defaultLocale = "en_US.UTF-8";
+  # console = {
+  #   font = "Lat2-Terminus16";
+  #   keyMap = "us";
+  #   useXkbConfig = true; # use xkb.options in tty.
+  # };
+
+  # Enable the X11 windowing system.
+  # services.xserver.enable = true;
+
+services.tumbler.enable = true;
+time.timeZone = "Asia/Karachi";
+
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  services.xserver.enable = true;
+  services.blueman.enable = true;
+  services.power-profiles-daemon.enable = true;
+security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
+services.pulseaudio = {
+    enable = true;
+    package = pkgs.pulseaudioFull;
+  };
+
+services.pipewire = {
+    enable = false;
+    # pulse.enable = true;
+  };
+
+  services.libinput.enable = true;
+  services.libinput.touchpad.accelSpeed = "1.0";
+  services.upower.enable = true;
+
+  users.users.shahid = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "docker" "audio" "kvm" ];
+    packages = with pkgs; [
+      hyprland
+      starship
+      git
+openssh
+      home-manager
+      kitty
+      catppuccin-sddm
+    ];
+    shell = pkgs.zsh;
+  };
+    home-manager.backupFileExtension = "backup";
+
+
+environment.systemPackages = with pkgs; [
+    (
+      catppuccin-sddm.override {
+        flavor = "mocha";
+        font = "JetBrainsMono Nerd Font";
+        fontSize = "9";
+        loginBackground = true;
+      }
+    )
   ];
-  services.xserver.enable = false;
-  home-manager.backupFileExtension = "backup";
   programs.hyprland.enable = true;
   virtualisation.docker.enable = true;
   programs.zsh.enable = true;
-
-
-  services.keyd = {
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
+ services.keyd = {
     enable = true;
     keyboards = {
       default = {
@@ -71,32 +144,12 @@
   };
 
   nix.settings.auto-optimise-store = true;
-
-
-  services.displayManager.sddm = {
+ services.displayManager.sddm = {
     enable = true;
     theme = "catppuccin-mocha";
     package = pkgs.kdePackages.sddm;
     autoNumlock = true;
   };
-
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
-
-  # Enable the X11 windowing system.
-  # services.xserver.enable = true;
-
-
   
 
   # Configure keymap in X11
@@ -109,42 +162,24 @@
   # Enable sound.
   # services.pulseaudio.enable = true;
   # OR
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    alsa.enable = true;
-    wireplumber.enable = true;
-  };
-
-  security.sudo = {
-    enable = true;
-    wheelNeedsPassword = false;
-  };
-
-  environment.systemPackages = with pkgs; [
-    (
-      catppuccin-sddm.override {
-        flavor = "mocha";
-        font = "GeistMono Nerd Font";
-        fontSize = "9";
-        background = ./wallpapers/abstract.png;
-        loginBackground = true;
-      }
-    )
-  ];
-
-
+  # services.pipewire = {
+  #   enable = true;
+  #   pulse.enable = true;
+  # };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  services.libinput.enable = true;
-  services.libinput.touchpad.accelSpeed = "1.0";
-  services.upower.enable = true;
+  # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.shahid.isNormalUser = true;
-  users.users.asad.isNormalUser = true;
+  # users.users.alice = {
+  #   isNormalUser = true;
+  #   extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+  #   packages = with pkgs; [
+  #     tree
+  #   ];
+  # };
 
-  programs.firefox.enable = true;
+  # programs.firefox.enable = true;
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -177,8 +212,6 @@
   # accidentally delete configuration.nix.
   # system.copySystemConfiguration = true;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nixpkgs.config.allowUnfree = true;
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
@@ -197,4 +230,6 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.05"; # Did you read the comment?
+
 }
+

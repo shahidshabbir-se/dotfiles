@@ -33,7 +33,7 @@
         inherit style;
       };
     in {
-      size = 15;
+      size = if pkgs.stdenv.isDarwin then 15 else 13;
       offset.y = 2;
       normal = jetbrainsMono "Light";
       bold = jetbrainsMono "Regular";

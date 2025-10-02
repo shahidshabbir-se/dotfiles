@@ -96,10 +96,12 @@ vim.lsp.config.templ = vim.tbl_deep_extend("force", {
 --   },
 -- })
 
--- lspconfig.rnix.setup({
---   on_attach = on_attach,
---   capabilities = capabilities,
--- })
+vim.lsp.config.rnix = {
+  cmd = { "rnix-lsp" },
+  filetypes = { "nix" },
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
 
 -- lspconfig.ts_ls.setup({
 --   on_attach = on_attach,
