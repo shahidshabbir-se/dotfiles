@@ -25,26 +25,25 @@ preset = 'qwerty'
 
 # Gaps settings
 [gaps]
-inner.horizontal = 15
-inner.vertical = 15
-outer.left = 15
-outer.bottom = 15
-outer.top = 7
-outer.right = 15
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 10
+outer.bottom = 10
+outer.top = 10
+outer.right = 10
 
 # Main mode bindings
 [mode.main.binding]
 # Launch applications
-cmd-enter = 'exec-and-forget open -na "Ghostty"'
+cmd-enter = 'exec-and-forget open -na "Kitty"'
 cmd-b = 'exec-and-forget open -a "Zen"'
 cmd-shift-b = 'exec-and-forget open -na "Zen" --args --private-window'
-cmd-m = 'exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Spotify.app"'
+cmd-m = 'exec-and-forget open -a "$HOME/Applications/Spotify.app"'
 cmd-e = 'exec-and-forget open -a Finder'
 
 # Window management
-cmd-q = "close --quit-if-last-window"
-alt-f = 'fullscreen'
-alt-t = 'layout floating tiling'
+cmd-g = 'fullscreen'
+cmd-shift-p = 'layout floating tiling'
 
 # Focus movement
 cmd-h = 'focus left'
@@ -122,7 +121,7 @@ esc = 'mode main'
 
 # Window detection rules
 [[on-window-detected]]
-if.app-id = 'com.mitchellh.ghostty'
+if.app-id = 'net.kovidgoyal.kitty'
 run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]

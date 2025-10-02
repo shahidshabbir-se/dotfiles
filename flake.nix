@@ -175,6 +175,7 @@
                 "notunes"
                 "betterdisplay"
                 "tailscale-app"
+                "goland"
                 "raycast"
                 "whatsapp"
                 "obsidian"
@@ -184,7 +185,6 @@
                 "visual-studio-code"
                 "zen"
                 "ghostty"
-                "figma"
                 "localsend"
                 "orbstack"
               ];

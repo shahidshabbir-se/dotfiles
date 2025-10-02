@@ -1,6 +1,5 @@
-{
-  pkgs,
-  ...
+{ pkgs
+, ...
 }: {
   enable = true;
 
@@ -63,9 +62,10 @@
     text_composition_strategy = "legacy";
 
     # Shell command
-    shell = if pkgs.stdenv.isDarwin
-      then "zsh -l -c 'tmux attach || tmux new \\; run-shell \"~/.tmux/plugins/tmux-resurrect/scripts/restore.sh\" \\; set-environment -g SHELL ${pkgs.zsh}/bin/zsh'"
-      else "${pkgs.zsh}/bin/zsh -l -c 'tmux attach || tmux new \\; run-shell \"~/.tmux/plugins/tmux-resurrect/scripts/restore.sh\"'";
+    shell =
+      if pkgs.stdenv.isDarwin
+      then "/etc/profiles/per-user/shahid/bin/zsh -c \"tmux attach -t zen || tmux new -s zen\""
+      else "${pkgs.tmux}/bin/tmux";
 
     # Tokyo Night theme colors
     background = "#1a1b26";
@@ -81,9 +81,9 @@
     inactive_tab_background = "#292e42";
     inactive_tab_foreground = "#545c7e";
 
-#     background_image = "~/Pictures/Wallpapers/2.png";
-# background_tint = "0.9900";
-# background_image_layout = "cscaled";
+    #     background_image = "~/Pictures/Wallpapers/2.png";
+    # background_tint = "0.9900";
+    # background_image_layout = "cscaled";
 
     # Windows
     active_border_color = "#7aa2f7";
