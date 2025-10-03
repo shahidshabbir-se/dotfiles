@@ -47,6 +47,7 @@ in
       fd
       gnupg
       fzf
+      rustup
       bat
       python3
       poppins

@@ -235,5 +235,10 @@
     if command -v docker &>/dev/null; then
       eval "$(docker completion zsh)"
     fi
+
+    # fnm (Fast Node Manager) - NixOS only
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      eval "$(fnm env --use-on-cd)"
+    fi
   '';
 }

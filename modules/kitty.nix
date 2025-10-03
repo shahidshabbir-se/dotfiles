@@ -39,8 +39,8 @@
     # URL settings
     url_launcher = "open";
     detect_urls = "yes";
-    url_color = "#0087bd";
-    url_style = "curly";
+    url_color = "#c0caf5";
+    url_style = "straight";
     url_prefixes = "file ftp ftps gemini git gopher http https irc ircs kitty mailto news sftp ssh";
 
     # Graphics
@@ -62,10 +62,8 @@
     text_composition_strategy = "legacy";
 
     # Shell command
-    shell =
-      if pkgs.stdenv.isDarwin
-      then "/etc/profiles/per-user/shahid/bin/zsh -c \"tmux attach -t zen || tmux new -s zen\""
-      else "${pkgs.tmux}/bin/tmux";
+    # shell =
+    #   "/etc/profiles/per-user/shahid/bin/zsh -c \"tmux attach -t zen || tmux new -s zen\"";
 
     # Tokyo Night theme colors
     background = "#1a1b26";
@@ -119,4 +117,8 @@
     "ctrl+shift+c" = "copy_to_clipboard";
     "ctrl+shift+v" = "paste_from_clipboard";
   };
+
+  extraConfig = ''
+    map shift+enter send_text all \n
+  '';
 }

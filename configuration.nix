@@ -6,17 +6,18 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
   nixpkgs.config.allowUnfree = true;
   # configuration.nix
-programs.nix-ld.enable = true;
-programs.nix-ld.libraries = with pkgs; [
-   fnm # Add fnm here
-];
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    fnm # Add fnm here
+  ];
   services.xserver.videoDrivers = [ "amdgpu" ];
-  
+
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
@@ -28,8 +29,8 @@ programs.nix-ld.libraries = with pkgs; [
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-boot.loader.efi.efiSysMountPoint = "/boot";
-services.openssh.enable = true;
+  boot.loader.efi.efiSysMountPoint = "/boot";
+  services.openssh.enable = true;
   services.tailscale.enable = true;
 
   # networking.hostName = "nixos"; # Define your hostname.
@@ -54,26 +55,26 @@ services.openssh.enable = true;
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
 
-services.tumbler.enable = true;
-time.timeZone = "Asia/Karachi";
+  services.tumbler.enable = true;
+  time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
 
   services.xserver.enable = true;
   services.blueman.enable = true;
   services.power-profiles-daemon.enable = true;
-security.sudo = {
+  security.sudo = {
     enable = true;
     wheelNeedsPassword = false;
   };
-services.pulseaudio = {
-    enable = true;
-    package = pkgs.pulseaudioFull;
-  };
+  services.pulseaudio.enable = false;
 
-services.pipewire = {
-    enable = false;
-    # pulse.enable = true;
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    jack.enable = true;
   };
 
   services.libinput.enable = true;
@@ -87,17 +88,17 @@ services.pipewire = {
       hyprland
       starship
       git
-openssh
+      openssh
       home-manager
       kitty
       catppuccin-sddm
     ];
     shell = pkgs.zsh;
   };
-    home-manager.backupFileExtension = "backup";
+  home-manager.backupFileExtension = "backup";
 
 
-environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     (
       catppuccin-sddm.override {
         flavor = "mocha";
@@ -113,7 +114,7 @@ environment.systemPackages = with pkgs; [
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
   ];
- services.keyd = {
+  services.keyd = {
     enable = true;
     keyboards = {
       default = {
@@ -144,13 +145,13 @@ environment.systemPackages = with pkgs; [
   };
 
   nix.settings.auto-optimise-store = true;
- services.displayManager.sddm = {
+  services.displayManager.sddm = {
     enable = true;
     theme = "catppuccin-mocha";
     package = pkgs.kdePackages.sddm;
     autoNumlock = true;
   };
-  
+
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
