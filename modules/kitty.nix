@@ -62,8 +62,8 @@
     text_composition_strategy = "legacy";
 
     # Shell command
-    # shell =
-    #   "/etc/profiles/per-user/shahid/bin/zsh -c \"tmux attach -t zen || tmux new -s zen\"";
+    shell =
+      "/etc/profiles/per-user/shahid/bin/zsh -c \"tmux attach -t zen || tmux new -s zen\"";
 
     # Tokyo Night theme colors
     background = "#1a1b26";
