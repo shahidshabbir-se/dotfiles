@@ -91,7 +91,6 @@
       openssh
       home-manager
       kitty
-      catppuccin-sddm
     ];
     shell = pkgs.zsh;
   };

@@ -116,9 +116,6 @@
   keybindings = {
     "ctrl+shift+c" = "copy_to_clipboard";
     "ctrl+shift+v" = "paste_from_clipboard";
+    "shift+enter" = "send_text all \\x1b\\r";
   };
-
-  extraConfig = ''
-    map shift+enter send_text all \n
-  '';
 }

@@ -15,6 +15,10 @@ let
   inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
+  # imports = [
+  #   ../../modules/pkgs/kubernetes.nix
+  # ];
+
   # ───────────────────────────────────────────────
   # ▶ Home Directory & Package Set
   # ───────────────────────────────────────────────
@@ -48,6 +52,8 @@ in
       gnupg
       fzf
       rustup
+      alsa-utils
+      android-studio
       bat
       python3
       poppins
@@ -59,7 +65,6 @@ in
       brightnessctl
       playerctl
       localsend
-      ghostty
       yazi
       ripgrep
       wrk
@@ -72,7 +77,6 @@ in
       onefetch
       coreutils
       jq
-      wezterm
       inputs.zen-browser.packages."${system}".default
       htop
       tokyonight-gtk-theme
@@ -107,6 +111,7 @@ in
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
     kitty = import ../../modules/kitty.nix { inherit pkgs; };
+    # ghostty = import ../../modules/ghostty.nix { inherit pkgs; };
   };
 
   wayland.windowManager.hyprland = import ../../modules/hyprland.nix {

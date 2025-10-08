@@ -23,6 +23,7 @@ in
   enabledExtensions = with spicePkgs.extensions; [
     adblock
     hidePodcasts
+    keyboardShortcut
     shuffle
   ];
 
