@@ -22,11 +22,11 @@
   # ▶ Shell Aliases
   # ───────────────────────────────────────────────
   shellAliases = {
-    ls="lsd --icon=always --color=always -a --ignore-glob=node_modules --ignore-glob=.DS_Store";
-    ll="lsd --icon=always --color=always -la --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ls = "lsd --icon=always --color=always -a --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ll = "lsd --icon=always --color=always -la --ignore-glob=node_modules --ignore-glob=.DS_Store";
 
     tree = "lsd --tree --depth 1";
-    
+
     # Basic utilities
     rm = "rm -rf";
     c = "clear";
@@ -69,7 +69,7 @@
     bd = "bun run debug";
     bb = "bun run build";
   };
-  
+
 
   # ───────────────────────────────────────────────
   # ▶ Zinit Plugin Manager Setup

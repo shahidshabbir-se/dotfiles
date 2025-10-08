@@ -12,7 +12,7 @@ let
   homeDirectory = "/Users/shahid";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
-  wallpaperPath = "/Users/shahid/dotfiles/wallpapers/lighthouse.jpg";
+  wallpaperPath = "${homeDirectory}/Pictures/Wallpapers/1.png";
   inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
@@ -39,6 +39,7 @@ in
       aerospace
       fd
       gnupg
+      wget
       fzf
       bat
       yazi
@@ -85,7 +86,7 @@ in
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-    spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
+    # spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
     kitty = import ../../modules/kitty.nix { inherit pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };

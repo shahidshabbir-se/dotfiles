@@ -112,8 +112,8 @@
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
-                # "${pkgsDarwin.alacritty}/Applications/Alacritty.app"
-                "/Applications/Ghostty.app"
+                "/Applications/Nix Apps/kitty.app"
+                "/Applications/Nix Apps/Spotify.app"
                 "/Applications/Xcode.app"
                 "/Applications/Zen.app"
               ];
@@ -133,7 +133,7 @@
               let
                 systemPackages = [
                   # pkgsDarwin.alacritty
-                  # pkgsDarwin.kitty
+                  pkgsDarwin.kitty
                   pkgsDarwin.mkalias
                 ];
 
@@ -148,12 +148,20 @@
                 rm -rf /Applications/Nix\ Apps
                 mkdir -p /Applications/Nix\ Apps
 
+                # Link system packages with mkalias
                 find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
                 while IFS= read -r src; do
                   app_name=$(basename "$src")
-                  echo "Copying $src to /Applications/Nix Apps/$app_name" >&2
+                  echo "Aliasing $src to /Applications/Nix Apps/$app_name" >&2
                   ${pkgsDarwin.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
                 done
+
+                # Link Spotify from Home Manager with mkalias
+                if [ -L "/Users/${user}/Applications/Spotify.app" ]; then
+                  spotify_src=$(readlink "/Users/${user}/Applications/Spotify.app")
+                  echo "Aliasing Spotify..." >&2
+                  ${pkgsDarwin.mkalias}/bin/mkalias "$spotify_src" "/Applications/Nix Apps/Spotify.app"
+                fi
               '';
 
             homebrew = {
@@ -165,6 +173,7 @@
                 "sqlc"
                 "gitleaks"
                 "lazygit"
+                "infisical"
                 "golang-migrate"
                 "node"
                 "ncdu"
@@ -175,16 +184,12 @@
                 "notunes"
                 "betterdisplay"
                 "tailscale-app"
-                "goland"
                 "raycast"
                 "whatsapp"
                 "obsidian"
                 "karabiner-elements"
                 "vlc"
-                "arc"
-                "visual-studio-code"
                 "zen"
-                "ghostty"
                 "localsend"
                 "orbstack"
               ];
