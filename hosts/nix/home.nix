@@ -55,8 +55,9 @@ in
       alsa-utils
       android-studio
       bat
+      vlc
       python3
-      poppins
+      inter
       zip
       feh
       grimblast
@@ -127,8 +128,8 @@ in
       gtk-theme = "Tokyonight-Dark-BL";
       cursor-theme = "Banana-Catppuccin-Mocha";
       cursor-size = 36;
-      font-name = "Poppins 11";
-      document-font-name = "Poppins 11";
+      font-name = "Inter 11";
+      document-font-name = "Inter 11";
       monospace-font-name = "JetBrainsMono Nerd Font 11";
     };
   };
