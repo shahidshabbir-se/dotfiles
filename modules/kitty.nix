@@ -9,7 +9,7 @@
   # Font configuration
   font = {
     name = "JetBrainsMono Nerd Font Mono";
-    size = if pkgs.stdenv.isDarwin then 15 else 13;
+    size = if pkgs.stdenv.isDarwin then 16 else 13;
   };
 
   settings = {
@@ -34,7 +34,7 @@
 
     # Window title
     window_title_format = "kitty - {title}";
-    hide_window_decorations = "yes";
+    hide_window_decorations = if pkgs.stdenv.isDarwin then "yes" else "no";
 
     # URL settings
     url_launcher = "open";

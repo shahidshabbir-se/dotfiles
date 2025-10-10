@@ -42,8 +42,8 @@ cmd-m = 'exec-and-forget open -a "$HOME/Applications/Spotify.app"'
 cmd-e = 'exec-and-forget open -a Finder'
 
 # Window management
-cmd-g = 'fullscreen'
-cmd-shift-p = 'layout floating tiling'
+cmd-g = 'macos-native-fullscreen'
+cmd-shift-t = 'layout floating tiling'
 
 # Focus movement
 cmd-h = 'focus left'
