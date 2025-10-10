@@ -94,24 +94,41 @@
     ];
     shell = pkgs.zsh;
   };
-  home-manager.backupFileExtension = "backup";
-
+  home-manager.backupFileExtension = "bak";
 
   environment.systemPackages = with pkgs; [
-    (
-      catppuccin-sddm.override {
-        flavor = "mocha";
-        font = "JetBrainsMono Nerd Font";
-        fontSize = "9";
-        loginBackground = true;
-      }
-    )
+    (sddm-astronaut.override {
+      themeConfig = {
+        ScreenWidth = "1920";
+        ScreenHeight = "1080";
+        Font = "Inter";
+        FontSize = "12";
+        RoundCorners = "20";
+
+        # Video background
+        Background = "${./assets/login-background.mp4}";
+        BackgroundSpeed = "1.0";
+        PauseBackground = "false";  # Set to true to pause video
+        CropBackground = "true";
+        BackgroundHorizontalAlignment = "center";
+        BackgroundVerticalAlignment = "center";
+        DimBackground = "0.0";
+
+        PartialBlur = "true";
+        BlurMax = "35";
+        Blur = "2.0";
+        HaveFormBackground = "false";
+        FormPosition = "left";
+      };
+    })
   ];
+
   programs.hyprland.enable = true;
   virtualisation.docker.enable = true;
   programs.zsh.enable = true;
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
+    pkgs.inter
   ];
   services.keyd = {
     enable = true;
@@ -144,13 +161,22 @@
   };
 
   nix.settings.auto-optimise-store = true;
+
   services.displayManager.sddm = {
     enable = true;
-    theme = "catppuccin-mocha";
     package = pkgs.kdePackages.sddm;
     autoNumlock = true;
+    theme = "sddm-astronaut-theme";
+    wayland = {
+      enable = true;
+      compositor = "weston";
+    };
+    extraPackages = with pkgs; [
+      kdePackages.qtsvg
+      kdePackages.qtvirtualkeyboard
+      kdePackages.qtmultimedia
+    ];
   };
-
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";

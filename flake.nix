@@ -18,6 +18,8 @@
       url = "github:0xc000022070/zen-browser-flake";
     };
 
+    catppuccin.url = "github:catppuccin/nix";
+
     # macOS
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
@@ -29,7 +31,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, spicetify-nix, zen-browser, nix-darwin, nix-homebrew, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, spicetify-nix, zen-browser, catppuccin, nix-darwin, nix-homebrew, ... }:
     let
       lib = nixpkgs.lib;
 
