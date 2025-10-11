@@ -108,17 +108,17 @@
         # Video background
         Background = "${./assets/login-background.mp4}";
         BackgroundSpeed = "1.0";
-        PauseBackground = "false";  # Set to true to pause video
+        PauseBackground = "false"; # Set to true to pause video
         CropBackground = "true";
         BackgroundHorizontalAlignment = "center";
         BackgroundVerticalAlignment = "center";
-        DimBackground = "0.0";
+        DimBackground = "0.3";
 
-        PartialBlur = "true";
+        PartialBlur = "false";
         BlurMax = "35";
         Blur = "2.0";
         HaveFormBackground = "false";
-        FormPosition = "left";
+        FormPosition = "center";
       };
     })
   ];
