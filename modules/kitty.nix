@@ -52,6 +52,10 @@
     # Close confirmation
     confirm_os_window_close = 0;
 
+    # Remote control for clipboard script
+    allow_remote_control = "yes";
+    listen_on = "unix:/tmp/kitty-socket";
+
     # Symbol mapping for Nerd Fonts
     symbol_map = "U+E000-U+F8FF,U+F0000-U+FFFFF JetBrainsMono Nerd Font";
 
@@ -118,4 +122,9 @@
     "ctrl+shift+v" = "paste_from_clipboard";
     "shift+enter" = "send_text all \\x1b\\r";
   };
+
+  # Custom clipboard-to-path script for Claude Code
+  extraConfig = ''
+    map ctrl+v launch --type=background --allow-remote-control --keep-focus /home/shahid/dotfiles/scripts/clip2path
+  '';
 }

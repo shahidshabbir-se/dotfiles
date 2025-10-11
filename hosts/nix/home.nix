@@ -54,6 +54,7 @@ in
       rustup
       alsa-utils
       android-studio
+      mpvpaper
       bat
       vlc
       python3
@@ -81,6 +82,8 @@ in
       inputs.zen-browser.packages."${system}".default
       htop
       tokyonight-gtk-theme
+      swaynotificationcenter
+      libnotify
     ];
   };
 
@@ -113,6 +116,10 @@ in
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
     kitty = import ../../modules/kitty.nix { inherit pkgs; };
     # ghostty = import ../../modules/ghostty.nix { inherit pkgs; };
+  };
+
+  services.swaync = import ../../modules/swaync.nix {
+    inherit pkgs homeDirectory;
   };
 
   wayland.windowManager.hyprland = import ../../modules/hyprland.nix {

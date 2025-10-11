@@ -17,8 +17,7 @@
     ];
 
     exec-once = [
-      "swww-daemon &"
-      "swww img $HOME/Pictures/Wallpapers/1.png"
+      "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
       "wl-paste --type text --watch cliphist store"
       "wl-paste --type image --watch cliphist store"
       "xdg-mime default vlc.desktop video/mp4"
@@ -152,6 +151,7 @@
       "$mod, P, pseudo,"
       "$mod SHIFT, J, togglesplit,"
       "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
+      "$mod, N, exec, swaync-client -t -sw"
       "ALT, C, exec, ~/.config/wofi/clipboard.sh"
       "SUPER, Space, exec, ~/.config/wofi/launcher.sh"
       "$mod, left, workspace, -1"
@@ -172,9 +172,9 @@
       "$mod, mouse_up, workspace, e-1"
       "$mod CTRL, right, workspace, e+1"
       "$mod CTRL, left, workspace, e-1"
-      ", F7, exec, playerctl previous"
-      ", F8, exec, playerctl play-pause"
-      ", F9, exec, playerctl next"
+      ", F7, exec, playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
+      ", F8, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
+      ", F9, exec, playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
     ] ++ (
       builtins.concatLists (builtins.genList
         (
@@ -200,18 +200,18 @@
     ];
 
     bindel = [
-      ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-      ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-      ",XF86MonBrightnessUp, exec, brightnessctl s 10%+"
-      ",XF86MonBrightnessDown, exec, brightnessctl s 10%-"
+      ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && ${homeDirectory}/dotfiles/scripts/volume-notify.sh"
+      ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && ${homeDirectory}/dotfiles/scripts/volume-notify.sh"
+      ",XF86MonBrightnessUp, exec, brightnessctl s 10%+ && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh"
+      ",XF86MonBrightnessDown, exec, brightnessctl s 10%- && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh"
     ];
 
     bindl = [
-      ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-      ", XF86AudioNext, exec, playerctl next"
-      ", XF86AudioPause, exec, playerctl play-pause"
-      ", XF86AudioPlay, exec, playerctl play-pause"
-      ", XF86AudioPrev, exec, playerctl previous"
+      ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ${homeDirectory}/dotfiles/scripts/volume-notify.sh"
+      ", XF86AudioNext, exec, playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
+      ", XF86AudioPause, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
+      ", XF86AudioPlay, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
+      ", XF86AudioPrev, exec, playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
       ", switch:on:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,disable\""
       ", switch:off:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,1920x1080@60,auto,1.3333\""
     ];
