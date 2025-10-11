@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    types=$(wl-paste --list-types)
+    if grep -q '^image/' <<<"$types"; then
+        ext=$(grep -m1 '^image/' <<<"$types" | cut -d/ -f2 | cut -d';' -f1)
+        file="$HOME/Pictures/Screenshots/clipboard_$(date +%Y%m%d_%H%M%S).${ext}"
+        wl-paste > "$file"
+        printf '%q' "$file" | kitty @ send-text --stdin
+    else
+        wl-paste --no-newline | kitty @ send-text --stdin
+    fi
+elif [ -n "$DISPLAY" ]; then
+    types=$(xclip -selection clipboard -t TARGETS -o)
+    if grep -q '^image/' <<<"$types"; then
+        ext=$(grep -m1 '^image/' <<<"$types" | cut -d/ -f2 | cut -d';' -f1)
+        file="$HOME/Pictures/Screenshots/clipboard_$(date +%Y%m%d_%H%M%S).${ext}"
+        xclip -selection clipboard -t "image/${ext}" -o > "$file"
+        printf '%q' "$file" | kitty @ send-text --stdin
+    else
+        xclip -selection clipboard -o | kitty @ send-text --stdin
+    fi
+fi
