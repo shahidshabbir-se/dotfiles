@@ -26,8 +26,10 @@ in
 
     packages = with pkgs; [
       zsh
+      inputs.home-manager.packages.${pkgs.system}.home-manager
       zoxide
       atuin
+      goose-cli
       tmux
       lsd
       rustup
@@ -44,6 +46,12 @@ in
       bat
       yazi
       ripgrep
+      sqlc
+      gitleaks
+      lazygit
+      fnm
+      go-migrate
+      ncdu
       wrk
       act
       dogdns
@@ -81,12 +89,12 @@ in
     };
 
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
-    tmux = import ../../modules/tmux.nix { inherit pkgs; };
+    tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     atuin = import ../../modules/atuin.nix;
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-    # spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
+    spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
     kitty = import ../../modules/kitty.nix { inherit pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };

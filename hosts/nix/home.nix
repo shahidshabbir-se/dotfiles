@@ -108,7 +108,7 @@ in
     };
 
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
-    tmux = import ../../modules/tmux.nix { inherit pkgs; };
+    tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     atuin = import ../../modules/atuin.nix;
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };

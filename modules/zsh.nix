@@ -42,7 +42,7 @@
     cr = "crush";
 
     # Git aliases
-    ggr = "git-graph --model git-flow";
+    ggr = "git log --oneline --graph --decorate --all";
     lzg = "lazygit";
 
     # pnpm aliases
@@ -237,9 +237,6 @@
       eval "$(docker completion zsh)"
     fi
 
-    # fnm (Fast Node Manager) - NixOS only
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
       eval "$(fnm env --use-on-cd)"
-    fi
   '';
 }
