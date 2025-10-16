@@ -60,3 +60,14 @@ autocmd("BufRead", {
 -- end
 
 -- vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
+--
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "NvimTree",
+  callback = function()
+    vim.api.nvim_buf_set_option(0, "modifiable", true)
+    vim.api.nvim_buf_set_lines(0, 0, 0, false, { "  📁  File Explorer" })
+    vim.api.nvim_buf_add_highlight(0, -1, "Title", 0, 0, -1)
+    vim.api.nvim_buf_set_option(0, "modifiable", false)
+  end,
+})
+
