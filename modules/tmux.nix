@@ -1,16 +1,5 @@
-#  ████████╗███╗   ███╗██╗   ██╗██╗  ██╗
-#  ╚══██╔══╝████╗ ████║██║   ██║╚██╗██╔╝
-#     ██║   ██╔████╔██║██║   ██║ ╚███╔╝ 
-#     ██║   ██║╚██╔╝██║██║   ██║ ██╔██╗ 
-#     ██║   ██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗
-#     ╚═╝   ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝
-#  https://github.com/shahidshabbir-se/dotfiles
+{ pkgs, config, lib, ... }:
 
-{ pkgs, ... }:
-
-# ─────────────────────────────────────────────────────────────
-#  Custom Plugin: tokyonight-tmux theme
-# ─────────────────────────────────────────────────────────────
 let
   tokyo-night = pkgs.tmuxPlugins.mkTmuxPlugin {
     pluginName = "tokyo-night";
@@ -23,14 +12,9 @@ let
     };
   };
 in
-
-# ─────────────────────────────────────────────────────────────
-#  Main Tmux Configuration
-# ─────────────────────────────────────────────────────────────
 {
   enable = true;
 
-  # General settings
   aggressiveResize = true;
   baseIndex = 1;
   disableConfirmationPrompt = true;
@@ -40,7 +24,6 @@ in
   secureSocket = true;
   shell = "${pkgs.zsh}/bin/zsh";
 
-  # Plugins
   plugins = with pkgs.tmuxPlugins; [
     tokyo-night
     yank
@@ -48,14 +31,11 @@ in
     vim-tmux-navigator
   ];
 
-  # Raw tmux configuration
   extraConfig = ''
     # ─────────────────────────────────────────────────────────
     #  Terminal Features
     # ─────────────────────────────────────────────────────────
     set -as terminal-features ",xterm-256color:RGB"
-    # set-option -sa terminal-overrides ",xterm*:Tc"
-
     set -g mouse on
 
     # ─────────────────────────────────────────────────────────
@@ -78,7 +58,6 @@ in
     # ─────────────────────────────────────────────────────────
     set -g base-index 1
     set -g pane-base-index 1
-    set-window-option -g pane-base-index 1
     set-option -g renumber-windows on
 
     # ─────────────────────────────────────────────────────────
@@ -94,7 +73,6 @@ in
     bind -n M-Up select-pane -U
     bind -n M-Down select-pane -D
 
-
     # ─────────────────────────────────────────────────────────
     #  Window Switching (Shift + Arrow or Alt + Vim)
     # ─────────────────────────────────────────────────────────
@@ -108,17 +86,22 @@ in
     # ─────────────────────────────────────────────────────────
     set -g @tokyo-night-tmux_window_id_style dsquare
     set -g @tokyo-night-tmux_show_datetime 0
-    set -g @tokyo-night-tmux_show_path 0
+    ${lib.optionalString pkgs.stdenv.isDarwin ''
+      set -g @tokyo-night-tmux_show_hostname 0
+
+    ''}
+    ${lib.optionalString (!pkgs.stdenv.isDarwin) ''
+      set -g @tokyo-night-tmux_show_hostname 0
+    ''}
     set -g @tokyo-night-tmux_path_format relative
     set -g @tokyo-night-tmux_show_git 1
-    set -g @tokyo-night-tmux_terminal_icon 
-    set -g @tokyo-night-tmux_active_terminal_icon 
-    set -g @tokyo-night-tmux_show_hostname 1
+    set -g @tokyo-night-tmux_terminal_icon ""
+    set -g @tokyo-night-tmux_active_terminal_icon ""
+    set -g @tokyo-night-tmux_show_path 1
     set -g @tokyo-night-tmux_show_music 1
     set -g @tokyo-night-tmux_window_tidy_icons 0
     set -g @tokyo-night-tmux_transparent 1
 
-    # Load theme
     run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
 
     # ─────────────────────────────────────────────────────────
@@ -146,10 +129,9 @@ in
     bind c new-window -c "#{pane_current_path}"
 
     # ─────────────────────────────────────────────────────────
-    #  Set default shell for new panes/windows
+    #  Default Shell
     # ─────────────────────────────────────────────────────────
     set -g default-shell "${pkgs.zsh}/bin/zsh"
     set -g default-command "${pkgs.zsh}/bin/zsh"
   '';
 }
-

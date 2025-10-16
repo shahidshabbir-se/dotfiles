@@ -16,16 +16,18 @@ in
   # ▶ Enable Spicetify with Customizations
   # ───────────────────────────────────────────────
   enable = true;
+  spotifyPackage = pkgs.spotify;
 
   # ───────────────────────────────────────────────
   # ▶ Extensions
   # ───────────────────────────────────────────────
-  enabledExtensions = with spicePkgs.extensions; [
-    adblock
-    hidePodcasts
-    keyboardShortcut
-    shuffle
-  ];
+  enabledExtensions = with spicePkgs.extensions;
+    [
+      adblock
+      hidePodcasts
+      keyboardShortcut
+      shuffle
+    ];
 
   # ───────────────────────────────────────────────
   # ▶ Custom Apps

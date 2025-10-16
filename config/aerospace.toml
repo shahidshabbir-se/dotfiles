@@ -38,12 +38,12 @@ outer.right = 10
 cmd-enter = 'exec-and-forget open -na "Kitty"'
 cmd-b = 'exec-and-forget open -a "Zen"'
 cmd-shift-b = 'exec-and-forget open -na "Zen" --args --private-window'
-cmd-m = 'exec-and-forget open -a "$HOME/Applications/Spotify.app"'
+cmd-m = 'exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Spotify.app"'
 cmd-e = 'exec-and-forget open -a Finder'
 
 # Window management
 cmd-g = 'macos-native-fullscreen'
-cmd-shift-t = 'layout floating tiling'
+cmd-ctrl-t = 'layout floating tiling'
 
 # Focus movement
 cmd-h = 'focus left'
@@ -138,3 +138,8 @@ run = 'move-node-to-workspace 2'
 if.app-id = 'app.zen-browser.zen'
 if.window-title-regex-substring = 'Private Browsing'
 run = 'move-node-to-workspace 8'
+
+# Finder → floating window
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'

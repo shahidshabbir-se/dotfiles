@@ -114,8 +114,9 @@
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
-                "/Applications/Nix Apps/kitty.app"
-                "/Applications/Nix Apps/Spotify.app"
+                "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
+                "${pkgsDarwin.kitty}/Applications/kitty.app"
+                "/Applications/Docker.app"
                 "/Applications/Xcode.app"
                 "/Applications/Zen.app"
               ];
@@ -146,24 +147,16 @@
                 };
               in
               pkgsDarwin.lib.mkForce ''
-                echo "Setting up /Applications..." >&2
+                # Set up applications.
+                echo "setting up /Applications..." >&2
                 rm -rf /Applications/Nix\ Apps
                 mkdir -p /Applications/Nix\ Apps
-
-                # Link system packages with mkalias
                 find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-                while IFS= read -r src; do
+                while read -r src; do
                   app_name=$(basename "$src")
-                  echo "Aliasing $src to /Applications/Nix Apps/$app_name" >&2
+                  echo "copying $src" >&2
                   ${pkgsDarwin.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
                 done
-
-                # Link Spotify from Home Manager with mkalias
-                if [ -L "/Users/${user}/Applications/Spotify.app" ]; then
-                  spotify_src=$(readlink "/Users/${user}/Applications/Spotify.app")
-                  echo "Aliasing Spotify..." >&2
-                  ${pkgsDarwin.mkalias}/bin/mkalias "$spotify_src" "/Applications/Nix Apps/Spotify.app"
-                fi
               '';
 
             homebrew = {
@@ -171,20 +164,11 @@
               taps = [ ];
 
               brews = [
-                "git-graph"
-                "sqlc"
-                "gitleaks"
-                "lazygit"
-                "infisical"
-                "golang-migrate"
-                "node"
-                "ncdu"
               ];
 
               casks = [
                 "qbittorrent"
                 "notunes"
-                "betterdisplay"
                 "tailscale-app"
                 "raycast"
                 "whatsapp"
@@ -193,7 +177,7 @@
                 "vlc"
                 "zen"
                 "localsend"
-                "orbstack"
+                "docker-desktop"
               ];
 
               masApps = {
@@ -234,3 +218,4 @@
       darwinPackages = self.darwinConfigurations.${host}.pkgs;
     };
 }
+
