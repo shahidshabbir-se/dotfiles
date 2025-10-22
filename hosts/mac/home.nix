@@ -50,7 +50,6 @@ in
       gitleaks
       lazygit
       fnm
-      go-migrate
       ncdu
       wrk
       act

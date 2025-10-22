@@ -5,9 +5,11 @@ return {
 	{ import = "plugins.override.nvim-web-devicons" },
 	{ import = "plugins.override.nvim-tree" },
 	{ import = "plugins.override.conform" },
+	{ import = "plugins.override.todo-comments" },
 
 	-- Specs
 	{ import = "plugins.spec.tiny-code-action" },
+	{ import = "plugins.spec.vim-tmux-navigator" },
 	{ import = "plugins.spec.typescript-tools" },
 	{ import = "plugins.spec.ts-autotag" },
 	{ import = "plugins.spec.vim-astro" },
