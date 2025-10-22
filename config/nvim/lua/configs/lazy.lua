@@ -9,7 +9,7 @@ return {
   defaults = { lazy = true },
   install = { colorscheme = { "nvchad" } },
   ui = {
-    border = "round",
+    border = "single",
     icons = {
       ft = "",
       lazy = "󰂠 ",

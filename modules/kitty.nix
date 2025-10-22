@@ -124,7 +124,11 @@
   };
 
   # Custom clipboard-to-path script for Claude Code
-  extraConfig = ''
-    map ctrl+v launch --type=background --allow-remote-control --keep-focus /home/shahid/dotfiles/scripts/clip2path
-  '';
+  extraConfig =
+    if pkgs.stdenv.isDarwin then
+      ""
+    else
+      ''
+        map ctrl+v launch --type=background --allow-remote-control --keep-focus /home/shahid/dotfiles/scripts/clip2path
+      '';
 }

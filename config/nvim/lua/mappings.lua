@@ -2,6 +2,12 @@ require("nvchad.mappings")
 
 local map = vim.keymap.set
 
+-- Tmux Navigator
+map("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Navigate left" })
+map("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Navigate down" })
+map("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Navigate up" })
+map("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Navigate right" })
+
 -- Command Mode
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
@@ -26,7 +32,7 @@ map("v", "<C-a>", "<Esc>ggVG$", { desc = "Select all in VISUAL mode" })
 map("i", "<C-a>", "<Esc>ggVG$", { desc = "Select all in INSERT mode" })
 
 -- NvimTree
--- map("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+map("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 
 -- Sessions
 map("n", "<leader>ss", "<cmd>SessionSearch<CR>", { noremap = true, silent = true, desc = "Search session" })
