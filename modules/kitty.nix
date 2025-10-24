@@ -57,7 +57,7 @@
     listen_on = "unix:/tmp/kitty-socket";
 
     # Symbol mapping for Nerd Fonts
-    symbol_map = "U+E000-U+F8FF,U+F0000-U+FFFFF JetBrainsMono Nerd Font";
+    symbol_map ="U+E000-U+F8FF,U+F0000-U+FFFFF,U+100000-U+10ffff JetBrainsMonoNL Nerd Font";
 
     # macOS specific
     macos_option_as_alt = "left";
@@ -121,6 +121,9 @@
     "ctrl+shift+c" = "copy_to_clipboard";
     "ctrl+shift+v" = "paste_from_clipboard";
     "shift+enter" = "send_text all \\x1b\\r";
+
+    # Open URL hints with keyboard
+    "ctrl+shift+e" = "open_url_with_hints";
   };
 
   # Custom clipboard-to-path script for Claude Code
