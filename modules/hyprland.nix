@@ -17,7 +17,9 @@
     ];
 
     exec-once = [
-      "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
+      "swww-daemon &"
+      "swww img $HOME/Pictures/Wallpapers/12.jpg"
+      # "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
       "wl-paste --type text --watch cliphist store"
       "wl-paste --type image --watch cliphist store"
       "xdg-mime default vlc.desktop video/mp4"
@@ -146,8 +148,8 @@
       "$mod, R, exec, kooha"
       "$mod SHIFT, R, exec, killall kooha"
       "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
-      "$mod, F, togglefloating,"
-      "$mod, G, fullscreen, 0"
+      "$mod, T, togglefloating,"
+      "$mod, F, fullscreen, 0"
       "$mod, P, pseudo,"
       "$mod SHIFT, J, togglesplit,"
       "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""

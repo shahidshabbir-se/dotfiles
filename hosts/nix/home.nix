@@ -34,57 +34,31 @@ in
     homeDirectory = homeDirectory;
     stateVersion = "24.05";
 
-    packages = with pkgs; [
-      zsh
-      zoxide
-      gcc
-      atuin
-      tmux
-      lsd
-      typtea
-      bun
-      go
-      doppler
-      nitch
-      fnm
-      btop
-      fd
-      gnupg
-      fzf
-      rustup
+    packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
       alsa-utils
-      android-studio
-      mpvpaper
-      bat
-      vlc
-      python3
-      inter
-      zip
-      feh
-      grimblast
-      wofi
-      unzip
       brightnessctl
-      playerctl
-      localsend
-      yazi
-      ripgrep
-      wrk
       cliphist
-      wl-clipboard
-      act
-      dogdns
-      swww
-      fastfetch
-      onefetch
-      coreutils
-      jq
+      feh
+      gcc
+      gnumake
+      grimblast
       inputs.zen-browser.packages."${system}".default
-      htop
-      tokyonight-gtk-theme
-      swaynotificationcenter
+      inter
       libnotify
-    ];
+      localsend
+      mpvpaper
+      nitch
+      playerctl
+      python3
+      swaynotificationcenter
+      swww
+      tokyonight-gtk-theme
+      unzip
+      vlc
+      wl-clipboard
+      wofi
+      zip
+    ]);
   };
 
   # ───────────────────────────────────────────────
@@ -106,7 +80,7 @@ in
     git = import ../../modules/git.nix {
       inherit config pkgs homeDirectory userGmail userGithub;
     };
-
+    delta = import ../../modules/delta.nix { inherit pkgs; };
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     atuin = import ../../modules/atuin.nix;
