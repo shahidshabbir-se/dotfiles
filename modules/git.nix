@@ -18,19 +18,17 @@
   # ───────────────────────────────────────────────
   # ▶ Extensions
   # ───────────────────────────────────────────────
-  delta.enable = true;
   lfs.enable = true;
 
   # ───────────────────────────────────────────────
-  # ▶ Git Identity
+  # ▶ Git Identity & Configuration
   # ───────────────────────────────────────────────
-  userName = userGithub;
-  userEmail = userGmail;
+  settings = {
+    user = {
+      name = userGithub;
+      email = userGmail;
+    };
 
-  # ───────────────────────────────────────────────
-  # ▶ Git Configuration
-  # ───────────────────────────────────────────────
-  extraConfig = {
     init.defaultBranch = "master";
 
     color.ui = "auto";
@@ -51,19 +49,6 @@
     branch.autosetupmerge = true;
 
     rerere.enabled = true;
-
-    delta = {
-      side-by-side = true;
-      line-numbers = true;
-      syntax-theme = "Dracula";
-    };
-
-    pager = {
-      diff = "delta";
-      log = "delta";
-      reflog = "delta";
-      show = "delta";
-    };
   };
 
   # ───────────────────────────────────────────────
