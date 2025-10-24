@@ -3,8 +3,6 @@
 with pkgs; [
   gitleaks
   graphite-cli
-  sqlc
-  opencode
   lazygit
   wget
   ncdu
