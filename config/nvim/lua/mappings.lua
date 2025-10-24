@@ -133,3 +133,44 @@ end
 
 map({ "o", "x" }, "iq", smart_quote(true), { expr = true })
 map({ "o", "x" }, "aq", smart_quote(false), { expr = true })
+
+-- OpenCode
+map({ "n", "x" }, "<leader>oa", function()
+	require("opencode").ask("@this: ", { submit = true })
+end, { desc = "OpenCode: Ask about this" })
+
+map({ "n", "x" }, "<leader>os", function()
+	require("opencode").select()
+end, { desc = "OpenCode: Select prompt" })
+
+map({ "n", "x" }, "<leader>o+", function()
+	require("opencode").prompt("@this")
+end, { desc = "OpenCode: Add this" })
+
+map("n", "<leader>ot", function()
+	require("opencode").toggle()
+end, { desc = "OpenCode: Toggle embedded" })
+
+map("n", "<leader>oc", function()
+	require("opencode").command()
+end, { desc = "OpenCode: Select command" })
+
+map("n", "<leader>on", function()
+	require("opencode").command("session_new")
+end, { desc = "OpenCode: New session" })
+
+map("n", "<leader>oi", function()
+	require("opencode").command("session_interrupt")
+end, { desc = "OpenCode: Interrupt session" })
+
+map("n", "<leader>oA", function()
+	require("opencode").command("agent_cycle")
+end, { desc = "OpenCode: Cycle selected agent" })
+
+map("n", "<S-C-u>", function()
+	require("opencode").command("messages_half_page_up")
+end, { desc = "OpenCode: Messages half page up" })
+
+map("n", "<S-C-d>", function()
+	require("opencode").command("messages_half_page_down")
+end, { desc = "OpenCode: Messages half page down" })

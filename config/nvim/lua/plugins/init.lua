@@ -14,6 +14,7 @@ return {
 	{ import = "plugins.spec.ts-autotag" },
 	{ import = "plugins.spec.vim-astro" },
 	{ import = "plugins.spec.tailwind-fold" },
+	{ import = "plugins.spec.opencode" },
 	{ import = "plugins.spec.mini-indentoscope" },
 	{ import = "plugins.spec.copilot" },
 	{ import = "plugins.spec.markview" },

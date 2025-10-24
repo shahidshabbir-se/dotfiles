@@ -29,7 +29,7 @@ in
       inputs.home-manager.packages.${pkgs.system}.home-manager
       zoxide
       atuin
-      goose-cli
+      croc
       tmux
       lsd
       rustup
@@ -51,6 +51,7 @@ in
       lazygit
       fnm
       ncdu
+      graphite-cli
       wrk
       act
       dogdns
@@ -85,6 +86,42 @@ in
   programs = {
     git = import ../../modules/git.nix {
       inherit config pkgs homeDirectory userGmail userGithub;
+    };
+
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        features = "tokyonight";
+        side-by-side = true;
+        line-numbers = true;
+
+        # Tokyonight Night theme colors
+        tokyonight = {
+          syntax-theme = "none";
+          commit-decoration-style = "bold yellow box ul";
+          file-style = "bold yellow";
+          file-decoration-style = "none";
+          hunk-header-decoration-style = "blue box";
+          hunk-header-file-style = "purple";
+          hunk-header-line-number-style = "bold blue";
+          hunk-header-style = "file line-number syntax";
+
+          minus-style = "syntax #37222c";
+          minus-emph-style = "syntax #713137";
+          minus-non-emph-style = "syntax auto";
+
+          plus-style = "syntax #20303b";
+          plus-emph-style = "syntax #2c5a66";
+          plus-non-emph-style = "syntax auto";
+
+          line-numbers-minus-style = "#914c54";
+          line-numbers-plus-style = "#449dab";
+          line-numbers-left-style = "#565f89";
+          line-numbers-right-style = "#565f89";
+          line-numbers-zero-style = "#3b4261";
+        };
+      };
     };
 
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
