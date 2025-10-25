@@ -18,6 +18,7 @@
 
     exec-once = [
       "swww-daemon &"
+      "waybar &"
       "swww img $HOME/Pictures/Wallpapers/12.jpg"
       # "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
       "wl-paste --type text --watch cliphist store"

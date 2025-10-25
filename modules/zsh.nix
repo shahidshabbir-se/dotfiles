@@ -39,6 +39,7 @@
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
     cc = "claude";
+    oc = "opencode";
     cr = "crush";
 
     # Git aliases
