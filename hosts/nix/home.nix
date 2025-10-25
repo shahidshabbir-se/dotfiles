@@ -35,6 +35,10 @@ in
     stateVersion = "24.05";
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
+      waybar
+      fastfetch
+      wlogout
+      hyprlock
       alsa-utils
       brightnessctl
       cliphist
@@ -45,7 +49,6 @@ in
       inputs.zen-browser.packages."${system}".default
       inter
       libnotify
-      localsend
       mpvpaper
       nitch
       playerctl
@@ -66,6 +69,7 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
+  xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
 
   # ───────────────────────────────────────────────
