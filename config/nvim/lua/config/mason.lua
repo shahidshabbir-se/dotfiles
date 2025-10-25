@@ -10,7 +10,7 @@ mason.setup({
       package_pending = "",
       package_uninstalled = "",
     },
-    border = "single",
+    border = "rounded",
     winhighlight = "Normal:MyHighlight,FloatBorder:FloatBorder",
   },
 })
