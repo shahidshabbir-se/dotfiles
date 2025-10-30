@@ -33,7 +33,8 @@
     vi = "nvim";
     ".." = "cd ..";
     e = "exit";
-    copy = "pbcopy";
+    copy = if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy";
+    pwd = if pkgs.stdenv.isDarwin then "pwd | pbcopy" else "pwd | wl-copy";
     cat = "bat";
     bc = "better-commits";
     viconf = "cd ~/.config/nvim && nvim .";
@@ -220,7 +221,8 @@
     }
 
     pw() {
-      python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | pbcopy
+      local clip_cmd="${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"
+      python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | $clip_cmd
     }
 
 

@@ -19,7 +19,7 @@
     exec-once = [
       "swww-daemon &"
       "waybar &"
-      "swww img $HOME/Pictures/Wallpapers/12.jpg"
+      "swww img $HOME/Pictures/Wallpapers/12.jpg --transition-type grow --transition-pos 0.054,0.977 --transition-step 90"
       # "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
       "wl-paste --type text --watch cliphist store"
       "wl-paste --type image --watch cliphist store"
@@ -130,21 +130,25 @@
     };
 
     bind = [
+      "$mod, Return, workspace, 1"
       "$mod, Return, exec, $terminal"
       "$mod, Q, killactive,"
       "$mod, E, exec, $fileManager"
       "CTRL_SHIFT, ESCAPE, exec, kitty --class=btop -e btop"
+      "$mod, B, workspace, 2"
       "$mod, B, exec, zen"
+      "$mod SHIFT, B, workspace, 8"
+      "$mod SHIFT, B, exec, zen --private-window"
       "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
       "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
       "$mod, O, exec, obsidian"
       "$mod + alt, p, exec, shutdown -h 0"
       "$mod + alt, r, exec, reboot"
       "$mod + alt, q, exec, sudo systemctl restart display-manager.service"
-      "$mod, L, exec, hyprlock"
+      "$mod SHIFT, L, exec, hyprlock"
+      "$mod, M, workspace, 9"
       "$mod, M, exec, spotify"
       "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
-      "$mod SHIFT, B, exec, zen --private-window"
       "$mod CTRL, S, exec, grimblast --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
       "$mod, R, exec, kooha"
       "$mod SHIFT, R, exec, killall kooha"
@@ -225,14 +229,13 @@
       "center, class:^(yazi)$"
       "noblur,class:^(Brave-browser)$"
       "float, class:^(btop)$"
-      "size 800 500, class:^(btop)$"
+      "size 900 600, class:^(btop)$"
       "center, class:^(btop)$"
       "float, class:^(podman-tui)$"
       "size 1000 600, class:^(podman-tui)$"
       "center, class:^(podman-tui)$"
       "suppressevent maximize, class:.*"
       "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
-      "workspace 9,class:^(Spotify)$"
     ];
 
     xwayland = {
