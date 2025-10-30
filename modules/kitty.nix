@@ -120,8 +120,8 @@
   keybindings = {
     "ctrl+shift+c" = "copy_to_clipboard";
     "ctrl+shift+v" = "paste_from_clipboard";
-    # "shift+enter" = "send_text all \\x1b\\r";
-    "shift+enter" = "send_text all \\\\\\r";
+    "shift+enter" = "send_text all \\x1b\\r";
+    # "shift+enter" = "send_text all \\\\\\r";
 
     # Open URL hints with keyboard
     "ctrl+shift+e" = "open_url_with_hints";
@@ -134,6 +134,6 @@
       ''
     else
       ''
-        # map ctrl+v launch --type=background --allow-remote-control --keep-focus /home/shahid/dotfiles/scripts/clip2path
+        map ctrl+v launch --type=background --allow-remote-control --keep-focus /home/shahid/dotfiles/scripts/clip2path
       '';
 }

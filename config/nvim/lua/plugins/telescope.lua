@@ -23,7 +23,8 @@ return {
           '--with-filename',
           '--line-number',
           '--column',
-          '--smart-case'
+          '--smart-case',
+          '--hidden'
         },
         prompt_prefix = "  ",
         selection_caret = " ",
@@ -49,7 +50,7 @@ return {
           },
         },
         file_sorter = require 'telescope.sorters'.get_fuzzy_file,
-        file_ignore_patterns = {},
+        file_ignore_patterns = { "^%.git/" },
         generic_sorter = require 'telescope.sorters'.get_generic_fuzzy_sorter,
         path_display = { "truncate" },
         winblend = 0,
@@ -76,7 +77,13 @@ return {
             ["<C-k>"] = actions.move_selection_previous,
           },
         },
-      }
+      },
+      pickers = {
+        find_files = {
+          hidden = true,
+          find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
+        },
+      },
     }
 
     pcall(telescope.load_extension, 'fzf')
