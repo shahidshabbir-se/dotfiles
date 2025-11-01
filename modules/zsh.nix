@@ -47,18 +47,6 @@
     ggr = "git log --oneline --graph --decorate --all";
     lzg = "lazygit";
 
-    # pnpm aliases
-    pa = "pnpm add";
-    pad = "pnpm install --save-dev";
-    ps = "pnpm start";
-    pt = "pnpm test";
-    pi = "pnpm install";
-    pr = "pnpm run dev";
-    pl = "pnpm run lint";
-    pf = "pnpm run format";
-    pd = "pnpm run debug";
-    pb = "pnpm run build";
-
     # bun aliases
     ba = "bun add";
     bad = "bun add --dev";
