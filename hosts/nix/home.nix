@@ -60,6 +60,9 @@ in
       vlc
       wl-clipboard
       wofi
+      rofi
+      rofi-bluetooth
+      rofi-network-manager
       zip
     ]);
   };
@@ -71,6 +74,7 @@ in
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
   xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
+  xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
