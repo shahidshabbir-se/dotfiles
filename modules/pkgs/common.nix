@@ -6,6 +6,7 @@ with pkgs; [
   lazygit
   wget
   ncdu
+  pgcli
   act
   atuin
   bat
