@@ -127,6 +127,8 @@ in
     bind v split-window -v -c "#{pane_current_path}"
     bind h split-window -h -c "#{pane_current_path}"
     bind c new-window -c "#{pane_current_path}"
+    bind-key < swap-window -t -1   # move current window left
+    bind-key > swap-window -t +1
 
     # ─────────────────────────────────────────────────────────
     #  Default Shell

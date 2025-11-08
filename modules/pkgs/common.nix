@@ -9,6 +9,7 @@ with pkgs; [
   pgcli
   act
   atuin
+  lazysql
   bat
   btop
   bun
