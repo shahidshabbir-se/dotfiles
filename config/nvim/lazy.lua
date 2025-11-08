@@ -27,6 +27,13 @@ require("lazy").setup({
     -- add your plugins here
     { import = "plugins" },
   },
+  ui = {
+    border = "rounded",
+    size = {
+      width = 0.8,
+      height = 0.8,
+    },
+  },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "tokyonight" } },

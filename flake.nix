@@ -106,7 +106,8 @@
             system.defaults = {
               dock.autohide = true;
               dock.persistent-apps = [
-                "/System/Applications/Apps.app"
+                # "/System/Applications/Apps.app"
+                "/System/Applications/Launchpad.app"
                 "/System/Applications/System Settings.app"
                 "/Applications/Microsoft Excel.app"
                 "/Applications/Microsoft PowerPoint.app"
