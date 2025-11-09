@@ -12,11 +12,6 @@
 #  ██║     ██╔══██║██║   ██║██║╚██╗██║██║     ██╔══██║██╔══╝  ██╔══██╗
 #  ███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╗██║  ██║███████╗██║  ██║
 #  ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-#	originally written by: gh0stzk - https://github.com/gh0stzk/dotfiles
-#	rewritten for hyprland by :	 develcooking - https://github.com/develcooking/hyprland-dotfiles
-#	Info    - This script runs the rofi launcher, to select
-#             the wallpapers included in the theme you are in.
-
 
 
 # Set some variables
@@ -76,10 +71,12 @@ swww img "${wall_dir}/${wall_selection}" \
     --transition-fps 60 \
     --transition-duration 0.8
 
+# Update hyprlock wallpaper symlink
+ln -sf "${wall_dir}/${wall_selection}" "${HOME}/.config/rofi/.current_wallpaper"
+
 # Optional notification
 if command -v notify-send >/dev/null 2>&1; then
     notify-send -i "${wall_dir}/${wall_selection}" "Wallpaper Applied" "${wall_selection}" -t 2000
 fi
 
 exit 0
-

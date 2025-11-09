@@ -9,10 +9,10 @@
     "$mod" = "SUPER";
     "$terminal" = "kitty";
     "$fileManager" = "kitty --class=yazi -e yazi";
-    "$menu" = "wofi --show drun";
+    "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
     monitor = [
-      "HDMI-A-1,1920x1080@120,auto,1,bitdepth,10"
+      "HDMI-A-1,1920x1080@120,0x0,1.2,bitdepth,10,cm,hdr,sdrbrightness,1.2,sdrsaturation,0.98,vrr,1"
       "eDP-1,1920x1080@60,auto,1.3333"
     ];
 
@@ -35,18 +35,18 @@
       "xdg-mime default feh.desktop image/gif"
       "xdg-mime default feh.desktop image/webp"
       "xdg-mime default feh.desktop image/bmp"
-      "hyprctl setcursor Banana-Catppuccin-Mocha 36"
+      "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
     ];
 
     env = [
       "XDG_MIME_APPS,$HOME/.config/mimeapps.list"
       "TERMINAL,kitty"
       "EDITOR,nvim"
-      "XCURSOR_THEME,Banana-Catppuccin-Mocha"
-      "XCURSOR_SIZE,36"
-      "HYPRCURSOR_SIZE,36"
-      "HYPRCURSOR_THEME,Banana-Catppuccin-Mocha"
-      "GTK_THEME,Tokyonight-Dark-BL"
+      "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
+      "XCURSOR_SIZE,24"
+      "HYPRCURSOR_SIZE,24"
+      "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
+      "GTK_THEME,catppuccin-mocha-blue-standard"
     ];
 
     general = {
@@ -164,7 +164,7 @@
       "ALT SHIFT, P, exec, ${homeDirectory}/dotfiles/config/rofi/power-launch.sh"
       "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
       "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"
-      "SUPER, Space, exec, ~/.config/wofi/launcher.sh"
+      "SUPER, Space, exec, ${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh"
       "$mod, left, workspace, -1"
       "ALT,Tab,cyclenext, next"
       "ALT SHIFT,Tab,cyclenext, prev"

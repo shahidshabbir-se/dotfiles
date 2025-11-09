@@ -13,6 +13,10 @@ let
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
+  
+  # Allow unfree packages for corefonts
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [ "corefonts" ];
 in
 {
   # imports = [
@@ -25,9 +29,9 @@ in
   home.pointerCursor = {
     x11.enable = true;
     gtk.enable = true;
-    package = import ../../modules/banana-cursor.nix { inherit pkgs; };
-    size = 36;
-    name = "Banana-Catppuccin-Mocha";
+    package = pkgs.catppuccin-cursors.mochaDark;
+size = 24;
+    name = "catppuccin-mocha-dark-cursors";
   };
   home = {
     username = "shahid";
@@ -35,6 +39,7 @@ in
     stateVersion = "24.05";
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
+      corefonts
       waybar
       fastfetch
       wlogout
@@ -50,12 +55,14 @@ in
       inter
       libnotify
       mpvpaper
+      xfce.thunar
       nitch
       playerctl
       python3
       swaynotificationcenter
       swww
-      tokyonight-gtk-theme
+      (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = ["blue"]; size = "standard"; })
+      onlyoffice-bin
       unzip
       vlc
       wl-clipboard
@@ -63,6 +70,7 @@ in
       rofi
       rofi-bluetooth
       rofi-network-manager
+catppuccin-papirus-folders
       zip
     ]);
   };
@@ -114,9 +122,10 @@ in
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
-      gtk-theme = "Tokyonight-Dark-BL";
-      cursor-theme = "Banana-Catppuccin-Mocha";
-      cursor-size = 36;
+      gtk-theme = "catppuccin-mocha-blue-standard";
+      icon-theme = "Papirus-Dark";
+      cursor-theme = "catppuccin-mocha-dark-cursors";
+      cursor-size = 24;
       font-name = "Inter 11";
       document-font-name = "Inter 11";
       monospace-font-name = "JetBrainsMono Nerd Font 11";
@@ -126,8 +135,12 @@ in
   gtk = {
     enable = true;
     theme = {
-      name = "Tokyonight-Dark-BL";
-      package = pkgs.tokyonight-gtk-theme;
+      name = "catppuccin-mocha-blue-standard";
+      package = (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = ["blue"]; size = "standard"; });
+    };
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.catppuccin-papirus-folders;
     };
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
