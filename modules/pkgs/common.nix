@@ -4,6 +4,7 @@ with pkgs; [
   gitleaks
   graphite-cli
   lazygit
+  lazysql
   wget
   ncdu
   pgcli

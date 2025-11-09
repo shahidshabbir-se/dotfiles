@@ -19,7 +19,7 @@ window {
     margin:                      0px;
     padding:                     0px;
     border:                      1px solid;
-    border-radius:               0px;
+    border-radius:               6px;
     border-color:                @selected;
     cursor:                      "default";
     background-color:            @background;
@@ -39,7 +39,7 @@ inputbar {
     spacing:                     10px;
     padding:                     0px;
     border:                      0px;
-    border-radius:               0px;
+    border-radius:               6px;
     border-color:                @selected;
     background-color:            transparent;
     text-color:                  @foreground;
@@ -52,7 +52,7 @@ textbox-prompt-colon {
     font:                        "JetbrainsMono NF Bold 10";
     str:                         "󰹑";
     padding:                     10px 17px 10px 12px;
-    border-radius:               0px;
+    border-radius:               6px;
     background-color:            @active;
     text-color:                  @background;
 }
@@ -60,7 +60,7 @@ textbox-prompt-colon {
 prompt {
     enabled:                     true;
     padding:                     10px;
-    border-radius:               0px;
+    border-radius:               6px;
     background-color:            @selected;
     text-color:                  @background;
 }
@@ -70,7 +70,7 @@ message {
     margin:                      0px;
     padding:                     10px;
     border:                      0px solid;
-    border-radius:               0px;
+    border-radius:               6px;
     border-color:                @selected;
     background-color:            @background-alt;
     text-color:                  @foreground;
@@ -100,7 +100,7 @@ element {
     enabled:                     true;
     padding:                     22px 22px 22px 10px;
     border:                      0px solid;
-    border-radius:               0px;
+    border-radius:               6px;
     border-color:                @selected;
     background-color:            transparent;
     text-color:                  @foreground;
@@ -119,7 +119,7 @@ element-text {
 element normal.normal,
 element alternate.normal {
     border:                      1px solid;
-    border-radius:               0px;
+    border-radius:               6px;
     border-color:                @selected;
     background-color:            @background;
     text-color:                  @foreground;

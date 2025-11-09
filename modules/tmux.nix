@@ -82,6 +82,12 @@ in
     bind -n M-l next-window
 
     # ─────────────────────────────────────────────────────────
+    #  Window Moving (Ctrl + Shift + Arrow)
+    # ─────────────────────────────────────────────────────────
+    bind -n C-S-Left swap-window -t -1\; select-window -t -1
+    bind -n C-S-Right swap-window -t +1\; select-window -t +1
+
+    # ─────────────────────────────────────────────────────────
     #  Theme Configuration (tokyo-night)
     # ─────────────────────────────────────────────────────────
     set -g @tokyo-night-tmux_window_id_style dsquare
