@@ -1,0 +1,64 @@
+[
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "shift-tab": "pane::ActivatePreviousItem",
+      "tab": "pane::ActivateNextItem"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-n c": "workspace::NewTerminal",
+      "ctrl-n h": "pane::SplitRight",
+      "ctrl-n v": "pane::SplitDown"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal || Workspace && vim_mode == normal",
+    "bindings": {
+      "ctrl-a": "editor::SelectAll",
+      "space f f": "file_finder::Toggle",
+      "ctrl-x m": "agent::ToggleModelSelector",
+      "space t h": "theme_selector::Toggle",
+      "space f r": "workspace::NewSearch",
+      "space l g": "git_panel::ToggleFocus",
+      "space e": "vim::ToggleProjectPanelFocus",
+      "space d b": "debug_panel::ToggleFocus",
+      "space p r": "projects::OpenRecent",
+      "ctrl-\\": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Editor || ProjectPanel && not_editing || Terminal",
+    "bindings": {
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-j": "workspace::ActivatePaneDown"
+    }
+  },
+  {
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      "space e": "workspace::ToggleLeftDock",
+      "a": "project_panel::NewFile",
+      "n": "project_panel::NewFile",
+      "shift-n": "project_panel::NewDirectory",
+      "d": "project_panel::Trash",
+      "l": "project_panel::Open",
+      "r": "project_panel::Rename",
+      "x": "project_panel::Cut",
+      "c": "project_panel::Copy",
+      "p": "project_panel::Paste"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      "ctrl-f": "editor::AcceptEditPrediction",
+      "alt-j": "editor::ContextMenuNext",
+      "alt-k": "editor::ContextMenuPrevious"
+    }
+  }
+]

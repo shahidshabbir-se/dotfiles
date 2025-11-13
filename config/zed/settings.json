@@ -1,0 +1,56 @@
+{
+	"agent_servers": {
+		"OpenCode": {
+			"command": "opencode",
+			"args": ["acp"]
+		}
+	},
+	"features": {
+		"edit_prediction_provider": "copilot"
+	},
+	"agent": {
+		"inline_assistant_model": {
+			"provider": "Chutes.ai",
+			"model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8"
+		},
+		"profiles": {
+			"autonomous": {
+				"name": "Autonomous",
+				"tools": {
+					"list_directory": true,
+					"grep": true,
+					"find_path": true,
+					"fetch": true,
+					"edit_file": true,
+					"diagnostics": true,
+					"delete_path": true,
+					"create_directory": true,
+					"copy_path": true
+				},
+				"enable_all_context_servers": false,
+				"context_servers": {}
+			}
+		},
+		"always_allow_tool_actions": true,
+		"default_model": {
+			"provider": "Chutes.ai",
+			"model": "moonshotai/Kimi-K2-Thinking"
+		},
+		"model_parameters": []
+	},
+	"vim_mode": true,
+	"terminal": {
+		"default_height": 9999
+	},
+	"icon_theme": "Material Icon Theme",
+	"buffer_font_family": "JetBrainsMono Nerd Font",
+	"ui_font_size": 15,
+	"buffer_font_size": 15,
+	"buffer_font_weight": 300,
+	"theme": {
+		"mode": "dark",
+		"light": "One Light",
+		"dark": "Catppuccin Mocha"
+	},
+	"autosave": "on_focus_change"
+}
