@@ -62,7 +62,7 @@ in
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
-    kitty = import ../../modules/kitty.nix { inherit pkgs; };
+    wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }
