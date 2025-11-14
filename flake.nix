@@ -116,7 +116,7 @@
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
                 "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
-                "${pkgsDarwin.kitty}/Applications/kitty.app"
+                "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                 "/Applications/Docker.app"
                 "/Applications/Xcode.app"
                 "/Applications/Zen.app"
@@ -137,7 +137,7 @@
               let
                 systemPackages = [
                   # pkgsDarwin.alacritty
-                  pkgsDarwin.kitty
+                  pkgsDarwin.wezterm
                   pkgsDarwin.mkalias
                 ];
 
