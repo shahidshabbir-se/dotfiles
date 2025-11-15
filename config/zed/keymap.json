@@ -19,7 +19,8 @@
     "bindings": {
       "ctrl-a": "editor::SelectAll",
       "space f f": "file_finder::Toggle",
-      "ctrl-x m": "agent::ToggleModelSelector",
+      "space a m": "agent::ToggleModelSelector",
+      "alt-j": "vim::ScrollUp",
       "space t h": "theme_selector::Toggle",
       "space f r": "workspace::NewSearch",
       "space l g": "git_panel::ToggleFocus",

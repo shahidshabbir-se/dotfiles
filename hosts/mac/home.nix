@@ -39,6 +39,7 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
+  xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
   home.file.".aerospace.toml".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/aerospace.toml";
 
 

@@ -35,7 +35,7 @@ outer.right = 10
 # Main mode bindings
 [mode.main.binding]
 # Launch applications
-cmd-enter = 'exec-and-forget open -na "$HOME/Applications/Home Manager Apps/kitty.app"'
+cmd-enter = 'exec-and-forget open -na "$HOME/Applications/Home Manager Apps/WezTerm.app"'
 cmd-b = 'exec-and-forget open -a "Zen"'
 cmd-shift-b = 'exec-and-forget open -na "Zen" --args --private-window'
 cmd-m = 'exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Spotify.app"'
@@ -121,7 +121,7 @@ esc = 'mode main'
 
 # Window detection rules
 [[on-window-detected]]
-if.app-id = 'net.kovidgoyal.kitty'
+if.app-id = 'org.wezfurlong.wezterm'
 run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]

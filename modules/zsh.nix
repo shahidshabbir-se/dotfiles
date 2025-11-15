@@ -216,6 +216,7 @@
 
     # Environment variables
     export TERM="xterm-256color"
+    export TMPDIR=$HOME/tmp
     export PATH="$HOME/.bun/bin:$PATH"
     export PATH="$HOME/.cache/.bun/bin:$PATH"
     export PATH="$PATH:$(go env GOPATH)/bin"
