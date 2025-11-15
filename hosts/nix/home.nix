@@ -62,7 +62,7 @@ size = 24;
       swaynotificationcenter
       swww
       (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = ["blue"]; size = "standard"; })
-      onlyoffice-bin
+      onlyoffice-desktopeditors
       unzip
       vlc
       wl-clipboard
@@ -105,7 +105,8 @@ catppuccin-papirus-folders
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
-    kitty = import ../../modules/kitty.nix { inherit pkgs; };
+    wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
+    # kitty = import ../../modules/kitty.nix { inherit pkgs; };
     # ghostty = import ../../modules/ghostty.nix { inherit pkgs; };
   };
 

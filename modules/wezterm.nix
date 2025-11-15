@@ -1,7 +1,11 @@
 {
   pkgs,
   ...
-}: {
+}: let
+  isMac = pkgs.stdenv.isDarwin;
+  fontSize = if isMac then 17.0 else 13.0;
+  windowDecorations = if isMac then "RESIZE" else "NONE";
+in {
   enable = true;
   package = pkgs.wezterm;
 
@@ -10,10 +14,15 @@
       adjust_window_size_when_changing_font_size = false,
       color_scheme = "tokyonight_night",
       enable_tab_bar = false,
-      font_size = 17.0,
+      font_size = ${toString fontSize},
       font = wezterm.font("JetBrainsMono Nerd Font"),
+<<<<<<< Updated upstream
       window_decorations = "RESIZE",
       window_close_confirmation = "NeverPrompt",
+=======
+      window_decorations = "${windowDecorations}",
+      default_prog = { "${pkgs.zsh}/bin/zsh", "-c", "tmux attach -t main || tmux new -s main" },
+>>>>>>> Stashed changes
 
       window_padding = {
         left = 16,

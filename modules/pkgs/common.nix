@@ -3,6 +3,7 @@
 with pkgs; [
   gitleaks
   graphite-cli
+  gh
   lazygit
   lazysql
   wget
