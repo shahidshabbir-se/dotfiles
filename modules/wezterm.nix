@@ -13,6 +13,7 @@
       font_size = 17.0,
       font = wezterm.font("JetBrainsMono Nerd Font"),
       window_decorations = "RESIZE",
+      window_close_confirmation = "NeverPrompt",
 
       window_padding = {
         left = 16,
@@ -34,6 +35,9 @@
         },
         { key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
       },
+
+      -- Attach to tmux session on startup
+      default_prog = { "${pkgs.zsh}/bin/zsh", "-c", "tmux attach -t main || tmux new -s main" },
 
       mouse_bindings = {
         -- Ctrl-click will open the link under the mouse cursor

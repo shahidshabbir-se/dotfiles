@@ -19,7 +19,7 @@ in
   baseIndex = 1;
   disableConfirmationPrompt = true;
   keyMode = "vi";
-  terminal = "xterm-kitty";
+  terminal = "xterm-256color";
   newSession = true;
   secureSocket = true;
   shell = "${pkgs.zsh}/bin/zsh";
