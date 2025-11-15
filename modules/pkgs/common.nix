@@ -6,6 +6,7 @@ with pkgs; [
   lazygit
   lazysql
   wget
+  cbonsai
   ncdu
   pgcli
   act
