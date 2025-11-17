@@ -1,7 +1,7 @@
 return {
   "luckasRanarison/tailwind-tools.nvim",
   name = "tailwind-tools",
-  event = { "BufReadPre", "BufNewFile" },
+event = "VimEnter",
   build = ":UpdateRemotePlugins",
   dependencies = {
     "nvim-treesitter/nvim-treesitter",

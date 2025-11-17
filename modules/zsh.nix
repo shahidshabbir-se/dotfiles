@@ -33,7 +33,7 @@
     vi = "nvim";
     ".." = "cd ..";
     e = "exit";
-    psql= "pgcli";
+    psql = "pgcli";
     copy = if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy";
     cat = "bat";
     bc = "better-commits";

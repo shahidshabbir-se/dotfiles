@@ -1,145 +1,90 @@
 { pkgs, config, lib, ... }:
 
 let
-  tokyo-night = pkgs.tmuxPlugins.mkTmuxPlugin {
-    pluginName = "tokyo-night";
-    version = "unstable-2025-02-26";
-    src = pkgs.fetchFromGitHub {
-      owner = "janoamaral";
-      repo = "tokyo-night-tmux";
-      rev = "master";
-      sha256 = "sha256-TOS9+eOEMInAgosB3D9KhahudW2i1ZEH+IXEc0RCpU0=";
-    };
-  };
 in
 {
   enable = true;
 
-  aggressiveResize = true;
-  baseIndex = 1;
-  disableConfirmationPrompt = true;
-  keyMode = "vi";
+  # aggressiveResize = true;
+  # baseIndex = 1;
+  # disableConfirmationPrompt = true;
+  # keyMode = "vi";
   terminal = "xterm-256color";
-  newSession = true;
-  secureSocket = true;
+  # newSession = true;
+  # secureSocket = true;
   shell = "${pkgs.zsh}/bin/zsh";
-
-  plugins = with pkgs.tmuxPlugins; [
-    tokyo-night
-    yank
-    sensible
-    vim-tmux-navigator
-  ];
+  # escapeTime = 0;
 
   extraConfig = ''
-    # ─────────────────────────────────────────────────────────
-    #  Terminal Features
-    # ─────────────────────────────────────────────────────────
     set -as terminal-features ",xterm-256color:RGB"
-    set -g mouse on
+    set -g prefix ^n
+    set -g base-index 1              # start indexing windows at 1 instead of 0
+    set -g detach-on-destroy off     # don't exit from tmux when closing a session
+    set -g escape-time 0             # zero-out escape time delay
+    set -g history-limit 1000000     # increase history size (from 2,000)
+    set -g renumber-windows on       # renumber all windows when any window is closed
+    set -g set-clipboard on          # use system clipboard
+    set -g status-position top # macOS / darwin style
+    setw -g mode-keys vi
+    set -g pane-active-border-style 'fg=magenta,bg=default'
+    set -g pane-border-style 'fg=brightblack,bg=default'
 
-    # ─────────────────────────────────────────────────────────
-    #  Prefix Customization
-    # ─────────────────────────────────────────────────────────
-    unbind C-b
-    set -g prefix C-n
-    bind C-n send-prefix
+    set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
+    set -g @fzf-url-history-limit '2000'
 
-    # ─────────────────────────────────────────────────────────
-    #  Pane Navigation (Vim style)
-    # ─────────────────────────────────────────────────────────
-    bind h select-pane -L
-    bind j select-pane -D
-    bind k select-pane -U
-    bind l select-pane -R
+    set -g @plugin 'tmux-plugins/tpm'
+    set -g @plugin 'tmux-plugins/tmux-sensible'
+    set -g @plugin 'tmux-plugins/tmux-yank'
+    set -g @plugin 'tmux-plugins/tmux-resurrect'
+    set -g @plugin 'tmux-plugins/tmux-continuum'
+    set -g @plugin 'fcsonline/tmux-thumbs'
+    set -g @plugin 'sainnhe/tmux-fzf'
+    set -g @plugin 'wfxr/tmux-fzf-url'
+    set -g @plugin 'omerxx/catppuccin-tmux' # My fork that holds the meetings script bc I'm lazy af
+    set -g @plugin 'omerxx/tmux-sessionx'
+    set -g @plugin 'omerxx/tmux-floax'
+    set -g @floax-width '80%'
+    set -g @floax-height '80%'
+    set -g @floax-border-color 'magenta'
+    set -g @floax-text-color 'blue'
+    set -g @floax-bind 'p'
+    set -g @floax-change-path 'true'
+    set -g @sessionx-bind-zo-new-window 'ctrl-y'
+    set -g @sessionx-auto-accept 'off'
+    set -g @sessionx-custom-paths '/Users/shahid/dotfiles'
+    set -g @sessionx-bind 'o'
+    set -g @sessionx-x-path '~/dotfiles'
+    set -g @sessionx-window-height '85%'
+    set -g @sessionx-window-width '75%'
+    set -g @sessionx-zoxide-mode 'on'
+    set -g @sessionx-custom-paths-subdirectories 'false'
+    set -g @sessionx-filter-current 'false'
+    set -g @continuum-restore 'on'
+    set -g @resurrect-strategy-nvim 'session'
+    set -g @catppuccin_window_left_separator "█"
+    set -g @catppuccin_window_right_separator "█ "
+    set -g @catppuccin_window_middle_separator " █"
+    set -g @catppuccin_window_number_position "right"
+    set -g @catppuccin_window_default_fill "number"
+    set -g @catppuccin_window_default_text "#W"
+    set -g @catppuccin_window_current_fill "number"
+    set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),}"
+    set -g @catppuccin_date_time_text "%H:%M"
+    set -g @catppuccin_status_modules_right "directory date_time"
+    set -g @catppuccin_status_modules_left "session"
+    set -g @catppuccin_status_left_separator  " █"
+    set -g @catppuccin_status_right_separator "█ "
+    set -g @catppuccin_status_right_separator_inverse "no"
+    set -g @catppuccin_status_fill "icon"
+    set -g @catppuccin_status_connect_separator "no"
+    set -g @catppuccin_directory_text "#{b:pane_current_path}"
 
-    # ─────────────────────────────────────────────────────────
-    #  Window and Pane Indexing
-    # ─────────────────────────────────────────────────────────
-    set -g base-index 1
-    set -g pane-base-index 1
-    set-option -g renumber-windows on
-
-    # ─────────────────────────────────────────────────────────
-    #  Clear Screen Binding
-    # ─────────────────────────────────────────────────────────
-    bind L send-keys '^L'
-
-    # ─────────────────────────────────────────────────────────
-    #  Pane Switching (Alt + Arrow)
-    # ─────────────────────────────────────────────────────────
-    bind -n M-Left select-pane -L
-    bind -n M-Right select-pane -R
-    bind -n M-Up select-pane -U
-    bind -n M-Down select-pane -D
-
-    # ─────────────────────────────────────────────────────────
-    #  Window Switching (Shift + Arrow or Alt + Vim)
-    # ─────────────────────────────────────────────────────────
-    bind -n S-Left previous-window
-    bind -n S-Right next-window
-    bind -n M-h previous-window
-    bind -n M-l next-window
-
-    # ─────────────────────────────────────────────────────────
-    #  Window Moving (Ctrl + Shift + Arrow)
-    # ─────────────────────────────────────────────────────────
-    bind -n C-S-Left swap-window -t -1\; select-window -t -1
-    bind -n C-S-Right swap-window -t +1\; select-window -t +1
-
-    # ─────────────────────────────────────────────────────────
-    #  Theme Configuration (tokyo-night)
-    # ─────────────────────────────────────────────────────────
-    set -g @tokyo-night-tmux_window_id_style dsquare
-    set -g @tokyo-night-tmux_show_datetime 0
-    ${lib.optionalString pkgs.stdenv.isDarwin ''
-      set -g @tokyo-night-tmux_show_hostname 0
-
-    ''}
-    ${lib.optionalString (!pkgs.stdenv.isDarwin) ''
-      set -g @tokyo-night-tmux_show_hostname 0
-    ''}
-    set -g @tokyo-night-tmux_path_format relative
-    set -g @tokyo-night-tmux_show_git 1
-    set -g @tokyo-night-tmux_terminal_icon ""
-    set -g @tokyo-night-tmux_active_terminal_icon ""
-    set -g @tokyo-night-tmux_show_path 0
-    set -g @tokyo-night-tmux_show_music 1
-    set -g @tokyo-night-tmux_window_tidy_icons 0
-    set -g @tokyo-night-tmux_transparent 1
-
-    run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
-
-    # ─────────────────────────────────────────────────────────
-    #  Vim-Tmux Navigator Integration
-    # ─────────────────────────────────────────────────────────
-    set -g @vim_navigator_mapping_left "C-Left C-h"
-    set -g @vim_navigator_mapping_right "C-Right C-l"
-    set -g @vim_navigator_mapping_up "C-k"
-    set -g @vim_navigator_mapping_down "C-j"
-    set -g @vim_navigator_mapping_prev ""
-
-    # ─────────────────────────────────────────────────────────
-    #  Copy Mode (vi style)
-    # ─────────────────────────────────────────────────────────
-    set-window-option -g mode-keys vi
-    bind-key -T copy-mode-vi v send-keys -X begin-selection
-    bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-    bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
-
-    # ─────────────────────────────────────────────────────────
-    #  Smart Directory Context
-    # ─────────────────────────────────────────────────────────
-    bind v split-window -v -c "#{pane_current_path}"
-    bind h split-window -h -c "#{pane_current_path}"
-    bind c new-window -c "#{pane_current_path}"
-    bind-key < swap-window -t -1   # move current window left
-    bind-key > swap-window -t +1
-
-    # ─────────────────────────────────────────────────────────
-    #  Default Shell
-    # ─────────────────────────────────────────────────────────
-    set -g default-shell "${pkgs.zsh}/bin/zsh"
-    set -g default-command "${pkgs.zsh}/bin/zsh"
+    # -----------------------------
+    # TPM (Tmux Plugin Manager)
+    # -----------------------------
+    # Ensure TPM is installed: https://github.com/tmux-plugins/tpm
+    if "test ! -d ~/.tmux/plugins/tpm" \
+      "run 'git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm && ~/.tmux/plugins/tpm/bin/install_plugins'"
+    run '~/.tmux/plugins/tpm/tpm'
   '';
 }
