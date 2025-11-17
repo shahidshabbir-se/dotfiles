@@ -1,14 +1,14 @@
 local M = {}
 
+M.mason = {
+  "gopls",
+}
+
 M.treesitter = {
   "go",
   "gomod",
   "gosum",
   "gowork",
-}
-
-M.mason = {
-  "gopls",
 }
 
 M.lsp = {
@@ -51,28 +51,17 @@ M.lsp = {
   },
 }
 
-M.conform = {
-  formatters = {
-    gofumpt = {
-      command = "gofumpt",
-      args = {}, -- no -w, no --lang, no stdin args required
-      stdin = true,
-    },
-    goimports = {
-      command = "goimports",
-      args = {},
-      stdin = true,
-    },
-  },
-  formatters_by_ft = {
-    go = { "gofumpt", "goimports" }, -- chained formatting
-  },
+
+M.formatters = {
+  go = { "gofmt" },
 }
 
 M.tools = {
-  "goimports",
+    "goimports",
   "gofumpt",
   "gomodifytags",
 }
+
+M.linters = { go = { "golangci_lint" } }
 
 return M

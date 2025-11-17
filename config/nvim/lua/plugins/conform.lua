@@ -1,7 +1,6 @@
 return {
-  "stevearc/conform.nvim",
-  event = "BufWritePre",
-  config = function()
-    require("config.conform")
-  end,
+  {
+    "stevearc/conform.nvim",
+    enabled=false,
+  },
 }
