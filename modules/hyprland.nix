@@ -7,8 +7,8 @@
 
   settings = {
     "$mod" = "SUPER";
-    "$terminal" = "kitty";
-    "$fileManager" = "kitty --class=yazi -e yazi";
+    "$terminal" = "wezterm";
+    "$fileManager" = "wezterm start --class=yazi -e yazi";
     "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
     monitor = [
@@ -40,7 +40,7 @@
 
     env = [
       "XDG_MIME_APPS,$HOME/.config/mimeapps.list"
-      "TERMINAL,kitty"
+      "TERMINAL,wezterm"
       "EDITOR,nvim"
       "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
       "XCURSOR_SIZE,24"
@@ -134,13 +134,13 @@
       "$mod, Return, exec, $terminal"
       "$mod, Q, killactive,"
       "$mod, E, exec, $fileManager"
-      "CTRL_SHIFT, ESCAPE, exec, kitty --class=btop -e btop"
+      "CTRL_SHIFT, ESCAPE, exec, wezterm start --class=btop -e btop"
       "$mod, B, workspace, 2"
       "$mod, B, exec, zen"
       "$mod SHIFT, B, workspace, 8"
       "$mod SHIFT, B, exec, zen --private-window"
       "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
-      "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
+      # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
       "$mod, O, exec, obsidian"
       "$mod + alt, p, exec, shutdown -h 0"
       "$mod + alt, r, exec, reboot"
@@ -148,11 +148,11 @@
       "$mod SHIFT, L, exec, hyprlock"
       "$mod, M, workspace, 9"
       "$mod, M, exec, spotify"
-      "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
+      # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
       "$mod CTRL, S, exec, grimblast --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
       "$mod, R, exec, kooha"
       "$mod SHIFT, R, exec, killall kooha"
-      "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
+      # "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
       "$mod, T, togglefloating,"
       "$mod, F, fullscreen, 0"
       "$mod, P, pseudo,"
@@ -229,6 +229,7 @@
 
     windowrulev2 = [
       "float, class:^(yazi)$"
+      "float, title:^(yazi)$"
       "size 800 500, class:^(yazi)$"
       "center, class:^(yazi)$"
       "noblur,class:^(Brave-browser)$"
