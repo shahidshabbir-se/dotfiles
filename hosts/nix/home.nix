@@ -13,7 +13,7 @@ let
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
-  
+
   # Allow unfree packages for corefonts
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "corefonts" ];
@@ -30,7 +30,7 @@ in
     x11.enable = true;
     gtk.enable = true;
     package = pkgs.catppuccin-cursors.mochaDark;
-size = 24;
+    size = 24;
     name = "catppuccin-mocha-dark-cursors";
   };
   home = {
@@ -61,7 +61,7 @@ size = 24;
       python3
       swaynotificationcenter
       swww
-      (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = ["blue"]; size = "standard"; })
+      (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = [ "blue" ]; size = "standard"; })
       onlyoffice-desktopeditors
       unzip
       vlc
@@ -70,8 +70,9 @@ size = 24;
       rofi
       rofi-bluetooth
       rofi-network-manager
-catppuccin-papirus-folders
+      catppuccin-papirus-folders
       zip
+      ghostty
     ]);
   };
 
@@ -105,9 +106,9 @@ catppuccin-papirus-folders
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
-    wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
+    # wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
-    # ghostty = import ../../modules/ghostty.nix { inherit pkgs; };
+    ghostty = import ../../modules/ghostty.nix { inherit config pkgs; };
   };
 
   services.swaync = import ../../modules/swaync.nix {
@@ -138,7 +139,7 @@ catppuccin-papirus-folders
     enable = true;
     theme = {
       name = "catppuccin-mocha-blue-standard";
-      package = (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = ["blue"]; size = "standard"; });
+      package = (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = [ "blue" ]; size = "standard"; });
     };
     iconTheme = {
       name = "Papirus-Dark";

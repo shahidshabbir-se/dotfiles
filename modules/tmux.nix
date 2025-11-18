@@ -1,31 +1,26 @@
 { pkgs, config, lib, ... }:
 
-let
-in
 {
   enable = true;
 
-  # aggressiveResize = true;
-  # baseIndex = 1;
+  aggressiveResize = true;
+  baseIndex = 1;
   # disableConfirmationPrompt = true;
-  # keyMode = "vi";
+  keyMode = "vi";
   terminal = "xterm-256color";
-  # newSession = true;
-  # secureSocket = true;
+  newSession = true;
+  secureSocket = true;
   shell = "${pkgs.zsh}/bin/zsh";
-  # escapeTime = 0;
+  escapeTime = 0;
 
   extraConfig = ''
     set -as terminal-features ",xterm-256color:RGB"
     set -g prefix ^n
-    set -g base-index 1              # start indexing windows at 1 instead of 0
     set -g detach-on-destroy off     # don't exit from tmux when closing a session
-    set -g escape-time 0             # zero-out escape time delay
     set -g history-limit 1000000     # increase history size (from 2,000)
     set -g renumber-windows on       # renumber all windows when any window is closed
     set -g set-clipboard on          # use system clipboard
-    set -g status-position top # macOS / darwin style
-    setw -g mode-keys vi
+    set -g status-position bottom
     set -g pane-active-border-style 'fg=magenta,bg=default'
     set -g pane-border-style 'fg=brightblack,bg=default'
 
