@@ -5,7 +5,7 @@
 
   aggressiveResize = true;
   baseIndex = 1;
-  # disableConfirmationPrompt = true;
+  disableConfirmationPrompt = true;
   keyMode = "vi";
   terminal = "xterm-256color";
   newSession = true;
@@ -15,12 +15,14 @@
 
   extraConfig = ''
     set -as terminal-features ",xterm-256color:RGB"
+    set -g xterm-keys on
     set -g prefix ^n
     set -g detach-on-destroy off     # don't exit from tmux when closing a session
     set -g history-limit 1000000     # increase history size (from 2,000)
     set -g renumber-windows on       # renumber all windows when any window is closed
     set -g set-clipboard on          # use system clipboard
     set -g status-position bottom
+    set -g mouse on
     set -g pane-active-border-style 'fg=magenta,bg=default'
     set -g pane-border-style 'fg=brightblack,bg=default'
 
@@ -73,6 +75,16 @@
     set -g @catppuccin_status_fill "icon"
     set -g @catppuccin_status_connect_separator "no"
     set -g @catppuccin_directory_text "#{b:pane_current_path}"
+
+    bind -n M-k copy-mode \; send-keys -X scroll-up 5
+    bind -n M-j copy-mode \; send-keys -X scroll-down 5
+    bind -n M-h previous-window
+    bind -n M-l next-window
+    bind -n M-< swap-window -t -1
+    bind -n M-> swap-window -t +1
+    bind v split-window -v -c "#{pane_current_path}"
+    bind h split-window -h -c "#{pane_current_path}"
+    bind c new-window -c "#{pane_current_path}"
 
     # -----------------------------
     # TPM (Tmux Plugin Manager)

@@ -7,8 +7,8 @@
 
   settings = {
     "$mod" = "SUPER";
-    "$terminal" = "wezterm";
-    "$fileManager" = "wezterm start --class=yazi -e yazi";
+    "$terminal" = "ghostty";
+    "$fileManager" = "ghostty --title=yazi -e yazi";
     "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
     monitor = [
@@ -134,7 +134,7 @@
       "$mod, Return, exec, $terminal"
       "$mod, Q, killactive,"
       "$mod, E, exec, $fileManager"
-      "CTRL_SHIFT, ESCAPE, exec, wezterm start --class=btop -e btop"
+      "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
       "$mod, B, workspace, 2"
       "$mod, B, exec, zen"
       "$mod SHIFT, B, workspace, 8"
@@ -228,14 +228,13 @@
     ];
 
     windowrulev2 = [
-      "float, class:^(yazi)$"
       "float, title:^(yazi)$"
-      "size 800 500, class:^(yazi)$"
-      "center, class:^(yazi)$"
+      "size 800 500, title:^(yazi)$"
+      "center, title:^(yazi)$"
       "noblur,class:^(Brave-browser)$"
-      "float, class:^(btop)$"
-      "size 900 600, class:^(btop)$"
-      "center, class:^(btop)$"
+      "float, title:^(btop)$"
+      "size 900 600, title:^(btop)$"
+      "center, title:^(btop)$"
       "float, class:^(podman-tui)$"
       "size 1000 600, class:^(podman-tui)$"
       "center, class:^(podman-tui)$"

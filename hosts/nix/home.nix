@@ -72,7 +72,6 @@ in
       rofi-network-manager
       catppuccin-papirus-folders
       zip
-      ghostty
     ]);
   };
 

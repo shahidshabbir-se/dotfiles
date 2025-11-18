@@ -19,12 +19,12 @@
     font-style-bold-italic = "bold italic";
 
     # Shell + command
-    shell-integration = "zsh";
-    shell-integration-features = "cursor,sudo,title";
-    command =
-      if pkgs.stdenv.isDarwin
-      then "/etc/profiles/per-user/shahid/bin/zsh -c \"tmux attach -t mini || tmux new -s mini\""
-      else "${pkgs.tmux}/bin/tmux";
+    shell-integration-features = "no-cursor,sudo,title";
+    command = [
+      "${pkgs.zsh}/bin/zsh"
+      "-c"
+      "tmux attach -t main || tmux new -s main"
+    ];
 
     # Window
     window-inherit-working-directory = true;
@@ -49,7 +49,7 @@
 
     # Keybinds
     keybind = [
-      "shift+enter=text:\x1b\r"
+      "shift+enter=text:\\x1b\\r"
       "ctrl+shift+r=reload_config"
     ];
   };
