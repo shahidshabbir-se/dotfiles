@@ -85,7 +85,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.extraSpecialArgs = { inherit inputs monitor; };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
             home-manager.users.shahid = import ./hosts/nix/home.nix;
           }
