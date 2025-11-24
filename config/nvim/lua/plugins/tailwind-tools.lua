@@ -10,7 +10,7 @@ event = "VimEnter",
   },
   opts = {
     document_color = {
-      enabled = true,
+      enabled = false,
       kind = "inline", -- inline color block (requires Neovim 0.10+)
     },
     cmp = {

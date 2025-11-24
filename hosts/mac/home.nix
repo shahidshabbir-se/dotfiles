@@ -6,7 +6,7 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, monitor, ... }:
 
 let
   homeDirectory = "/Users/shahid";
@@ -39,6 +39,7 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
+  xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
   home.file.".aerospace.toml".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/aerospace.toml";
 
@@ -63,7 +64,8 @@ in
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
-    wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
+    wezterm = import ../../modules/wezterm.nix { inherit pkgs monitor; };
+    # ghostty = import ../../modules/ghostty.nix { inherit config pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

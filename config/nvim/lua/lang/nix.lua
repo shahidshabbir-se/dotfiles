@@ -7,12 +7,12 @@ M.treesitter = {
 
 -- Mason servers / LSP binaries
 M.mason = {
-  "rnix",
+  "nil_ls",
 }
 
 -- LSP configuration for vim.lsp.enable
 M.lsp = {
-  ["rnix"] = {
+  ["nil_ls"] = {
     settings = {
       -- rnix-lsp doesn’t have tons of custom settings, default is fine
     },

@@ -25,7 +25,7 @@ M.mason = {
 M.lsp = {
   ["html-lsp"] = {},
   ["css-lsp"] = {},
-  ["tsserver"] = {},
+  ["ts_ls"] = {},
   ["json-lsp"] = {
     settings = {
       json = {
@@ -46,6 +46,7 @@ M.lsp = {
   ["graphql-language-service-cli"] = {},
   ["prisma-language-server"] = {},
   ["astro-ls"] = {},
+  ["tailwindcss"] = {},
 }
 
 -- Formatters

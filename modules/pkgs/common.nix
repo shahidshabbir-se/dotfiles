@@ -10,8 +10,10 @@ with pkgs; [
   wget
   cbonsai
   ncdu
-  pgcli
   act
+  sesh
+  lsof
+  python311
   atuin
   lazysql
   bat
