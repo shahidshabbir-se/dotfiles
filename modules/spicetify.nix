@@ -47,6 +47,6 @@ in
   # ───────────────────────────────────────────────
   # ▶ Theme Configuration
   # ───────────────────────────────────────────────
-  theme = spicePkgs.themes.bloom;
+  theme = spicePkgs.themes.lucid;
   # colorScheme = "TokyoNight";
 }

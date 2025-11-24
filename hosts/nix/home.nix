@@ -6,7 +6,7 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, monitor, ... }:
 
 let
   homeDirectory = "/home/shahid";
@@ -107,7 +107,7 @@ in
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
-    ghostty = import ../../modules/ghostty.nix { inherit config pkgs; };
+    ghostty = import ../../modules/ghostty.nix { inherit config monitor pkgs; };
   };
 
   services.swaync = import ../../modules/swaync.nix {

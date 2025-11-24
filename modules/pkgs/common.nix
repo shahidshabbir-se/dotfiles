@@ -12,9 +12,8 @@ with pkgs; [
   ncdu
   act
   sesh
-  lsof
-  python311
-  atuin
+   lsof
+   atuin
   lazysql
   bat
   btop
