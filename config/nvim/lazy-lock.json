@@ -54,6 +54,7 @@
   "tiny-code-action.nvim": { "branch": "main", "commit": "b6c9ee6444196c1ca616bf4ff381124b140db21f" },
   "treesj": { "branch": "main", "commit": "4770492244ccecdc9b01e0e81fa8f2f6b4a23841" },
   "trouble.nvim": { "branch": "main", "commit": "bd67efe408d4816e25e8491cc5ad4088e708a69a" },
+  "typescript-tools.nvim": { "branch": "master", "commit": "c2f5910074103705661e9651aa841e0d7eea9932" },
   "ui": { "branch": "v3.0", "commit": "bea2af0a76c1098fac0988ad296aa028cad2a333" },
   "undotree": { "branch": "master", "commit": "0f1c9816975b5d7f87d5003a19c53c6fd2ff6f7f" },
   "vim-illuminate": { "branch": "master", "commit": "0d1e93684da00ab7c057410fecfc24f434698898" },

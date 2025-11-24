@@ -1,17 +1,35 @@
-{ config, pkgs, ... }:
+#  ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗████████╗██╗   ██╗
+# ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝
+# ██║  ███╗███████║██║   ██║███████╗   ██║      ██║    ╚████╔╝ 
+# ██║   ██║██╔══██║██║   ██║╚════██║   ██║      ██║     ╚██╔╝  
+# ╚██████╔╝██║  ██║╚██████╔╝███████║   ██║      ██║      ██║   
+#  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝      ╚═╝   
+# https://github.com/shahidshabbir-se/dotfiles
+
+{ pkgs
+, monitor
+, ...
+}:
+let
+  fontSize = if monitor.scale >= 2.0 then 17.0 else 13.0;
+in
 {
   enable = true;
   enableZshIntegration = true;
 
-  package = pkgs.ghostty;
+  # pkg
+  package =
+    if pkgs.stdenv.isDarwin
+    then pkgs.ghostty-bin
+    else pkgs.ghostty;
 
   settings = {
-    theme = "Catppuccin Mocha";
+    theme = "TokyoNight";
     title = " ";
 
     # Font
     font-family = "JetBrainsMono Nerd Font";
-    font-size = if pkgs.stdenv.isDarwin then 15 else 14;
+    font-size = fontSize;
     font-feature = [ "-calt" "+liga" "+dlig" "+hlig" "+ss01" "+ss02" "+ss03" "+ss04" "+ss05" "+ss06" "+ss07" "+ss08" "+ss09" ];
     font-style = "regular";
     font-style-bold = "bold";
@@ -30,7 +48,7 @@
     window-inherit-working-directory = true;
     window-inherit-font-size = false;
     background-opacity = 1.0;
-    window-decoration = true;
+    window-decoration = false;
     window-padding-x = 6;
     window-padding-y = 4;
     window-padding-balance = true;

@@ -1,9 +1,18 @@
+# ██╗    ██╗███████╗███████╗████████╗███████╗██████╗ ███╗   ███╗
+# ██║    ██║██╔════╝╚══███╔╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║
+# ██║ █╗ ██║█████╗    ███╔╝    ██║   █████╗  ██████╔╝██╔████╔██║
+# ██║███╗██║██╔══╝   ███╔╝     ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║
+# ╚███╔███╔╝███████╗███████╗   ██║   ███████╗██║  ██║██║ ╚═╝ ██║
+# ╚══╝╚══╝ ╚══════╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+#  https://github.com/shahidshabbir-se/dotfiles
+
 { pkgs
+, monitor
 , ...
 }:
 let
   isMac = pkgs.stdenv.isDarwin;
-  fontSize = if isMac then 17.0 else 13.0;
+  fontSize = if monitor.scale >= 2.0 then 17.0 else 13.0;
   windowDecorations = if isMac then "RESIZE" else "NONE";
 in
 {
@@ -11,47 +20,56 @@ in
   package = pkgs.wezterm;
 
   extraConfig = ''
-        return {
-          adjust_window_size_when_changing_font_size = false,
-    	    color_scheme = 'Catppuccin Mocha',
-          enable_tab_bar = false,
-          font_size = ${toString fontSize},
-          font = wezterm.font("GeistMono Nerd Font"),
-          window_decorations = "${windowDecorations}",
-          default_prog = { "${pkgs.zsh}/bin/zsh", "-c", "tmux attach -t main || tmux new -s main" },
+    return {
+      adjust_window_size_when_changing_font_size = false,
+      color_scheme = 'tokyonight_night',
+      enable_tab_bar = false,
+      window_close_confirmation = "NeverPrompt",
 
-          window_padding = {
-            left = 12,
-            right = 8,
-            top = "0.7cell",
-            bottom = 0,
-          },
+      font_size = ${toString fontSize},
+      font = wezterm.font("GeistMono Nerd Font"),
+      window_decorations = "${windowDecorations}",
 
-          keys = {
-            {
-              key = "q",
-              mods = "CTRL",
-              action = wezterm.action.ToggleFullScreen,
-            },
-            {
-              key = "'",
-              mods = "CTRL",
-              action = wezterm.action.ClearScrollback("ScrollbackAndViewport"),
-            },
-            { key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
-          },
+      window_padding = {
+        left = 12,
+        right = 8,
+        top = "0.7cell",
+        bottom = 0,
+      },
 
-          -- Attach to tmux session on startup
-          default_prog = { "${pkgs.zsh}/bin/zsh", "-c", "tmux attach -t main || tmux new -s main" },
+      -- Attach to tmux session on startup
+      default_prog = {
+        "${pkgs.zsh}/bin/zsh",
+        "-c",
+        "tmux attach -t main || tmux new -s main"
+      },
 
-          mouse_bindings = {
-            -- Ctrl-click will open the link under the mouse cursor
-            {
-              event = { Up = { streak = 1, button = "Left" } },
-              mods = "CTRL",
-              action = wezterm.action.OpenLinkAtMouseCursor,
-            },
-          },
-        }
+      keys = {
+        {
+          key = "q",
+          mods = "CTRL",
+          action = wezterm.action.ToggleFullScreen,
+        },
+        {
+          key = "'",
+          mods = "CTRL",
+          action = wezterm.action.ClearScrollback("ScrollbackAndViewport"),
+        },
+        {
+          key = "Enter",
+          mods = "SHIFT",
+          action = wezterm.action({ SendString = "\x1b\r" }),
+        },
+      },
+
+      mouse_bindings = {
+        -- Ctrl-click to open link under cursor
+        {
+          event = { Up = { streak = 1, button = "Left" } },
+          mods = "CTRL",
+          action = wezterm.action.OpenLinkAtMouseCursor,
+        },
+      },
+    }
   '';
 }

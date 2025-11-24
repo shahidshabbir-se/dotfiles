@@ -1,6 +1,6 @@
 require "nvchad.autocmds"
 vim.cmd [[autocmd BufNewFile,BufRead .env* set filetype=sh]]
-vim.api.nvim_set_hl(0, "BufferLineOffset", { fg = "#cdd6f4", bg = "#191828", bold = true })
+vim.api.nvim_set_hl(0, "BufferLineOffset", { fg = "#cdd6f4", bg = "#16161E", bold = true })
 
 -- Enable auto-format globally
 vim.g.autoformat_enabled = true

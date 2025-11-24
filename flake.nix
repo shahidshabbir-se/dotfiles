@@ -1,3 +1,11 @@
+# ███╗   ██╗██╗██╗  ██╗    ███████╗██╗      █████╗ ██╗  ██╗███████╗
+# ████╗  ██║██║╚██╗██╔╝    ██╔════╝██║     ██╔══██╗██║ ██╔╝██╔════╝
+# ██╔██╗ ██║██║ ╚███╔╝     █████╗  ██║     ███████║█████╔╝ █████╗
+# ██║╚██╗██║██║ ██╔██╗     ██╔══╝  ██║     ██╔══██║██╔═██╗ ██╔══╝
+# ██║ ╚████║██║██╔╝ ██╗    ██║     ███████╗██║  ██║██║  ██╗███████╗
+# ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
+# https://github.com/shahidshabbir-se/dotfiles
+
 {
   description = "My NixOS + macOS Configuration Flake";
 
@@ -42,6 +50,15 @@
       # Users
       user = "shahid";
       host = "mini";
+
+      # Monitor configuration
+      monitor = {
+        name = "MAG 255F E20";
+        width = 3200;
+        height = 1800;
+        scale = 2.0; # UI looks like 1600x900
+        refreshRate = 200;
+      };
 
       # Packages
       pkgsLinux = import nixpkgs {
@@ -178,7 +195,7 @@
                 "vlc"
                 "zen"
                 "localsend"
-                "zed"
+                "antigravity"
                 "docker-desktop"
               ];
 
@@ -200,7 +217,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.extraSpecialArgs = { inherit inputs monitor; };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
 
             home-manager.users.${user} = import ./hosts/mac/home.nix;
