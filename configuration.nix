@@ -97,7 +97,6 @@
       git
       openssh
       home-manager
-      kitty
     ];
     shell = pkgs.zsh;
   };
