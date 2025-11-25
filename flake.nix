@@ -63,7 +63,7 @@
             scale = 1.0;
             refreshRate = 60;
           };
-          fontSize = 12.0; # Smaller font for laptop
+          fontSize = 14.0; # Smaller font for laptop
         };
 
         mac-mini-external = {

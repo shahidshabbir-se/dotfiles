@@ -12,9 +12,10 @@
 }:
 let
   # Use device-specific font size, or fall back to scale-based calculation
-  fontSize = if device ? fontSize 
-             then device.fontSize 
-             else if device.display.scale >= 2.0 then 17.0 else 13.0;
+  fontSize =
+    if device ? fontSize
+    then device.fontSize
+    else if device.display.scale >= 2.0 then 17.0 else 14.0;
 in
 {
   enable = true;
@@ -33,7 +34,7 @@ in
     # Font
     font-family = "JetBrainsMono Nerd Font";
     font-size = fontSize;
-    font-feature = [ "-calt" "+liga" "+dlig" "+hlig" "+ss01" "+ss02" "+ss03" "+ss04" "+ss05" "+ss06" "+ss07" "+ss08" "+ss09" ];
+    font-feature = [ "+calt" "+liga" ];
     font-style = "regular";
     font-style-bold = "bold";
     font-style-italic = "italic";
