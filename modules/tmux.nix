@@ -37,7 +37,30 @@ in
   prefix = "C-n";
 
   plugins = with pkgs.tmuxPlugins; [
-    tokyo-night
+    {
+      plugin = tokyo-night;
+      extraConfig = ''
+        set -g @tokyo-night-tmux_window_id_style dsquare
+        set -g @tokyo-night-tmux_show_datetime 0
+        ${lib.optionalString pkgs.stdenv.isDarwin ''
+          set -g @tokyo-night-tmux_show_hostname 0
+
+        ''}
+        ${lib.optionalString (!pkgs.stdenv.isDarwin) ''
+          set -g @tokyo-night-tmux_show_hostname 0
+        ''}
+        set -g @tokyo-night-tmux_path_format relative
+        set -g @tokyo-night-tmux_show_git 1
+        set -g @tokyo-night-tmux_terminal_icon ""
+        set -g @tokyo-night-tmux_active_terminal_icon ""
+        set -g @tokyo-night-tmux_show_path 0
+        set -g @tokyo-night-tmux_show_music 1
+        set -g @tokyo-night-tmux_window_tidy_icons 0
+        set -g @tokyo-night-tmux_transparent 1
+
+        run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
+      '';
+    }
     yank
     # sensible  # removed - might override shell settings
     vim-tmux-navigator
@@ -74,9 +97,8 @@ in
       plugin = resurrect;
       extraConfig =
         ''
-          # Let auto-session handle nvim restoration (it auto-restores based on cwd)
           set -g @resurrect-strategy-vim 'session'
-          set -g @resurrect-strategy-nvim 'none'
+          set -g @resurrect-strategy-nvim 'session'
           set -g @resurrect-capture-pane-contents 'on'
           set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode" "~claude->claude"'
         ''
@@ -92,8 +114,9 @@ in
       plugin = continuum;
       extraConfig = ''
         set -g @continuum-restore 'on'
-        set -g @continuum-boot 'off'
-        set -g @continuum-save-interval '5'
+        set -g @continuum-boot 'on'
+        set -g @continuum-save-interval '1'
+        set -g @continuum-verbose 'on'
       '';
     }
   ];
@@ -155,29 +178,6 @@ in
     # ─────────────────────────────────────────────────────────
     bind -n M-< swap-window -t -1\; select-window -t -1
     bind -n M-> swap-window -t +1\; select-window -t +1
-
-    # ─────────────────────────────────────────────────────────
-    #  Theme Configuration (tokyo-night)
-    # ─────────────────────────────────────────────────────────
-    set -g @tokyo-night-tmux_window_id_style dsquare
-    set -g @tokyo-night-tmux_show_datetime 0
-    ${lib.optionalString pkgs.stdenv.isDarwin ''
-      set -g @tokyo-night-tmux_show_hostname 0
-
-    ''}
-    ${lib.optionalString (!pkgs.stdenv.isDarwin) ''
-      set -g @tokyo-night-tmux_show_hostname 0
-    ''}
-    set -g @tokyo-night-tmux_path_format relative
-    set -g @tokyo-night-tmux_show_git 1
-    set -g @tokyo-night-tmux_terminal_icon ""
-    set -g @tokyo-night-tmux_active_terminal_icon ""
-    set -g @tokyo-night-tmux_show_path 0
-    set -g @tokyo-night-tmux_show_music 1
-    set -g @tokyo-night-tmux_window_tidy_icons 0
-    set -g @tokyo-night-tmux_transparent 1
-
-    run-shell ${tokyo-night}/share/tmux-plugins/tokyo-night/tokyo-night.tmux
 
     # ─────────────────────────────────────────────────────────
     #  Vim-Tmux Navigator Integration
