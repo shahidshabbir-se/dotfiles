@@ -6,7 +6,7 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, lib, inputs, monitor, ... }:
+{ config, pkgs, lib, inputs, device, ... }:
 
 let
   homeDirectory = "/Users/shahid";
@@ -64,7 +64,7 @@ in
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
-    wezterm = import ../../modules/wezterm.nix { inherit pkgs monitor; };
+    wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
     # ghostty = import ../../modules/ghostty.nix { inherit config pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };

@@ -7,12 +7,15 @@
 #  https://github.com/shahidshabbir-se/dotfiles
 
 { pkgs
-, monitor
+, device
 , ...
 }:
 let
   isMac = pkgs.stdenv.isDarwin;
-  fontSize = if monitor.scale >= 2.0 then 17.0 else 13.0;
+  # Use device-specific font size, or fall back to scale-based calculation
+  fontSize = if device ? fontSize 
+             then device.fontSize 
+             else if device.display.scale >= 2.0 then 17.0 else 13.0;
   windowDecorations = if isMac then "RESIZE" else "NONE";
 in
 {
