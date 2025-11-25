@@ -51,14 +51,39 @@
       user = "shahid";
       host = "mini";
 
-      # Monitor configuration
-      monitor = {
-        name = "MAG 255F E20";
-        width = 3200;
-        height = 1800;
-        scale = 2.0; # UI looks like 1600x900
-        refreshRate = 200;
+      # Device configurations
+      devices = {
+        thinkpad-e14 = {
+          name = "ThinkPad E14";
+          type = "laptop";
+          display = {
+            name = "Built-in Display";
+            width = 1920;
+            height = 1080;
+            scale = 1.0;
+            refreshRate = 60;
+          };
+          fontSize = 12.0; # Smaller font for laptop
+        };
+
+        mac-mini-external = {
+          name = "Mac Mini + Monitor";
+          type = "desktop";
+          display = {
+            name = "MAG 255F E20";
+            width = 3200;
+            height = 1800;
+            scale = 2.0; # UI looks like 1600x900
+            refreshRate = 200;
+          };
+          fontSize = 17.0; # Larger font for HiDPI monitor
+        };
       };
+
+      # Active device selection
+      # Change this to switch between configurations
+      activeDeviceLinux = devices.thinkpad-e14;
+      activeDeviceMac = devices.mac-mini-external;
 
       # Packages
       pkgsLinux = import nixpkgs {
@@ -85,7 +110,10 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit inputs monitor; };
+            home-manager.extraSpecialArgs = {
+              inherit inputs;
+              device = activeDeviceLinux;
+            };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
             home-manager.users.shahid = import ./hosts/nix/home.nix;
           }
@@ -217,7 +245,10 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit inputs monitor; };
+            home-manager.extraSpecialArgs = {
+              inherit inputs;
+              device = activeDeviceMac;
+            };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
 
             home-manager.users.${user} = import ./hosts/mac/home.nix;
