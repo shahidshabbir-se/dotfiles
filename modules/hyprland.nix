@@ -1,4 +1,4 @@
-{ config, pkgs, homeDirectory, ... }:
+{ homeDirectory, ... }:
 
 {
   enable = true;
