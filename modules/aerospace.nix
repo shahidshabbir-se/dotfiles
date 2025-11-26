@@ -1,146 +1,162 @@
 {
-  lib,
-  pkgs,
-  ...
-}:
-lib.mkIf (pkgs.stdenv.isDarwin) {
-  # Ensure aerospace package installed
-  home.packages = [ pkgs.aerospace ];
+  enable = true;
 
-  # Source aerospace config from the home-manager store
-  home.file.".aerospace.toml".text = ''
-      # Start AeroSpace at login
-      start-at-login = true
+  userSettings = {
+    # Start AeroSpace at login
+    start-at-login = true;
 
-      # Normalization settings
-      enable-normalization-flatten-containers = true
-      enable-normalization-opposite-orientation-for-nested-containers = true
+    # Normalization settings
+    enable-normalization-flatten-containers = true;
+    enable-normalization-opposite-orientation-for-nested-containers = true;
 
-      # Accordion layout settings
-      accordion-padding = 30
+    # Accordion layout settings
+    accordion-padding = 30;
 
-      # Default root container settings
-      default-root-container-layout = 'tiles'
-      default-root-container-orientation = 'auto'
+    # Default root container settings
+    default-root-container-layout = "tiles";
+    default-root-container-orientation = "auto";
 
-      # Mouse follows focus settings
-      on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
-      on-focus-changed = ['move-mouse window-lazy-center']
+    # Mouse follows focus settings
+    on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
+    on-focus-changed = [ "move-mouse window-lazy-center" ];
 
-      # Automatically unhide macOS hidden apps
-      automatically-unhide-macos-hidden-apps = true
+    # Automatically unhide macOS hidden apps
+    automatically-unhide-macos-hidden-apps = true;
 
-      # Key mapping preset
-      [key-mapping]
-      preset = 'qwerty'
+    # Key mapping preset
+    key-mapping.preset = "qwerty";
 
-      # Gaps settings
-      [gaps]
-      inner.horizontal = 6
-      inner.vertical =   6
-      outer.left =       6
-      outer.bottom =     6
-      outer.top =        6
-      outer.right =      6
+    # Gaps settings
+    gaps = {
+      inner = {
+        horizontal = 10;
+        vertical = 10;
+      };
+      outer = {
+        left = 10;
+        bottom = 10;
+        top = 10;
+        right = 10;
+      };
+    };
 
-      # Main mode bindings
-      [mode.main.binding]
+    # Main mode bindings
+    mode.main.binding = {
       # Launch applications
-      cmd-enter = 'exec-and-forget open -na "Kitty"'
-      cmd-b = 'exec-and-forget open -a "Zen"'
-      cmd-m = 'exec-and-forget open -a "Spotify"'
-      cmd-f = 'exec-and-forget open -a Finder'
+      cmd-enter = ''exec-and-forget open -a "$HOME/Applications/Home Manager Apps/WezTerm.app"'';
+      cmd-b = ''exec-and-forget open -a "Zen"'';
+      cmd-shift-b = ''exec-and-forget open -na "Zen" --args --private-window'';
+      cmd-m = ''exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Spotify.app"'';
+      cmd-e = "exec-and-forget open -a Finder";
 
       # Window management
-      cmd-q = "close"
-      alt-f = 'fullscreen'
-      alt-t = 'layout floating tiling'
+      cmd-g = "macos-native-fullscreen";
+      cmd-ctrl-t = "layout floating tiling";
 
       # Focus movement
-      cmd-h = 'focus left'
-      cmd-j = 'focus down'
-      cmd-k = 'focus up'
-      cmd-l = 'focus right'
+      cmd-h = "focus left";
+      cmd-j = "focus down";
+      cmd-k = "focus up";
+      cmd-l = "focus right";
 
       # Window movement
-      cmd-shift-h = 'move left'
-      cmd-shift-j = 'move down'
-      cmd-shift-k = 'move up'
-      cmd-shift-l = 'move right'
+      cmd-shift-h = "move left";
+      cmd-shift-j = "move down";
+      cmd-shift-k = "move up";
+      cmd-shift-l = "move right";
 
       # Resize windows
-      cmd-shift-minus = 'resize smart -50'
-      cmd-shift-equal = 'resize smart +50'
+      cmd-shift-minus = "resize smart -50";
+      cmd-shift-equal = "resize smart +50";
 
       # Workspace management
-      cmd-1 = 'workspace 1'
-      cmd-2 = 'workspace 2'
-      cmd-3 = 'workspace 3'
-      cmd-4 = 'workspace 4'
-      cmd-5 = 'workspace 5'
-      cmd-6 = 'workspace 6'
-      cmd-7 = 'workspace 7'
-      cmd-8 = 'workspace 8'
-      cmd-9 = 'workspace 9'
+      cmd-1 = "workspace 1";
+      cmd-2 = "workspace 2";
+      cmd-3 = "workspace 3";
+      cmd-4 = "workspace 4";
+      cmd-5 = "workspace 5";
+      cmd-6 = "workspace 6";
+      cmd-7 = "workspace 7";
+      cmd-8 = "workspace 8";
+      cmd-9 = "workspace 9";
 
       # Move windows to workspaces
-      cmd-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
-      cmd-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
-      cmd-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
-      cmd-shift-4 = 'move-node-to-workspace --focus-follows-window 4'
-      cmd-shift-5 = 'move-node-to-workspace --focus-follows-window 5'
-      cmd-shift-6 = 'move-node-to-workspace --focus-follows-window 6'
-      cmd-shift-7 = 'move-node-to-workspace --focus-follows-window 7'
-      cmd-shift-8 = 'move-node-to-workspace --focus-follows-window 8'
-      cmd-shift-9 = 'move-node-to-workspace --focus-follows-window 9'
+      cmd-shift-1 = "move-node-to-workspace --focus-follows-window 1";
+      cmd-shift-2 = "move-node-to-workspace --focus-follows-window 2";
+      cmd-shift-3 = "move-node-to-workspace --focus-follows-window 3";
+      cmd-shift-4 = "move-node-to-workspace --focus-follows-window 4";
+      cmd-shift-5 = "move-node-to-workspace --focus-follows-window 5";
+      cmd-shift-6 = "move-node-to-workspace --focus-follows-window 6";
+      cmd-shift-7 = "move-node-to-workspace --focus-follows-window 7";
+      cmd-shift-8 = "move-node-to-workspace --focus-follows-window 8";
+      cmd-shift-9 = "move-node-to-workspace --focus-follows-window 9";
 
       # Workspace navigation
-      alt-tab = 'workspace-back-and-forth'
-      alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+      alt-tab = "workspace-back-and-forth";
+      alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
 
       # Enter passthrough mode for typing special characters
-      alt-p = 'mode passthrough'
+      alt-p = "mode passthrough";
 
       # Enter service mode
-      alt-shift-semicolon = 'mode service'
+      alt-shift-semicolon = "mode service";
+    };
 
-      # Service mode bindings
-      [mode.service.binding]
+    # Service mode bindings
+    mode.service.binding = {
       # Reload config and exit service mode
-      esc = ['reload-config', 'mode main']
+      esc = [ "reload-config" "mode main" ];
 
       # Reset layout
-      r = ['flatten-workspace-tree', 'mode main']
+      r = [ "flatten-workspace-tree" "mode main" ];
 
       # Toggle floating/tiling layout
-      f = ['layout floating tiling', 'mode main']
+      f = [ "layout floating tiling" "mode main" ];
 
       # Close all windows but current
-      backspace = ['close-all-windows-but-current', 'mode main']
+      backspace = [ "close-all-windows-but-current" "mode main" ];
 
       # Join with adjacent windows
-      alt-shift-h = ['join-with left', 'mode main']
-      alt-shift-j = ['join-with down', 'mode main']
-      alt-shift-k = ['join-with up', 'mode main']
-      alt-shift-l = ['join-with right', 'mode main']
+      alt-shift-h = [ "join-with left" "mode main" ];
+      alt-shift-j = [ "join-with down" "mode main" ];
+      alt-shift-k = [ "join-with up" "mode main" ];
+      alt-shift-l = [ "join-with right" "mode main" ];
+    };
 
-      # Passthrough mode to allow typing special characters (e.g., Polish letters)
-      # Enter with 'alt-p', exit with 'alt-p' or 'esc'.
-      [mode.passthrough.binding]
-      alt-p = 'mode main'
-      esc = 'mode main'
+    # Passthrough mode
+    mode.passthrough.binding = {
+      alt-p = "mode main";
+      esc = "mode main";
+    };
 
-      # Window detection rules
-      [[on-window-detected]]
-      if.app-id = 'net.kovidgoyal.kitty'
-      run = 'move-node-to-workspace 1'
-
-      [[on-window-detected]]
-      if.app-id = 'app.zen-browser.zen'
-      run = 'move-node-to-workspace 2'
-
-      [[on-window-detected]]
-      if.app-id = 'com.spotify.client'
-      run = 'move-node-to-workspace 9'
-    '';
+    # Window detection rules
+    on-window-detected = [
+      {
+        "if".app-id = "org.wezfurlong.wezterm";
+        run = "move-node-to-workspace 1";
+      }
+      {
+        "if".app-id = "com.spotify.client";
+        run = "move-node-to-workspace 9";
+      }
+      {
+        "if" = {
+          app-id = "app.zen-browser.zen";
+          window-title-regex-substring = "^Zen Browser$";
+        };
+        run = "move-node-to-workspace 2";
+      }
+      {
+        "if" = {
+          app-id = "app.zen-browser.zen";
+          window-title-regex-substring = "Private Browsing";
+        };
+        run = "move-node-to-workspace 8";
+      }
+      {
+        "if".app-id = "com.apple.finder";
+        run = "layout floating";
+      }
+    ];
+  };
 }
