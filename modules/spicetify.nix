@@ -6,7 +6,7 @@
 #  ╚══════╝╚═╝     ╚═╝ ╚═════╝╚══════╝   ╚═╝   ╚═╝╚═╝        ╚═╝   
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ inputs, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 
 let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};

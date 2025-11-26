@@ -104,7 +104,7 @@ in
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-    spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
+    spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };

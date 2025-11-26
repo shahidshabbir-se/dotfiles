@@ -25,7 +25,6 @@ in
     stateVersion = "24.05";
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
-      aerospace
       inputs.home-manager.packages.${pkgs.system}.home-manager
     ]);
     # activation.setWallpaper = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -41,7 +40,6 @@ in
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
-  home.file.".aerospace.toml".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/aerospace.toml";
 
 
   # ───────────────────────────────────────────────
@@ -63,7 +61,8 @@ in
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-    spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs; };
+    aerospace = import ../../modules/aerospace.nix;
+    spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
     wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
     # ghostty = import ../../modules/ghostty.nix { inherit config pkgs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
