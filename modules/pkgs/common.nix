@@ -17,7 +17,6 @@ with pkgs; [
   atuin
   lazysql
   bat
-  moreutils
   btop
   bun
   coreutils
