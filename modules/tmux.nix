@@ -95,28 +95,27 @@ in
     }
     {
       plugin = resurrect;
-      extraConfig =
-        ''
-          set -g @resurrect-strategy-vim 'session'
-          set -g @resurrect-strategy-nvim 'session'
-          set -g @resurrect-capture-pane-contents 'on'
-          set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode" "~claude->claude"'
-        ''
-        + ''
-          # Session save directory
-          set -g @resurrect-dir "$HOME/.tmux/resurrect"
+      extraConfig = ''
+        set -g @resurrect-strategy-vim 'session'
+        set -g @resurrect-strategy-nvim 'session'
+        set -g @resurrect-capture-pane-contents 'on'
+        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode" "~claude->claude"'
+      ''
+      + ''
+        # Taken from: https://github.com/p3t33/nixos_flake/blob/5a989e5af403b4efe296be6f39ffe6d5d440d6d6/home/modules/tmux.nix
+        resurrect_dir="$XDG_CACHE_HOME/.tmux/resurrect"
+        set -g @resurrect-dir $resurrect_dir
 
-          # Clean up nix paths from saved sessions
-          set -g @resurrect-hook-post-save-all 'target=$(readlink -f $HOME/.tmux/resurrect/last); sed "s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g" $target | sponge $target'
-        '';
+        set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed -E "s| --cmd lua vim\\.g\\.[^ ]+||g; s| --cmd [^ ]*-vim-pack-dir||g; s|/etc/profiles/per-user/\$USER/bin/||g; s|/home/\$USER/.nix-profile/bin/||g" $target | sponge $target'
+      '';
     }
     {
       plugin = continuum;
       extraConfig = ''
         set -g @continuum-restore 'on'
         set -g @continuum-boot 'on'
-        set -g @continuum-save-interval '1'
-        set -g @continuum-verbose 'on'
+        set -g @continuum-save-interval '10'
+        set -g @continuum-systemd-start-cmd 'start-server'
       '';
     }
   ];
