@@ -210,12 +210,14 @@
               taps = [ ];
 
               brews = [
+                "cliproxyapi"
               ];
 
               casks = [
                 "qbittorrent"
                 "notunes"
                 "tailscale-app"
+                "anydesk"
                 "raycast"
                 "whatsapp"
                 "obsidian"
@@ -223,7 +225,7 @@
                 "vlc"
                 "zen"
                 "localsend"
-                "antigravity"
+                "zed"
                 "docker-desktop"
               ];
 
