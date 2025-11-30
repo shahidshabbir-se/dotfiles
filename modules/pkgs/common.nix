@@ -3,6 +3,7 @@
 with pkgs; [
   gitleaks
   graphite-cli
+  csview
   lsof
   gh
   lazygit
@@ -12,10 +13,11 @@ with pkgs; [
   ncdu
   act
   sesh
-   lsof
-   atuin
+  lsof
+  atuin
   lazysql
   bat
+  moreutils
   btop
   bun
   coreutils
