@@ -64,3 +64,7 @@ end
 
 map({ "o", "x" }, "iq", smart_quote(true), { expr = true })
 map({ "o", "x" }, "aq", smart_quote(false), { expr = true })
+
+-- Mason and Lazy menu shortcuts
+map("n", "<leader>mm", "<cmd>Mason<CR>", { desc = "Open Mason menu" })
+map("n", "<leader>ll", "<cmd>Lazy<CR>", { desc = "Open Lazy menu" })
