@@ -7,6 +7,7 @@ with pkgs; [
   lsof
   gh
   lazygit
+  hyprpicker
   lazysql
   wget
   cbonsai

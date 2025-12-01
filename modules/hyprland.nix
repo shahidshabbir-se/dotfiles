@@ -150,6 +150,7 @@
       "$mod, M, exec, spotify"
       # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
       "$mod CTRL, S, exec, grimblast --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
+      "$mod SHIFT, C, exec, hyprpicker -a"
       "$mod, R, exec, kooha"
       "$mod SHIFT, R, exec, killall kooha"
       # "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
