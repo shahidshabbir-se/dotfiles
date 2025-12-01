@@ -225,7 +225,6 @@
                 "vlc"
                 "zen"
                 "localsend"
-                "zed"
                 "docker-desktop"
               ];
 
