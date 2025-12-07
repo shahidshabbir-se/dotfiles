@@ -53,7 +53,7 @@ M.lsp = {
 
 
 M.formatters = {
-  go = { "gofmt" },
+  go = { "goimports" },
 }
 
 M.tools = {

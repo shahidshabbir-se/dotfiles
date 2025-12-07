@@ -1,48 +1,39 @@
 return {
   {
     "hrsh7th/nvim-cmp",
+    lazy = true,
+    event = "InsertEnter",
     dependencies = {
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-nvim-lua",
+      "ray-x/cmp-treesitter",
+      "tailwind-tools",
+      "hrsh7th/cmp-path",
+      "saadparwaiz1/cmp_luasnip",
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-nvim-lsp-signature-help",
+      { "onsails/lspkind.nvim" },
       {
         "L3MON4D3/LuaSnip",
-        config = function(_, opts)
-          require("luasnip").config.set_config(opts)
-
-          local luasnip = require "luasnip"
-
-          luasnip.filetype_extend("javascriptreact", { "html" })
-          luasnip.filetype_extend("typescriptreact", { "html" })
-          luasnip.filetype_extend("svelte", { "html" })
-
-          require "nvchad.configs.luasnip"
+        wants = { "friendly-snippets", "vim-snippets" },
+        config = function()
+          require("config.cmp.luasnip").setup()
         end,
       },
-
       {
         "hrsh7th/cmp-cmdline",
         event = "CmdlineEnter",
         config = function()
-          local cmp = require "cmp"
-
-          cmp.setup.cmdline("/", {
-            mapping = cmp.mapping.preset.cmdline(),
-            sources = { { name = "buffer" } },
-          })
-
-          cmp.setup.cmdline(":", {
-            mapping = cmp.mapping.preset.cmdline(),
-            sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline" } }),
-            matching = { disallow_symbol_nonprefix_matching = false },
-          })
-        end,
+          require(
+            "config.cmp.cmdline")
+        end
       },
+      "rafamadriz/friendly-snippets",
+      "honza/vim-snippets",
     },
-
-    opts = function(_, opts)
-      table.insert(opts.sources, 1, {
-        name = "copilot",
-        group_index = 1,
-        priority = 100,
-      })
+    config = function()
+      require("config.cmp")
     end,
   },
 }
