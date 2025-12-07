@@ -1,7 +1,7 @@
 return {
   "luckasRanarison/tailwind-tools.nvim",
   name = "tailwind-tools",
-event = "VimEnter",
+  event = { "BufReadPre", "BufNewFile" },
   build = ":UpdateRemotePlugins",
   dependencies = {
     "nvim-treesitter/nvim-treesitter",
@@ -10,7 +10,7 @@ event = "VimEnter",
   },
   opts = {
     document_color = {
-      enabled = false,
+      enabled = true,
       kind = "inline", -- inline color block (requires Neovim 0.10+)
     },
     cmp = {
