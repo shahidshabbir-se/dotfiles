@@ -189,7 +189,7 @@
                 env = pkgsDarwin.buildEnv {
                   name = "system-applications";
                   paths = systemPackages;
-                  pathsToLink = "/Applications";
+                  pathsToLink = ["/Applications"];
                 };
               in
               pkgsDarwin.lib.mkForce ''
