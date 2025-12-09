@@ -7,6 +7,7 @@ with pkgs; [
   lsof
   gh
   lazygit
+  mise
   lazysql
   wget
   cbonsai
@@ -16,16 +17,13 @@ with pkgs; [
   lsof
   atuin
   lazysql
-  bat
   btop
-  bun
   coreutils
   croc
   dogdns
   doppler
   fastfetch
   fd
-  fnm
   fzf
   gnupg
   go

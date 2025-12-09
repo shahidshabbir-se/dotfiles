@@ -101,6 +101,7 @@ in
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     atuin = import ../../modules/atuin.nix;
+    bat = import ../../modules/bat.nix { inherit pkgs lib; };
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };

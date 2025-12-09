@@ -220,11 +220,12 @@
     export BROWSER="Zen"
     export _ZO_DOCTOR=0
 
+    # Activate mise
+    eval "$(mise activate zsh)"
+
     # Docker completion (if available)
     if command -v docker &>/dev/null; then
       eval "$(docker completion zsh)"
     fi
-
-      eval "$(fnm env --use-on-cd)"
   '';
 }
