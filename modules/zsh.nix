@@ -11,12 +11,12 @@
 {
   enable = true;
 
-  # ───────────────────────────────────────────────
-  # ▶ ZSH History
-  # ───────────────────────────────────────────────
-  history.size = 10000;
-  history.ignoreAllDups = true;
-  history.path = "${config.xdg.dataHome}/zsh/history";
+  # # ───────────────────────────────────────────────
+  # # ▶ ZSH History
+  # # ───────────────────────────────────────────────
+  # history.size = 10000;
+  # history.ignoreAllDups = true;
+  # history.path = "${config.xdg.dataHome}/zsh/history";
 
   # ───────────────────────────────────────────────
   # ▶ Shell Aliases
@@ -71,11 +71,6 @@
       file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
     }
     {
-      name = "zsh-syntax-highlighting";
-      src = pkgs.zsh-syntax-highlighting;
-      file = "share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
-    }
-    {
       name = "zsh-completions";
       src = pkgs.zsh-completions;
       file = "share/zsh-completions/zsh-completions.plugin.zsh";
@@ -95,44 +90,86 @@
       src = pkgs.zsh-fzf-tab;
       file = "share/fzf-tab/fzf-tab.plugin.zsh";
     }
+    {
+      name = "zsh-syntax-highlighting";
+      src = pkgs.zsh-syntax-highlighting;
+      file = "share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
+    }
   ];
 
   # ───────────────────────────────────────────────
   # ▶ Oh-My-Zsh Plugin Snippets
   # ───────────────────────────────────────────────
-  oh-my-zsh = {
-    enable = true;
-    plugins = [
-      "git"
-      "docker"
-      "docker-compose"
-      "npm"
-      "kubectl"
-      "tmux"
-    ];
-  };
+  # oh-my-zsh = {
+  #   enable = true;
+  #   plugins = [
+  #     "git"
+  #     "docker"
+  #     "docker-compose"
+  #     "npm"
+  #     "kubectl"
+  #     "tmux"
+  #   ];
+  # };
 
   # ───────────────────────────────────────────────
-  # ▶ Zsh Init Content
+  # ▶ Zsh Init Conten
   # ───────────────────────────────────────────────
   initContent = ''
+    # Set ZSH cache directory (for dynamic completions)
+    export ZSH_CACHE_DIR="${config.xdg.cacheHome}/zsh"
+    mkdir -p "$ZSH_CACHE_DIR/completions"
+
     # Powerlevel10k configuration
     [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    if [[ -d $HOME/.zsh/aliases ]]; then
+      for file in $HOME/.zsh/aliases/*.zsh; do
+        [[ -f "$file" ]] && source "$file"
+      done
+    fi
+
+    # Add completion directories to fpath
+    # Static completions from dotfiles and dynamic completions from cache
+    fpath=(${config.home.homeDirectory}/dotfiles/config/zsh/completions $ZSH_CACHE_DIR/completions $fpath)
+
+    # Lazy-load completions (only regenerate once per day)
+    autoload -Uz compinit
+    if [[ -n $ZSH_CACHE_DIR/zcompdump(#qN.mh+24) ]]; then
+      compinit -d "$ZSH_CACHE_DIR/zcompdump"
+    else
+      compinit -C -d "$ZSH_CACHE_DIR/zcompdump"
+    fi
 
     # Completion styling
     zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
     zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
     zstyle ':completion:*' menu no
-    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --color=always --icon=always $realpath'
-    zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'lsd --color=always --icon=always $realpath'
-    zstyle ':fzf-tab:complete:*' fzf-preview '[[ -d $realpath ]] && lsd --color=always --icon=always $realpath || bat --style=numbers --color=always --paging=never $realpath'
+    
+    # FZF-TAB configuration
+    zstyle ":fzf-tab:*" fzf-flags --border=sharp --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-sharp
+    
+    # Disable preview by default
+    zstyle ":fzf-tab:*" fzf-preview ""
+    
+    # Enable preview only for specific commands
+    zstyle ":fzf-tab:complete:cd:*" fzf-preview "lsd --color=always --icon=always \$realpath"
+    zstyle ":fzf-tab:complete:__zoxide_z:*" fzf-preview "lsd --color=always --icon=always \$realpath"
+    zstyle ":fzf-tab:complete:ls:*" fzf-preview "[[ -d \$realpath ]] && lsd --color=always --icon=always \$realpath || bat --style=numbers --color=always --paging=never \$realpath"
+    zstyle ":fzf-tab:complete:cat:*" fzf-preview "bat --style=numbers --color=always --paging=never \$realpath"
+    zstyle ":fzf-tab:complete:bat:*" fzf-preview "bat --style=numbers --color=always --paging=never \$realpath"
+    zstyle ":fzf-tab:complete:nvim:*" fzf-preview "[[ -d \$realpath ]] && lsd --color=always --icon=always \$realpath || bat --style=numbers --color=always --paging=never \$realpath"
+    zstyle ":fzf-tab:complete:vi:*" fzf-preview "[[ -d \$realpath ]] && lsd --color=always --icon=always \$realpath || bat --style=numbers --color=always --paging=never \$realpath"
 
     # FZF colors (Tokyo Night theme)
     export FZF_DEFAULT_OPTS="\
       --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 \
       --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff \
       --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff \
-      --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
+      --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a \
+      --border=sharp \
+      --color=border:#7dcfff \
+      --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+      --preview-window 'right:50%:wrap:border-sharp'"
 
     # Key bindings
     bindkey '^r' atuin-search
@@ -153,9 +190,6 @@
     bindkey '^Y' yank
     bindkey '^[o' execute-named-cmd
     bindkey '^F' autosuggest-accept
-
-    # Load completions
-    autoload -Uz compinit && compinit
 
     # Custom lt function for tree view
     lt() {
@@ -209,23 +243,56 @@
       python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | $clip_cmd
     }
 
+    # FZF integrations
+    # Kill process with fzf
+    fkill() {
+      local pid
+      pid=$(ps -ef | sed 1d | fzf -m --header='[kill:process]' --preview-window=hidden | awk '{print $2}')
+      if [ "x$pid" != "x" ]; then
+        echo $pid | xargs kill -''${1:-9}
+      fi
+    }
+
+    # Docker container selection with fzf
+    fdock() {
+      local container
+      container=$(docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}' | fzf --header-lines=1 --header='[docker:container]' --preview-window=hidden) &&
+      echo $container | awk '{print $1}'
+    }
+
+    # Docker logs with fzf
+    fdlog() {
+      local container
+      container=$(docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}' | fzf --header-lines=1 --header='[docker:logs]' --preview-window=hidden | awk '{print $1}') &&
+      [ -n "$container" ] && docker logs -f "$container"
+    }
+
+    # Environment variable viewer with fzf
+    fenv() {
+      env | fzf --preview 'echo {}' --preview-window=down:3:wrap --header='[env:variables]'
+    }
+
+    # Man page search with fzf
+    fman() {
+      man -k . | fzf --preview 'echo {} | awk "{print \$1}" | xargs man' --header='[man:pages]' | awk '{print $1}' | xargs man
+    }
+
+    # Directory history with fzf (using zoxide)
+    fz() {
+      local dir
+      dir=$(zoxide query -l | fzf --preview 'lsd --color=always --icon=always {}' --header='[zoxide:jump]') &&
+      cd "$dir"
+    }
+
 
     # Environment variables
     export TERM="xterm-256color"
     export TMPDIR=$HOME/tmp
-    export PATH="$HOME/.bun/bin:$PATH"
-    export PATH="$HOME/.cache/.bun/bin:$PATH"
-    export PATH="$PATH:$(go env GOPATH)/bin"
     export EDITOR="nvim"
     export BROWSER="Zen"
     export _ZO_DOCTOR=0
-
-    # Activate mise
-    eval "$(mise activate zsh)"
-
-    # Docker completion (if available)
-    if command -v docker &>/dev/null; then
-      eval "$(docker completion zsh)"
-    fi
+    
+    # Optimize PATH (single assignment is faster)
+    export PATH="$HOME/.asdf/shims:$HOME/.asdf/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH:$(go env GOPATH)/bin"
   '';
 }

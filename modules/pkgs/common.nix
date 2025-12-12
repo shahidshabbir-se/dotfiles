@@ -7,7 +7,7 @@ with pkgs; [
   lsof
   gh
   lazygit
-  mise
+  asdf-vm
   lazysql
   wget
   cbonsai

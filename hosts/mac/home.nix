@@ -46,6 +46,7 @@ in
   # ▶ Dotfiles Mapping
   # ───────────────────────────────────────────────
   home.file.".p10k.zsh".source = ../../config/p10k.zsh;
+  home.file.".zsh/aliases".source = ../../config/zsh/aliases;
 
   # ───────────────────────────────────────────────
   # ▶ Program Configurations

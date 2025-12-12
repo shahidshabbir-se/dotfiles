@@ -89,6 +89,7 @@ in
   # ▶ Dotfiles Mapping
   # ───────────────────────────────────────────────
   home.file.".p10k.zsh".source = ../../config/p10k.zsh;
+  home.file.".zsh/aliases".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zsh/aliases";
 
   # ───────────────────────────────────────────────
   # ▶ Program Configurations
