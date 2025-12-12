@@ -32,7 +32,7 @@ in
     title = " ";
 
     # Font
-    font-family = "JetBrainsMono Nerd Font";
+    font-family = "BlexMono Nerd Font";
     font-size = fontSize;
     font-feature = [ "+calt" "+liga" ];
     font-style = "regular";

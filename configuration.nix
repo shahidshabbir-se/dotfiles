@@ -133,7 +133,7 @@
   programs.zsh.enable = true;
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.geist-mono
+    pkgs.nerd-fonts.blex-mono
     pkgs.inter
   ];
   services.keyd = {
