@@ -291,8 +291,8 @@
     export EDITOR="nvim"
     export BROWSER="Zen"
     export _ZO_DOCTOR=0
-    
+
     # Optimize PATH (single assignment is faster)
-    export PATH="$HOME/.asdf/shims:$HOME/.asdf/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH:$(go env GOPATH)/bin"
+    export PATH="$HOME/go/bin:$HOME/.local/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"
   '';
 }

@@ -99,7 +99,7 @@ in
         set -g @resurrect-strategy-vim 'session'
         set -g @resurrect-strategy-nvim 'session'
         set -g @resurrect-capture-pane-contents 'on'
-        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode" "~claude->claude"'
+        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~droid->droid" "~claude->claude"'
       ''
       + ''
         # Taken from: https://github.com/p3t33/nixos_flake/blob/5a989e5af403b4efe296be6f39ffe6d5d440d6d6/home/modules/tmux.nix
@@ -206,5 +206,11 @@ in
     set -g @fzf-url-history-limit '2000'
 
     set -g status-position bottom
+
+    # ─────────────────────────────────────────────────────────
+    #  Scroll up/down with Alt-k/j
+    # ─────────────────────────────────────────────────────────
+    bind -n M-k if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
+    bind -n M-j if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "send-keys M-j"
   '';
 }

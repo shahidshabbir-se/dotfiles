@@ -2,11 +2,11 @@
 
 with pkgs; [
   gitleaks
-  graphite-cli
   csview
   lsof
   gh
   lazygit
+  stripe-cli
   asdf-vm
   lazysql
   wget
@@ -26,7 +26,6 @@ with pkgs; [
   fd
   fzf
   gnupg
-  go
   htop
   jq
   lsd
