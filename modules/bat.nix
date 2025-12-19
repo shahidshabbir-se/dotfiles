@@ -17,7 +17,7 @@
         rev = "main";
         sha256 = "sha256-4zfkv3egdWJ/GCWUehV0MAIXxsrGT82Wd1Qqj1SCGOk=";
       };
-        file = "extras/sublime/tokyonight_night.tmTheme";
+      file = "extras/sublime/tokyonight_night.tmTheme";
     };
   };
 }
