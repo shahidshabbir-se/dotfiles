@@ -85,12 +85,6 @@
       activeDeviceLinux = devices.thinkpad-e14;
       activeDeviceMac = devices.mac-mini-external;
 
-      # Packages
-      pkgsLinux = import nixpkgs {
-        system = systemLinux;
-        config.allowUnfree = true;
-      };
-
       pkgsDarwin = import nixpkgs {
         system = systemDarwin;
         config.allowUnfree = true;
@@ -189,7 +183,7 @@
                 env = pkgsDarwin.buildEnv {
                   name = "system-applications";
                   paths = systemPackages;
-                  pathsToLink = ["/Applications"];
+                  pathsToLink = [ "/Applications" ];
                 };
               in
               pkgsDarwin.lib.mkForce ''

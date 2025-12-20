@@ -18,6 +18,10 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		"*.go",
 		"*.nix",
 		"*.md",
+		"Dockerfile*",
+		"*.dockerfile",
+		"*.yaml",
+		"*.yml",
 	},
 	callback = function()
 		if vim.g._autosave_lock then

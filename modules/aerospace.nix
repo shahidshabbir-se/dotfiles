@@ -2,7 +2,7 @@
   enable = true;
   launchd.enable = true;
 
-  settings= {
+  settings = {
     # Start AeroSpace at login
     start-at-login = true;
 

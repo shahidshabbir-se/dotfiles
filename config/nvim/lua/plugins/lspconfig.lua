@@ -13,9 +13,14 @@ return {
     for _, lang in ipairs(langs) do
       if lang.lsp then
         for server_name, server_config in pairs(lang.lsp) do
-          local config = server_config or {}
-          config.capabilities = capabilities
-          vim.lsp.enable(server_name, config)
+          local config = vim.tbl_deep_extend("force", {
+            capabilities = capabilities,
+          }, server_config or {})
+          
+          -- Use vim.lsp.config to define the configuration first
+          vim.lsp.config(server_name, config)
+          -- Then enable it
+          vim.lsp.enable(server_name)
         end
       end
     end

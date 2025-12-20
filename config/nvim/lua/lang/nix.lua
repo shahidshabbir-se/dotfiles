@@ -13,20 +13,27 @@ M.mason = {
 -- LSP configuration for vim.lsp.enable
 M.lsp = {
   ["nil_ls"] = {
+    cmd = { "nil" },
+    filetypes = { "nix" },
+    root_markers = { "flake.nix", ".git" },
     settings = {
-      -- rnix-lsp doesn’t have tons of custom settings, default is fine
+      ["nil"] = {
+        formatting = {
+          command = { "nixpkgs-fmt" },
+        },
+      },
     },
   },
 }
 
 -- Formatters
 M.formatters = {
-  nix = { "nixpkgs-fmt" },
+  -- nil_ls LSP handles formatting via nixpkgs-fmt (configured in LSP settings)
 }
 
 -- Linters
 M.linters = {
-  nix = { "nixpkgs-fmt" }, -- nixpkgs-fmt works as both linter and formatter
+  -- nil_ls LSP server provides diagnostics
 }
 
 -- Tools to ensure installed via Mason

@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports =
@@ -13,8 +13,8 @@
   nixpkgs.config.allowUnfree = true;
   # configuration.nix
   programs.nix-ld.enable = true;
-  programs.nix-ld.libraries = with pkgs; [
-  ];
+  # programs.nix-ld.libraries = with pkgs; [
+  # ];
   services.xserver.videoDrivers = [ "amdgpu" ];
 
 

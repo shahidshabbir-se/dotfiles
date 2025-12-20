@@ -5,7 +5,9 @@ local enabled = {
   go = true,
   lua = true,
   nix = true,
-  web = true
+  web = true,
+  docker = true,
+  yaml = true
 }
 
 local langs = {}
