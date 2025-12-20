@@ -6,9 +6,7 @@
 #   ╚═════╝ ╚═╝   ╚═╝   
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config
-, pkgs
-, userGmail
+{ userGmail
 , userGithub
 , homeDirectory
 , ...

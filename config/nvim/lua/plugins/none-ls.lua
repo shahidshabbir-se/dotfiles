@@ -14,7 +14,12 @@ return {
       if lang.formatters then
         for ft, fmt_list in pairs(lang.formatters) do
           for _, fmt in ipairs(fmt_list) do
-            table.insert(sources, none_ls.builtins.formatting[fmt])
+            local formatter = none_ls.builtins.formatting[fmt]
+            if formatter then
+              table.insert(sources, formatter)
+            else
+              vim.notify("Formatter not found: " .. fmt, vim.log.levels.WARN)
+            end
           end
         end
       end
@@ -23,7 +28,12 @@ return {
       if lang.linters then
         for ft, lints in pairs(lang.linters) do
           for _, lint in ipairs(lints) do
-            table.insert(sources, none_ls.builtins.diagnostics[lint])
+            local linter = none_ls.builtins.diagnostics[lint]
+            if linter then
+              table.insert(sources, linter)
+            else
+              vim.notify("Linter not found: " .. lint, vim.log.levels.WARN)
+            end
           end
         end
       end

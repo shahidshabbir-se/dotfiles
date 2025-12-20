@@ -6,7 +6,7 @@
 #     ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   services.yabai = {

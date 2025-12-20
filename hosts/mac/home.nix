@@ -12,7 +12,7 @@ let
   homeDirectory = "/Users/shahid";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
-  wallpaperPath = "${homeDirectory}/Pictures/Wallpapers/1.png";
+  # wallpaperPath = "${homeDirectory}/Pictures/Wallpapers/1.png";
   inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
@@ -24,7 +24,7 @@ in
     homeDirectory = homeDirectory;
     stateVersion = "24.05";
 
-    packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
+    packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ ([
       inputs.home-manager.packages.${pkgs.system}.home-manager
     ]);
     # activation.setWallpaper = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

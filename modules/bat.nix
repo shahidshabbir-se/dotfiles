@@ -5,7 +5,7 @@
   config = {
     theme = "TokyoNight";
     style = "numbers,changes,header";
-    italic-text ="always";
+    italic-text = "always";
     pager = "less -FR";
   };
 

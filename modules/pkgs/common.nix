@@ -6,6 +6,7 @@ with pkgs; [
   lsof
   gh
   lazygit
+  nixpkgs-fmt
   stripe-cli
   asdf-vm
   lazysql
