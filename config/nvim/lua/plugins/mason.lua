@@ -12,7 +12,7 @@ return {
 					package_pending = "➜",
 					package_uninstalled = "✗",
 				},
-				border = "single",
+				border = "rounded",
 				backdrop = 100,
         width = 0.75,
         height = 0.8,
