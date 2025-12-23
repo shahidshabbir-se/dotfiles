@@ -214,9 +214,9 @@ in
     bind -n M-d if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "copy-mode; send-keys -X scroll-down"
 
     # ─────────────────────────────────────────────────────────
-    #  Kill Pane and Window (Easy shortcuts)
+    #  Kill Pane and Window
     # ─────────────────────────────────────────────────────────
-    bind -n C-x kill-pane
-    bind -n C-w kill-window
+    bind x kill-pane
+    bind w kill-window
   '';
 }
