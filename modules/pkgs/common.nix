@@ -30,6 +30,7 @@ with pkgs; [
   htop
   jq
   lsd
+  moreutils
   onefetch
   ripgrep
   rustup
