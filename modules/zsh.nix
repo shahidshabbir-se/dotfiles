@@ -140,13 +140,16 @@
       compinit -C -d "$ZSH_CACHE_DIR/zcompdump"
     fi
 
+    # Word characters (treat hyphen as word separator so Ctrl+W stops at it)
+    WORDCHARS='*?_[]~=&;!#$%^(){}<>'
+
     # Completion styling
     zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
     zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
     zstyle ':completion:*' menu no
     
     # FZF-TAB configuration
-    zstyle ":fzf-tab:*" fzf-flags --border=sharp --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-sharp
+    zstyle ":fzf-tab:*" fzf-flags --border=rounded --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-rounded --height=60% --min-height=15
     
     # Disable preview by default
     zstyle ":fzf-tab:*" fzf-preview ""
@@ -166,10 +169,10 @@
       --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff \
       --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff \
       --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a \
-      --border=sharp \
+      --border=rounded \
       --color=border:#7dcfff \
       --preview 'bat --style=numbers --color=always --line-range :500 {}' \
-      --preview-window 'right:50%:wrap:border-sharp'"
+      --preview-window 'right:50%:wrap:border-rounded'"
 
     # Key bindings
     bindkey '^r' atuin-search
@@ -183,6 +186,7 @@
     bindkey '^[b' backward-word
     bindkey '^[f' forward-word
     bindkey '^D' delete-char
+    bindkey '^[[3~' delete-char  # DEL key
     bindkey '^?' backward-delete-char
     bindkey '^T' transpose-chars
     bindkey '^[t' transpose-words

@@ -208,9 +208,15 @@ in
     set -g status-position bottom
 
     # ─────────────────────────────────────────────────────────
-    #  Scroll up/down with Alt-k/j
+    #  Scroll up/down with Alt-u/d
     # ─────────────────────────────────────────────────────────
-    bind -n M-k if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
-    bind -n M-j if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "send-keys M-j"
+    bind -n M-u if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
+    bind -n M-d if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "copy-mode; send-keys -X scroll-down"
+
+    # ─────────────────────────────────────────────────────────
+    #  Kill Pane and Window (Easy shortcuts)
+    # ─────────────────────────────────────────────────────────
+    bind -n C-x kill-pane
+    bind -n C-w kill-window
   '';
 }
