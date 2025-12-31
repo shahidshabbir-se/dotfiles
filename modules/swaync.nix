@@ -62,7 +62,7 @@
 
     * {
       all: unset;
-      font-family: "Inter", "SF Pro Display", sans-serif;
+      font-family: "Poppins", "SF Pro Display", sans-serif;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 

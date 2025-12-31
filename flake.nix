@@ -12,6 +12,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -153,7 +158,7 @@
                 "/Applications/Microsoft Word.app"
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
-                "/Applications/VLC.app"
+                "/Applications/mpv.app"
                 "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
                 "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                 "/Applications/Docker.app"
@@ -217,7 +222,6 @@
                 "whatsapp"
                 "obsidian"
                 "karabiner-elements"
-                "vlc"
                 "zen"
                 "docker-desktop"
               ];

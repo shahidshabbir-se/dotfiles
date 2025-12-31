@@ -29,6 +29,7 @@ in
 
   settings = {
     theme = "TokyoNight";
+    # theme = "Catppuccin Mocha";
     title = " ";
 
     # Font
