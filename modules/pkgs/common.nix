@@ -4,14 +4,20 @@ with pkgs; [
   gitleaks
   csview
   lsof
+  openssl
   gh
   lazygit
+  go
   nixpkgs-fmt
   stripe-cli
   asdf-vm
   lazysql
   wget
   cbonsai
+  imagemagick
+  youtube-tui
+  mpv
+  yt-dlp
   ncdu
   act
   sesh
@@ -29,6 +35,7 @@ with pkgs; [
   gnupg
   htop
   jq
+  jless
   lsd
   moreutils
   onefetch

@@ -28,13 +28,13 @@
     tree = "lsd --tree --depth 1";
 
     # Basic utilities
-    rm = "rm -rf";
+    rm = "rm -rI";
+    rmd = "rm-rf";
     c = "clear";
     vi = "nvim";
     ".." = "cd ..";
     e = "exit";
     psql = "pgcli";
-    copy = if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy";
     cat = "bat";
     bc = "better-commits";
     viconf = "cd ~/.config/nvim && nvim .";
@@ -193,7 +193,78 @@
     bindkey '^L' clear-screen
     bindkey '^Y' yank
     bindkey '^[o' execute-named-cmd
-    bindkey '^F' autosuggest-accept
+bindkey '^F' autosuggest-accept
+
+    # Edit command in $EDITOR (Ctrl+X Ctrl+E)
+    autoload -Uz edit-command-line
+    zle -N edit-command-line
+    bindkey '^X^E' edit-command-line
+
+    # Vi mode edit command
+    bindkey -M vicmd 'v' edit-command-line
+
+    # Undo (Ctrl+_)
+    bindkey '^_' undo
+
+    # Magic Space - Expand history expressions
+    bindkey ' ' magic-space
+
+    # Suffix aliases - open files by extension
+    alias -s json=jless
+    alias -s md=bat
+    alias -s txt=bat
+    alias -s log=bat
+    alias -s py=$EDITOR
+    alias -s js=$EDITOR
+    alias -s ts=$EDITOR
+    alias -s rs=$EDITOR
+    alias -s go=$EDITOR
+    alias -s html=${if pkgs.stdenv.isDarwin then "open" else "xdg-open"}  # open in default browser
+
+    # Global aliases for output redirection
+    alias -g NE='2>/dev/null'     # Redirect stderr only
+    alias -g NO='>/dev/null'      # Redirect stdout only
+    alias -g NUL='>/dev/null 2>&1' # Redirect both stdout and stderr
+    alias -g J='| jq'            # Pipe to jq
+alias -g C="| ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"  # Copy to clipboard
+
+    # zmv - Advanced batch rename/move
+    autoload -Uz zmv
+    alias zcp='zmv -C'  # Copy with patterns
+    alias zln='zmv -L'  # Link with patterns
+
+    # Hash directory shortcuts
+    hash -d dot=~/dotfiles
+    hash -d dl=~/Downloads
+    hash -d dev=~/Developer
+    hash -d doc=~/Documents
+    hash -d devf=~/Developer/freelance/
+    hash -d devp=~/Developer/personal/
+    hash -d ccd=~/.claude
+    hash -d ocd=~/.opencode
+
+    # Custom widgets
+    function clear-screen-and-scrollback() {
+      echoti civis >"$TTY"
+      printf '%b' '\e[H\e[2J\e[3J' >"$TTY"
+      echoti cnorm >"$TTY"
+      zle redisplay
+    }
+    zle -N clear-screen-and-scrollback
+    bindkey '^X^L' clear-screen-and-scrollback
+
+    function copy-buffer-to-clipboard() {
+      echo -n "$BUFFER" | ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}
+      zle -M "Copied to clipboard"
+    }
+    zle -N copy-buffer-to-clipboard
+    bindkey '^X^C' copy-buffer-to-clipboard
+
+    # Hotkey insertions - text snippets
+    bindkey -s '^Xgc' 'git commit -m ""\C-b'    # Git commit template
+    bindkey -s '^Xgp' 'git push origin '         # Git push origin
+    bindkey -s '^Xgs' 'git status\n'             # Git status
+    bindkey -s '^Xgl' 'git log --oneline -n 10\n' # Git log
 
     # Custom lt function for tree view
     lt() {
@@ -295,8 +366,7 @@
     export EDITOR="nvim"
     export BROWSER="Zen"
     export _ZO_DOCTOR=0
-
-    # Optimize PATH (single assignment is faster)
-    export PATH="$HOME/go/bin:$HOME/.local/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"
+    export GOPATH="$HOME/go"
+    export PATH="$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH"
   '';
 }

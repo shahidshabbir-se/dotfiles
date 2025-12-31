@@ -24,9 +24,18 @@
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  # Use GRUB for dual-boot with Windows
+  boot.loader.systemd-boot.enable = false;
+  boot.loader.grub = {
+    enable = true;
+    device = "nodev"; # For EFI systems
+    efiSupport = true;
+    useOSProber = true; # Detect Windows automatically
+    theme = pkgs.catppuccin-grub;
+    gfxmodeEfi = "1920x1080"; # Adjust to your screen resolution
+  };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
   services.openssh.enable = true;
@@ -102,11 +111,22 @@
   home-manager.backupFileExtension = "bak";
 
   environment.systemPackages = with pkgs; [
+    openvpn
+    swww
+    (pkgs.symlinkJoin {
+      name = "quickshell-wrapped";
+      paths = [ quickshell ];
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/quickshell \
+          --prefix QML_IMPORT_PATH : ${pkgs.qt6.qt5compat}/${pkgs.qt6.qtbase.qtQmlPrefix}
+      '';
+    })
     (sddm-astronaut.override {
       themeConfig = {
         ScreenWidth = "1920";
         ScreenHeight = "1080";
-        Font = "Inter";
+        Font = "Poppins";
         FontSize = "12";
         RoundCorners = "20";
 

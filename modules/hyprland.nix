@@ -35,17 +35,22 @@
       "xdg-mime default feh.desktop image/gif"
       "xdg-mime default feh.desktop image/webp"
       "xdg-mime default feh.desktop image/bmp"
-      "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
+      "hyprctl setcursor Banana 36"
+      # "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
     ];
 
     env = [
       "XDG_MIME_APPS,$HOME/.config/mimeapps.list"
       "TERMINAL,wezterm"
       "EDITOR,nvim"
-      "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
-      "XCURSOR_SIZE,24"
-      "HYPRCURSOR_SIZE,24"
-      "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
+      "XCURSOR_THEME,Banana"
+      "XCURSOR_SIZE,36"
+      "HYPRCURSOR_SIZE,36"
+      "HYPRCURSOR_THEME,Banana"
+      # "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
+      # "XCURSOR_SIZE,24"
+      # "HYPRCURSOR_SIZE,24"
+      # "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
       "GTK_THEME,catppuccin-mocha-blue-standard"
     ];
 
@@ -157,6 +162,7 @@
       "$mod, F, fullscreen, 0"
       "$mod, P, pseudo,"
       "$mod SHIFT, J, togglesplit,"
+      "$mod, W, exec, quickshell"
       "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
       "$mod, N, exec, swaync-client -t -sw"
       "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"

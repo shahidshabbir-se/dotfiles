@@ -54,7 +54,7 @@ in
         set -g @tokyo-night-tmux_terminal_icon ""
         set -g @tokyo-night-tmux_active_terminal_icon ""
         set -g @tokyo-night-tmux_show_path 0
-        set -g @tokyo-night-tmux_show_music 1
+        set -g @tokyo-night-tmux_show_music 0
         set -g @tokyo-night-tmux_window_tidy_icons 0
         set -g @tokyo-night-tmux_transparent 1
 

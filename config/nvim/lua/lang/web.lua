@@ -100,6 +100,7 @@ M.tools = {
 	"htmlhint",
 	"html-lsp",
 	"css-lsp",
+	"tailwindcss-language-server",
 	"astro-language-server",
 	"svelte-language-server",
 	"prisma-language-server", -- Prisma

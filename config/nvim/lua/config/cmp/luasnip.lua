@@ -24,6 +24,14 @@ function M.setup()
   luasnip.filetype_extend("typescriptreact", { "html" })
   luasnip.filetype_extend("svelte", { "html" })
 
+  -- Extend tailwindcss snippets to web frameworks
+  luasnip.filetype_extend("javascriptreact", { "tailwindcss" })
+  luasnip.filetype_extend("typescriptreact", { "tailwindcss" })
+  luasnip.filetype_extend("svelte", { "tailwindcss" })
+  luasnip.filetype_extend("vue", { "tailwindcss" })
+  luasnip.filetype_extend("astro", { "tailwindcss" })
+  luasnip.filetype_extend("html", { "tailwindcss" })
+
   -- Global snippets
   luasnip.filetype_extend("all", { "_" })
 end

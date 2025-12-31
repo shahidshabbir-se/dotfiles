@@ -26,12 +26,19 @@ in
   # ───────────────────────────────────────────────
   # ▶ Home Directory & Package Set
   # ───────────────────────────────────────────────
+  # home.pointerCursor = {
+  #   x11.enable = true;
+  #   gtk.enable = true;
+  #   package = pkgs.catppuccin-cursors.mochaDark;
+  #   size = 24;
+  #   name = "catppuccin-mocha-dark-cursors";
+  # };
   home.pointerCursor = {
     x11.enable = true;
     gtk.enable = true;
-    package = pkgs.catppuccin-cursors.mochaDark;
-    size = 24;
-    name = "catppuccin-mocha-dark-cursors";
+    package = import ../../modules/banana-cursor.nix { inherit pkgs; };
+    size = 36;
+    name = "Banana";
   };
   home = {
     username = "shahid";
@@ -52,7 +59,7 @@ in
       gnumake
       grimblast
       inputs.zen-browser.packages."${system}".default
-      inter
+      poppins
       libnotify
       mpvpaper
       xfce.thunar
@@ -64,7 +71,6 @@ in
       (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = [ "blue" ]; size = "standard"; })
       onlyoffice-desktopeditors
       unzip
-      vlc
       wl-clipboard
       wofi
       rofi
@@ -128,10 +134,11 @@ in
       color-scheme = "prefer-dark";
       gtk-theme = "catppuccin-mocha-blue-standard";
       icon-theme = "Papirus-Dark";
-      cursor-theme = "catppuccin-mocha-dark-cursors";
-      cursor-size = 24;
-      font-name = "Inter 11";
-      document-font-name = "Inter 11";
+      # cursor-theme = "catppuccin-mocha-dark-cursors";
+      cursor-theme = "Banana";
+      cursor-size = 36;
+      font-name = "Poppins 11";
+      document-font-name = "Poppins 11";
       monospace-font-name = "JetBrainsMono Nerd Font 11";
     };
   };

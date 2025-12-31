@@ -14,7 +14,7 @@ return {
       kind = "inline", -- inline color block (requires Neovim 0.10+)
     },
     cmp = {
-      enabled = false,
+      enabled = true,
       highlight = "background", -- color preview style, "foreground" | "background"
     },
     conceal = {
