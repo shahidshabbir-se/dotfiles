@@ -18,8 +18,8 @@
 
     exec-once = [
       "swww-daemon &"
+      "eww --config ~/.config/eww daemon &"
       "waybar &"
-      "bash -c 'swww img $(cat ~/.config/rofi/wallpaper)'"
       # "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
       "wl-paste --type text --watch cliphist store"
       "wl-paste --type image --watch cliphist store"
@@ -162,11 +162,11 @@
       "$mod, F, fullscreen, 0"
       "$mod, P, pseudo,"
       "$mod SHIFT, J, togglesplit,"
-      "$mod, W, exec, quickshell"
+      "$mod, W, exec, ags run"
       "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
       "$mod, N, exec, swaync-client -t -sw"
       "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
-      "ALT SHIFT, W, exec, ${homeDirectory}/dotfiles/config/rofi/wallpaper-launch.sh"
+      "ALT SHIFT, W, exec, bash ~/.config/eww/toggle-wallpaper.sh"
       "ALT SHIFT, P, exec, ${homeDirectory}/dotfiles/config/rofi/power-launch.sh"
       "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
       "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"

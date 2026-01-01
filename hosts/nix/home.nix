@@ -60,6 +60,7 @@ in
       grimblast
       inputs.zen-browser.packages."${system}".default
       poppins
+      eww
       libnotify
       mpvpaper
       xfce.thunar

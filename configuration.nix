@@ -113,15 +113,6 @@
   environment.systemPackages = with pkgs; [
     openvpn
     swww
-    (pkgs.symlinkJoin {
-      name = "quickshell-wrapped";
-      paths = [ quickshell ];
-      buildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/quickshell \
-          --prefix QML_IMPORT_PATH : ${pkgs.qt6.qt5compat}/${pkgs.qt6.qtbase.qtQmlPrefix}
-      '';
-    })
     (sddm-astronaut.override {
       themeConfig = {
         ScreenWidth = "1920";
