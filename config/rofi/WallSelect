@@ -1,0 +1,84 @@
+#!/run/current-system/sw/bin/bash
+
+# WallSelect - Dynamic wallpaper selector for Hyprland
+# Optimized for NixOS
+
+# Configuration
+wall_dir="$HOME/Pictures/Wallpapers"
+cacheDir="$HOME/.cache/wallpaper-cache"
+rofi_theme="$HOME/dotfiles/config/rofi/wallSelect.rasi"
+
+# Create directories if they don't exist
+[ -d "$wall_dir" ] || mkdir -p "$wall_dir"
+[ -d "$cacheDir" ] || mkdir -p "$cacheDir"
+
+rofi_command="rofi -dmenu -theme $rofi_theme"
+
+# Detect number of cores
+get_optimal_jobs() {
+    cores=$(nproc)
+    if [ "$cores" -le 2 ]; then echo 2; elif [ "$cores" -gt 4 ]; then echo 4; else echo $((cores - 1)); fi
+}
+
+PARALLEL_JOBS=$(get_optimal_jobs)
+
+process_func_def='process_image() {
+    imagen="$1"
+    nombre_archivo=$(basename "$imagen")
+    cache_file="${cacheDir}/${nombre_archivo}"
+    md5_file="${cacheDir}/.${nombre_archivo}.md5"
+    lock_file="${cacheDir}/.lock_${nombre_archivo}"
+    current_md5=$(md5sum "$imagen" | cut -d " " -f1)
+    (
+        flock -x 9
+        if [ ! -f "$cache_file" ] || [ ! -f "$md5_file" ] || [ "$current_md5" != "$(cat "$md5_file" 2>/dev/null)" ]; then
+            magick "$imagen" -resize 500x500^ -gravity center -extent 500x500 "$cache_file"
+            echo "$current_md5" > "$md5_file"
+        fi
+        rm -f "$lock_file"
+    ) 9>"$lock_file"
+}'
+
+export -f get_optimal_jobs
+export process_func_def cacheDir wall_dir
+
+# Clean old locks
+rm -f "${cacheDir}"/.lock_* 2>/dev/null || true
+
+# Process files in parallel
+find "$wall_dir" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) -print0 | \
+    xargs -0 -P "$PARALLEL_JOBS" -I {} sh -c "$process_func_def; process_image \"{}\""
+
+# Clean orphaned cache
+for cached in "$cacheDir"/*; do
+    [ -f "$cached" ] || continue
+    [ -f "${wall_dir}/$(basename "$cached")" ] || rm -f "$cached" "${cacheDir}/.$(basename "$cached").md5"
+done
+
+# Launch rofi
+wall_selection=$(find "${wall_dir}" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) -print0 |
+    xargs -0 basename -a |
+    LC_ALL=C sort |
+    while IFS= read -r A; do
+        printf '%s\000icon\037%s/%s\n' "$A" "$cacheDir" "$A"
+    done | $rofi_command)
+
+# Set wallpaper for Hyprland (using swww)
+if [ -n "$wall_selection" ]; then
+    selected_path="${wall_dir}/${wall_selection}"
+    # Ensure swww-daemon is running
+    if ! pgrep -x "swww-daemon" > /dev/null; then
+        swww-daemon &
+        sleep 0.5
+    fi
+    
+    # Get cursor position for transition, fallback to center if it fails
+    cursor_pos=$(hyprctl cursorpos 2>/dev/null)
+    if [[ "$cursor_pos" =~ ^[0-9]+,[[:space:]]*[0-9]+$ ]]; then
+        cursor_pos=$(echo "$cursor_pos" | sed 's/ //g')
+    else
+        cursor_pos="center"
+    fi
+
+    swww img "$selected_path" --transition-type grow --transition-pos "$cursor_pos" --transition-step 90
+fi

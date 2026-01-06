@@ -1,171 +1,114 @@
-@import "tokyonight.css";
-
 * {
+  border: none;
+  border-radius: 0;
   min-height: 0;
-  font-family: "JetBrainsMono Nerd Font", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free";
+  font-size: 15px;
+  font-weight: bold;
 }
-/* Waybar */
+
+window#waybar {
+  background-color: #1A1B26;
+  border-radius: 12px;
+}
+
 #waybar {
   background-color: transparent;
 }
 
-#waybar .module {
-  color: @text;
-  padding: 0px 0px;
-  margin: -10px 6px -10px;
-  padding-left: 2px;
-  margin: -10px 7px -10px;
-  border: 2px;
+/* Common style for modules with background */
+#cpu,
+#memory,
+#disk,
+#music-controls,
+#workspaces,
+#hardware,
+#pulseaudio,
+#custom-updates,
+#clock,
+#tray {
+  background-color: #222330;
+  border-radius: 999px;
+  padding: 0 10px;
+  margin: 6px 4px;
 }
 
-#waybar .module:hover {
-  color: @subtext1;
+/* Style for grouped elements */
+#battery, #network, #custom-prev, #custom-play-pause, #custom-next {
+  background-color: transparent;
+  padding: 0 6px;
+  margin: 0;
 }
 
-#window#waybar {
-  color: @text;
-  background-color: @base;
-  transition-property: background-color;
-  transition-duration: 0.5s;
-  border: 2px solid @mauve;
+/* Style for grouped hardware internal elements */
+#battery, #network {
+  background-color: transparent;
+  padding: 0 6px;
+  margin: 0;
 }
 
-button {
-  box-shadow: inset 0 -3px transparent;
-  border: none;
-  border-radius: 2px;
-  padding: 0px 5px;
-  margin: 5px 0px;
+/* Music and Bluetooth Group - No background */
+#music-bt {
+  background-color: transparent;
+  margin: 6px 8px;
 }
 
-button:hover {
-  background: inherit;
-  box-shadow: inset 0 -3px transparent;
+#custom-mplayer, #bluetooth {
+  background-color: transparent;
+  padding: 0 6px;
+  margin: 0;
+  font-size: 15px; /* Same as hardware/global */
+}
+
+/* Modules without background (Launchers) */
+#custom-launcher, 
+#custom-power {
+  background-color: transparent;
+  padding: 0 5px;
+  margin: 0 8px;
+}
+
+#custom-launcher {
+  color: #7aa2f7;
+  margin-left: 20px;
+  padding-right: 15px;
+}
+
+#custom-power {
+  color: #f7768e;
+  margin-right: 20px;
 }
 
 #workspaces button {
-  box-shadow: none;
-  text-shadow: none;
-  padding: 0px;
-  border-radius: 8px;
-  margin-top: 1em;
-  margin-bottom: 1em;
-  margin-left: 0px;
-  padding-left: 3px;
-  padding-right: 3px;
-  margin-right: 0px;
-  color: @text;
-  animation: ws_normal 20s ease-in-out 1;
+  padding: 0 8px;
+  color: #583794;
+  background: transparent;
+  min-width: 20px;
 }
 
 #workspaces button.active {
-  background: @mauve;
-  color: @crust;
-  border-radius: 4.5pt;
-  margin-left: 0px;
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-right: 0px;
-  animation: ws_active 20s ease-in-out 1;
-  transition: all 0.4s cubic-bezier(0.55, -0.68, 0.48, 1.682);
+  color: #e0af68;
+}
+
+#workspaces button.urgent {
+  color: #f7768e;
 }
 
 #workspaces button:hover {
-  background: @mantle;
-  color: @text;
-  animation: ws_hover 20s ease-in-out 1;
-  transition: all 0.3s cubic-bezier(0.55, -0.68, 0.48, 1.682);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
 }
 
-#tags button {
-  color: @mauve;
-  background: @base;
-  border-radius: 0px;
-  padding: 0px 0px;
-  margin: 5px 0px;
-}
-
-#tags button.occupied {
-  color: @mantle;
-}
-
-#tags button.focused {
-  color: @sky;
-}
-
-#tags button.urgent {
-  color: @red;
-}
-
-#clock {
-  font-size: 13px;
-}
-
-#custom-notification {
-  color: @text;
-}
-
-#group-10,
-#group-9,
-#group-8,
-#group-7,
-#group-6,
-#group-10,
-#group-5,
-#group-4,
-#group-3,
-#group-2,
-#group-1 {
-  border-radius: 4.5pt;
-  background: @base; /* linear-gradient(145deg, #1e1e2e 0%, #181825 100%); */
-  margin: 0px 3px;
-  border-radius: 6px;
-  background: @base; /* linear-gradient(145deg, #1e1e2e 0%, #181825 100%); */
-  border: 2px;
-}
-#custom-discord,
-#custom-reddit,
-#custom-instagram,
-#custom-whatsapp,
-#custom-firefox,
-#custom-spotify,
-#custom-github {
-  border: 2px;
-  font-size: 14px;
-}
-
-#custom-keybinds,
-#bluetooth {
-  font-size: 13px;
-}
-
-#custom-next,
-#custom-pause,
-#custom-previous {
-  font-size: 15px;
-}
-
-#network.disconnected,
-#pulseaudio.muted,
-#wireplumber.muted {
-  color: @red;
-}
-
-#battery.charging,
-#battery.plugged {
-  color: @green; /* linear-gradient(145deg, @green 0%, #1e1e2e 100%); */
-}
-
-label:focus {
-  background-color: @base;
-}
-
-#battery.critical:not(.charging) {
-  color: @red;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
+/* Colors */
+#cpu { color: #f7768e; }
+#memory { color: #7dcfff; }
+#disk { color: #FBC02D; }
+#network { color: #9ece6a; }
+#pulseaudio { color: #6C77BB; }
+#battery { color: #7aa2f7; }
+#clock { color: #F1F1F1; }
+#custom-updates { color: #B9C244; }
+#custom-mplayer { color: #9ece6a; }
+#bluetooth { color: #7aa2f7; }

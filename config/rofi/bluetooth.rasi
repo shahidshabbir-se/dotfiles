@@ -21,7 +21,7 @@ window {
     enabled:                     true;
     margin:                      0px;
     padding:                     0px;
-    border:                      2px solid;
+    border:                      0px;
     border-radius:               6px;
     border-color:                @selected;
     cursor:                      "default";

@@ -16,6 +16,7 @@ cmp.setup({
 	window = {
 		completion = cmp.config.window.bordered({
 			-- border = { "┌", "─", "┐", "│", "┘", "─", "└", "│" }, -- correct order!
+			border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, -- rounded border
 			side_padding = 0,
 			col_offset = 0,
 			max_width = 63,
@@ -24,6 +25,7 @@ cmp.setup({
 		}),
 		documentation = cmp.config.window.bordered({
 			-- border = { "┌", "─", "┐", "│", "┘", "─", "└", "│" }, -- square border
+			border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, -- rounded border
 			winhighlight = "normal:normal,floatborder:floatborder,cursorline:pmenusel,search:none",
 			side_padding = 0,
 			max_width = 60,

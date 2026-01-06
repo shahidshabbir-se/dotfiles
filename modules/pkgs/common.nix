@@ -14,6 +14,10 @@ with pkgs; [
   lazysql
   wget
   cbonsai
+  polybar
+  mpd
+  font-awesome_6
+  socat
   imagemagick
   youtube-tui
   mpv

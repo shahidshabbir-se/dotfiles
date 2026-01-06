@@ -59,7 +59,7 @@ in
       gnumake
       grimblast
       inputs.zen-browser.packages."${system}".default
-      poppins
+      # poppins
       eww
       libnotify
       mpvpaper
@@ -138,8 +138,8 @@ in
       # cursor-theme = "catppuccin-mocha-dark-cursors";
       cursor-theme = "Banana";
       cursor-size = 36;
-      font-name = "Poppins 11";
-      document-font-name = "Poppins 11";
+      font-name = "SF Pro Display 11";
+      document-font-name = "SF Pro Display 11";
       monospace-font-name = "JetBrainsMono Nerd Font 11";
     };
   };

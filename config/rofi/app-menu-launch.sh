@@ -27,15 +27,20 @@ if [ -z "$current_wall" ] || [ ! -f "$current_wall" ]; then
     fi
 fi
 
-# Launch rofi with wallpaper background
-if [ -n "$current_wall" ] && [ -f "$current_wall" ]; then
-    rofi -show drun \
-         -theme ~/.config/rofi/app-menu.rasi \
-         -theme-str "inputbar { background-image: url(\"$current_wall\", width); }" \
-         -show-icons
+# Toggle rofi
+if pgrep -x rofi > /dev/null; then
+    pkill -x rofi
 else
-    # Fallback without background image
-    rofi -show drun \
-         -theme ~/.config/rofi/app-menu.rasi \
-         -show-icons
+    # Launch rofi with wallpaper background
+    if [ -n "$current_wall" ] && [ -f "$current_wall" ]; then
+        rofi -show drun \
+             -theme ~/.config/rofi/app-menu.rasi \
+             -theme-str "inputbar { background-image: url(\"$current_wall\", width); }" \
+             -show-icons
+    else
+        # Fallback without background image
+        rofi -show drun \
+             -theme ~/.config/rofi/app-menu.rasi \
+             -show-icons
+    fi
 fi

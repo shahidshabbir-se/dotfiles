@@ -8,6 +8,7 @@
   settings = {
     "$mod" = "SUPER";
     "$terminal" = "ghostty";
+    "$browser" = "zen";
     "$fileManager" = "ghostty --title=yazi -e yazi";
     "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
@@ -20,7 +21,7 @@
       "swww-daemon &"
       "eww --config ~/.config/eww daemon &"
       "waybar &"
-      # "mpvpaper -o 'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu' '*' ${homeDirectory}/dotfiles/assets/login-background.mp4"
+      # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
       "wl-paste --type text --watch cliphist store"
       "wl-paste --type image --watch cliphist store"
       "xdg-mime default vlc.desktop video/mp4"
@@ -42,6 +43,7 @@
     env = [
       "XDG_MIME_APPS,$HOME/.config/mimeapps.list"
       "TERMINAL,wezterm"
+      "BROWSER,zen"
       "EDITOR,nvim"
       "XCURSOR_THEME,Banana"
       "XCURSOR_SIZE,36"
@@ -55,9 +57,9 @@
     ];
 
     general = {
-      gaps_in = 10;
-      gaps_out = 27;
-      border_size = 2;
+      gaps_in = 5;
+      gaps_out = 10;
+      border_size = 0;
       "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
       "col.inactive_border" = "rgba(595959aa)";
       resize_on_border = false;
@@ -66,7 +68,7 @@
     };
 
     decoration = {
-      rounding = 10;
+      rounding = 8;
       active_opacity = 1.0;
       inactive_opacity = 0.98;
 
@@ -98,6 +100,8 @@
       "fadeIn,0"
       "fadeOut,1,10,easeInCubic"
       "workspaces,1,4,easeInOutCubic,slide"
+      "layersIn, 1, 8, default, popin 80%"
+      "layersOut, 1, 8, default, popin 80%"
     ];
 
     dwindle = {
@@ -141,9 +145,9 @@
       "$mod, E, exec, $fileManager"
       "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
       "$mod, B, workspace, 2"
-      "$mod, B, exec, zen"
+      "$mod, B, exec, $browser"
       "$mod SHIFT, B, workspace, 8"
-      "$mod SHIFT, B, exec, zen --private-window"
+      "$mod SHIFT, B, exec, $browser --private-window"
       "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
       # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
       "$mod, O, exec, obsidian"
@@ -151,7 +155,7 @@
       "$mod + alt, r, exec, reboot"
       "$mod + alt, q, exec, sudo systemctl restart display-manager.service"
       "$mod SHIFT, L, exec, hyprlock"
-      "$mod, M, workspace, 9"
+      "$mod, M, workspace, 6"
       "$mod, M, exec, spotify"
       # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
       "$mod CTRL, S, exec, grimblast --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
@@ -166,11 +170,11 @@
       "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
       "$mod, N, exec, swaync-client -t -sw"
       "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
-      "ALT SHIFT, W, exec, bash ~/.config/eww/toggle-wallpaper.sh"
+      "ALT SHIFT, W, exec, bash ~/.config/rofi/WallSelect"
       "ALT SHIFT, P, exec, ${homeDirectory}/dotfiles/config/rofi/power-launch.sh"
       "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
       "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"
-      "SUPER, Space, exec, ${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh"
+      "SUPER, SUPER_L, exec, $menu"
       "$mod, left, workspace, -1"
       "ALT,Tab,cyclenext, next"
       "ALT SHIFT,Tab,cyclenext, prev"
@@ -244,6 +248,9 @@
       "float, class:^(podman-tui)$"
       "size 1000 600, class:^(podman-tui)$"
       "center, class:^(podman-tui)$"
+      "float, class:^(Rofi)$"
+      "animation popin, class:^(Rofi)$"
+      "dimaround, class:^(Rofi)$"
       "suppressevent maximize, class:.*"
       "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
     ];
