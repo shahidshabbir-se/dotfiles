@@ -117,7 +117,7 @@
       themeConfig = {
         ScreenWidth = "1920";
         ScreenHeight = "1080";
-        Font = "Poppins";
+        Font = "SF Pro Display";
         FontSize = "12";
         RoundCorners = "20";
 
@@ -146,6 +146,14 @@
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.blex-mono
     pkgs.inter
+    (pkgs.stdenv.mkDerivation {
+      name = "sf-pro-display";
+      src = ./config/fonts/sf-pro-display;
+      installPhase = ''
+        mkdir -p $out/share/fonts/opentype
+        cp *.OTF $out/share/fonts/opentype
+      '';
+    })
   ];
   services.keyd = {
     enable = true;

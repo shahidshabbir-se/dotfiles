@@ -1,0 +1,163 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 42,
+  "spacing": 0,
+  "margin-left": 50,
+  "margin-right": 50,
+  "margin-top": 10,
+  "margin-bottom": 0,
+  "reload_style_on_change": true,
+
+  "modules-left": ["custom/launcher", "cpu", "memory", "disk", "group/music-controls"],
+  "modules-center": ["hyprland/workspaces"],
+  "modules-right": ["group/music-bt", "group/hardware", "pulseaudio", "custom/updates", "clock", "custom/power"],
+
+  "group/music-bt": {
+    "orientation": "horizontal",
+    "modules": ["custom/mplayer", "bluetooth"]
+  },
+
+  "group/music-controls": {
+    "orientation": "horizontal",
+    "modules": ["custom/prev", "custom/play-pause", "custom/next"]
+  },
+
+  "group/hardware": {
+    "orientation": "horizontal",
+    "modules": ["battery", "network"]
+  },
+
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "active-only": false,
+    "all-outputs": true,
+    "format": "{icon}",
+    "persistent-workspaces": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": []
+    },
+    "format-icons": {
+      "active": "󰮯",
+      "occupied": "󰊠",
+      "empty": "󰑊",
+      "default": "󰑊",
+      "persistent": "󰑊"
+    }
+  },
+
+  "cpu": {
+    "interval": 2,
+    "format": " {usage}%",
+    "tooltip": false
+  },
+
+  "memory": {
+    "interval": 3,
+    "format": " {used}",
+    "tooltip": false
+  },
+
+  "disk": {
+    "interval": 60,
+    "format": " {used}",
+    "tooltip": false
+  },
+
+  "network": {
+    "interval": 3,
+    "format-wifi": " {bandwidthTotalBytes}",
+    "format-ethernet": "󰈀 {bandwidthTotalBytes}",
+    "format-disconnected": "Offline",
+    "tooltip": false
+  },
+
+  "bluetooth": {
+    "format": "󰂯",
+    "format-connected": "󰂯 {num_connections}",
+    "on-click": "/home/shahid/.config/rofi/bluetooth-launch.sh",
+    "tooltip": false
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": " Muted",
+    "format-icons": {
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol",
+    "on-click-right": "OpenApps --soundcontrol",
+    "tooltip": false
+  },
+
+  "battery": {
+    "states": {
+      "good": 99,
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-icons": ["", "", "", "", ""],
+    "battery": "BAT0",
+    "tooltip": false
+  },
+
+  "clock": {
+    "interval": 1,
+    "format": " {:%I:%M %p}",
+    "format-alt": " {:%a, %d %b %Y}",
+    "tooltip": false
+  },
+
+  "custom/launcher": {
+    "format": "",
+    "on-click": "/home/shahid/.config/rofi/app-menu-launch.sh",
+    "on-click-right": "RiceSelector",
+    "tooltip": false
+  },
+
+  "custom/prev": {
+    "format": "",
+    "on-click": "playerctl previous",
+    "tooltip": false
+  },
+
+  "custom/play-pause": {
+    "format": "{}",
+    "exec": "playerctl status 2>/dev/null | grep -q 'Playing' && echo '' || echo ''",
+    "interval": 1,
+    "on-click": "playerctl play-pause",
+    "tooltip": false
+  },
+
+  "custom/next": {
+    "format": "",
+    "on-click": "playerctl next",
+    "tooltip": false
+  },
+
+  "custom/mplayer": {
+    "format": "",
+    "on-click": "eww open --toggle music",
+    "tooltip": false
+  },
+
+  "custom/updates": {
+    "exec": "cat ~/.cache/Updates.txt 2>/dev/null",
+    "interval": 1,
+    "format": "󰊠 {}",
+    "on-click": "OpenApps --checkupdates",
+    "tooltip": false
+  },
+
+  "custom/power": {
+    "format": "",
+    "on-click": "/home/shahid/.config/rofi/power-launch.sh",
+    "tooltip": false
+  }
+}
