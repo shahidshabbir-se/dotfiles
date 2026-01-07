@@ -27,6 +27,9 @@ with pkgs; [
   sesh
   lsof
   atuin
+  # yt-dlp
+  mpv
+  # youtube-tui
   lazysql
   btop
   coreutils

@@ -30,7 +30,7 @@
 
     # Basic utilities
     rm = "rm -rI";
-    rmd = "rm-rf";
+    rmf = "rm -rf";
     c = "clear";
     vi = "nvim";
     ".." = "cd ..";
@@ -40,7 +40,8 @@
     bc = "better-commits";
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
-    cc = "claude";
+    # cc = "claude";
+    cc = "eval \"$(ccr activate)\" && NODE_OPTIONS=\"--no-deprecation\" claude";
     oc = "opencode";
     cr = "crush";
 
@@ -227,7 +228,11 @@
         alias -g NO='>/dev/null'      # Redirect stdout only
         alias -g NUL='>/dev/null 2>&1' # Redirect both stdout and stderr
         alias -g J='| jq'            # Pipe to jq
+<<<<<<< Updated upstream
     alias -g C="| ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"  # Copy to clipboard
+=======
+        alias -g C="| ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"  # Copy to clipboard
+>>>>>>> Stashed changes
 
         # zmv - Advanced batch rename/move
         autoload -Uz zmv
@@ -365,7 +370,11 @@
         export TERM="xterm-256color"
         export TMPDIR=$HOME/tmp
         export EDITOR="nvim"
+<<<<<<< Updated upstream
         export BROWSER="zen"
+=======
+        export BROWSER="Zen"
+>>>>>>> Stashed changes
         export _ZO_DOCTOR=0
         export GOPATH="$HOME/go"
         export PATH="$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH"
