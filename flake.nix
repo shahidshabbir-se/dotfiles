@@ -154,7 +154,7 @@
                 "/Applications/Microsoft Word.app"
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
-                "/Applications/mpv.app"
+                "/Users/${user}/Applications/Home Manager Apps/mpv.app"
                 "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
                 "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                 "/Applications/Docker.app"
