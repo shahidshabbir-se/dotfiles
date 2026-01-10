@@ -1,4 +1,7 @@
 {
+	"session": {
+		"trust_all_worktrees": true,
+	},
 	"telemetry": {
 		"diagnostics": false,
 		"metrics": false,
@@ -47,8 +50,8 @@
 		},
 		"always_allow_tool_actions": true,
 		"default_model": {
-			"provider": "Chutes.ai",
-			"model": "moonshotai/Kimi-K2-Thinking",
+			"provider": "copilot_chat",
+			"model": "gpt-5-mini",
 		},
 		"model_parameters": [],
 	},
@@ -56,12 +59,20 @@
 	"terminal": {
 		"default_height": 9999,
 	},
-	"icon_theme": "Material Icon Theme",
+	"icon_theme": {
+		"mode": "light",
+		"light": "Material Icon Theme",
+		"dark": "Material Icon Theme",
+	},
 	"buffer_font_family": "BlexMono Nerd Font",
 	"ui_font_size": 15,
 	"agent_buffer_font_size": 15,
 	"buffer_font_size": 15,
 	"buffer_font_weight": 300,
-	"theme": "Catppuccin Mocha",
+	"theme": {
+		"mode": "dark",
+		"light": "Gruvbox Dark",
+		"dark": "Tokyo Night",
+	},
 	"autosave": "on_focus_change",
 }
