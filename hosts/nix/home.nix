@@ -66,6 +66,8 @@ in
       xfce.thunar
       nitch
       playerctl
+      font-awesome_6
+      socat
       python3
       swaynotificationcenter
       swww
