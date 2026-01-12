@@ -139,7 +139,7 @@
 
             fonts.packages = with pkgsDarwin; [
               nerd-fonts.jetbrains-mono
-              nerd-fonts.blex-mono
+              nerd-fonts.geist-mono
             ];
 
             # System defaults (macOS settings)
@@ -213,6 +213,7 @@
                 "droid"
                 "notunes"
                 "tailscale-app"
+                "visual-studio-code"
                 "raycast"
                 "whatsapp"
                 "obsidian"

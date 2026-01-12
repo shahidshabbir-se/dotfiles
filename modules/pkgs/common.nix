@@ -6,15 +6,20 @@ with pkgs; [
   lsof
   openssl
   gh
+  # (import ../../modules/droid.nix { inherit pkgs; })
+  (import ../../modules/cliproxyapi.nix { inherit pkgs fetchFromGitHub lib; })
   lazygit
   go
   nixpkgs-fmt
   stripe-cli
-  asdf-vm
   lazysql
+  mise
+  asdf-vm
   wget
   cbonsai
   mpd
+  font-awesome_6
+  socat
   imagemagick
   youtube-tui
   mpv
