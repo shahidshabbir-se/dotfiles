@@ -66,8 +66,6 @@ in
       xfce.thunar
       nitch
       playerctl
-      font-awesome_6
-      socat
       python3
       swaynotificationcenter
       swww
@@ -81,6 +79,8 @@ in
       rofi-network-manager
       catppuccin-papirus-folders
       zip
+      jetbrains.webstorm
+      # (import ../../modules/void.nix { inherit pkgs; })
     ]);
   };
 
@@ -89,10 +89,11 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-  xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
+  # xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
   xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
+  xdg.configFile."cliproxyapi/config.yaml".source = ../../config/cliproxyapi/config.yaml;
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
@@ -123,6 +124,24 @@ in
 
   services.swaync = import ../../modules/swaync.nix {
     inherit pkgs homeDirectory;
+  };
+
+  # CLIProxyAPI service
+  systemd.user.services.cliproxyapi = {
+    Unit = {
+      Description = "CLIProxyAPI Service";
+      Documentation = "https://github.com/router-for-me/CLIProxyAPI";
+      After = [ "network.target" ];
+    };
+    Service = {
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = 5;
+      ExecStart = "/etc/profiles/per-user/${config.home.username}/bin/cliproxyapi -config %h/.config/cliproxyapi/config.yaml";
+      WorkingDirectory = "%h";
+      Environment = [ "HOME=%h" ];
+    };
+    Install.WantedBy = [ "default.target" ];
   };
 
   wayland.windowManager.hyprland = import ../../modules/hyprland.nix {
