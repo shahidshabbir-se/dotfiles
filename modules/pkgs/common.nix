@@ -6,8 +6,7 @@ with pkgs; [
   lsof
   openssl
   gh
-  # (import ../../modules/droid.nix { inherit pkgs; })
-  (import ../../modules/cliproxyapi.nix { inherit pkgs fetchFromGitHub lib; })
+  (import ../../modules/droid.nix { inherit pkgs; })
   lazygit
   go
   nixpkgs-fmt

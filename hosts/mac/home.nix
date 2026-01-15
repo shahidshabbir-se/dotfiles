@@ -16,6 +16,10 @@ let
   inherit (config.lib.file) mkOutOfStoreSymlink;
 in
 {
+  imports = [
+    ../../modules/cliproxyapi.nix
+  ];
+
   # ───────────────────────────────────────────────
   # ▶ Home Directory & Package Set
   # ───────────────────────────────────────────────

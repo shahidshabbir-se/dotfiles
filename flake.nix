@@ -205,15 +205,15 @@
               taps = [ ];
 
               brews = [
-                "cliproxyapi"
+                # "cliproxyapi"
               ];
 
               casks = [
                 "qbittorrent"
-                "droid"
+                # "droid"
                 "notunes"
                 "tailscale-app"
-                "visual-studio-code"
+		"betterdisplay"
                 "raycast"
                 "whatsapp"
                 "obsidian"
@@ -223,7 +223,7 @@
               ];
 
               masApps = {
-                Xcode = 497799835;
+                # Xcode = 497799835;
               };
 
               onActivation.cleanup = "zap";

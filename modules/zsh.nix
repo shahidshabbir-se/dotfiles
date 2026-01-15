@@ -44,6 +44,7 @@
     cc = "eval \"$(ccr activate)\" && NODE_OPTIONS=\"--no-deprecation\" claude";
     oc = "opencode";
     cr = "crush";
+    cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
 
     # Git aliases
     ggr = "git log --oneline --graph --decorate --all";
@@ -228,6 +229,7 @@
         alias -g NO='>/dev/null'      # Redirect stdout only
         alias -g NUL='>/dev/null 2>&1' # Redirect both stdout and stderr
         alias -g J='| jq'            # Pipe to jq
+        alias -g V='| nvim -'        # Pipe to nvim
         alias -g C="| ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"  # Copy to clipboard
 
         # zmv - Advanced batch rename/move
