@@ -81,4 +81,6 @@ if [ -n "$wall_selection" ]; then
     fi
 
     swww img "$selected_path" --transition-type grow --transition-pos "$cursor_pos" --transition-step 90
+    cp -f "$selected_path" "$HOME/.cache/hyprlock.png"
+
 fi
