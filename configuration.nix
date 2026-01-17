@@ -2,14 +2,35 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   imports =
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      inputs.erosanix.nixosModules.protonvpn
     ];
+
+  services.protonvpn = {
+    enable = true;
+    autostart = false; # Set to false so you can debug without losing internet on boot
+    interface = {
+      privateKeyFile = "/var/lib/protonvpn/private.key";
+      dns = {
+        enable = true;
+        ip = "1.1.1.1"; # Explicitly use Cloudflare DNS to avoid resolution issues
+      };
+    };
+    endpoint = {
+      publicKey = "xGIfeXZPiiMUX1lCAXA7VLX12RefzAZEevm6/Yd1yW4=";
+      ip = "185.107.56.143";
+    };
+  };
+
+  # Ensure you have a fallback DNS if the VPN fails
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+
   nixpkgs.config.allowUnfree = true;
   # configuration.nix
   programs.nix-ld.enable = true;

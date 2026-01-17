@@ -38,9 +38,14 @@
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
     };
+
+    erosanix = {
+      url = "github:emmanuelrosa/erosanix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, spicetify-nix, zen-browser, catppuccin, nix-darwin, nix-homebrew, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, spicetify-nix, zen-browser, catppuccin, nix-darwin, nix-homebrew, erosanix, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -98,6 +103,9 @@
       # ──────────────────────────────
       nixosConfigurations.nixos = lib.nixosSystem {
         system = systemLinux;
+        specialArgs = {
+          inherit inputs;
+        };
         modules = [
           ./configuration.nix
 
