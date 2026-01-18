@@ -221,7 +221,7 @@
                 # "droid"
                 "notunes"
                 "tailscale-app"
-		"betterdisplay"
+                "betterdisplay"
                 "raycast"
                 "whatsapp"
                 "obsidian"
