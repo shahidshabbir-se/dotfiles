@@ -53,7 +53,7 @@
     enable = true;
     device = "nodev"; # For EFI systems
     efiSupport = true;
-    useOSProber = false; # Detect Windows automatically
+    useOSProber = true; # Detect Windows automatically
     theme = pkgs.catppuccin-grub;
     gfxmodeEfi = "1920x1080"; # Adjust to your screen resolution
   };
