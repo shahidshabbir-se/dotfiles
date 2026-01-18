@@ -6,7 +6,7 @@ with pkgs; [
   lsof
   openssl
   gh
-  # (import ../../modules/droid.nix { inherit pkgs; })
+  (import ../../modules/droid.nix { inherit pkgs; })
   lazygit
   go
   nixpkgs-fmt
