@@ -154,15 +154,15 @@
             system.defaults = {
               dock.autohide = true;
               dock.persistent-apps = [
-                # "/System/Applications/Apps.app"
-                "/System/Applications/Launchpad.app"
+                "/System/Applications/Apps.app"
+                # "/System/Applications/Launchpad.app"
                 "/System/Applications/System Settings.app"
                 "/Applications/Microsoft Excel.app"
                 "/Applications/Microsoft PowerPoint.app"
                 "/Applications/Microsoft Word.app"
                 "/Applications/WhatsApp.app"
                 "/Applications/Obsidian.app"
-                "/Users/${user}/Applications/Home Manager Apps/mpv.app"
+                "/Applications/VLC.app"
                 "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
                 "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                 "/Applications/Docker.app"
@@ -227,6 +227,7 @@
                 "obsidian"
                 "karabiner-elements"
                 "zen"
+                "vlc"
                 "docker-desktop"
               ];
 

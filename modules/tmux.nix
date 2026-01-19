@@ -107,7 +107,7 @@ in
         set -g @resurrect-dir $resurrect_dir
       ''
       + lib.optionalString pkgs.stdenv.isDarwin ''
-        set -g @resurrect-hook-post-save-all 'sed -i \"\" \"s| --cmd .*-vim-pack-dir||g; s| --cmd lua vim\\\\.g\\\\.[^[:space:]]*||g; s|/etc/profiles/per-user/\\$USER/bin/||g; s|/home/\\$USER/.nix-profile/bin/||g; s|/nix/store/.*/bin/||g\" $resurrect_dir/$(readlink $resurrect_dir/last)'
+        set -g @resurrect-hook-post-save-all 'sed -i "" "s|\tnvim\t:.*|\tnvim\t:nvim .|g; s|/etc/profiles/per-user/\$USER/bin/||g; s|/home/\$USER/.nix-profile/bin/||g; s|/nix/store/.*/bin/||g" $resurrect_dir/$(readlink $resurrect_dir/last)'
       ''
       + lib.optionalString (!pkgs.stdenv.isDarwin) ''
         set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed "s| --cmd lua vim\\.g\\.[^ ]*||g; s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g; s|/nix/store/.*/bin/||g" $target | ${pkgs.moreutils}/bin/sponge $target'
