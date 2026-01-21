@@ -18,6 +18,7 @@ in
 {
   imports = [
     ../../modules/cliproxyapi.nix
+    ../../modules/karabiner.nix
   ];
 
   # ───────────────────────────────────────────────
