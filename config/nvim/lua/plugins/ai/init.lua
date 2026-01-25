@@ -1,8 +1,8 @@
 local enabled_plugins = {
 	avante = false,
-	copilot = false,
+	copilot = true,
 	codeium = false,
-	supermaven = true,
+	supermaven = false,
 }
 
 local plugins = {}

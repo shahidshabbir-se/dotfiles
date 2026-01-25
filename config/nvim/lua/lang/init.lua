@@ -8,6 +8,7 @@ local enabled = {
 	web = true,
 	docker = false,
 	yaml = false,
+	rust = true,
 }
 
 local langs = {}

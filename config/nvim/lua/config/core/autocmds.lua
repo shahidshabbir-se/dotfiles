@@ -22,6 +22,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		"*.dockerfile",
 		"*.yaml",
 		"*.yml",
+		"*.rs",
 	},
 	callback = function()
 		if vim.g._autosave_lock then
