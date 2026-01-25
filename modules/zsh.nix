@@ -371,6 +371,6 @@
         export BROWSER="Zen"
         export _ZO_DOCTOR=0
         export GOPATH="$HOME/go"
-        export PATH="$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH"
+        export PATH="$HOME/.npm-global/bin:$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"
   '';
 }
