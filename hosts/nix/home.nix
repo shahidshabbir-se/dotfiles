@@ -21,6 +21,7 @@ in
 {
   imports = [
     ../../modules/cliproxyapi.nix
+    ../../modules/node.nix
   ];
 
   # ───────────────────────────────────────────────
@@ -79,7 +80,6 @@ in
       rofi-network-manager
       catppuccin-papirus-folders
       zip
-      jetbrains.webstorm
       # (import ../../modules/void.nix { inherit pkgs; })
     ]);
   };

@@ -13,7 +13,7 @@ with pkgs; [
   stripe-cli
   lazysql
   mise
-  asdf-vm
+  fnm
   wget
   cbonsai
   mpd
