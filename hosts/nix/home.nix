@@ -14,6 +14,13 @@ let
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
 
+  system = pkgs.stdenv.hostPlatform.system;
+
+  unstable = import inputs.unstable {
+    inherit system;
+    config.allowUnfree = true;
+  };
+
   # Allow unfree packages for corefonts
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "corefonts" ];
@@ -56,6 +63,7 @@ in
       brightnessctl
       cliphist
       feh
+      postgresql
       gcc
       gnumake
       grimblast

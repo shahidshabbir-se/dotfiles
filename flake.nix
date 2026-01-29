@@ -12,6 +12,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -45,7 +46,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, spicetify-nix, zen-browser, catppuccin, nix-darwin, nix-homebrew, erosanix, ... }:
+  outputs = inputs@{ self, nixpkgs, unstable, home-manager, spicetify-nix, zen-browser, catppuccin, nix-darwin, nix-homebrew, erosanix, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -114,7 +115,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
-              inherit inputs;
+              inherit inputs unstable;
               device = activeDeviceLinux;
             };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
@@ -250,7 +251,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
-              inherit inputs;
+              inherit inputs unstable;
               device = activeDeviceMac;
             };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];

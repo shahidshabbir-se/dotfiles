@@ -4,6 +4,7 @@ with pkgs; [
   gitleaks
   csview
   lsof
+  calc
   openssl
   gh
   # (import ../../modules/droid.nix { inherit pkgs; })
