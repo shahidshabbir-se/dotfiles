@@ -166,6 +166,7 @@
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.blex-mono
+    pkgs.nerd-fonts.geist-mono
     pkgs.inter
     (pkgs.stdenv.mkDerivation {
       name = "sf-pro-display";
