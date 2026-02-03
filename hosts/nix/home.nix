@@ -27,8 +27,8 @@ let
 in
 {
   imports = [
-    ../../modules/cliproxyapi.nix
     ../../modules/node.nix
+    # ../../modules/cliproxyapi.nix
   ];
 
   # ───────────────────────────────────────────────

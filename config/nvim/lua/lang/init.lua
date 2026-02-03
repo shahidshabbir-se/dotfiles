@@ -9,6 +9,7 @@ local enabled = {
 	docker = false,
 	yaml = false,
 	rust = true,
+	copilot = true,
 }
 
 local langs = {}

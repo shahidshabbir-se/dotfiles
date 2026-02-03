@@ -3,6 +3,8 @@ local enabled_plugins = {
 	copilot = true,
 	codeium = false,
 	supermaven = false,
+	sidekick = false,
+	opencode = true,
 }
 
 local plugins = {}
