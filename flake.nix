@@ -148,7 +148,7 @@
 
             fonts.packages = with pkgsDarwin; [
               nerd-fonts.jetbrains-mono
-              nerd-fonts.geist-mono
+              nerd-fonts.blex-mono
             ];
 
             # System defaults (macOS settings)
@@ -209,35 +209,40 @@
                 done
               '';
 
-            homebrew = {
-              enable = true;
-              taps = [ ];
+            homebrew =
+              {
+                enable = true;
+                taps = [ ];
 
-              brews = [
-                # "cliproxyapi"
-              ];
+                brews = [
+                  # "cliproxyapi"
+                  "libpq"
+                ];
 
-              casks = [
-                "qbittorrent"
-                # "droid"
-                "notunes"
-                "tailscale-app"
-                "betterdisplay"
-                "raycast"
-                "whatsapp"
-                "obsidian"
-                "karabiner-elements"
-                "zen"
-                "vlc"
-                "docker-desktop"
-              ];
+                casks = [
+                  "qbittorrent"
+                  # "droid"
+                  "notunes"
+                  "tailscale-app"
+                  "betterdisplay"
+                  "raycast"
+                  "whatsapp"
+                  "obsidian"
+                  "visual-studio-code"
+                  "karabiner-elements"
+                  "protonvpn"
+                  "zen"
+                  "vlc"
+                  "docker-desktop"
+                  "camo-studio"
+                ];
 
-              masApps = {
-                # Xcode = 497799835;
+                masApps = {
+                  # Xcode = 497799835;
+                };
+
+                onActivation.cleanup = "zap";
               };
-
-              onActivation.cleanup = "zap";
-            };
 
             nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -273,4 +278,5 @@
       darwinPackages = self.darwinConfigurations.${host}.pkgs;
     };
 }
+
 

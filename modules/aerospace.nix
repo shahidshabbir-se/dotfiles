@@ -48,7 +48,7 @@
       cmd-b = ''exec-and-forget open -a "Zen"'';
       cmd-shift-b = ''exec-and-forget open -na "Zen" --args --private-window'';
       cmd-m = ''exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Spotify.app"'';
-      cmd-e = "exec-and-forget open -a Finder";
+      # cmd-e = "exec-and-forget open -a Finder";
 
       # Window management
       cmd-g = "macos-native-fullscreen";

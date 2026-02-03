@@ -9,6 +9,7 @@ with pkgs; [
   gh
   # (import ../../modules/droid.nix { inherit pkgs; })
   lazygit
+  just
   go
   nixpkgs-fmt
   stripe-cli

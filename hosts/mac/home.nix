@@ -17,8 +17,9 @@ let
 in
 {
   imports = [
-    ../../modules/cliproxyapi.nix
+    # ../../modules/cliproxyapi.nix
     ../../modules/karabiner.nix
+    ../../modules/node.nix
   ];
 
   # ───────────────────────────────────────────────
