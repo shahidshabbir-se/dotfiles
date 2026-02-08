@@ -1,6 +1,6 @@
 local map = vim.keymap.set
 
-require("keymaps.nvim-tree")
+-- require("keymaps.nvim-tree")
 require("keymaps.indent-blankline")
 require("keymaps.bufferline")
 require("keymaps.lspconfig")
