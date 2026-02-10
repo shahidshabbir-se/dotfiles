@@ -33,12 +33,15 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 		local ft = vim.bo.filetype
 
-		-- TypeScript / JS import organization
+		-- TypeScript / JS import organization (target ts_ls specifically to avoid Copilot errors)
 		if ft == "typescript" or ft == "typescriptreact" or ft == "javascript" or ft == "javascriptreact" then
-			vim.lsp.buf.execute_command({
-				command = "_typescript.organizeImports",
-				arguments = { vim.api.nvim_buf_get_name(0) },
-			})
+			local clients = vim.lsp.get_clients({ bufnr = 0, name = "ts_ls" })
+			if clients[1] then
+				clients[1]:request("workspace/executeCommand", {
+					command = "_typescript.organizeImports",
+					arguments = { vim.api.nvim_buf_get_name(0) },
+				}, nil, 0)
+			end
 		end
 
 		-- Svelte import organization

@@ -73,7 +73,6 @@ in
       libnotify
       mpvpaper
       xfce.thunar
-      zed-editor
       nitch
       playerctl
       python3

@@ -165,7 +165,8 @@
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
                 "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
-                "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
+                "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
+                # "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                 "/Applications/Docker.app"
                 "/Applications/Xcode.app"
                 "/Applications/Zen.app"
@@ -186,7 +187,8 @@
               let
                 systemPackages = [
                   # pkgsDarwin.alacritty
-                  pkgsDarwin.wezterm
+                  pkgsDarwin.ghostty-bin
+                  # pkgsDarwin.wezterm
                   pkgsDarwin.mkalias
                 ];
 
@@ -228,9 +230,9 @@
                   "raycast"
                   "whatsapp"
                   "obsidian"
-                  "visual-studio-code"
                   "karabiner-elements"
                   "protonvpn"
+                  "zed"
                   "zen"
                   "vlc"
                   "docker-desktop"
