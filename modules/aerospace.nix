@@ -44,14 +44,14 @@
     # Main mode bindings
     mode.main.binding = {
       # Launch applications
-      cmd-enter = ''exec-and-forget open -a "$HOME/Applications/Home Manager Apps/WezTerm.app"'';
+      cmd-enter = ''exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Ghostty.app"'';
       cmd-b = ''exec-and-forget open -a "Zen"'';
       cmd-shift-b = ''exec-and-forget open -na "Zen" --args --private-window'';
       cmd-m = ''exec-and-forget open -a "$HOME/Applications/Home Manager Apps/Spotify.app"'';
       # cmd-e = "exec-and-forget open -a Finder";
 
       # Window management
-      cmd-g = "macos-native-fullscreen";
+      cmd-g = "fullscreen --no-outer-gaps";
       cmd-ctrl-t = "layout floating tiling";
 
       # Focus movement
@@ -95,6 +95,8 @@
       # Workspace navigation
       alt-tab = "workspace-back-and-forth";
       alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
+      cmd-left = "workspace prev";
+      cmd-right = "workspace next";
 
       # Enter passthrough mode for typing special characters
       alt-p = "mode passthrough";
@@ -133,7 +135,7 @@
     # Window detection rules
     on-window-detected = [
       {
-        "if".app-id = "org.wezfurlong.wezterm";
+        "if".app-id = "com.mitchellh.ghostty";
         run = "move-node-to-workspace 1";
       }
       {

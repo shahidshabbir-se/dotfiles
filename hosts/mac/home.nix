@@ -71,8 +71,8 @@ in
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     aerospace = import ../../modules/aerospace.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
-    wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
-    # ghostty = import ../../modules/ghostty.nix { inherit config pkgs; };
+    # wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
+    ghostty = import ../../modules/ghostty.nix { inherit config pkgs device; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

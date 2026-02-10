@@ -46,7 +46,7 @@ in
     command = [
       "${pkgs.zsh}/bin/zsh"
       "-c"
-      "tmux attach -t main || tmux new -s main"
+      "${pkgs.tmux}/bin/tmux attach -t main || ${pkgs.tmux}/bin/tmux new -s main"
     ];
 
     # Window
