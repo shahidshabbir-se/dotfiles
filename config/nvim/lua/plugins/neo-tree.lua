@@ -1,16 +1,15 @@
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons", -- optional, but recommended
-    },
-    lazy = false,                    -- neo-tree will lazily load itself
-    config = function()
-      require("config.neo-tree")
+    init = function()
+      -- Override LazyVim's default init that auto-opens neo-tree on directory buffers.
+      -- This prevents neo-tree from stealing focus on session restore.
     end,
-
-  }
+    opts = {
+      window = {
+        -- position = "right",
+        width = 30,
+      },
+    },
+  },
 }

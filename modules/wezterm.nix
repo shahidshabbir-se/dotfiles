@@ -31,7 +31,7 @@ in
       window_close_confirmation = "NeverPrompt",
 
       font_size = ${toString fontSize},
-      font = wezterm.font("BlexMono Nerd Font"),
+      font = wezterm.font("Lilex Nerd Font"),
       window_decorations = "${windowDecorations}",
 
       window_padding = {
