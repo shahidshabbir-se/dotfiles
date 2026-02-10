@@ -25,18 +25,7 @@ M.mason = {
 M.lsp = {
 	["html-lsp"] = {},
 	["css-lsp"] = {},
-	["ts_ls"] = {
-		root_dir = function(bufnr, on_dir)
-			local fname = vim.api.nvim_buf_get_name(bufnr)
-			local util = require("lspconfig.util")
-			-- Prefer the nearest tsconfig.json so monorepo sub-projects resolve their own node_modules
-			local root = util.root_pattern("tsconfig.json")(fname)
-				or util.root_pattern("package.json", "jsconfig.json", ".git")(fname)
-			if root then
-				on_dir(root)
-			end
-		end,
-	},
+	["ts_ls"] = {},
 	["json-lsp"] = {
 		settings = {
 			json = {
@@ -74,12 +63,13 @@ M.lsp = {
 
 -- Formatters
 M.formatters = {
-	javascript = { "prettier" },
-	typescript = { "prettier" },
-	tsx = { "prettier" },
-	css = { "prettier" },
+	javascript = { "biome", "prettier" },
+	typescript = { "biome", "prettier" },
+	tsx = { "biome", "prettier" },
+	css = { "biome", "prettier" },
 	html = { "prettier" },
 	json = { "prettier" },
+	jsonc = { "prettier" },
 	vue = { "prettier" },
 	svelte = { "prettier" },
 	markdown = { "prettier" },
@@ -105,7 +95,6 @@ M.linters = {
 
 -- Tools to ensure installed via Mason
 M.tools = {
-	"biome",
 	"prettier",
 	"eslint",
 	"stylelint",

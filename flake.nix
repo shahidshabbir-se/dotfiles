@@ -148,7 +148,7 @@
 
             fonts.packages = with pkgsDarwin; [
               nerd-fonts.jetbrains-mono
-              nerd-fonts.blex-mono
+              nerd-fonts.lilex
             ];
 
             # System defaults (macOS settings)
@@ -165,8 +165,8 @@
                 "/Applications/Obsidian.app"
                 "/Applications/VLC.app"
                 "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
-                "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
-                # "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
+                # "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
+                "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                 "/Applications/Docker.app"
                 "/Applications/Xcode.app"
                 "/Applications/Zen.app"
@@ -187,8 +187,8 @@
               let
                 systemPackages = [
                   # pkgsDarwin.alacritty
-                  pkgsDarwin.ghostty-bin
-                  # pkgsDarwin.wezterm
+                  # pkgsDarwin.ghostty-bin
+                  pkgsDarwin.wezterm
                   pkgsDarwin.mkalias
                 ];
 

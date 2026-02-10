@@ -1,23 +1,6 @@
 {
-  "runtime": {
-    "version": "LuaJIT"
-  },
-  "diagnostics": {
-    "globals": [
-      "vim"
-    ]
-  },
-  "workspace": {
-    "library": [
-      "${3rd}/luv/library",
-      "${3rd}/busted/library",
-      "/usr/share/nvim/runtime/lua",
-      "/usr/share/nvim/runtime/lua/vim",
-      "/your/path/to/nvim-config/lua"
-    ],
-    "checkThirdParty": false
-  },
-  "telemetry": {
-    "enable": false
-  }
+  "diagnostics.globals": ["vim"],
+  "runtime.version": "LuaJIT",
+  "workspace.library": ["${3rd}/luv/library"],
+  "workspace.checkThirdParty": false
 }
