@@ -165,7 +165,7 @@
   programs.zsh.enable = true;
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.blex-mono
+    pkgs.nerd-fonts.lilex
     pkgs.inter
     (pkgs.stdenv.mkDerivation {
       name = "sf-pro-display";
