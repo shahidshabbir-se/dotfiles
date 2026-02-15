@@ -234,6 +234,7 @@
                   "protonvpn"
                   "zed"
                   "zen"
+                  "google-chrome"
                   "vlc"
                   "docker-desktop"
                   "camo-studio"
