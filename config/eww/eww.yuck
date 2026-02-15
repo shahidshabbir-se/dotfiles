@@ -1,0 +1,2 @@
+(include "profilecard/profilecard.yuck")
+(include "player/player.yuck")
