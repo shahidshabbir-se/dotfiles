@@ -1,21 +1,21 @@
 * {
-  border: none;
-  border-radius: 0;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free";
-  font-size: 15px;
-  font-weight: bold;
+	border: none;
+	border-radius: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free";
+	font-size: 15px;
+	font-weight: bold;
 }
 
 window#waybar {
-  background-color: #1A1B26;
-  border-radius: 12px;
+	background-color: #1a1b26;
+	border-radius: 12px;
 }
 
 #waybar {
-  background-color: transparent;
+	background-color: transparent;
 }
 
 /* Common style for modules with background */
@@ -29,86 +29,116 @@ window#waybar {
 #custom-updates,
 #clock,
 #tray {
-  background-color: #222330;
-  border-radius: 999px;
-  padding: 0 10px;
-  margin: 6px 4px;
+	background-color: #222330;
+	border-radius: 999px;
+	padding: 0 10px;
+	margin: 6px 4px;
 }
 
 /* Style for grouped elements */
-#battery, #network, #custom-prev, #custom-play-pause, #custom-next {
-  background-color: transparent;
-  padding: 0 6px;
-  margin: 0;
+#battery,
+#network,
+#custom-prev,
+#custom-play-pause,
+#custom-next {
+	background-color: transparent;
+	padding: 0 6px;
+	margin: 0;
 }
 
 /* Style for grouped hardware internal elements */
-#battery, #network {
-  background-color: transparent;
-  padding: 0 6px;
-  margin: 0;
+#battery,
+#network {
+	background-color: transparent;
+	padding: 0 6px;
+	margin: 0;
 }
 
 /* Music and Bluetooth Group - No background */
 #music-bt {
-  background-color: transparent;
-  margin: 6px 8px;
+	background-color: transparent;
+	margin: 6px 8px;
 }
 
-#custom-mplayer, #bluetooth {
-  background-color: transparent;
-  padding: 0 6px;
-  margin: 0;
-  font-size: 15px; /* Same as hardware/global */
+#custom-mplayer,
+#bluetooth {
+	background-color: transparent;
+	padding: 0 9px 0px 12px;
+	margin: 0;
+	font-size: 15px; /* Same as hardware/global */
 }
 
 /* Modules without background (Launchers) */
-#custom-launcher, 
+#custom-launcher,
 #custom-power {
-  background-color: transparent;
-  padding: 0 5px;
-  margin: 0 8px;
+	background-color: transparent;
+	padding: 0 5px;
+	margin: 0 8px;
 }
 
 #custom-launcher {
-  color: #7aa2f7;
-  margin-left: 20px;
-  padding-right: 15px;
+	color: #7aa2f7;
+	margin-left: 20px;
+	padding-right: 15px;
 }
 
 #custom-power {
-  color: #f7768e;
-  margin-right: 20px;
+	color: #f7768e;
+	margin-right: 20px;
 }
 
 #workspaces button {
-  padding: 0 8px;
-  color: #583794;
-  background: transparent;
-  min-width: 20px;
+	padding: 0 8px;
+	color: #7dcfff;
+	background: transparent;
+	min-width: 20px;
+}
+
+#workspaces button.empty {
+	color: #583794;
 }
 
 #workspaces button.active {
-  color: #e0af68;
+	color: #e0af68;
 }
 
 #workspaces button.urgent {
-  color: #f7768e;
+	color: #f7768e;
 }
 
 #workspaces button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 999px;
 }
 
 /* Colors */
-#cpu { color: #f7768e; }
-#memory { color: #7dcfff; }
-#disk { color: #FBC02D; }
-#network { color: #9ece6a; }
-#pulseaudio { color: #6C77BB; }
-#battery { color: #7aa2f7; }
-#clock { color: #F1F1F1; }
-#custom-updates { color: #B9C244; }
-#custom-mplayer { color: #9ece6a; }
-#bluetooth { color: #7aa2f7; }
+#cpu {
+	color: #f7768e;
+}
+#memory {
+	color: #7dcfff;
+}
+#disk {
+	color: #fbc02d;
+}
+#network {
+	color: #9ece6a;
+}
+#pulseaudio {
+	color: #6c77bb;
+}
+#battery {
+	color: #7aa2f7;
+}
+#clock {
+	color: #f1f1f1;
+}
+#custom-updates {
+	color: #b9c244;
+}
+#custom-mplayer {
+	color: #9ece6a;
+}
+#bluetooth {
+	color: #7aa2f7;
+}

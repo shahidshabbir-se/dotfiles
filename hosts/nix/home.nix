@@ -85,7 +85,6 @@ in
       wofi
       rofi
       rofi-bluetooth
-      rofi-network-manager
       catppuccin-papirus-folders
       zip
       # (import ../../modules/void.nix { inherit pkgs; })
@@ -100,6 +99,7 @@ in
   # xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
   xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
+  xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
   xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
 
   # ───────────────────────────────────────────────

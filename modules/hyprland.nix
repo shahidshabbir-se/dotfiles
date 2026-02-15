@@ -97,11 +97,11 @@
     animation = [
       "windowsIn,1,5,easeOutBack,popin"
       "windowsOut,1,5,easeInBack,popin"
-      "fadeIn,0"
+      "fadeIn,1,5,easeInOutCubic"
       "fadeOut,1,10,easeInCubic"
       "workspaces,1,4,easeInOutCubic,slide"
-      "layersIn, 1, 8, default, popin 80%"
-      "layersOut, 1, 8, default, popin 80%"
+      "layersIn, 1, 5, easeInOutCubic, fade"
+      "layersOut, 1, 3, easeInCubic, fade"
     ];
 
     dwindle = {
@@ -169,7 +169,9 @@
       "$mod, W, exec, ags run"
       "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
       "$mod, N, exec, swaync-client -t -sw"
+      "$mod, Z, exec, pkill -SIGUSR1 waybar"
       "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
+      "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
       "ALT SHIFT, W, exec, bash ~/.config/rofi/WallSelect"
       "ALT SHIFT, P, exec, ${homeDirectory}/dotfiles/config/rofi/power-launch.sh"
       "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
@@ -212,7 +214,7 @@
             "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
           ]
         )
-        10)
+        6)
     );
 
     bindm = [
@@ -249,8 +251,6 @@
       "size 1000 600, class:^(podman-tui)$"
       "center, class:^(podman-tui)$"
       "float, class:^(Rofi)$"
-      "animation popin, class:^(Rofi)$"
-      "dimaround, class:^(Rofi)$"
       "suppressevent maximize, class:.*"
       "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
     ];

@@ -175,6 +175,14 @@
         cp *.OTF $out/share/fonts/opentype
       '';
     })
+    (pkgs.stdenv.mkDerivation {
+      name = "cartograph-cf";
+      src = ./config/fonts/cartograph-cf;
+      installPhase = ''
+        mkdir -p $out/share/fonts/truetype
+        cp *.ttf $out/share/fonts/truetype
+      '';
+    })
   ];
   services.keyd = {
     enable = true;

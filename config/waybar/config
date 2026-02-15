@@ -38,14 +38,13 @@
         "2": [],
         "3": [],
         "4": [],
-        "5": []
+        "5": [],
+        "6": []
     },
     "format-icons": {
       "active": "󰮯",
-      "occupied": "󰊠",
       "empty": "󰑊",
-      "default": "󰑊",
-      "persistent": "󰑊"
+      "default": "󰊠"
     }
   },
 
@@ -69,9 +68,10 @@
 
   "network": {
     "interval": 3,
-    "format-wifi": " {bandwidthTotalBytes}",
+    "format-wifi": " {bandwidthTotalBytes}",
     "format-ethernet": "󰈀 {bandwidthTotalBytes}",
     "format-disconnected": "Offline",
+    "on-click": "/home/shahid/.config/rofi/wifi-launch.sh",
     "tooltip": false
   },
 
@@ -88,7 +88,7 @@
     "format-icons": {
       "default": ["", "", ""]
     },
-    "on-click": "pavucontrol",
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
     "on-click-right": "OpenApps --soundcontrol",
     "tooltip": false
   },
