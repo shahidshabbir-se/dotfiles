@@ -3,3 +3,10 @@
 **/.env
 .claude/
 config/rofi/.current_wallpaper
+
+# Editor/tool backup files
+*.swp
+*.swo
+*~
+*.bak
+*.toml-*
