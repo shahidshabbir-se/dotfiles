@@ -11,13 +11,6 @@
 {
   enable = true;
 
-  # # ───────────────────────────────────────────────
-  # # ▶ ZSH History
-  # # ───────────────────────────────────────────────
-  # history.size = 10000;
-  # history.ignoreAllDups = true;
-  # history.path = "${config.xdg.dataHome}/zsh/history";
-
   # ───────────────────────────────────────────────
   # ▶ Shell Aliases
   # ───────────────────────────────────────────────
@@ -35,16 +28,17 @@
     vi = "nvim";
     ".." = "cd ..";
     e = "exit";
-    # psql = "pgcli";
     cat = "bat";
     bc = "better-commits";
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
     cc = "claude";
-    # cc = "eval \"$(ccr activate)\" && NODE_OPTIONS=\"--no-deprecation\" claude";
     oc = "opencode";
     cr = "crush";
     cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
+    curl = "xh";
+    sed = "sd";
+    time = "hyperfine";
 
     # Git aliases
     ggr = "git log --oneline --graph --decorate --all";

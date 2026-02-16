@@ -1,60 +1,76 @@
 { pkgs }:
 
 with pkgs; [
-  gitleaks
-  csview
-  lsof
-  calc
-  openssl
+  # Development
   gh
-  # (import ../../modules/droid.nix { inherit pkgs; })
-  lazygit
-  just
   go
-  nixpkgs-fmt
-  stripe-cli
+  lazygit
   lazysql
+  just
   mise
   fnm
-  wget
-  cbonsai
-  mpd
-  font-awesome_6
-  socat
-  imagemagick
-  youtube-tui
-  mpv
-  yt-dlp
-  ncdu
+  nixpkgs-fmt
+  rustup
   act
-  sesh
-  lsof
-  atuin
-  # yt-dlp
-  mpv
-  # youtube-tui
-  lazysql
+
+  # CLI Utilities
+  bat
   btop
+  calc
   coreutils
-  croc
-  dogdns
-  doppler
-  fastfetch
+  csview
   fd
   fzf
   gnupg
   htop
+  imagemagick
   jq
   jless
   lsd
+  lsof
   moreutils
+  ncdu
   onefetch
+  fastfetch
   ripgrep
-  rustup
-  tmux
-  typtea
-  wrk
+  sd
+  tldr
+  tokei
+  wget
+  xh
   yazi
   zoxide
   zsh
+
+  # Security
+  gitleaks
+  openssl
+
+  # Media
+  mpd
+  mpv
+  yt-dlp
+
+  # Networking
+  croc
+  dogdns
+  doppler
+  stripe-cli
+  socat
+
+  # System / Terminal
+  atuin
+  sesh
+  tmux
+
+  # Fun
+  cbonsai
+  typtea
+
+  # Fonts / UI
+  font-awesome_6
+
+  # Benchmarking
+  hyperfine
+  wrk
 ]

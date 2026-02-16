@@ -232,7 +232,6 @@
                   "obsidian"
                   "karabiner-elements"
                   "protonvpn"
-                  "zed"
                   "zen"
                   "google-chrome"
                   "vlc"
