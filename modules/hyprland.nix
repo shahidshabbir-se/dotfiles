@@ -146,7 +146,7 @@
       "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
       "$mod, B, workspace, 2"
       "$mod, B, exec, $browser"
-      "$mod SHIFT, B, workspace, 8"
+      "$mod SHIFT, B, workspace, 5"
       "$mod SHIFT, B, exec, $browser --private-window"
       "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
       # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
