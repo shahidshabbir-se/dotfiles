@@ -7,11 +7,13 @@ with pkgs; [
   lazygit
   lazysql
   just
-  mise
-  fnm
+  # mise
+  # fnm
   nixpkgs-fmt
   rustup
   act
+  mysql84
+  pgloader
 
   # CLI Utilities
   bat

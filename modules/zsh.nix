@@ -6,7 +6,7 @@
 #  ╚══════╝╚══════╝╚═╝  ╚═╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, ... }:
+{ config, pkgs, browser, ... }:
 
 {
   enable = true;
@@ -113,6 +113,9 @@
   # ▶ Zsh Init Conten
   # ───────────────────────────────────────────────
   initContent = ''
+        # Force emacs keybindings (prevents EDITOR=nvim from switching to vi mode)
+        bindkey -e
+
         # Set ZSH cache directory (for dynamic completions)
         export ZSH_CACHE_DIR="${config.xdg.cacheHome}/zsh"
         mkdir -p "$ZSH_CACHE_DIR/completions"
@@ -197,9 +200,6 @@
         zle -N edit-command-line
         bindkey '^X^E' edit-command-line
 
-        # Vi mode edit command
-        bindkey -M vicmd 'v' edit-command-line
-
         # Undo (Ctrl+_)
         bindkey '^_' undo
 
@@ -218,13 +218,23 @@
         alias -s go=$EDITOR
         alias -s html=${if pkgs.stdenv.isDarwin then "open" else "xdg-open"}  # open in default browser
 
+        # Clipboard helper — works on macOS, Wayland, and X11
+        _clip() {
+          ${if pkgs.stdenv.isDarwin then ''pbcopy'' else ''
+          if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+            xclip -selection clipboard
+          else
+            wl-copy
+          fi''}
+        }
+
         # Global aliases for output redirection
         alias -g NE='2>/dev/null'     # Redirect stderr only
         alias -g NO='>/dev/null'      # Redirect stdout only
         alias -g NUL='>/dev/null 2>&1' # Redirect both stdout and stderr
         alias -g J='| jq'            # Pipe to jq
         alias -g V='| nvim -'        # Pipe to nvim
-        alias -g C="| ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"  # Copy to clipboard
+        alias -g C='| _clip'         # Copy to clipboard
 
         # zmv - Advanced batch rename/move
         autoload -Uz zmv
@@ -252,7 +262,7 @@
         bindkey '^X^L' clear-screen-and-scrollback
 
         function copy-buffer-to-clipboard() {
-          echo -n "$BUFFER" | ${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}
+          echo -n "$BUFFER" | _clip
           zle -M "Copied to clipboard"
         }
         zle -N copy-buffer-to-clipboard
@@ -312,15 +322,14 @@
         }
 
         pw() {
-          local clip_cmd="${if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy"}"
-          python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | $clip_cmd
+          python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | _clip
         }
 
         # FZF integrations
         # Kill process with fzf
         fkill() {
           local pid
-          pid=$(ps -ef | sed 1d | fzf -m --header='[kill:process]' --preview-window=hidden | awk '{print $2}')
+          pid=$(ps -ef | command sed 1d | fzf -m --header='[kill:process]' --preview-window=hidden | awk '{print $2}')
           if [ "x$pid" != "x" ]; then
             echo $pid | xargs kill -''${1:-9}
           fi
@@ -362,7 +371,7 @@
         export TERM="xterm-256color"
         export TMPDIR=$HOME/tmp
         export EDITOR="nvim"
-        export BROWSER="Zen"
+        export BROWSER="${browser}"
         export _ZO_DOCTOR=0
         export GOPATH="$HOME/go"
         export PATH="$HOME/.npm-global/bin:$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"

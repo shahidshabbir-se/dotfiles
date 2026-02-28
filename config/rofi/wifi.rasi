@@ -14,8 +14,8 @@ window {
     anchor:                      north east;
     fullscreen:                  false;
     width:                       22%;
-    x-offset:                    -220px;
-    y-offset:                    5px;
+    x-offset:                    -180px;
+    y-offset:                    65px;
 
     /* properties for all widgets */
     enabled:                     true;

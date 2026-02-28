@@ -1,4 +1,4 @@
-{ homeDirectory, ... }:
+{ homeDirectory, browser, ... }:
 
 {
   enable = true;
@@ -8,7 +8,7 @@
   settings = {
     "$mod" = "SUPER";
     "$terminal" = "ghostty";
-    "$browser" = "zen";
+    "$browser" = "${browser}";
     "$fileManager" = "ghostty --title=yazi -e yazi";
     "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
@@ -36,8 +36,9 @@
       "xdg-mime default feh.desktop image/gif"
       "xdg-mime default feh.desktop image/webp"
       "xdg-mime default feh.desktop image/bmp"
-      "hyprctl setcursor Banana 36"
-      # "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
+      # "hyprctl setcursor Banana 36"
+      "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
+      ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl dispatch togglefloating "address:0x$addr" && hyprctl dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
     ];
 
     env = [
@@ -45,14 +46,14 @@
       "TERMINAL,wezterm"
       "BROWSER,zen"
       "EDITOR,nvim"
-      "XCURSOR_THEME,Banana"
-      "XCURSOR_SIZE,36"
-      "HYPRCURSOR_SIZE,36"
-      "HYPRCURSOR_THEME,Banana"
-      # "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
-      # "XCURSOR_SIZE,24"
-      # "HYPRCURSOR_SIZE,24"
-      # "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
+      # "XCURSOR_THEME,Banana"
+      # "XCURSOR_SIZE,36"
+      # "HYPRCURSOR_SIZE,36"
+      # "HYPRCURSOR_THEME,Banana"
+      "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
+      "XCURSOR_SIZE,24"
+      "HYPRCURSOR_SIZE,24"
+      "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
       "GTK_THEME,catppuccin-mocha-blue-standard"
     ];
 

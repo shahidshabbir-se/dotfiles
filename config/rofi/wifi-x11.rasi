@@ -1,0 +1,5 @@
+@import "wifi.rasi"
+
+* {
+    font: "JetBrainsMono NF Bold 12";
+}

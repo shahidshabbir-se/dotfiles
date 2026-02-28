@@ -12,8 +12,12 @@
 #
 # Depends on: rofi, NetworkManager (nmcli), notify-send (optional)
 
-# Theme
-THEME="$HOME/.config/rofi/wifi.rasi"
+# Theme — X11 needs larger font (i3 uses DPI 120)
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    THEME="$HOME/.config/rofi/wifi-x11.rasi"
+else
+    THEME="$HOME/.config/rofi/wifi.rasi"
+fi
 
 # Constants
 divider="---------"

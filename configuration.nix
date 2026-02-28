@@ -119,7 +119,7 @@
 
   users.users.shahid = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "audio" "kvm" ];
+    extraGroups = [ "wheel" "docker" "audio" "kvm" "input" ];
     packages = with pkgs; [
       hyprland
       starship
@@ -161,6 +161,28 @@
   ];
 
   programs.hyprland.enable = true;
+
+  # i3 (X11 session for Upwork compatibility)
+  services.xserver.windowManager.i3 = {
+    enable = true;
+    extraPackages = with pkgs; [
+      i3lock-color
+      i3status
+      numlockx
+      xclip
+      xsel
+      maim
+      xdotool
+      xorg.xrandr
+      arandr
+      autorandr
+      picom
+      feh
+      dunst
+      polybar
+      haskellPackages.greenclip
+    ];
+  };
   virtualisation.docker.enable = true;
   programs.zsh.enable = true;
   fonts.packages = [

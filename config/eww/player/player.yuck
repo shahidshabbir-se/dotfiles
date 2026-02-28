@@ -174,9 +174,9 @@
   :monitor 0
   :geometry
   (geometry
-    :y "1%"
+    :y "-1%"
     :anchor "bottom center"
   )
-	:wm-ignore false
+	:wm-ignore true
   (player)
 )
