@@ -10,6 +10,7 @@
 
 let
   homeDirectory = "/home/shahid";
+  browser = "brave";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
@@ -34,20 +35,20 @@ in
   # ───────────────────────────────────────────────
   # ▶ Home Directory & Package Set
   # ───────────────────────────────────────────────
-  # home.pointerCursor = {
-  #   x11.enable = true;
-  #   gtk.enable = true;
-  #   package = pkgs.catppuccin-cursors.mochaDark;
-  #   size = 24;
-  #   name = "catppuccin-mocha-dark-cursors";
-  # };
   home.pointerCursor = {
     x11.enable = true;
     gtk.enable = true;
-    package = import ../../modules/banana-cursor.nix { inherit pkgs; };
-    size = 36;
-    name = "Banana";
+    package = pkgs.catppuccin-cursors.mochaDark;
+    size = 24;
+    name = "catppuccin-mocha-dark-cursors";
   };
+  # home.pointerCursor = {
+  #   x11.enable = true;
+  #   gtk.enable = true;
+  #   package = import ../../modules/banana-cursor.nix { inherit pkgs; };
+  #   size = 36;
+  #   name = "Banana";
+  # };
   home = {
     username = "shahid";
     homeDirectory = homeDirectory;
@@ -64,10 +65,12 @@ in
       cliphist
       feh
       postgresql
+      upwork
       gcc
       gnumake
       grimblast
-      inputs.zen-browser.packages."${system}".default
+      firefox
+      brave
       # poppins
       eww
       libnotify
@@ -87,6 +90,22 @@ in
       rofi-bluetooth
       catppuccin-papirus-folders
       zip
+      # X11 / i3 session packages
+      i3lock-color
+      maim
+      xclip
+      xsel
+      xdotool
+      xorg.xrandr
+      numlockx
+      haskellPackages.greenclip
+      autorandr
+      xsettingsd
+      libinput-gestures
+      xbindkeys
+      bc
+      firefox
+      brave
       # (import ../../modules/void.nix { inherit pkgs; })
     ]);
   };
@@ -101,6 +120,44 @@ in
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
   xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
+  # picom config is loaded directly via extraArgs in picom.nix (no symlink needed)
+  # polybar config is loaded directly via --config flag for fast iteration
+
+  # ───────────────────────────────────────────────
+  # ▶ libinput-gestures (touchpad 3-finger swipe to switch workspaces)
+  # ───────────────────────────────────────────────
+  xdg.configFile."libinput-gestures.conf".text = ''
+    gesture swipe right 3 i3-msg workspace prev
+    gesture swipe left 3 i3-msg workspace next
+  '';
+
+  # ───────────────────────────────────────────────
+  # ▶ xbindkeys (Super+scroll to switch workspaces)
+  # ───────────────────────────────────────────────
+  home.file.".xbindkeysrc".text = ''
+    "i3-msg workspace prev"
+      Mod4 + b:4
+
+    "i3-msg workspace next"
+      Mod4 + b:5
+  '';
+
+  # ───────────────────────────────────────────────
+  # ▶ xsettingsd (bridges GTK/font settings to X11)
+  # ───────────────────────────────────────────────
+  xdg.configFile."xsettingsd/xsettingsd.conf".text = ''
+    Net/ThemeName "catppuccin-mocha-blue-standard"
+    Net/IconThemeName "Papirus-Dark"
+    Gtk/CursorThemeName "catppuccin-mocha-dark-cursors"
+    Gtk/CursorThemeSize 24
+    Gtk/FontName "SF Pro Display 11"
+    Net/EnableEventSounds 0
+    Net/EnableInputFeedbackSounds 0
+    Xft/Antialias 1
+    Xft/Hinting 1
+    Xft/HintStyle "hintfull"
+    Xft/DPI ${builtins.toString (120 * 1024)}
+  '';
 
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
@@ -116,7 +173,7 @@ in
       inherit config pkgs homeDirectory userGmail userGithub;
     };
     delta = import ../../modules/delta.nix { inherit pkgs; };
-    zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
+    zsh = import ../../modules/zsh.nix { inherit config pkgs lib browser; };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     atuin = import ../../modules/atuin.nix;
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
@@ -134,7 +191,46 @@ in
   };
 
   wayland.windowManager.hyprland = import ../../modules/hyprland.nix {
-    inherit config pkgs homeDirectory;
+    inherit config pkgs homeDirectory browser;
+  };
+
+  # ───────────────────────────────────────────────
+  # i3 (X11 session - for Upwork compatibility)
+  # ───────────────────────────────────────────────
+  xsession.windowManager.i3 = import ../../modules/i3.nix {
+    inherit config pkgs lib homeDirectory browser;
+  };
+
+  services.picom = import ../../modules/picom.nix { };
+
+  services.dunst = import ../../modules/dunst.nix { };
+
+  # Polybar config is managed as a raw file via xdg symlink for fast iteration
+  services.polybar = {
+    enable = true;
+    package = pkgs.polybar.override {
+      i3Support = true;
+      pulseSupport = true;
+    };
+    script = ''
+      polybar-msg cmd quit 2>/dev/null
+      for m in $(polybar --list-monitors | cut -d":" -f1); do
+        MONITOR=$m polybar --config=${homeDirectory}/dotfiles/config/polybar/config.ini main &
+      done
+    '';
+  };
+
+  # ───────────────────────────────────────────────
+  # ▶ X11 DPI / Xresources (scaling for i3)
+  # ───────────────────────────────────────────────
+  xresources.properties = {
+    "Xft.dpi" = 120;
+    "Xft.autohint" = 0;
+    "Xft.lcdfilter" = "lcddefault";
+    "Xft.hintstyle" = "hintfull";
+    "Xft.hinting" = 1;
+    "Xft.antialias" = 1;
+    "Xft.rgba" = "rgb";
   };
 
   # ───────────────────────────────────────────────
@@ -145,9 +241,9 @@ in
       color-scheme = "prefer-dark";
       gtk-theme = "catppuccin-mocha-blue-standard";
       icon-theme = "Papirus-Dark";
-      # cursor-theme = "catppuccin-mocha-dark-cursors";
-      cursor-theme = "Banana";
-      cursor-size = 36;
+      cursor-theme = "catppuccin-mocha-dark-cursors";
+      # cursor-theme = "Banana";
+      cursor-size = 24;
       font-name = "SF Pro Display 11";
       document-font-name = "SF Pro Display 11";
       monospace-font-name = "JetBrainsMono Nerd Font 11";

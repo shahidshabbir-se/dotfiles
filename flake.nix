@@ -24,9 +24,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-    };
+    # zen-browser = {
+    #   url = "github:0xc000022070/zen-browser-flake";
+    # };
 
     catppuccin.url = "github:catppuccin/nix";
 
@@ -46,7 +46,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, unstable, home-manager, spicetify-nix, zen-browser, catppuccin, nix-darwin, nix-homebrew, erosanix, ... }:
+  outputs = inputs@{ self, nixpkgs, unstable, home-manager, spicetify-nix, catppuccin, nix-darwin, nix-homebrew, erosanix, ... }:
     let
       lib = nixpkgs.lib;
 
