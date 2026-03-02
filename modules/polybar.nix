@@ -25,7 +25,7 @@
       fixed-center = true;
 
       width = "100%";
-      height = 52;
+      height = "1%";
 
       offset-x = 0;
       offset-y = 0;

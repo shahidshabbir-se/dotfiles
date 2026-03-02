@@ -7,6 +7,9 @@ with pkgs; [
   lazygit
   lazysql
   just
+  stress
+  file
+
   # mise
   # fnm
   nixpkgs-fmt
@@ -45,6 +48,7 @@ with pkgs; [
   zsh
 
   # Security
+  age
   gitleaks
   openssl
 

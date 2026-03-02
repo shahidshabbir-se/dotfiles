@@ -10,7 +10,7 @@
 
 let
   homeDirectory = "/home/shahid";
-  browser = "brave";
+  browser = "zen";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
@@ -55,6 +55,7 @@ in
     stateVersion = "24.05";
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
+      upwork
       corefonts
       waybar
       fastfetch
@@ -65,12 +66,12 @@ in
       cliphist
       feh
       postgresql
-      upwork
       gcc
       gnumake
       grimblast
-      firefox
-      brave
+      inputs.zen-browser.packages.${system}.default
+      chromium
+      protonvpn-gui
       # poppins
       eww
       libnotify
@@ -104,8 +105,6 @@ in
       libinput-gestures
       xbindkeys
       bc
-      firefox
-      brave
       # (import ../../modules/void.nix { inherit pkgs; })
     ]);
   };
@@ -156,7 +155,31 @@ in
     Xft/Antialias 1
     Xft/Hinting 1
     Xft/HintStyle "hintfull"
-    Xft/DPI ${builtins.toString (120 * 1024)}
+    Xft/DPI ${builtins.toString (112 * 1024)}
+  '';
+
+  # ───────────────────────────────────────────────
+  # ▶ Developer Workspace
+  # ───────────────────────────────────────────────
+  home.activation.createDevWorkspace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p ${homeDirectory}/Developer/{freelance,personal,opensource,learning}
+
+    # Auto-clone repos if not present (SSH key decrypted via age)
+    export GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh -o StrictHostKeyChecking=accept-new"
+
+    if [ ! -d "${homeDirectory}/dotfiles/.git" ]; then
+      ${pkgs.git}/bin/git clone git@github.com:shahidshabbir-se/dotfiles.git ${homeDirectory}/dotfiles || true
+    fi
+
+    # Ensure dotfiles remote is SSH (in case it was cloned via HTTPS on fresh install)
+    DOTFILES_REMOTE=$(${pkgs.git}/bin/git -C ${homeDirectory}/dotfiles remote get-url origin 2>/dev/null || true)
+    if echo "$DOTFILES_REMOTE" | grep -q "^https://"; then
+      ${pkgs.git}/bin/git -C ${homeDirectory}/dotfiles remote set-url origin git@github.com:shahidshabbir-se/dotfiles.git
+    fi
+
+    if [ ! -d "${homeDirectory}/.config/opencode/.git" ]; then
+      ${pkgs.git}/bin/git clone git@github.com:shahidshabbir-se/opencode-ai.git ${homeDirectory}/.config/opencode || true
+    fi
   '';
 
   # ───────────────────────────────────────────────
@@ -191,7 +214,7 @@ in
   };
 
   wayland.windowManager.hyprland = import ../../modules/hyprland.nix {
-    inherit config pkgs homeDirectory browser;
+    inherit config pkgs homeDirectory browser device;
   };
 
   # ───────────────────────────────────────────────
@@ -224,7 +247,7 @@ in
   # ▶ X11 DPI / Xresources (scaling for i3)
   # ───────────────────────────────────────────────
   xresources.properties = {
-    "Xft.dpi" = 120;
+    "Xft.dpi" = 112;
     "Xft.autohint" = 0;
     "Xft.lcdfilter" = "lcddefault";
     "Xft.hintstyle" = "hintfull";
