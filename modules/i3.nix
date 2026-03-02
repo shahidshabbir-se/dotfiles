@@ -254,7 +254,7 @@ in
     # ───────────────────────────────────────────────
     # Monitor setup (xrandr)
     # ───────────────────────────────────────────────
-    exec --no-startup-id xrandr --dpi 120 --output HDMI-A-0 --mode 1920x1080 --rate 120 --primary --output eDP-1 --mode 1920x1080 --rate 60 --right-of HDMI-A-0
+    exec --no-startup-id xrandr --dpi 112 --output HDMI-A-0 --mode 1920x1080 --rate 200 --primary --output eDP-1 --mode 1920x1080 --rate 60 --right-of HDMI-A-0
 
     # ───────────────────────────────────────────────
     # Mouse settings

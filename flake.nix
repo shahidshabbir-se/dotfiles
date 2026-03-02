@@ -24,9 +24,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # zen-browser = {
-    #   url = "github:0xc000022070/zen-browser-flake";
-    # };
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+    };
 
     catppuccin.url = "github:catppuccin/nix";
 
@@ -40,13 +40,9 @@
       url = "github:zhaofengli-wip/nix-homebrew";
     };
 
-    erosanix = {
-      url = "github:emmanuelrosa/erosanix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = inputs@{ self, nixpkgs, unstable, home-manager, spicetify-nix, catppuccin, nix-darwin, nix-homebrew, erosanix, ... }:
+  outputs = inputs@{ self, nixpkgs, unstable, home-manager, spicetify-nix, catppuccin, nix-darwin, nix-homebrew, zen-browser, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -64,33 +60,34 @@
           name = "ThinkPad E14";
           type = "laptop";
           display = {
-            name = "Built-in Display";
+            connector = "eDP-1";
             width = 1920;
             height = 1080;
-            scale = 1.0;
+            scale = 1.3333;
             refreshRate = 60;
           };
-          fontSize = 14.0; # Smaller font for laptop
+          fontSize = 14.0;
         };
 
-        mac-mini-external = {
-          name = "Mac Mini + Monitor";
+        pc = {
+          name = "PC + MAG 255F E20";
           type = "desktop";
           display = {
-            name = "MAG 255F E20";
-            width = 3200;
-            height = 1800;
-            scale = 2.0; # UI looks like 1600x900
+            connector = "HDMI-A-1";
+            width = 1920;
+            height = 1080;
+            scale = 1.2;
             refreshRate = 200;
           };
-          fontSize = 17.0; # Larger font for HiDPI monitor
+          fontSize = 14.0;
         };
       };
 
       # Active device selection
-      # Change this to switch between configurations
-      activeDeviceLinux = devices.thinkpad-e14;
-      activeDeviceMac = devices.mac-mini-external;
+      # Change this to switch between configurations:
+      #   devices.thinkpad-e14  — for laptop
+      #   devices.pc            — for PC with external monitor
+      activeDevice = devices.pc;
 
       pkgsDarwin = import nixpkgs {
         system = systemDarwin;
@@ -116,7 +113,7 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
               inherit inputs unstable;
-              device = activeDeviceLinux;
+              device = activeDevice;
             };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
             home-manager.users.shahid = import ./hosts/nix/home.nix;
@@ -259,7 +256,7 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
               inherit inputs unstable;
-              device = activeDeviceMac;
+              device = activeDevice;
             };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
 

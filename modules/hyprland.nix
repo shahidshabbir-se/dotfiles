@@ -1,5 +1,11 @@
-{ homeDirectory, browser, ... }:
+{ homeDirectory, browser, device, ... }:
 
+let
+  d = device.display;
+  monitorLine =
+    "${d.connector},${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale}"
+    + (if device.type == "desktop" then ",bitdepth,10,cm,hdr,sdrbrightness,1.2,sdrsaturation,0.98,vrr,1" else "");
+in
 {
   enable = true;
   xwayland.enable = true;
@@ -13,8 +19,7 @@
     "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
     monitor = [
-      "HDMI-A-1,1920x1080@120,0x0,1.2,bitdepth,10,cm,hdr,sdrbrightness,1.2,sdrsaturation,0.98,vrr,1"
-      "eDP-1,1920x1080@60,auto,1.3333"
+      monitorLine
     ];
 
     exec-once = [
@@ -236,9 +241,10 @@
       ", XF86AudioPause, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
       ", XF86AudioPlay, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
       ", XF86AudioPrev, exec, playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
+    ] ++ (if device.type == "laptop" then [
       ", switch:on:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,disable\""
-      ", switch:off:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,1920x1080@60,auto,1.3333\""
-    ];
+      ", switch:off:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale}\""
+    ] else []);
 
     windowrulev2 = [
       "float, title:^(yazi)$"

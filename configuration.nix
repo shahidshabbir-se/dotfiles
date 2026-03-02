@@ -9,27 +9,7 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      inputs.erosanix.nixosModules.protonvpn
     ];
-
-  services.protonvpn = {
-    enable = true;
-    autostart = false; # Set to false so you can debug without losing internet on boot
-    interface = {
-      privateKeyFile = "/var/lib/protonvpn/private.key";
-      dns = {
-        enable = true;
-        ip = "1.1.1.1"; # Explicitly use Cloudflare DNS to avoid resolution issues
-      };
-    };
-    endpoint = {
-      publicKey = "xGIfeXZPiiMUX1lCAXA7VLX12RefzAZEevm6/Yd1yW4=";
-      ip = "185.107.56.143";
-    };
-  };
-
-  # Ensure you have a fallback DNS if the VPN fails
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
   nixpkgs.config.allowUnfree = true;
   # configuration.nix
@@ -41,6 +21,12 @@
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
+  hardware.bluetooth.settings = {
+    General = {
+      Enable = "Source,Sink,Media,Socket";
+      Experimental = true;
+    };
+  };
 
 
   networking.hostName = "nixos";
@@ -111,6 +97,16 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     jack.enable = true;
+    wireplumber.extraConfig = {
+      "10-bluez" = {
+        "monitor.bluez.properties" = {
+          "bluez5.enable-sbc-xq" = true;
+          "bluez5.enable-msbc" = true;
+          "bluez5.enable-hw-volume" = true;
+          "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_sink" "bap_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
+        };
+      };
+    };
   };
 
   services.libinput.enable = true;
@@ -119,7 +115,7 @@
 
   users.users.shahid = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "audio" "kvm" "input" ];
+    extraGroups = [ "wheel" "docker" "audio" "kvm" "input" "networkmanager" ];
     packages = with pkgs; [
       hyprland
       starship
@@ -232,8 +228,8 @@
 
   nix.gc = {
     automatic = true;
-    dates = "daily";
-    options = "--delete-older-than +1";
+    dates = "weekly";
+    options = "--delete-older-than 3d";
   };
 
   nix.settings.auto-optimise-store = true;
@@ -243,10 +239,10 @@
     package = pkgs.kdePackages.sddm;
     autoNumlock = true;
     theme = "sddm-astronaut-theme";
-    wayland = {
-      enable = true;
-      compositor = "weston";
-    };
+    # wayland = {
+    #   enable = true;
+    #   compositor = "weston";
+    # };
     extraPackages = with pkgs; [
       kdePackages.qtsvg
       kdePackages.qtvirtualkeyboard
