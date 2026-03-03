@@ -5,21 +5,21 @@
 (defpoll wm :interval "24h" "../eww/profilecard/scripts/fetch wm")
 
 ;; Profile
-(defvar IMAGEP "../config/assets/profile.png")
+(defvar IMAGEP "/home/shahid/dotfiles/config/assets/profile.png")
 (defpoll username :interval "24h" "whoami")
 (defpoll hostname :interval "24h" "cat /etc/hostname")
 (defpoll uptime :interval "30s" "uptime -p | sed -E -e 's/hour(s)?/hrs/g' -e 's/minute(s)?/min/g'")
 
-;; Pacman
-(defpoll UPDATES :interval "15m" `cat $HOME/.cache/Updates.txt 2>/dev/null`)
-(defpoll packages :interval "1h" "pacman -Q | wc -l")
+;; Nix Packages
+(defpoll UPDATES :interval "15m" `cat $HOME/.cache/Updates.txt 2>/dev/null || echo 0`)
+(defpoll packages :interval "1h" "nix-store -qR /run/current-system 2>/dev/null | wc -l")
 
 ;; Weather
-(defpoll weathericon :interval "15m" "Weather icon")
-(defpoll weathercity :interval "15m" "Weather city")
-(defpoll weathertemp :interval "15m" "Weather current_temp")
-(defpoll weatherdesc :interval "15m" "Weather weather_desc")
-(defpoll weatherhex :interval "15m" "Weather hex")
+(defpoll weathericon :interval "15m" "../eww/profilecard/scripts/Weather icon")
+(defpoll weathercity :interval "15m" "../eww/profilecard/scripts/Weather city")
+(defpoll weathertemp :interval "15m" "../eww/profilecard/scripts/Weather current_temp")
+(defpoll weatherdesc :interval "15m" "../eww/profilecard/scripts/Weather weather_desc")
+(defpoll weatherhex :interval "15m" "../eww/profilecard/scripts/Weather hex")
 
 ;; Networking
 (defpoll net_status :interval "3s" "../eww/profilecard/scripts/Network --status")
@@ -68,7 +68,7 @@
 (defwidget closebtn []
   (box :orientation "h" :space-evenly "false" :halign "end"
     (eventbox :cursor "pointer"
-      (button :class "min" :onclick "eww -c ~/.config/bspwm/eww open --toggle launchermenu" "󰅙")
+      (button :class "min" :onclick "eww close launchermenu" "󰅙")
     )
   )
 )
@@ -106,9 +106,9 @@
 				   :halign "start"
 				   :hexpand false
 				   (eventbox :cursor "pointer"
-				   (button :class "btn-info" :tooltip "Lock Computer" :onclick "ScreenLocker &" "󱅞"))
+				   (button :class "btn-info" :tooltip "Lock Computer" :onclick "bash -c 'if pgrep -x Hyprland >/dev/null; then hyprlock & else /home/shahid/dotfiles/scripts/i3lock-screen.sh & fi'" "󱅞"))
 				   (eventbox :cursor "pointer"
-				   (button :class "btn-info" :tooltip "Logout BSPWM" :onclick "bspc quit" "󰍃")))
+				   (button :class "btn-info" :tooltip "Logout" :onclick "bash -c 'if pgrep -x Hyprland >/dev/null; then hyprctl dispatch exit; else i3-msg exit; fi'" "󰍃")))
 		)
 	)
 )
@@ -128,14 +128,14 @@
 						 (button :class "pacman-updates"
 								 :halign "start"
 								 :tooltip "Click to update"
-								 :onclick "OpenApps --update" "${UPDATES} Updates"))))
+								 :onclick "ghostty -e sudo nixos-rebuild switch &" "${UPDATES} Updates"))))
 			   (box :orientation "h"
 					:space-evenly "false"
 					:class "fetch"
 					:spacing 8
 					(label :class "arch-icon"
 						   :halign "start"
-						   :text "󰣇")
+						   :text " ")
 					(box
 						 :space-evenly "false"
 						 (box :orientation "v"
@@ -144,7 +144,7 @@
 							  :style "margin-left: 10px;"
 							  (label :class "os-icon"
 									 :halign "start"
-									 :text "󰣇")
+									 :text "")
 							  (label :class "pkgs-icon"
 									 :halign "start"
 									 :text "󰮯")
@@ -289,6 +289,6 @@
 
 (defwindow launchermenu
     :monitor 0
-    :geometry (geometry :x "80px" :y "0px" :anchor "left center")
-    :wm-ignore false
+    :geometry (geometry :x "-20px" :y "0px" :anchor "right center")
+    :wm-ignore true
     (launchermenu))

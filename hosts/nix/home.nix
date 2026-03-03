@@ -55,7 +55,6 @@ in
     stateVersion = "24.05";
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
-      upwork
       corefonts
       waybar
       fastfetch
@@ -198,7 +197,6 @@ in
     delta = import ../../modules/delta.nix { inherit pkgs; };
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib browser; };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
-    atuin = import ../../modules/atuin.nix;
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };

@@ -79,7 +79,7 @@
             scale = 1.2;
             refreshRate = 200;
           };
-          fontSize = 14.0;
+          fontSize = 13.0;
         };
       };
 
