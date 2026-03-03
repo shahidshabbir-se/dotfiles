@@ -1,84 +1,60 @@
-// # z0mbi3 -  https://github.com/gh0stzk/dotfiles
+// https://github.com/gh0stzk/dotfiles
 
 configuration {
     modi:                        "drun";
     show-icons:                  true;
     drun-display-format:         "{name}";
-    font:                        "JetBrainsMono NF Bold 11";
-
-    hover-select:                true;
-    me-select-entry:             "MouseSecondary";
-    me-accept-entry:             "MousePrimary";
 }
 
-//----- Tokyo Night Color Scheme -----//
-
-* {
-main-bg: #1a1b26F2;
-main-fg: #c0caf5;
-select-bg: #7aa2f7;
-select-fg: #1a1b26;
-border-color: #7aa2f7;
-accent: #bb9af7;
-}
-
-//----- Main Window -----//
+@import "shared.rasi"
 
 window {
     enabled:                     true;
     fullscreen:                  false;
-    width:                       99%;
+    width:                       100%;
     transparency:                "real";
     cursor:                      "default";
     spacing:                     0px;
     padding:                     0px;
     border:                      0px;
-    border-radius:               5px;
+    border-radius:               0px;
     border-color:                transparent;
     background-color:            transparent;
 }
 
-//----- Main Box -----//
-
 mainbox {
     enabled:                     true;
     children:                    [ "listview" ];
-    background-color:            @main-bg;
+    background-color:            @background;
 }
-
-//----- Listview -----//
 
 listview {
     enabled:                     true;
     columns:                     6;
     lines:                       1;
-    spacing:                     20px;
-    padding:                     20px 20px;
+    spacing:                     30px;
+    padding:                     20px 30px;
     cycle:                       true;
     dynamic:                     false;
     scrollbar:                   false;
     layout:                      vertical;
-    reverse:                     true;
+    reverse:                     false;
     fixed-height:                true;
     fixed-columns:               true;
     cursor:                      "default";
     background-color:            transparent;
-    text-color:                  @main-fg;
+    text-color:                  @foreground;
 }
-
-//----- Elements -----//
 
 element {
     enabled:                     true;
     orientation:                 horizontal;
     spacing:                     0px;
-    padding:                     0px;
-    border-radius:               5px;
-    border:                      0px;
-    border-color:                transparent;
+    padding:                     3px;
+    border-radius:               20px;
     cursor:                      pointer;
     background-color:            transparent;
-    text-color:                  @main-fg;
+    text-color:                  @foreground;
 }
 
 @media(max-aspect-ratio: 1.8) {
@@ -88,20 +64,23 @@ element {
 }
 
 element selected.normal {
-    background-color:            transparent;
-    text-color:                  @select-fg;
-    border:                      3px;
-    border-color:                @select-bg;
+    background-color:            @selected;
+    text-color:                  @background;
 }
 
 element-icon {
-    size:                        40%;
+    size:                        25%;
+	border-radius:				 20px;
     cursor:                      inherit;
-    border-radius:               5px;
     background-color:            transparent;
     text-color:                  inherit;
 }
 
 element-text {
-    enabled:                     false;
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+    padding:                     10px 0px 8px 0px;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
 }

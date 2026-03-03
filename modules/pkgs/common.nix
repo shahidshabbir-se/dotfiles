@@ -8,6 +8,9 @@ with pkgs; [
   lazysql
   just
   stress
+  statix
+  hishtory
+  killall
   file
 
   # mise
@@ -57,6 +60,10 @@ with pkgs; [
   mpv
   yt-dlp
 
+  # Night Light
+  redshift
+  gammastep
+
   # Networking
   croc
   dogdns
@@ -65,7 +72,6 @@ with pkgs; [
   socat
 
   # System / Terminal
-  atuin
   sesh
   tmux
 

@@ -174,10 +174,10 @@
           --preview 'bat --style=numbers --color=always --line-range :500 {}' \
           --preview-window 'right:50%:wrap:border-rounded'"
 
+        # hishtory shell integration
+        source ${pkgs.hishtory}/share/hishtory/config.zsh
+
         # Key bindings
-        bindkey '^r' atuin-search
-        bindkey '^[[A' atuin-up-search
-        bindkey '^[OA' atuin-up-search
         bindkey '^A' beginning-of-line
         bindkey '^E' end-of-line
         bindkey '^U' backward-kill-line
