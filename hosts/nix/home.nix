@@ -10,7 +10,7 @@
 
 let
   homeDirectory = "/home/shahid";
-  browser = "zen";
+  browser = "zen-beta";
   userGmail = "shahidshabbirse@gmail.com";
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
@@ -148,7 +148,7 @@ in
     Net/IconThemeName "Papirus-Dark"
     Gtk/CursorThemeName "catppuccin-mocha-dark-cursors"
     Gtk/CursorThemeSize 24
-    Gtk/FontName "SF Pro Display 11"
+    Gtk/FontName "SF Pro Display 10"
     Net/EnableEventSounds 0
     Net/EnableInputFeedbackSounds 0
     Xft/Antialias 1
@@ -265,9 +265,9 @@ in
       cursor-theme = "catppuccin-mocha-dark-cursors";
       # cursor-theme = "Banana";
       cursor-size = 24;
-      font-name = "SF Pro Display 11";
-      document-font-name = "SF Pro Display 11";
-      monospace-font-name = "JetBrainsMono Nerd Font 11";
+      font-name = "SF Pro Display 10";
+      document-font-name = "SF Pro Display 10";
+      monospace-font-name = "JetBrainsMono Nerd Font 10";
     };
   };
 
