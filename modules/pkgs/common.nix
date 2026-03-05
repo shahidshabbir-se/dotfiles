@@ -11,6 +11,7 @@ with pkgs; [
   statix
   killall
   file
+  eww
 
   # mise
   # fnm

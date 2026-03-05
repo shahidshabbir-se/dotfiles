@@ -59,13 +59,13 @@ in
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; })
       ++ (with pkgs; [
+      upwork
       corefonts
       fastfetch
       postgresql
       gcc
       gnumake
       inputs.zen-browser.packages.${system}.default
-      chromium
       protonvpn-gui
       # poppins
       xfce.thunar
