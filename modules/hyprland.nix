@@ -25,7 +25,6 @@ in
   home.packages = with pkgs; [
     # Bar / Widgets
     waybar
-    eww
 
     # Wallpaper
     swww
