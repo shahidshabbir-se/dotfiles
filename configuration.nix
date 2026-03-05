@@ -5,11 +5,9 @@
 { pkgs, inputs, ... }:
 
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Hardware config is imported per-device from flake.nix
+  ];
 
   nixpkgs.config.allowUnfree = true;
   # configuration.nix
@@ -117,7 +115,7 @@
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" "audio" "kvm" "input" "networkmanager" ];
     packages = with pkgs; [
-      hyprland
+      # hyprland
       starship
       git
       openssh
@@ -129,7 +127,7 @@
 
   environment.systemPackages = with pkgs; [
     openvpn
-    swww
+    # swww
     (sddm-astronaut.override {
       themeConfig = {
         ScreenWidth = "1920";
@@ -156,7 +154,7 @@
     })
   ];
 
-  programs.hyprland.enable = true;
+  # programs.hyprland.enable = true;
 
   # i3 (X11 session for Upwork compatibility)
   services.xserver.windowManager.i3 = {
@@ -224,7 +222,7 @@
     };
   };
 
-  programs.hyprland.xwayland.enable = true;
+  # programs.hyprland.xwayland.enable = true;
 
   nix.gc = {
     automatic = true;

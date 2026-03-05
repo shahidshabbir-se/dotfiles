@@ -25,10 +25,13 @@ let
   # Allow unfree packages for corefonts
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "corefonts" ];
+
 in
 {
   imports = [
     ../../modules/node.nix
+    ../../modules/i3.nix
+    # ../../modules/hyprland.nix
     # ../../modules/cliproxyapi.nix
   ];
 
@@ -54,56 +57,25 @@ in
     homeDirectory = homeDirectory;
     stateVersion = "24.05";
 
-    packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ (with pkgs; [
+    packages = (import ../../modules/pkgs/common.nix { inherit pkgs; })
+      ++ (with pkgs; [
       corefonts
-      waybar
       fastfetch
-      wlogout
-      hyprlock
-      alsa-utils
-      brightnessctl
-      cliphist
-      feh
       postgresql
       gcc
       gnumake
-      grimblast
       inputs.zen-browser.packages.${system}.default
       chromium
       protonvpn-gui
       # poppins
-      eww
-      libnotify
-      mpvpaper
       xfce.thunar
       nitch
-      playerctl
       python3
-      swaynotificationcenter
-      swww
       (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = [ "blue" ]; size = "standard"; })
       onlyoffice-desktopeditors
       unzip
-      wl-clipboard
-      wofi
-      rofi
-      rofi-bluetooth
       catppuccin-papirus-folders
       zip
-      # X11 / i3 session packages
-      i3lock-color
-      maim
-      xclip
-      xsel
-      xdotool
-      xorg.xrandr
-      numlockx
-      haskellPackages.greenclip
-      autorandr
-      xsettingsd
-      libinput-gestures
-      xbindkeys
-      bc
       # (import ../../modules/void.nix { inherit pkgs; })
     ]);
   };
@@ -114,48 +86,8 @@ in
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
   # xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
-  xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
-  xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
-  xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
-  # picom config is loaded directly via extraArgs in picom.nix (no symlink needed)
-  # polybar config is loaded directly via --config flag for fast iteration
 
-  # ───────────────────────────────────────────────
-  # ▶ libinput-gestures (touchpad 3-finger swipe to switch workspaces)
-  # ───────────────────────────────────────────────
-  xdg.configFile."libinput-gestures.conf".text = ''
-    gesture swipe right 3 i3-msg workspace prev
-    gesture swipe left 3 i3-msg workspace next
-  '';
-
-  # ───────────────────────────────────────────────
-  # ▶ xbindkeys (Super+scroll to switch workspaces)
-  # ───────────────────────────────────────────────
-  home.file.".xbindkeysrc".text = ''
-    "i3-msg workspace prev"
-      Mod4 + b:4
-
-    "i3-msg workspace next"
-      Mod4 + b:5
-  '';
-
-  # ───────────────────────────────────────────────
-  # ▶ xsettingsd (bridges GTK/font settings to X11)
-  # ───────────────────────────────────────────────
-  xdg.configFile."xsettingsd/xsettingsd.conf".text = ''
-    Net/ThemeName "catppuccin-mocha-blue-standard"
-    Net/IconThemeName "Papirus-Dark"
-    Gtk/CursorThemeName "catppuccin-mocha-dark-cursors"
-    Gtk/CursorThemeSize 24
-    Gtk/FontName "SF Pro Display 10"
-    Net/EnableEventSounds 0
-    Net/EnableInputFeedbackSounds 0
-    Xft/Antialias 1
-    Xft/Hinting 1
-    Xft/HintStyle "hintfull"
-    Xft/DPI ${builtins.toString (112 * 1024)}
-  '';
 
   # ───────────────────────────────────────────────
   # ▶ Developer Workspace
@@ -201,58 +133,14 @@ in
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
+    atuin = import ../../modules/atuin.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
   };
 
-  services.swaync = import ../../modules/swaync.nix {
-    inherit pkgs homeDirectory;
-  };
 
-  wayland.windowManager.hyprland = import ../../modules/hyprland.nix {
-    inherit config pkgs homeDirectory browser device;
-  };
-
-  # ───────────────────────────────────────────────
-  # i3 (X11 session - for Upwork compatibility)
-  # ───────────────────────────────────────────────
-  xsession.windowManager.i3 = import ../../modules/i3.nix {
-    inherit config pkgs lib homeDirectory browser;
-  };
-
-  services.picom = import ../../modules/picom.nix { };
-
-  services.dunst = import ../../modules/dunst.nix { };
-
-  # Polybar config is managed as a raw file via xdg symlink for fast iteration
-  services.polybar = {
-    enable = true;
-    package = pkgs.polybar.override {
-      i3Support = true;
-      pulseSupport = true;
-    };
-    script = ''
-      polybar-msg cmd quit 2>/dev/null
-      for m in $(polybar --list-monitors | cut -d":" -f1); do
-        MONITOR=$m polybar --config=${homeDirectory}/dotfiles/config/polybar/config.ini main &
-      done
-    '';
-  };
-
-  # ───────────────────────────────────────────────
-  # ▶ X11 DPI / Xresources (scaling for i3)
-  # ───────────────────────────────────────────────
-  xresources.properties = {
-    "Xft.dpi" = 112;
-    "Xft.autohint" = 0;
-    "Xft.lcdfilter" = "lcddefault";
-    "Xft.hintstyle" = "hintfull";
-    "Xft.hinting" = 1;
-    "Xft.antialias" = 1;
-    "Xft.rgba" = "rgb";
-  };
 
   # ───────────────────────────────────────────────
   # ▶ dconf Settings

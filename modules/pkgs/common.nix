@@ -9,7 +9,6 @@ with pkgs; [
   just
   stress
   statix
-  hishtory
   killall
   file
 

@@ -68,6 +68,7 @@ in
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
+    atuin = import ../../modules/atuin.nix;
     aerospace = import ../../modules/aerospace.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
     wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };

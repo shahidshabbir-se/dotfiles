@@ -81,30 +81,34 @@
           };
           fontSize = 13.0;
         };
-      };
 
-      # Active device selection
-      # Change this to switch between configurations:
-      #   devices.thinkpad-e14  — for laptop
-      #   devices.pc            — for PC with external monitor
-      activeDevice = devices.pc;
+        mac-mini = {
+          name = "Mac Mini M4";
+          type = "desktop";
+          display = {
+            connector = "HDMI-A-1";
+            width = 1920;
+            height = 1080;
+            scale = 1.0;
+            refreshRate = 60;
+          };
+          fontSize = 13.0;
+        };
+      };
 
       pkgsDarwin = import nixpkgs {
         system = systemDarwin;
         config.allowUnfree = true;
       };
 
-    in
-    {
-      # ──────────────────────────────
-      # ▶ Linux (NixOS)
-      # ──────────────────────────────
-      nixosConfigurations.nixos = lib.nixosSystem {
+      # Helper to create a NixOS configuration for a given device
+      mkNixos = { device, hardwareConfig }: lib.nixosSystem {
         system = systemLinux;
         specialArgs = {
           inherit inputs;
         };
         modules = [
+          hardwareConfig
           ./configuration.nix
 
           home-manager.nixosModules.home-manager
@@ -112,13 +116,27 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
-              inherit inputs unstable;
-              device = activeDevice;
+              inherit inputs unstable device;
             };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
             home-manager.users.shahid = import ./hosts/nix/home.nix;
           }
         ];
+      };
+
+    in
+    {
+      # ──────────────────────────────
+      # ▶ Linux (NixOS)
+      # ──────────────────────────────
+      nixosConfigurations.laptop = mkNixos {
+        device = devices.thinkpad-e14;
+        hardwareConfig = ./hardware-laptop.nix;
+      };
+
+      nixosConfigurations.pc = mkNixos {
+        device = devices.pc;
+        hardwareConfig = ./hardware-pc.nix;
       };
 
       # ──────────────────────────────
@@ -256,7 +274,7 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
               inherit inputs unstable;
-              device = activeDevice;
+              device = devices.mac-mini;
             };
             home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
 
