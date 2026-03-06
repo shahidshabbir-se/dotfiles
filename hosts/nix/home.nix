@@ -60,6 +60,7 @@ in
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; })
       ++ (with pkgs; [
       upwork
+      chromium
       corefonts
       fastfetch
       postgresql
