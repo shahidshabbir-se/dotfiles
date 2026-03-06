@@ -87,6 +87,8 @@ in
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
   # xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
+  xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
+  xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
 
 
   # ───────────────────────────────────────────────
