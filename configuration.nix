@@ -11,6 +11,7 @@
 
   nixpkgs.config.allowUnfree = true;
   # configuration.nix
+  programs.dconf.enable = true;
   programs.nix-ld.enable = true;
   # programs.nix-ld.libraries = with pkgs; [
   # ];

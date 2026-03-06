@@ -62,12 +62,22 @@ in
 
     # Notifications
     libnotify
+
+    # Audio visualizer
+    glava
   ];
 
   # ───────────────────────────────────────────────
-  # ▶ XDG Symlinks (i3-specific configs)
+  # ▶ GLava (audio visualizer)
   # ───────────────────────────────────────────────
-  xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
+  home.activation.glavaConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Copy default shaders if missing, then symlink our overrides
+    if [ ! -d "${homeDirectory}/.config/glava/bars" ]; then
+      ${pkgs.glava}/bin/glava --copy-config 2>/dev/null || true
+    fi
+    ln -sf ${homeDirectory}/dotfiles/config/glava/rc.glsl ${homeDirectory}/.config/glava/rc.glsl
+    ln -sf ${homeDirectory}/dotfiles/config/glava/bars.glsl ${homeDirectory}/.config/glava/bars.glsl
+  '';
 
   # ───────────────────────────────────────────────
   # ▶ libinput-gestures (touchpad 3-finger swipe)
@@ -345,6 +355,7 @@ in
         { command = "xinput set-prop 'ETPS/2 Elantech Touchpad' 'libinput Natural Scrolling Enabled' 1"; notification = false; }
         { command = "xsetroot -cursor_name left_ptr"; notification = false; }
         { command = "numlockx on"; notification = false; }
+        { command = "sh -c 'sleep 3 && glava'"; notification = false; }
         { command = "xdg-mime default vlc.desktop video/mp4"; notification = false; }
         { command = "xdg-mime default vlc.desktop video/x-matroska"; notification = false; }
         { command = "xdg-mime default vlc.desktop video/avi"; notification = false; }

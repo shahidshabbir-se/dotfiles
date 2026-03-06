@@ -63,8 +63,6 @@ in
   # ▶ XDG Symlinks (Hyprland-specific configs)
   # ───────────────────────────────────────────────
   xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
-  xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
-  xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
 
   # ───────────────────────────────────────────────
   # ▶ Swaync (Notification Center)
