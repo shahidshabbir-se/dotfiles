@@ -26,6 +26,7 @@ return {
         [".swcrc"] = { icon = "", color = "#d9996d", name = ".swcrc" },
         ["stylua.toml"] = { icon = "", color = "#6D8086", name = "stylua" },
         ["drizzle.config.ts"] = { icon = "󱙌", color = "#A78BFA", name = "DrizzleConfig" },
+        ["turbo.json"] = { icon = "󱀚", color = "#027acf", name = "TurboRepo" },
         ["orval.config.js"] = { icon = "", color = "#6f40c9", name = "OrvalConfig" },
         ["orval.config.ts"] = { icon = "", color = "#6f40c9", name = "OrvalConfig" },
         ["next.config.ts"] = { icon = "", color = "#ffffff", name = "NextConfig" },

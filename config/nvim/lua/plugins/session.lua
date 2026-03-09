@@ -22,6 +22,20 @@ return {
       args_allow_files_auto_save = false,
       continue_restore_on_error = true,
       show_auto_restore_notif = false,
+      post_restore_cmds = {
+        function()
+          -- Re-trigger filetype detection so treesitter/syntax highlights attach
+          -- on the first buffer after session restore
+          vim.schedule(function()
+            vim.cmd("filetype detect")
+            local buf = vim.api.nvim_get_current_buf()
+            local ft = vim.bo[buf].filetype
+            if ft and ft ~= "" then
+              vim.bo[buf].filetype = ft
+            end
+          end)
+        end,
+      },
       cwd_change_handling = false,
       lsp_stop_on_restore = false,
       restore_error_handler = nil,

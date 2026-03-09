@@ -250,7 +250,7 @@ in
         "${mod}+o" = "exec obsidian";
         "${mod}+Mod1+p" = "exec systemctl poweroff";
         "${mod}+Mod1+r" = "exec systemctl reboot";
-        "${mod}+Mod1+q" = "exec i3-msg exit";
+        "${mod}+Mod1+q" = "exit";
         "${mod}+Shift+l" = "exec ${homeDirectory}/dotfiles/scripts/i3lock-screen.sh";
         "${mod}+m" = "workspace number 6; exec spotify";
         "${mod}+Ctrl+s" = "exec ${homeDirectory}/dotfiles/scripts/screenshot-x11.sh area";
@@ -348,7 +348,7 @@ in
         { command = "sh -c '[ -f ~/.fehbg ] && sh ~/.fehbg || feh --bg-fill ${homeDirectory}/.cache/wallpaper-cache/wallpaper.jpg'"; always = true; notification = false; }
         { command = "picom --config ${homeDirectory}/dotfiles/config/picom/picom.conf"; notification = false; }
         { command = "killall polybar; sleep 0.5; polybar --config=${homeDirectory}/dotfiles/config/polybar/config.ini main"; always = true; notification = false; }
-        { command = "greenclip daemon"; notification = false; }
+        { command = "systemctl --user restart greenclip.service"; notification = false; }
         { command = "libinput-gestures"; notification = false; }
         { command = "xbindkeys"; notification = false; }
         { command = "xsettingsd"; notification = false; }
@@ -384,5 +384,23 @@ in
       for_window [class="Rofi"] floating enable
       for_window [class="^.*$"] border pixel 0
     '';
+  };
+
+  # ───────────────────────────────────────────────
+  # ▶ Greenclip systemd user service
+  # ───────────────────────────────────────────────
+  systemd.user.services.greenclip = {
+    Unit = {
+      Description = "Greenclip clipboard manager";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.haskellPackages.greenclip}/bin/greenclip daemon";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
   };
 }
