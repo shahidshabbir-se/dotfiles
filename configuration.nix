@@ -105,6 +105,46 @@
           "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_sink" "bap_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
         };
       };
+      "20-jieli-usb-speaker" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [ { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; } ];
+            actions = {
+              update-props = {
+                "api.alsa.soft-mixer" = true;
+                "device.profile" = "output:analog-stereo";
+                "priority.session" = 1500;  # Lower than BT so BT takes over when connected
+              };
+            };
+          }
+        ];
+      };
+      "30-bluetooth-priority" = {
+        "monitor.bluez.rules" = [
+          {
+            matches = [ { "device.name" = "~bluez_card.*"; } ];
+            actions = {
+              update-props = {
+                "priority.session" = 2000;  # Highest — auto-switches to BT when connected
+              };
+            };
+          }
+        ];
+      };
+    };
+  };
+
+  # Restart WirePlumber when USB speaker is plugged in so it initializes on boot
+  services.udev.extraRules = ''
+    SUBSYSTEM=="sound", ACTION=="add", ATTRS{idVendor}=="3654", ATTRS{idProduct}=="4755", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="wireplumber-usb-reset.service"
+  '';
+
+  systemd.user.services.wireplumber-usb-reset = {
+    description = "Restart WirePlumber when USB speaker connects";
+    after = [ "wireplumber.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --user restart wireplumber";
     };
   };
 
