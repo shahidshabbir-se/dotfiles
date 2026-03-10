@@ -58,6 +58,7 @@ in
     stateVersion = "24.05";
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; })
+      ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
       upwork
       chromium
@@ -76,6 +77,8 @@ in
       onlyoffice-desktopeditors
       unzip
       catppuccin-papirus-folders
+        anydesk
+        pulsemixer
       zip
       # (import ../../modules/void.nix { inherit pkgs; })
     ]);
