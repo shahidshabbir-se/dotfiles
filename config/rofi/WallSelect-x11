@@ -69,4 +69,7 @@ if [ -n "$wall_selection" ]; then
     feh --bg-fill "$selected_path"
     # Cache for i3lock background
     cp -f "$selected_path" "$HOME/.cache/i3lock-bg.png"
+
+    # Generate Material Design 3 colors from wallpaper and apply to templates (glava, polybar, etc.)
+    matugen image --config "$HOME/dotfiles/config/matugen/config.toml" "$selected_path" &
 fi

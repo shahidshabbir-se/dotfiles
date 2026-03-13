@@ -223,6 +223,9 @@
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.lilex
+    pkgs.nerd-fonts.iosevka
+    pkgs.nerd-fonts.daddy-time-mono
+    pkgs.icomoon-feather
     pkgs.inter
     (pkgs.stdenv.mkDerivation {
       name = "sf-pro-display";

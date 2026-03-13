@@ -67,6 +67,7 @@ with pkgs; [
   # Networking
   croc
   dogdns
+  tree
   doppler
   stripe-cli
   socat
