@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+
+## Get data using playerctl
+STATUS="$(playerctl status 2>/dev/null)"
+COVER_URL="$(playerctl metadata mpris:artUrl 2>/dev/null)"
+COVER="/tmp/.music_cover.png"
+
+## Get status icon
+get_status() {
+    if [[ $STATUS == "Playing" ]]; then
+        echo "󰏤"
+    else
+        echo "󰐊"
+    fi
+}
+
+## Get song
+get_song() {
+    song=$(playerctl metadata title 2>/dev/null)
+    if [[ -z "$song" ]]; then
+        echo "No Media"
+    else
+        echo "$song"
+    fi
+}
+
+## Get artist
+get_artist() {
+    artist=$(playerctl metadata artist 2>/dev/null)
+    if [[ -z "$artist" ]]; then
+        echo "Unknown Artist"
+    else
+        echo "$artist"
+    fi
+}
+
+## Get time (percentage for the bar)
+get_time() {
+    # Use playerctl's built-in template math for extreme speed
+    val=$(playerctl metadata --format '{{position / (mpris:length / 100)}}' 2>/dev/null)
+    if [[ -n "$val" && "$val" != "inf" && "$val" != "nan" ]]; then
+        printf "%.0f\n" "$val" 2>/dev/null || echo "0"
+    else
+        echo "0"
+    fi
+}
+
+## Get current time string
+get_ctime() {
+    playerctl position --format '{{ duration(position) }}' 2>/dev/null || echo "0:00"
+}
+
+## Get total time string
+get_ttime() {
+    playerctl metadata --format '{{ duration(mpris:length) }}' 2>/dev/null || echo "0:00"
+}
+
+## Get cover
+get_cover() {
+    if [[ -n "$COVER_URL" ]]; then
+        if [[ "$COVER_URL" == "file://"* ]]; then
+            echo "${COVER_URL#file://}"
+        elif [[ "$COVER_URL" == "http"* ]]; then
+            url_hash=$(echo "$COVER_URL" | md5sum | cut -d' ' -f1)
+            hash_file="/tmp/.music_cover_hash"
+            if [[ ! -f "$COVER" || "$(cat $hash_file 2>/dev/null)" != "$url_hash" ]]; then
+                curl -s "$COVER_URL" -o "$COVER"
+                echo "$url_hash" > "$hash_file"
+            fi
+            echo "$COVER"
+        else
+            echo "images/music.png"
+        fi
+    else
+        echo "images/music.png"
+    fi
+}
+
+## Seek to percentage
+seek() {
+    # eww sends the new value as the first argument
+    # We use printf to ensure we have a clean integer/float
+    percentage=$(printf "%.2f" "$1" 2>/dev/null || echo "0")
+    
+    # Get length in seconds directly
+    len_sec=$(playerctl metadata --format '{{mpris:length / 1000000}}' 2>/dev/null)
+    
+    if [[ -n "$len_sec" && "$len_sec" != "0" ]]; then
+        # Calculate target position in seconds
+        target=$(echo "scale=2; $len_sec * ($percentage / 100)" | bc 2>/dev/null)
+        # Use playerctl set-position for more reliable seeking
+        playerctl position "$target" 2>/dev/null
+    fi
+}
+
+## Execute accordingly
+if [[ "$1" == "--song" ]]; then
+    get_song
+elif [[ "$1" == "--artist" ]]; then
+    get_artist
+elif [[ "$1" == "--status" ]]; then
+    get_status
+elif [[ "$1" == "--time" ]]; then
+    get_time
+elif [[ "$1" == "--ctime" ]]; then
+    get_ctime
+elif [[ "$1" == "--ttime" ]]; then
+    get_ttime
+elif [[ "$1" == "--cover" ]]; then
+    get_cover
+elif [[ "$1" == "--toggle" ]]; then
+    playerctl play-pause
+elif [[ "$1" == "--next" ]]; then
+    playerctl next
+elif [[ "$1" == "--prev" ]]; then
+    playerctl previous
+elif [[ "$1" == "--seek" ]]; then
+    seek "$2"
+fi

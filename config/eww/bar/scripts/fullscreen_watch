@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+EWW="eww -c $HOME/dotfiles/config/eww/bar"
+
+check_fullscreen() {
+    # Check if any window on the focused workspace is fullscreen
+    fs=$(i3-msg -t get_tree 2>/dev/null | jq -r '[.. | select(.focused? == true) | .fullscreen_mode] | first // 0')
+    if [[ "$fs" == "1" ]]; then
+        $EWW close bar 2>/dev/null
+    else
+        $EWW open bar 2>/dev/null
+    fi
+}
+
+# Check on startup
+check_fullscreen
+
+# Watch for window and workspace changes
+i3-msg -t subscribe -m '["window", "workspace"]' 2>/dev/null | while read -r _; do
+    check_fullscreen
+done

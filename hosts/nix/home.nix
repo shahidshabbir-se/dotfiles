@@ -61,7 +61,9 @@ in
       ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
       upwork
+      git-filter-repo
       chromium
+        matugen
       corefonts
       fastfetch
       postgresql

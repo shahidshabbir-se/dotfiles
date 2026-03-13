@@ -37,6 +37,7 @@ in
     numlockx
     autorandr
     bc
+    jq
 
     # Clipboard manager
     haskellPackages.greenclip
@@ -62,6 +63,9 @@ in
 
     # Notifications
     libnotify
+
+    # Bar / Widgets
+    eww
 
     # Audio visualizer
     glava
@@ -139,23 +143,6 @@ in
   services.dunst = import ./dunst.nix { };
 
   # ───────────────────────────────────────────────
-  # ▶ Polybar
-  # ───────────────────────────────────────────────
-  services.polybar = {
-    enable = true;
-    package = pkgs.polybar.override {
-      i3Support = true;
-      pulseSupport = true;
-    };
-    script = ''
-      polybar-msg cmd quit 2>/dev/null
-      for m in $(polybar --list-monitors | cut -d":" -f1); do
-        MONITOR=$m polybar --config=${homeDirectory}/dotfiles/config/polybar/config.ini main &
-      done
-    '';
-  };
-
-  # ───────────────────────────────────────────────
   # ▶ i3 Window Manager
   # ───────────────────────────────────────────────
   xsession.windowManager.i3 = {
@@ -174,6 +161,7 @@ in
       gaps = {
         inner = 5;
         outer = 10;
+        top = 65;
         smartGaps = false;
         smartBorders = "off";
       };
@@ -320,8 +308,8 @@ in
         "Mod1+Shift+s" = "exec ${homeDirectory}/dotfiles/config/rofi/screenshot-x11-launch.sh";
         "Mod1+c" = "exec ${homeDirectory}/dotfiles/config/rofi/clipboard-x11-launch.sh";
 
-        # Polybar toggle
-        "${mod}+z" = "exec polybar-msg cmd toggle";
+        # Bar toggle
+        "${mod}+z" = "exec ${homeDirectory}/dotfiles/config/eww/bar/launch_bar";
 
         # Media keys
         "F7" = "exec playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
@@ -347,7 +335,8 @@ in
       startup = [
         { command = "sh -c '[ -f ~/.fehbg ] && sh ~/.fehbg || feh --bg-fill ${homeDirectory}/.cache/wallpaper-cache/wallpaper.jpg'"; always = true; notification = false; }
         { command = "picom --config ${homeDirectory}/dotfiles/config/picom/picom.conf"; notification = false; }
-        { command = "killall polybar; sleep 0.5; polybar --config=${homeDirectory}/dotfiles/config/polybar/config.ini main"; always = true; notification = false; }
+        { command = "sh ${homeDirectory}/dotfiles/config/eww/bar/launch_bar"; always = true; notification = false; }
+        { command = "${homeDirectory}/dotfiles/config/eww/bar/scripts/fullscreen_watch"; always = true; notification = false; }
         { command = "systemctl --user restart greenclip.service"; notification = false; }
         { command = "libinput-gestures"; notification = false; }
         { command = "xbindkeys"; notification = false; }

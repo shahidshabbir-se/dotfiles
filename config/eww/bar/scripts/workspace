@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+workspaces() {
+  ws_json=$(i3-msg -t get_workspaces 2>/dev/null)
+  if [ -z "$ws_json" ]; then
+    echo '(box :class "works" :orientation "h" :spacing 5 :space-evenly "false" (label :text "no i3"))'
+    return
+  fi
+
+  occupied=$(echo "$ws_json" | jq -r '.[].num')
+  focused=$(echo "$ws_json" | jq -r '.[] | select(.focused==true) | .num')
+
+  output='(box :class "works" :orientation "h" :spacing 5 :space-evenly "false"'
+
+  for i in 1 2 3 4 5 6; do
+    icon=""
+    class="ws0"
+
+    if echo "$occupied" | grep -qw "$i"; then
+      class="ws0${i}"
+    fi
+
+    if [ "$focused" = "$i" ]; then
+      class="ws0${i}${i}"
+      icon=""
+    fi
+
+    output+=" (button :onclick \"i3-msg workspace number $i\" :class \"$class\" \"$icon\")"
+  done
+
+  output+=")"
+  echo "$output"
+}
+
+workspaces
+i3-msg -t subscribe -m '["workspace"]' 2>/dev/null | while read -r _; do
+  workspaces
+done

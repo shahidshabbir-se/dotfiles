@@ -1,0 +1,20 @@
+[config]
+
+[templates.glava]
+input_path = "templates/glava-bars.glsl"
+output_path = "~/.config/glava/bars.glsl"
+post_hook = "pkill -f '[.]glava-unwrapped' 2>/dev/null || true; nohup glava >/dev/null 2>&1 &"
+
+[templates.polybar]
+input_path = "templates/polybar-colors.ini"
+output_path = "~/.config/polybar/colors.ini"
+post_hook = "polybar-msg cmd restart 2>/dev/null || true"
+
+[templates.eww-colors]
+input_path = "templates/eww-colors.scss"
+output_path = "~/.config/eww/colors.scss"
+
+[templates.eww-bar]
+input_path = "templates/eww-bar.scss"
+output_path = "~/.config/eww/bar/eww.scss"
+post_hook = "eww -c $HOME/.config/eww/bar reload 2>/dev/null || true"
