@@ -1,6 +1,9 @@
 { pkgs }:
 
 with pkgs; [
+  # Devops
+  kubernetes-helm
+
   # Development
   gh
   go
@@ -45,7 +48,6 @@ with pkgs; [
   tldr
   tokei
   wget
-  xh
   yazi
   zoxide
   zsh
