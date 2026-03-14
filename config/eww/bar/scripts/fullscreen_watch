@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+# Ensure only one instance runs
+LOCKFILE="/tmp/fullscreen_watch.lock"
+exec 9>"$LOCKFILE"
+flock -n 9 || { echo "Already running"; exit 0; }
+echo $$ >&9
+trap 'rm -f "$LOCKFILE"' EXIT
+
 EWW="eww -c $HOME/dotfiles/config/eww/bar"
 
 check_fullscreen() {
     # Check if any window on the focused workspace is fullscreen
-    fs=$(i3-msg -t get_tree 2>/dev/null | jq -r '[.. | select(.focused? == true) | .fullscreen_mode] | first // 0')
+    fs=$(i3-msg -t get_tree 2>/dev/null | jq -r '[.. | select(.focused? == true and .window? != null) | .fullscreen_mode] | first // 0')
     if [[ "$fs" == "1" ]]; then
         $EWW close bar 2>/dev/null
     else

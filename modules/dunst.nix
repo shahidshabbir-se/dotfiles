@@ -3,6 +3,10 @@
 {
   enable = true;
 
+  # Use matugen-generated config for dynamic wallpaper-based colors
+  # Fallback settings below are written to dunstrc but dunst reads configFile instead
+  configFile = "/home/shahid/dotfiles/config/dunst/dunstrc";
+
   settings = {
     global = {
       # ───────────────────────────────────────────────

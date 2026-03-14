@@ -141,7 +141,7 @@
 			  :onhoverlost "${eww} update music_reveal=false"
 		(box :class "module-2" :orientation "h" :space-evenly "false" :vexpand "false" :hexpand "false" 
 			(label :class "song_cover_art" :text "󰎇" :valign "center")
-			(button :class "song" :wrap "true" :onclick "scripts/pop music" song)
+			(button :class "song" :onclick "scripts/pop music" (label :text song :limit-width 20))
 	    (revealer :transition "slideright"
 			      :reveal music_reveal
 			      :duration "350ms"

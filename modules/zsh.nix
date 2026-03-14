@@ -36,7 +36,6 @@
     oc = "opencode";
     cr = "crush";
     cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
-    curl = "xh";
     sed = "sd";
     time = "hyperfine";
 
