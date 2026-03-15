@@ -1,11 +1,16 @@
 { pkgs }:
 
-with pkgs; [
+with pkgs;
+[
   # Devops
   kubernetes-helm
+  yamllint
+  actionlint
 
   # Development
   gh
+  gh-dash
+  nixfmt
   go
   lazygit
   lazysql
