@@ -65,7 +65,8 @@ in
 
     packages =
       (import ../../modules/pkgs/common.nix { inherit pkgs; })
-        # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
         vscode
         upwork

@@ -6,13 +6,26 @@ return {
       -- This prevents neo-tree from stealing focus on session restore.
     end,
     opts = {
+      source_selector = {
+        winbar = false,
+        statusline = false,
+      },
       hide_root_node = true,
       retain_hidden_root_indent = false,
       filesystem = {
+        bind_to_cwd = false,
+        follow_current_file = { enabled = true },
         filtered_items = {
           hide_dotfiles = false,
           hide_gitignored = true,
-          hide_by_name = { "node_modules", ".next", "dist", ".git", ".claude", ".husky" },
+          hide_by_name = {
+            "node_modules",
+            ".next",
+            "dist",
+            ".git",
+            ".claude",
+            ".husky",
+          },
         },
       },
       enable_git_status = true,
@@ -25,23 +38,39 @@ return {
         },
         git_status = {
           symbols = {
-            -- Change type
-            added = "", -- or "✚"
-            modified = "", -- or ""
-            -- Status type
+            added = "",
+            modified = "",
             conflict = "",
-            unstaged = "", -- File modified
-            staged = "", -- File staged
-            unmerged = "", -- Merge conflict
-            renamed = "➜", -- Renamed file
-            untracked = "", -- Untracked file
-            deleted = "", -- Deleted file
-            ignored = "◌", -- Ignored file
+            unstaged = "",
+            staged = "",
+            unmerged = "",
+            renamed = "➜",
+            untracked = "",
+            deleted = "",
+            ignored = "◌",
           },
         },
       },
       window = {
         width = 30,
+      },
+    },
+  },
+
+  -- Override bufferline offset title
+  {
+    "akinsho/bufferline.nvim",
+    opts = {
+      options = {
+        offsets = {
+          {
+            filetype = "neo-tree",
+            text = "File Explorer",
+            text_align = "left",
+            highlight = "BufferLineOffsetText",
+            separator = true,
+          },
+        },
       },
     },
   },
