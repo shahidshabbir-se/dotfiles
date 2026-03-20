@@ -17,7 +17,6 @@
   # ];
   services.xserver.videoDrivers = [ "amdgpu" ];
 
-
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   hardware.bluetooth.settings = {
@@ -27,8 +26,8 @@
     };
   };
 
-
   networking.hostName = "nixos";
+  networking.firewall.allowedTCPPorts = [ 4096 ];
   networking.networkmanager.enable = true;
   networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
 
@@ -102,18 +101,29 @@
           "bluez5.enable-sbc-xq" = true;
           "bluez5.enable-msbc" = true;
           "bluez5.enable-hw-volume" = true;
-          "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_sink" "bap_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
+          "bluez5.roles" = [
+            "a2dp_sink"
+            "a2dp_source"
+            "bap_sink"
+            "bap_source"
+            "hsp_hs"
+            "hsp_ag"
+            "hfp_hf"
+            "hfp_ag"
+          ];
         };
       };
       "20-jieli-usb-speaker" = {
         "monitor.alsa.rules" = [
           {
-            matches = [ { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; } ];
+            matches = [
+              { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; }
+            ];
             actions = {
               update-props = {
                 "api.alsa.soft-mixer" = true;
                 "device.profile" = "output:analog-stereo";
-                "priority.session" = 1500;  # Lower than BT so BT takes over when connected
+                "priority.session" = 1500; # Lower than BT so BT takes over when connected
               };
             };
           }
@@ -125,7 +135,7 @@
             matches = [ { "device.name" = "~bluez_card.*"; } ];
             actions = {
               update-props = {
-                "priority.session" = 2000;  # Highest — auto-switches to BT when connected
+                "priority.session" = 2000; # Highest — auto-switches to BT when connected
               };
             };
           }
@@ -154,7 +164,14 @@
 
   users.users.shahid = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "audio" "kvm" "input" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "docker"
+      "audio"
+      "kvm"
+      "input"
+      "networkmanager"
+    ];
     packages = with pkgs; [
       # hyprland
       starship
@@ -372,4 +389,3 @@
   system.stateVersion = "25.05"; # Did you read the comment?
 
 }
-
