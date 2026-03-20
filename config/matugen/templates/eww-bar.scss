@@ -531,3 +531,84 @@ calendar:indeterminate {
   font-size: 18px;
   margin: 0px 0px 0px 0px;
 }
+
+// ── Calendar popup (from calendar.yuck) ──
+.date {
+  background-color: $background;
+  color: $on_background;
+  border-radius: 0.5rem;
+}
+
+.timebox {
+  margin: 1.2rem 3.5rem 0 3.5rem;
+
+  .time-container {
+    .content {
+      font-family: JetBrainsMono NF;
+      font-weight: Bolder;
+      font-size: 3.6rem;
+      color: $on_background;
+    }
+
+    .divider {
+      margin: 0.2rem 15px;
+      padding: 0px 1px;
+      background: linear-gradient($error, $secondary, $primary, $tertiary);
+    }
+  }
+
+  .date-container {
+    font-family: JetBrainsMono NF;
+    font-weight: Bold;
+    font-size: 1rem;
+    color: $on_background;
+    margin: 5px 0;
+  }
+}
+
+.cal-box {
+  font-family: JetBrainsMono NF;
+  font-weight: Bold;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  padding: 0 1rem 0.2rem;
+  color: $on_background;
+  background-color: $surface_container;
+  margin: 0.9rem 0.6rem 0.9rem 0.6rem;
+
+  .cal {
+    background-color: inherit;
+    padding: 0.5rem 0.15rem 0.2rem;
+    margin-left: 10px;
+
+    &>* {
+      border: solid 0px transparent;
+    }
+
+    &.highlight {
+      padding: 10rem;
+    }
+  }
+}
+
+calendar:selected {
+  color: $secondary;
+}
+
+calendar.header {
+  color: $secondary;
+  font-weight: bold;
+}
+
+calendar.button {
+  color: $on_background;
+}
+
+calendar.highlight {
+  color: $primary_container;
+  font-weight: bold;
+}
+
+calendar:indeterminate {
+  color: rgba($on_background, 0.3);
+}
