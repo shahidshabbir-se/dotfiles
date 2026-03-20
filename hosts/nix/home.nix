@@ -1,12 +1,19 @@
 #  ███╗   ██╗██╗██╗  ██╗    ██╗  ██╗ ██████╗ ███╗   ███╗███████╗
 #  ████╗  ██║██║╚██╗██╔╝    ██║  ██║██╔═══██╗████╗ ████║██╔════╝
-#  ██╔██╗ ██║██║ ╚███╔╝     ███████║██║   ██║██╔████╔██║█████╗  
-#  ██║╚██╗██║██║ ██╔██╗     ██╔══██║██║   ██║██║╚██╔╝██║██╔══╝  
+#  ██╔██╗ ██║██║ ╚███╔╝     ███████║██║   ██║██╔████╔██║█████╗
+#  ██║╚██╗██║██║ ██╔██╗     ██╔══██║██║   ██║██║╚██╔╝██║██╔══╝
 #  ██║ ╚████║██║██╔╝ ██╗    ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, lib, inputs, device, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  device,
+  ...
+}:
 
 let
   homeDirectory = "/home/shahid";
@@ -23,8 +30,7 @@ let
   };
 
   # Allow unfree packages for corefonts
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [ "corefonts" ];
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "corefonts" ];
 
 in
 {
@@ -57,33 +63,39 @@ in
     homeDirectory = homeDirectory;
     stateVersion = "24.05";
 
-    packages = (import ../../modules/pkgs/common.nix { inherit pkgs; })
-      ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+    packages =
+      (import ../../modules/pkgs/common.nix { inherit pkgs; })
+        # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
-      upwork
-      git-filter-repo
-      chromium
+        vscode
+        upwork
+        git-filter-repo
+        chromium
         matugen
-      corefonts
-      fastfetch
-      postgresql
-      gcc
-      gnumake
-      inputs.zen-browser.packages.${system}.default
-      protonvpn-gui
-      # poppins
-      xfce.thunar
-      nitch
-      python3
-      (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = [ "blue" ]; size = "standard"; })
-      onlyoffice-desktopeditors
-      unzip
-      catppuccin-papirus-folders
+        corefonts
+        fastfetch
+        gcc
+        cloudflared
+        gnumake
+        inputs.zen-browser.packages.${system}.default
+        protonvpn-gui
+        # poppins
+        xfce.thunar
+        nitch
+        python3
+        (pkgs.catppuccin-gtk.override {
+          variant = "mocha";
+          accents = [ "blue" ];
+          size = "standard";
+        })
+        onlyoffice-desktopeditors
+        unzip
+        catppuccin-papirus-folders
         anydesk
         pulsemixer
-      zip
-      # (import ../../modules/void.nix { inherit pkgs; })
-    ]);
+        zip
+        # (import ../../modules/void.nix { inherit pkgs; })
+      ]);
   };
 
   # ───────────────────────────────────────────────
@@ -111,7 +123,6 @@ in
       "application/x-extension-xht" = [ "zen-beta.desktop" ];
     };
   };
-
 
   # ───────────────────────────────────────────────
   # ▶ Developer Workspace
@@ -141,17 +152,31 @@ in
   # ▶ Dotfiles Mapping
   # ───────────────────────────────────────────────
   home.file.".p10k.zsh".source = ../../config/p10k.zsh;
-  home.file.".zsh/aliases".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zsh/aliases";
+  home.file.".zsh/aliases".source =
+    mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zsh/aliases";
 
   # ───────────────────────────────────────────────
   # ▶ Program Configurations
   # ───────────────────────────────────────────────
   programs = {
     git = import ../../modules/git.nix {
-      inherit config pkgs homeDirectory userGmail userGithub;
+      inherit
+        config
+        pkgs
+        homeDirectory
+        userGmail
+        userGithub
+        ;
     };
     delta = import ../../modules/delta.nix { inherit pkgs; };
-    zsh = import ../../modules/zsh.nix { inherit config pkgs lib browser; };
+    zsh = import ../../modules/zsh.nix {
+      inherit
+        config
+        pkgs
+        lib
+        browser
+        ;
+    };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
@@ -163,8 +188,6 @@ in
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
   };
-
-
 
   # ───────────────────────────────────────────────
   # ▶ dconf Settings
@@ -187,7 +210,13 @@ in
     enable = true;
     theme = {
       name = "catppuccin-mocha-blue-standard";
-      package = (pkgs.catppuccin-gtk.override { variant = "mocha"; accents = [ "blue" ]; size = "standard"; });
+      package = (
+        pkgs.catppuccin-gtk.override {
+          variant = "mocha";
+          accents = [ "blue" ];
+          size = "standard";
+        }
+      );
     };
     iconTheme = {
       name = "Papirus-Dark";
@@ -201,4 +230,3 @@ in
     };
   };
 }
-

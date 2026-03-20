@@ -10,6 +10,9 @@ with pkgs;
   # Development
   gh
   gh-dash
+  postgresql
+  redis
+  k6
   nixfmt
   go
   lazygit
