@@ -8,14 +8,21 @@ echo $$ >&9
 trap 'rm -f "$LOCKFILE"' EXIT
 
 EWW="eww -c $HOME/dotfiles/config/eww/bar"
+BAR_HIDDEN=false
 
 check_fullscreen() {
     # Check if any window on the focused workspace is fullscreen
     fs=$(i3-msg -t get_tree 2>/dev/null | jq -r '[.. | select(.focused? == true and .window? != null) | .fullscreen_mode] | first // 0')
     if [[ "$fs" == "1" ]]; then
-        $EWW close bar 2>/dev/null
+        if [[ "$BAR_HIDDEN" == false ]]; then
+            $EWW close bar 2>/dev/null
+            BAR_HIDDEN=true
+        fi
     else
-        $EWW open bar 2>/dev/null
+        if [[ "$BAR_HIDDEN" == true ]]; then
+            $EWW open bar 2>/dev/null
+            BAR_HIDDEN=false
+        fi
     fi
 }
 

@@ -7,15 +7,15 @@ calendar() {
 LOCK_FILE="$HOME/.cache/eww-calendar.lock"
 
 run() {
-    ${EWW_BIN} -c ${EWW_CFG} open calendar
+    ${EWW_BIN} -c ${EWW_CFG} open date
 }
 
 if [[ ! -f "$LOCK_FILE" ]]; then
-    ${EWW_BIN} -c ${EWW_CFG} close system music_win audio_ctl 2>/dev/null
+    ${EWW_BIN} -c ${EWW_CFG} close system music_win audio_ctl date 2>/dev/null
     touch "$LOCK_FILE"
     run
 else
-    ${EWW_BIN} -c ${EWW_CFG} close calendar
+    ${EWW_BIN} -c ${EWW_CFG} close date
     rm "$LOCK_FILE"
 fi
 }
@@ -28,7 +28,7 @@ run() {
 }
 
 if [[ ! -f "$LOCK_FILE_MEM" ]]; then
-    ${EWW_BIN} -c ${EWW_CFG} close calendar music_win audio_ctl 2>/dev/null
+    ${EWW_BIN} -c ${EWW_CFG} close date music_win audio_ctl 2>/dev/null
     touch "$LOCK_FILE_MEM"
     run
 else
@@ -45,7 +45,7 @@ run() {
 }
 
 if [[ ! -f "$LOCK_FILE_SONG" ]]; then
-    ${EWW_BIN} -c ${EWW_CFG} close system calendar 2>/dev/null
+    ${EWW_BIN} -c ${EWW_CFG} close system date 2>/dev/null
     touch "$LOCK_FILE_SONG"
     run
 else
@@ -62,7 +62,7 @@ run() {
 }
 
 if [[ ! -f "$LOCK_FILE_AUDIO" ]]; then
-    ${EWW_BIN} -c ${EWW_CFG} close system calendar music_win 2>/dev/null
+    ${EWW_BIN} -c ${EWW_CFG} close system date music_win 2>/dev/null
     touch "$LOCK_FILE_AUDIO"
     run
 else

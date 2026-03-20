@@ -91,9 +91,9 @@
   (eventbox :onhover "${eww} update time_rev=true"
 			  :onhoverlost "${eww} update time_rev=false"
     (box :class "module" :space-evenly "false" :orientation "h" :spacing "3" 
-      (label :text clock_time :class "clock_time_class" )
-      (label :text "󰇙" :class "clock_time_sep" )
-      (label :text clock_minute :class "clock_minute_class")
+      (button :class "clock_time_class" :onclick "scripts/pop calendar" clock_time)
+      (button :class "clock_time_sep" :onclick "scripts/pop calendar" "󰇙")
+      (button :class "clock_minute_class" :onclick "scripts/pop calendar" clock_minute)
 	  (revealer :transition "slideleft"
 			  :reveal time_rev
 			  :duration "350ms"
@@ -208,12 +208,12 @@
   (bar_1))
   
 (defwidget system []
-  (box :class "sys_win" :orientation "v" :space-evenly "false" :hexpand "false" :vexpand "false" :spacing 0
+  (box :class "sys_win" :orientation "v" :space-evenly "false" :hexpand "false" :vexpand "false" :spacing 0 :halign "center"
   (box :class "sys_bat_box" :orientation "h" :space-evenly "false"
       (circular-progress :value cpu
                 :class "sys_bat"
                 :thickness 9
-            (label :text ""
+            (label :text ""
                 :class "sys_icon_bat"
                 :limit-width 2
                 :show_truncated false
@@ -238,11 +238,11 @@
                 :show_truncated false
                 :wrap false)))
             (label :text "" :class "sys_sep" :halign "center")
-  (box :class "sys_mem_box" :orientation "h" :space-evenly "false" :halign "start"
+  (box :class "sys_mem_box" :orientation "h" :space-evenly "false" :halign "center"
       (circular-progress :value memory
                 :class "sys_mem"
                 :thickness 9
-            (label :text ""
+            (label :text " "
                 :class "sys_icon_mem"
                 :limit-width 2
                 :show_truncated false
@@ -268,20 +268,7 @@
                 :show_truncated false
                 :wrap false)))))
 
-(defwidget cal []
-	(box :class "cal" :orientation "v"
-	(box :class "cal-in"
-	(calendar :class "cal" 
-			  :day calendar_day 
-			  :year calendar_year))))
-
-(defwindow calendar
-	:geometry (geometry :x "-20px" 
-						:y "7%" 
-                        :anchor "top right"
-						:width "270px" 
-						:height "60px")
-(cal))
+;; calendar widget and window are provided by ../calendar/calendar.yuck (included at top)
 
 
 
@@ -314,7 +301,7 @@
 			  :min 0))))))
 
 (defwindow audio_ctl
-	:geometry (geometry :x "-20px" 
+	:geometry (geometry :x "-23%" 
 						:y "7%" 
                         :anchor "top right"
 						:width "280px" 
@@ -323,7 +310,7 @@
 
 
 (defwindow system
-	:geometry (geometry :x "-20px" 
+	:geometry (geometry :x "-14%" 
 						:y "7%" 
                         :anchor "top right"
 						:width "290px" 
