@@ -4,7 +4,7 @@ return {
   priority = 1000,
   opts = function()
     return {
-      style = "moon", -- options: "storm", "moon", "night", "day"
+      style = "moon",
       transparent = true,
       terminal_colors = true,
       styles = {
@@ -19,12 +19,22 @@ return {
       hide_inactive_statusline = true,
       dim_inactive = false,
       lualine_bold = true,
-      on_highlights = function(hl)
+
+      -- FIX HERE
+      on_highlights = function(hl, c)
         hl.WinSeparator = {
           fg = "#3b4261",
         }
+
         hl.NvimTreeWinSeparator = {
           fg = "#3b4261",
+        }
+
+        hl.BufferLineOffsetText = {
+          fg = c.blue,
+          bg = "NONE",
+          bold = true,
+          italic = false,
         }
       end,
     }
