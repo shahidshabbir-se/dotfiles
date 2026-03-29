@@ -15,18 +15,18 @@ transparency = 0
 corner_radius = 6
 gap_size = 4
 separator_height = 1
-separator_color = "#9b8d94"
+separator_color = "#8c9199"
 padding = 15
 horizontal_padding = 15
 text_icon_padding = 0
 frame_width = 0
-frame_color = "#251e22"
+frame_color = "#1c2024"
 
 # Typography
 font = "JetBrainsMono NF Medium 9"
 line_height = 0
 markup = full
-format = "<span size='xx-large' font_desc='JetBrainsMono NF 9' weight='bold' foreground='#f6b2df'>%s</span>\n%b"
+format = "<span size='xx-large' font_desc='JetBrainsMono NF 9' weight='bold' foreground='#9ccbfb'>%s</span>\n%b"
 alignment = center
 vertical_alignment = center
 show_age_threshold = 60
@@ -71,18 +71,18 @@ class = Dunst
 
 [urgency_low]
 timeout = 3
-background = "#181215"
-foreground = "#f5b9a1"
-highlight = "#f6b2df"
+background = "#101418"
+foreground = "#d3bfe6"
+highlight = "#9ccbfb"
 
 [urgency_normal]
 timeout = 5
-background = "#181215"
-foreground = "#ecdfe5"
-highlight = "#f6b2df"
+background = "#101418"
+foreground = "#e0e2e8"
+highlight = "#9ccbfb"
 
 [urgency_critical]
 timeout = 0
-background = "#181215"
+background = "#101418"
 foreground = "#ffb4ab"
 highlight = "#ffb4ab"

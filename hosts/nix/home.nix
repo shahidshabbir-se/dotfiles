@@ -68,9 +68,9 @@ in
       # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
-        vscode
         upwork
         git-filter-repo
+        unstable.opencode
         chromium
         matugen
         corefonts
@@ -179,12 +179,12 @@ in
         ;
     };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
-    bat = import ../../modules/bat.nix { inherit pkgs lib; };
+    # bat = import ../../modules/bat.nix { inherit pkgs lib; };
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     atuin = import ../../modules/atuin.nix;
-    spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
+    # spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
