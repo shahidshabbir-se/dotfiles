@@ -87,6 +87,7 @@
     enable = true;
     wheelNeedsPassword = false;
   };
+  security.rtkit.enable = true;
   services.pulseaudio.enable = false;
 
   services.pipewire = {

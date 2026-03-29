@@ -41,6 +41,16 @@ if [[ "$CURRENT_REMOTE" == https://* ]]; then
   git -C "$DOTFILES" remote set-url origin git@github.com:shahidshabbir-se/dotfiles.git
 fi
 
+# Clone wallpapers repo
+WALLPAPERS_DIR="$HOME/Pictures/Wallpapers"
+if [ ! -d "$WALLPAPERS_DIR" ]; then
+  echo "Cloning wallpapers repo..."
+  git clone git@github.com:shahidshabbir-se/wallpapers.git "$WALLPAPERS_DIR"
+  echo "Wallpapers cloned."
+else
+  echo "Wallpapers repo already exists, skipping."
+fi
+
 echo ""
 echo "=== Bootstrap complete ==="
 echo "Next steps:"

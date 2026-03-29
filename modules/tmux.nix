@@ -1,7 +1,7 @@
 # ████████╗███╗   ███╗██╗   ██╗██╗  ██╗
 # ╚══██╔══╝████╗ ████║██║   ██║╚██╗██╔╝
-#    ██║   ██╔████╔██║██║   ██║ ╚███╔╝ 
-#    ██║   ██║╚██╔╝██║██║   ██║ ██╔██╗ 
+#    ██║   ██╔████╔██║██║   ██║ ╚███╔╝
+#    ██║   ██║╚██╔╝██║██║   ██║ ██╔██╗
 #    ██║   ██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗
 #    ╚═╝   ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝
 # https://github.com/shahidshabbir-se/dotfiles
@@ -68,15 +68,14 @@ in
     better-mouse-mode
     {
       plugin = tmux-floax;
-      extraConfig =
-        ''
-          set -g @floax-width '80%'
-          set -g @floax-height '80%'
-          set -g @floax-border-color 'magenta'
-          set -g @floax-text-color 'blue'
-          set -g @floax-bind 'p'
-          set -g @floax-change-path 'true'
-        '';
+      extraConfig = ''
+        set -g @floax-width '80%'
+        set -g @floax-height '80%'
+        set -g @floax-border-color 'magenta'
+        set -g @floax-text-color 'blue'
+        set -g @floax-bind 'p'
+        set -g @floax-change-path 'true'
+      '';
     }
     {
       plugin = mkTmuxPlugin {
@@ -222,6 +221,14 @@ in
     # ─────────────────────────────────────────────────────────
     bind x kill-pane
     bind w kill-window
+
+    # ─────────────────────────────────────────────────────────
+    #  Pane Resizing (Alt + H/J/K/L)
+    # ─────────────────────────────────────────────────────────
+    bind -n M-H resize-pane -L 5
+    bind -n M-J resize-pane -D 5
+    bind -n M-K resize-pane -U 5
+    bind -n M-L resize-pane -R 5
 
     # ─────────────────────────────────────────────────────────
     #  Zoom Toggle (Alt-z)
