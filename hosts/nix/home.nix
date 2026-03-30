@@ -70,7 +70,6 @@ in
       ++ (with pkgs; [
         upwork
         git-filter-repo
-        unstable.opencode
         chromium
         matugen
         corefonts
@@ -108,6 +107,45 @@ in
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
   xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
+
+  xdg.desktopEntries = {
+    microsoft-excel = {
+      name = "Microsoft Excel";
+      genericName = "Spreadsheet";
+      comment = "Microsoft Excel Online";
+      icon = "ms-excel";
+      exec = "chromium --disable-features=UseOzonePlatform --app=https://excel.cloud.microsoft/";
+      terminal = false;
+      categories = [
+        "Office"
+        "Spreadsheet"
+      ];
+    };
+    microsoft-word = {
+      name = "Microsoft Word";
+      genericName = "Word Processor";
+      comment = "Microsoft Word Online";
+      icon = "ms-word";
+      exec = "chromium --disable-features=UseOzonePlatform --app=https://word.cloud.microsoft/";
+      terminal = false;
+      categories = [
+        "Office"
+        "WordProcessor"
+      ];
+    };
+    microsoft-powerpoint = {
+      name = "Microsoft PowerPoint";
+      genericName = "Presentation";
+      comment = "Microsoft PowerPoint Online";
+      icon = "ms-powerpoint";
+      exec = "chromium --disable-features=UseOzonePlatform --app=https://powerpoint.cloud.microsoft/";
+      terminal = false;
+      categories = [
+        "Office"
+        "Presentation"
+      ];
+    };
+  };
 
   xdg.mimeApps = {
     enable = true;
