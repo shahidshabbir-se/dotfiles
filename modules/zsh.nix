@@ -6,7 +6,12 @@
 #  ╚══════╝╚══════╝╚═╝  ╚═╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, browser, ... }:
+{
+  config,
+  pkgs,
+  browser,
+  ...
+}:
 
 {
   enable = true;
@@ -55,7 +60,6 @@
     bd = "bun run debug";
     bb = "bun run build";
   };
-
 
   # ───────────────────────────────────────────────
   # ▶ Zinit Plugin Manager Setup
@@ -146,13 +150,13 @@
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
         zstyle ':completion:*' menu no
-    
+
         # FZF-TAB configuration
         zstyle ":fzf-tab:*" fzf-flags --border=rounded --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-rounded --height=60% --min-height=15
-    
+
         # Disable preview by default
         zstyle ":fzf-tab:*" fzf-preview ""
-    
+
         # Enable preview only for specific commands
         zstyle ":fzf-tab:complete:cd:*" fzf-preview "lsd --color=always --icon=always \$realpath"
         zstyle ":fzf-tab:complete:__zoxide_z:*" fzf-preview "lsd --color=always --icon=always \$realpath"
@@ -216,12 +220,17 @@
 
         # Clipboard helper — works on macOS, Wayland, and X11
         _clip() {
-          ${if pkgs.stdenv.isDarwin then ''pbcopy'' else ''
-          if [ "$XDG_SESSION_TYPE" = "x11" ]; then
-            xclip -selection clipboard
-          else
-            wl-copy
-          fi''}
+          ${
+            if pkgs.stdenv.isDarwin then
+              ''pbcopy''
+            else
+              ''
+                if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+                  xclip -selection clipboard
+                else
+                  wl-copy
+                fi''
+          }
         }
 
         # Global aliases for output redirection
@@ -279,7 +288,7 @@
         ghc() {
           local repo="''$1"
           local target_dir="''$2"
-  
+
           if [[ -z "''$repo" ]]; then
             echo "Usage: ghc <repo-name> [target-directory]"
             echo "Examples:"
@@ -288,18 +297,18 @@
             echo "  ghc user/repo"
             return 1
           fi
-  
+
           # If repo doesn't contain '/', prepend your username
           if [[ "''$repo" != *"/"* ]]; then
             repo="shahidshabbir-se/''$repo"
           fi
-  
+
           # Use target directory if provided, otherwise use repo name
           local dir="''${target_dir:-$(basename "''$repo")}"
       
           echo " Cloning repository: ''$repo"
           echo " Target directory: ''$dir"
-  
+
           # Try SSH first, fallback to HTTPS if it fails
           echo " Attempting SSH clone..."
           if git clone --progress "git@github.com:''${repo}.git" "''$dir" 2>&1; then
@@ -362,6 +371,14 @@
           cd "$dir"
         }
 
+
+        # ─────────────────────────────────────────────────────────
+        #  Television shell integration
+        #  Ctrl-R = history  |  Ctrl-T = smart autocomplete
+        # ─────────────────────────────────────────────────────────
+        if (( $+commands[tv] )); then
+          eval "$(tv init zsh)"
+        fi
 
         # Environment variables
         export TERM="xterm-256color"

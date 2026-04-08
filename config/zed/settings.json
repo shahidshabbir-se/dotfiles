@@ -1,75 +1,32 @@
 {
+	"theme": "Tokyo Night",
+	"agent_servers": {
+		"opencode": {
+			"type": "extension",
+			"favorite_models": ["openai/gpt-5.4"],
+			"default_config_options": {},
+			"favorite_config_option_values": {},
+		},
+	},
 	"telemetry": {
 		"diagnostics": false,
 		"metrics": false,
-	},
-	"agent_servers": {
-		"OpenCode": {
-			"type": "custom",
-			"command": "opencode",
-			"args": ["acp"],
-		},
 	},
 	"toolbar": {
 		"breadcrumbs": false,
 		"quick_actions": false,
 	},
-	"tab_bar": {
-		"show_nav_history_buttons": false,
-	},
 	"hard_tabs": true,
-	"features": {
-		"edit_prediction_provider": "copilot",
-	},
-	"agent": {
-		"expand_edit_card": true,
-		"inline_assistant_model": {
-			"provider": "Chutes.ai",
-			"model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
-		},
-		"profiles": {
-			"autonomous": {
-				"name": "Autonomous",
-				"tools": {
-					"list_directory": true,
-					"grep": true,
-					"find_path": true,
-					"fetch": true,
-					"edit_file": true,
-					"diagnostics": true,
-					"delete_path": true,
-					"create_directory": true,
-					"copy_path": true,
-				},
-				"enable_all_context_servers": false,
-				"context_servers": {},
-			},
-		},
-		"always_allow_tool_actions": true,
-		"default_model": {
-			"provider": "Chutes.ai",
-			"model": "moonshotai/Kimi-K2-Thinking",
-		},
-		"model_parameters": [],
-	},
 	"vim_mode": true,
-	"terminal": {
-		"default_height": 9999,
-	},
 	"icon_theme": {
-  "mode": "dark",
-  "light": "Material Icon Theme",
-  "dark": "Material Icon Theme"
- },
-	"buffer_font_family": "BlexMono Nerd Font",
+		"mode": "light",
+		"light": "Material Icon Theme",
+		"dark": "Material Icon Theme",
+	},
+	"buffer_font_family": "JetBrainsMono Nerd Font",
 	"ui_font_size": 15,
-	"agent_buffer_font_size": 15,
+	"agent_buffer_font_size": 13,
 	"buffer_font_size": 15,
 	"buffer_font_weight": 300,
-	"theme": {
-  "mode": "dark",
-  "light": "Catppuccin Mocha",
-  "dark": "Tokyo Night"
- },
 	"autosave": "on_focus_change",
 }

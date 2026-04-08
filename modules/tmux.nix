@@ -234,5 +234,20 @@ in
     #  Zoom Toggle (Alt-z)
     # ─────────────────────────────────────────────────────────
     bind -n M-z resize-pane -Z
+
+    # ─────────────────────────────────────────────────────────
+    #  Sesh - Smart Session Manager
+    # ─────────────────────────────────────────────────────────
+    # Don't exit tmux when closing last session
+    set -g detach-on-destroy off
+
+    # T = open sesh session picker via television popup
+    bind-key "T" display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'
+
+    # l = jump to last session (via sesh)
+    bind -N "last-session (via sesh)" l run-shell "sesh last"
+
+    # 9 = connect to root of current git repo/worktree (via sesh)
+    bind -N "switch to root session (via sesh)" 9 run-shell "sesh connect --root $(pwd)"
   '';
 }

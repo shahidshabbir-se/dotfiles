@@ -4,25 +4,28 @@
 FILE="$HOME/.cache/eww_launch.xyz"
 EWW="eww -c $HOME/dotfiles/config/eww/bar"
 
-## Run eww daemon if not running already
-if [[ ! `pidof eww` ]]; then
-	${EWW} daemon
-	sleep 1
-fi
-
-## Open widgets 
+## Open widgets
 run_eww() {
 	${EWW} open-many \
          bar
-        
 }
 
 ## Launch or close widgets accordingly
-if [[ ! `pidof eww` ]] || [[ ! -f "$FILE" ]]; then
+if [[ -f "$FILE" ]] && pidof eww &>/dev/null; then
+	## Bar is running — toggle it off
+	${EWW} close-all && killall eww
+	rm -f "$FILE"
+else
+	## Bar is not running — start daemon if needed, then open
+	if ! pidof eww &>/dev/null; then
+		${EWW} daemon
+		## Wait for daemon to be ready (up to 5 seconds)
+		for i in $(seq 1 10); do
+			sleep 0.5
+			pidof eww &>/dev/null && break
+		done
+	fi
 	rm -f "$FILE"
 	touch "$FILE"
 	run_eww
-else
-	${EWW} close-all && killall eww
-	rm -f "$FILE"
 fi
