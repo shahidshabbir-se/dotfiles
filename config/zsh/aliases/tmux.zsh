@@ -187,6 +187,37 @@ function _tmux_directory_session() {
 
 alias tds=_tmux_directory_session
 
+# ─────────────────────────────────────────────────────────
+#  Sesh - Smart Session Manager
+# ─────────────────────────────────────────────────────────
+if (( $+commands[sesh] )); then
+  # Quick connect (fzf picker in terminal, outside tmux)
+  alias ss='sesh connect $(sesh list | fzf --height 40% --reverse --border-label " sesh " --border --prompt "⚡  ")'
+
+  # List sessions
+  alias sl='sesh list'
+
+  # Connect to last session
+  alias slast='sesh last'
+
+  # Zsh keybind: Alt-s to open sesh picker
+  function _sesh_sessions() {
+    {
+      exec </dev/tty
+      exec <&1
+      local session
+      session=$(sesh list -t -c | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  ')
+      zle reset-prompt > /dev/null 2>&1 || true
+      [[ -z "$session" ]] && return
+      sesh connect "$session"
+    }
+  }
+  zle -N _sesh_sessions
+  bindkey -M emacs '\es' _sesh_sessions
+  bindkey -M vicmd '\es' _sesh_sessions
+  bindkey -M viins '\es' _sesh_sessions
+fi
+
 # Autostart if not already in tmux and enabled.
 if [[ -z "$TMUX" && "$ZSH_TMUX_AUTOSTART" == "true" && -z "$INSIDE_EMACS" && -z "$EMACS" && -z "$VIM" && -z "$INTELLIJ_ENVIRONMENT_READER" && -z "$ZED_TERM" ]]; then
   # Actually don't autostart if we already did and multiple autostarts are disabled.

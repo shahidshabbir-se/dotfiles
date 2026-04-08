@@ -1,4 +1,7 @@
-{ pkgs, lib ? pkgs.lib }:
+{
+  pkgs,
+  lib ? pkgs.lib,
+}:
 
 let
   version = "2.6";
@@ -24,7 +27,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://api2.cursor.sh/updates/download/golden/linux-x64/cursor/${version}";
-    sha256 = "09dvmlgsi60gai438z5x88kdwxjq08wpl1br6njrz6wzlqkrjf76";
+    sha256 = "sha256-rmPXBpIHIp87yF0PDJhqIgvtXOVYT0JXHT66Yynwggg=";
     name = "cursor-${version}.AppImage";
   };
 

@@ -39,6 +39,7 @@ in
     ../../modules/i3.nix
     # ../../modules/hyprland.nix
     # ../../modules/cliproxyapi.nix
+    ../../modules/television.nix
   ];
 
   # ───────────────────────────────────────────────
@@ -67,6 +68,10 @@ in
       (import ../../modules/pkgs/common.nix { inherit pkgs; })
       # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
+      ++ (with unstable; [
+        # zed-editor
+        # jetbrains.rust-rover
+      ])
       ++ (with pkgs; [
         upwork
         git-filter-repo
@@ -75,7 +80,6 @@ in
         corefonts
         fastfetch
         gcc
-        cloudflared
         gnumake
         inputs.zen-browser.packages.${system}.default
         protonvpn-gui
@@ -88,7 +92,6 @@ in
           accents = [ "blue" ];
           size = "standard";
         })
-        onlyoffice-desktopeditors
         unzip
         catppuccin-papirus-folders
         anydesk
@@ -103,12 +106,25 @@ in
   # ───────────────────────────────────────────────
   xdg.enable = true;
   xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-  # xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
+  xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
   xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
 
   xdg.desktopEntries = {
+    whatsapp = {
+      name = "Whatsapp";
+      genericName = "Messaging";
+      comment = "Whatsapp Web";
+      icon = "whatsapp";
+      exec = "chromium --disable-features=UseOzonePlatform --app=https://web.whatsapp.com";
+      terminal = false;
+      categories = [
+        "Network"
+        "Chat"
+      ];
+    };
+
     microsoft-excel = {
       name = "Microsoft Excel";
       genericName = "Spreadsheet";
@@ -193,6 +209,8 @@ in
   home.file.".p10k.zsh".source = ../../config/p10k.zsh;
   home.file.".zsh/aliases".source =
     mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zsh/aliases";
+  # home.file.".ideavimrc".source =
+  #   mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/jetbrains/.ideavimrc";
 
   # ───────────────────────────────────────────────
   # ▶ Program Configurations

@@ -84,6 +84,7 @@ with pkgs;
 
   # System / Terminal
   sesh
+  television
   tmux
 
   # Fun

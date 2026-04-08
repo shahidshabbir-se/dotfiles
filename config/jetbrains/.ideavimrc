@@ -1,0 +1,362 @@
+" ╔══════════════════════════════════════════════════════════════╗
+" ║  IdeaVim Configuration - LazyVim Compatible                ║
+" ║  https://github.com/shahidshabbir-se/dotfiles              ║
+" ╚══════════════════════════════════════════════════════════════╝
+
+" ───────────────────────────────────────────────
+" ▶ Leader Key
+" ───────────────────────────────────────────────
+let mapleader=" "
+let maplocalleader="\\"
+
+" ───────────────────────────────────────────────
+" ▶ IdeaVim Plugins
+" ───────────────────────────────────────────────
+set surround             " vim-surround: ys, cs, ds
+set commentary           " gcc, gc + motion
+set argtextobj           " argument text objects: ia, aa
+set textobj-entire       " entire buffer text object: ae, ie
+set highlightedyank      " brief highlight on yank
+set nerdtree             " file tree with :NERDTree
+set matchit              " % to jump between matching tags
+set exchange             " cx to exchange text
+set quickscope           " highlight unique chars for f/t
+set which-key            " show keybindings popup like which-key.nvim
+set notimeout            " don't timeout on which-key
+
+" ───────────────────────────────────────────────
+" ▶ Settings
+" ───────────────────────────────────────────────
+set scrolloff=8
+set sidescrolloff=8
+set number
+set relativenumber
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+set clipboard=unnamedplus
+set showmode
+set showcmd
+set visualbell
+set ideajoin             " smart join with J
+set idearefactormode=keep
+
+" ───────────────────────────────────────────────
+" ▶ General (from LazyVim + custom keymaps.lua)
+" ───────────────────────────────────────────────
+" ; to enter command mode (custom)
+nmap ; :
+
+" Select all (custom: C-a)
+nmap <C-a> ggVG$
+vmap <C-a> <Esc>ggVG$
+imap <C-a> <Esc>ggVG$
+
+" Save file (custom + LazyVim: C-s)
+nmap <C-s> :w<CR>
+vmap <C-s> <Esc>:w<CR>
+imap <C-s> <Esc>:w<CR>
+
+" Clear search highlight (LazyVim: Esc)
+nmap <Esc> :nohlsearch<CR>
+
+" Move lines up/down (LazyVim: A-j/k)
+nmap <A-j> :action MoveLineDown<CR>
+nmap <A-k> :action MoveLineUp<CR>
+vmap <A-j> :action MoveLineDown<CR>
+vmap <A-k> :action MoveLineUp<CR>
+imap <A-j> <Esc>:action MoveLineDown<CR>a
+imap <A-k> <Esc>:action MoveLineUp<CR>a
+
+" Better indenting (stay in visual mode)
+vmap < <gv
+vmap > >gv
+
+" ───────────────────────────────────────────────
+" ▶ Window Navigation (LazyVim: C-h/j/k/l)
+" ───────────────────────────────────────────────
+sethandler <C-h> a:vim
+sethandler <C-j> a:vim
+sethandler <C-k> a:vim
+sethandler <C-l> a:vim
+
+nnoremap <C-h> :action ActivateProjectToolWindow<CR>
+nnoremap <C-l> :action ActivateAIAssistantToolWindow<CR>
+nnoremap <C-j> :action ActivateTerminalToolWindow<CR>
+nnoremap <C-k> :action FocusEditor<CR>
+
+" Splits (custom: leader-hs, leader-vs + LazyVim)
+nmap <leader>hs :split<CR>
+nmap <leader>vs :vsplit<CR>
+nmap <leader>- :action SplitHorizontally<CR>
+nmap <leader>\| :action SplitVertically<CR>
+nmap <leader>wd :action Unsplit<CR>
+
+" Window resize (LazyVim: C-arrows)
+nmap <C-Up> :action StretchSplitToTop<CR>
+nmap <C-Down> :action StretchSplitToBottom<CR>
+nmap <C-Left> :action StretchSplitToLeft<CR>
+nmap <C-Right> :action StretchSplitToRight<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Buffer/Tab Navigation (LazyVim: S-h/l, [b, ]b)
+" ───────────────────────────────────────────────
+nmap <S-h> :action PreviousTab<CR>
+nmap <S-l> :action NextTab<CR>
+nmap [b :action PreviousTab<CR>
+nmap ]b :action NextTab<CR>
+nmap <leader>bb :action Switcher<CR>
+nmap <leader>` :action Switcher<CR>
+nmap <leader>bd :action CloseContent<CR>
+nmap <leader>bo :action CloseAllEditorsButActive<CR>
+nmap <leader>bD :action CloseContent<CR>
+
+" ───────────────────────────────────────────────
+" ▶ File Navigation / Find (LazyVim: leader-f*)
+" ───────────────────────────────────────────────
+nmap <leader><space> :action GotoFile<CR>
+nmap <leader>ff :action GotoFile<CR>
+nmap <leader>fF :action GotoFile<CR>
+nmap <leader>fg :action FindInPath<CR>
+nmap <leader>fw :action FindInPath<CR>
+nmap <leader>fb :action Switcher<CR>
+nmap <leader>fh :action HelpTopics<CR>
+nmap <leader>fo :action RecentFiles<CR>
+nmap <leader>fr :action RecentFiles<CR>
+nmap <leader>fR :action RecentFiles<CR>
+nmap <leader>fn :action NewFile<CR>
+nmap <leader>fp :action ManageRecentProjects<CR>
+
+" Search (LazyVim: leader-s*)
+nmap <leader>/ :action FindInPath<CR>
+nmap <leader>: :action GotoAction<CR>
+nmap <leader>sg :action FindInPath<CR>
+nmap <leader>sG :action FindInPath<CR>
+nmap <leader>sw :action FindWordAtCaret<CR>
+nmap <leader>ss :action GotoSymbol<CR>
+nmap <leader>sS :action GotoSymbol<CR>
+nmap <leader>sh :action GotoAction<CR>
+nmap <leader>sk :action GotoAction<CR>
+nmap <leader>sc :action GotoAction<CR>
+nmap <leader>sd :action ActivateProblemsViewToolWindow<CR>
+nmap <leader>sD :action ActivateProblemsViewToolWindow<CR>
+nmap <leader>sr :action ReplaceInPath<CR>
+
+" ───────────────────────────────────────────────
+" ▶ File Explorer (LazyVim: leader-e, leader-fe)
+" ───────────────────────────────────────────────
+" Toggle/focus project tree
+nmap <leader>e :NERDTreeToggle<CR>
+nmap <leader>E :NERDTreeFind<CR>
+nmap <leader>fe :NERDTreeToggle<CR>
+nmap <leader>fE :NERDTreeFind<CR>
+
+" NERDTree keybindings (when tree is focused):
+"   o     = open file/directory
+"   go    = preview (open but keep cursor in tree)
+"   i     = open in horizontal split
+"   s     = open in vertical split
+"   t     = open in new tab
+"   n     = create file
+"   N     = create directory
+"   d     = delete
+"   m     = menu (rename, move, copy, etc.)
+"   r     = refresh directory
+"   R     = refresh root
+"   p     = go to parent
+"   P     = go to root
+"   K     = first sibling
+"   J     = last sibling
+"   q     = close tree
+"   A     = zoom (maximize/minimize)
+"   x     = close parent directory
+"
+" Tip: Disable "Open Files with Single Click" in
+"      Settings > Appearance > Tool Windows
+
+" ───────────────────────────────────────────────
+" ▶ LSP / Code (LazyVim: g*, leader-c*)
+" ───────────────────────────────────────────────
+" Go-to
+nmap gd :action GotoDeclaration<CR>
+nmap gr :action FindUsages<CR>
+nmap gI :action GotoImplementation<CR>
+nmap gy :action GotoTypeDeclaration<CR>
+nmap gD :action GotoSuperMethod<CR>
+
+" Hover
+nmap K :action ShowHoverInfo<CR>
+nmap gK :action ParameterInfo<CR>
+
+" Code actions
+nmap <leader>ca :action ShowIntentionActions<CR>
+vmap <leader>ca :action ShowIntentionActions<CR>
+nmap <leader>cr :action RenameElement<CR>
+nmap <leader>cR :action RenameFile<CR>
+nmap <leader>cf :action ReformatCode<CR>
+vmap <leader>cf :action ReformatCode<CR>
+nmap <leader>co :action OptimizeImports<CR>
+nmap <leader>cA :action Generate<CR>
+
+" Diagnostics (LazyVim: ]d, [d, ]e, [e)
+nmap <leader>cd :action ShowErrorDescription<CR>
+nmap ]d :action GotoNextError<CR>
+nmap [d :action GotoPreviousError<CR>
+nmap ]e :action GotoNextError<CR>
+nmap [e :action GotoPreviousError<CR>
+nmap ]w :action GotoNextError<CR>
+nmap [w :action GotoPreviousError<CR>
+
+" References navigation
+nmap ]] :action GotoNextElementUnderCaretUsage<CR>
+nmap [[ :action GotoPrevElementUnderCaretUsage<CR>
+
+" Symbols / Structure (LazyVim: leader-cs)
+nmap <leader>cs :action ActivateStructureToolWindow<CR>
+nmap <leader>cS :action GotoRelated<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Diagnostics / Trouble (LazyVim: leader-x*)
+" ───────────────────────────────────────────────
+nmap <leader>xx :action ActivateProblemsViewToolWindow<CR>
+nmap <leader>xX :action ActivateProblemsViewToolWindow<CR>
+nmap <leader>xl :action ActivateProblemsViewToolWindow<CR>
+nmap <leader>xq :action ActivateProblemsViewToolWindow<CR>
+nmap <leader>xt :action ActivateTODOToolWindow<CR>
+
+" Quickfix (LazyVim: ]q, [q)
+nmap ]q :action GotoNextError<CR>
+nmap [q :action GotoPreviousError<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Git (LazyVim: leader-g*)
+" ───────────────────────────────────────────────
+nmap <leader>gs :action ActivateVersionControlToolWindow<CR>
+nmap <leader>gb :action Annotate<CR>
+nmap <leader>gB :action Github.Open.In.Browser<CR>
+vmap <leader>gB :action Github.Open.In.Browser<CR>
+nmap <leader>gd :action Compare.SameVersion<CR>
+nmap <leader>gD :action Compare.SameVersion<CR>
+nmap <leader>gl :action Vcs.ShowTabbedFileHistory<CR>
+nmap <leader>gL :action Vcs.Show.Log<CR>
+nmap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
+nmap <leader>gp :action Vcs.Push<CR>
+nmap <leader>gc :action CheckinProject<CR>
+
+" Git hunks
+nmap ]h :action VcsShowNextChangeMarker<CR>
+nmap [h :action VcsShowPrevChangeMarker<CR>
+nmap <leader>ghr :action Vcs.RollbackChangedLines<CR>
+nmap <leader>ghp :action VcsShowCurrentChangeMarker<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Debug (LazyVim DAP: leader-d*)
+" ───────────────────────────────────────────────
+nmap <leader>db :action ToggleLineBreakpoint<CR>
+nmap <leader>dB :action EditBreakpoint<CR>
+nmap <leader>dc :action Resume<CR>
+nmap <leader>dC :action RunToCursor<CR>
+nmap <leader>di :action StepInto<CR>
+nmap <leader>do :action StepOut<CR>
+nmap <leader>dO :action StepOver<CR>
+nmap <leader>dP :action Pause<CR>
+nmap <leader>dr :action EvaluateExpression<CR>
+nmap <leader>ds :action ActivateDebugToolWindow<CR>
+nmap <leader>dt :action Stop<CR>
+nmap <leader>da :action DebugClass<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Run (leader-r*)
+" ───────────────────────────────────────────────
+nmap <leader>rr :action Run<CR>
+nmap <leader>rd :action Debug<CR>
+nmap <leader>rc :action RunClass<CR>
+nmap <leader>rs :action Stop<CR>
+nmap <leader>rl :action Rerun<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Refactoring (leader-r* from extras)
+" ───────────────────────────────────────────────
+nmap <leader>rm :action ExtractMethod<CR>
+vmap <leader>rm :action ExtractMethod<CR>
+nmap <leader>rv :action IntroduceVariable<CR>
+vmap <leader>rv :action IntroduceVariable<CR>
+nmap <leader>rf :action IntroduceField<CR>
+nmap <leader>ri :action Inline<CR>
+nmap <leader>rn :action RenameElement<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Tabs (LazyVim: leader-tab-*)
+" ───────────────────────────────────────────────
+nmap <leader><tab><tab> :action NewScratchFile<CR>
+nmap <leader><tab>d :action CloseContent<CR>
+nmap <leader><tab>o :action CloseAllEditorsButActive<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Toggle / UI (LazyVim: leader-u*)
+" ───────────────────────────────────────────────
+nmap <leader>uf :action ToggleDistractionFreeMode<CR>
+nmap <leader>uz :action ToggleZenMode<CR>
+nmap <leader>uw :action EditorToggleUseSoftWraps<CR>
+nmap <leader>ul :action EditorToggleShowLineNumbers<CR>
+nmap <leader>uL :action EditorToggleShowLineNumbers<CR>
+nmap <leader>uh :action ToggleInlayHintsGloballyAction<CR>
+nmap <leader>ud :action ToggleRenderedDocPresentation<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Terminal (LazyVim: leader-ft, C-/)
+" ───────────────────────────────────────────────
+nmap <leader>ft :action ActivateTerminalToolWindow<CR>
+nmap <leader>fT :action ActivateTerminalToolWindow<CR>
+nmap <C-/> :action ActivateTerminalToolWindow<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Quit (LazyVim: leader-q*)
+" ───────────────────────────────────────────────
+nmap <leader>qq :action Exit<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Flash/Jump (LazyVim flash.nvim: s, S)
+" ───────────────────────────────────────────────
+" Requires IdeaVim-EasyMotion + AceJump plugin
+set easymotion
+nmap s <Plug>(easymotion-s2)
+nmap S <Plug>(easymotion-sn)
+
+" ───────────────────────────────────────────────
+" ▶ Harpoon (LazyVim harpoon2 extra)
+" ───────────────────────────────────────────────
+" Simulated via bookmarks
+nmap <leader>ha :action ToggleBookmarkWithMnemonic<CR>
+nmap <leader>hh :action ShowBookmarks<CR>
+nmap <leader>1 :action GotoBookmark1<CR>
+nmap <leader>2 :action GotoBookmark2<CR>
+nmap <leader>3 :action GotoBookmark3<CR>
+nmap <leader>4 :action GotoBookmark4<CR>
+nmap <leader>5 :action GotoBookmark5<CR>
+
+" ───────────────────────────────────────────────
+" ▶ Which-Key Labels
+" ───────────────────────────────────────────────
+let g:WhichKey_FontSize = 16
+let g:WhichKey_ShowVimActions = "true"
+
+let g:WhichKeyDesc_buffer = "<leader>b  +buffer"
+let g:WhichKeyDesc_code = "<leader>c  +code"
+let g:WhichKeyDesc_debug = "<leader>d  +debug"
+let g:WhichKeyDesc_file = "<leader>f  +file/find"
+let g:WhichKeyDesc_git = "<leader>g  +git"
+let g:WhichKeyDesc_harpoon = "<leader>h  +harpoon"
+let g:WhichKeyDesc_quit = "<leader>q  +quit"
+let g:WhichKeyDesc_run = "<leader>r  +run/refactor"
+let g:WhichKeyDesc_search = "<leader>s  +search"
+let g:WhichKeyDesc_toggle = "<leader>u  +toggle/ui"
+let g:WhichKeyDesc_window = "<leader>w  +window"
+let g:WhichKeyDesc_diagnostics = "<leader>x  +diagnostics"
+let g:WhichKeyDesc_tab = "<leader><tab>  +tab"
+let g:WhichKeyDesc_split_h = "<leader>-  Split below"
+let g:WhichKeyDesc_split_v = "<leader>|  Split right"
+let g:WhichKeyDesc_find_files = "<leader><space>  Find files"
+let g:WhichKeyDesc_grep = "<leader>/  Grep"
+let g:WhichKeyDesc_command = "<leader>:  Commands"
