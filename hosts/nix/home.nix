@@ -75,6 +75,8 @@ in
       ++ (with pkgs; [
         upwork
         git-filter-repo
+        wmctrl
+        vscode
         chromium
         matugen
         corefonts
@@ -235,7 +237,7 @@ in
         ;
     };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
-    # bat = import ../../modules/bat.nix { inherit pkgs lib; };
+    bat = import ../../modules/bat.nix { inherit pkgs lib; };
     neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };

@@ -6,7 +6,12 @@
 # ║    services.xserver.windowManager.i3.enable = true;         ║
 # ╚══════════════════════════════════════════════════════════════╝
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   homeDirectory = "/home/shahid";
@@ -216,15 +221,33 @@ in
       };
 
       workspaceOutputAssign = [
-        { workspace = "1"; output = "HDMI-A-0 HDMI-1 eDP-1 eDP1"; }
-        { workspace = "2"; output = "HDMI-A-0 HDMI-1 eDP-1 eDP1"; }
-        { workspace = "3"; output = "HDMI-A-0 HDMI-1 eDP-1 eDP1"; }
-        { workspace = "4"; output = "eDP-1 eDP1 HDMI-A-0 HDMI-1"; }
-        { workspace = "5"; output = "eDP-1 eDP1 HDMI-A-0 HDMI-1"; }
-        { workspace = "6"; output = "eDP-1 eDP1 HDMI-A-0 HDMI-1"; }
+        {
+          workspace = "1";
+          output = "HDMI-A-0 HDMI-1 eDP-1 eDP1";
+        }
+        {
+          workspace = "2";
+          output = "HDMI-A-0 HDMI-1 eDP-1 eDP1";
+        }
+        {
+          workspace = "3";
+          output = "HDMI-A-0 HDMI-1 eDP-1 eDP1";
+        }
+        {
+          workspace = "4";
+          output = "eDP-1 eDP1 HDMI-A-0 HDMI-1";
+        }
+        {
+          workspace = "5";
+          output = "eDP-1 eDP1 HDMI-A-0 HDMI-1";
+        }
+        {
+          workspace = "6";
+          output = "eDP-1 eDP1 HDMI-A-0 HDMI-1";
+        }
       ];
 
-      assigns = {};
+      assigns = { };
 
       keybindings = lib.mkOptionDefault {
         # Launch applications
@@ -317,46 +340,128 @@ in
         "F9" = "exec playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
 
         # Volume
-        "XF86AudioRaiseVolume" = "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
-        "XF86AudioLowerVolume" = "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
-        "XF86AudioMute" = "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
+        "XF86AudioRaiseVolume" =
+          "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
+        "XF86AudioLowerVolume" =
+          "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
+        "XF86AudioMute" =
+          "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
 
         # Brightness
-        "XF86MonBrightnessUp" = "exec brightnessctl s 10%+ && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh";
-        "XF86MonBrightnessDown" = "exec brightnessctl s 10%- && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh";
+        "XF86MonBrightnessUp" =
+          "exec brightnessctl s 10%+ && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh";
+        "XF86MonBrightnessDown" =
+          "exec brightnessctl s 10%- && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh";
 
         # Media (XF86 keys)
-        "XF86AudioNext" = "exec playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
-        "XF86AudioPrev" = "exec playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
+        "XF86AudioNext" =
+          "exec playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
+        "XF86AudioPrev" =
+          "exec playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
         "XF86AudioPlay" = "exec playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
         "XF86AudioPause" = "exec playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh";
       };
 
       startup = [
-        { command = "sh -c '[ -f ~/.fehbg ] && sh ~/.fehbg || feh --bg-fill ${homeDirectory}/.cache/wallpaper-cache/wallpaper.jpg'"; always = true; notification = false; }
-        { command = "picom --config ${homeDirectory}/dotfiles/config/picom/picom.conf"; notification = false; }
-        { command = "sh ${homeDirectory}/dotfiles/config/eww/bar/launch_bar"; always = true; notification = false; }
-        { command = "${homeDirectory}/dotfiles/config/eww/bar/scripts/fullscreen_watch"; always = true; notification = false; }
-        { command = "systemctl --user restart greenclip.service"; notification = false; }
-        { command = "libinput-gestures"; notification = false; }
-        { command = "xbindkeys"; notification = false; }
-        { command = "xsettingsd"; notification = false; }
-        { command = "xinput set-prop 'ETPS/2 Elantech Touchpad' 'libinput Natural Scrolling Enabled' 1"; notification = false; }
-        { command = "xsetroot -cursor_name left_ptr"; notification = false; }
-        { command = "numlockx on"; notification = false; }
-        { command = "sh -c 'sleep 3 && glava'"; notification = false; }
-        { command = "xdg-mime default vlc.desktop video/mp4"; notification = false; }
-        { command = "xdg-mime default vlc.desktop video/x-matroska"; notification = false; }
-        { command = "xdg-mime default vlc.desktop video/avi"; notification = false; }
-        { command = "xdg-mime default vlc.desktop video/webm"; notification = false; }
-        { command = "xdg-mime default vlc.desktop audio/mpeg"; notification = false; }
-        { command = "xdg-mime default vlc.desktop audio/x-wav"; notification = false; }
-        { command = "xdg-mime default vlc.desktop audio/flac"; notification = false; }
-        { command = "xdg-mime default feh.desktop image/png"; notification = false; }
-        { command = "xdg-mime default feh.desktop image/jpeg"; notification = false; }
-        { command = "xdg-mime default feh.desktop image/gif"; notification = false; }
-        { command = "xdg-mime default feh.desktop image/webp"; notification = false; }
-        { command = "xdg-mime default feh.desktop image/bmp"; notification = false; }
+        {
+          command = "sh -c '[ -f ~/.fehbg ] && sh ~/.fehbg || feh --bg-fill ${homeDirectory}/.cache/wallpaper-cache/wallpaper.jpg'";
+          always = true;
+          notification = false;
+        }
+        {
+          command = "picom --config ${homeDirectory}/dotfiles/config/picom/picom.conf";
+          notification = false;
+        }
+        {
+          command = "sh ${homeDirectory}/dotfiles/config/eww/bar/launch_bar";
+          always = true;
+          notification = false;
+        }
+        {
+          command = "${homeDirectory}/dotfiles/config/eww/bar/scripts/fullscreen_watch";
+          always = true;
+          notification = false;
+        }
+        {
+          command = "systemctl --user restart greenclip.service";
+          notification = false;
+        }
+        {
+          command = "libinput-gestures";
+          notification = false;
+        }
+        {
+          command = "xbindkeys";
+          notification = false;
+        }
+        {
+          command = "xsettingsd";
+          notification = false;
+        }
+        {
+          command = "xinput set-prop 'ETPS/2 Elantech Touchpad' 'libinput Natural Scrolling Enabled' 1";
+          notification = false;
+        }
+        {
+          command = "xsetroot -cursor_name left_ptr";
+          notification = false;
+        }
+        {
+          command = "numlockx on";
+          notification = false;
+        }
+        {
+          command = "sh -c 'sleep 3 && glava'";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop video/mp4";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop video/x-matroska";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop video/avi";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop video/webm";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop audio/mpeg";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop audio/x-wav";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default vlc.desktop audio/flac";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default feh.desktop image/png";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default feh.desktop image/jpeg";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default feh.desktop image/gif";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default feh.desktop image/webp";
+          notification = false;
+        }
+        {
+          command = "xdg-mime default feh.desktop image/bmp";
+          notification = false;
+        }
       ];
 
       bars = [ ];
@@ -368,7 +473,7 @@ in
       focus_follows_mouse yes
 
       for_window [title="yazi"] floating enable, resize set 800 500, move position center
-      for_window [title="btop"] floating enable, resize set 900 600, move position center
+      for_window [title="btop"] floating enable, resize set 1100 800, move position center
       for_window [class="podman-tui"] floating enable, resize set 1000 600, move position center
       for_window [class="Rofi"] floating enable
       for_window [class="^.*$"] border pixel 0

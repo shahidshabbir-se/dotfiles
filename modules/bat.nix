@@ -12,10 +12,10 @@
   themes = {
     TokyoNight = {
       src = pkgs.fetchFromGitHub {
-        owner = "folke";
+        owner = "shahidshabbir-se";
         repo = "tokyonight.nvim";
         rev = "main";
-        sha256 = "sha256-4zfkv3egdWJ/GCWUehV0MAIXxsrGT82Wd1Qqj1SCGOk=";
+        sha256 = "sha256-a9iRWue7DB7s/wNdxqqB51Jya5P9X6sDftqhdmKggU0=";
       };
       file = "extras/sublime/tokyonight_night.tmTheme";
     };

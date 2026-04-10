@@ -134,6 +134,7 @@ in
     #  Terminal Features
     # ─────────────────────────────────────────────────────────
     set -as terminal-features ",xterm-256color:RGB"
+    set -g extended-keys on
 
     set -g pane-active-border-style 'fg=magenta,bg=default'
     set -g pane-border-style 'fg=brightblack,bg=default'
@@ -155,9 +156,9 @@ in
     set-option -g renumber-windows on
 
     # ─────────────────────────────────────────────────────────
-    #  Clear Screen Binding
+    #  Clear Screen — Ctrl-Shift-L (no prefix)
     # ─────────────────────────────────────────────────────────
-    bind L send-keys '^L'
+    bind -n C-S-l send-keys '^L'
 
     # ─────────────────────────────────────────────────────────
     #  Pane Switching (Alt + Arrow)
@@ -241,11 +242,11 @@ in
     # Don't exit tmux when closing last session
     set -g detach-on-destroy off
 
-    # T = open sesh session picker via television popup
-    bind-key "T" display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'
+    # Ctrl-t = open sesh session picker via television popup
+    bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'
 
-    # l = jump to last session (via sesh)
-    bind -N "last-session (via sesh)" l run-shell "sesh last"
+    # Ctrl-l = jump to last session (via sesh)
+    bind -N "last-session (via sesh)" C-l run-shell "sesh last"
 
     # 9 = connect to root of current git repo/worktree (via sesh)
     bind -N "switch to root session (via sesh)" 9 run-shell "sesh connect --root $(pwd)"

@@ -15,7 +15,7 @@
    correctly on X11 with `"native"` transparency. */
 #define USE_ALPHA 1
 /* Bar color */
-#define COLOR (#f6b2df * 0.75)
+#define COLOR (#ffb3b1 * 0.75)
 /* Direction that the bars are facing, 0 for inward, 1 for outward */
 #define DIRECTION 1
 /* Whether to switch left/right audio buffers */

@@ -109,10 +109,17 @@
     requirements = ["sesh", "tmux"]
 
     [source]
-    command = "sesh list -t -c -z --icons"
+    command = [
+      "sesh list --icons",
+      "sesh list -t --icons",
+      "sesh list -c --icons",
+      "sesh list -z --icons",
+    ]
+    ansi   = true
+    output = "{strip_ansi|split: :1..|join: }"
 
     [preview]
-    command = "sesh preview {}"
+    command = "sesh preview '{strip_ansi|split: :1..|join: }'"
 
     [keybindings]
     enter  = "actions:connect"
@@ -120,12 +127,12 @@
 
     [actions.connect]
     description = "Connect to the selected session"
-    command     = "sesh connect '{}'"
+    command     = "sesh connect '{strip_ansi|split: :1..|join: }'"
     mode        = "execute"
 
     [actions.kill]
     description = "Kill the selected tmux session"
-    command     = "tmux kill-session -t '{}'"
+    command     = "tmux kill-session -t '{strip_ansi|split: :1..|join: }'"
     mode        = "fork"
   '';
 
