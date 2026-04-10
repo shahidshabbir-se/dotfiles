@@ -16,6 +16,7 @@
   extraConfig = ''
     set -as terminal-features ",xterm-256color:RGB"
     set -g xterm-keys on
+    set -g extended-keys on
     set -g prefix ^n
     set -g detach-on-destroy off     # don't exit from tmux when closing a session
     set -g history-limit 1000000     # increase history size (from 2,000)

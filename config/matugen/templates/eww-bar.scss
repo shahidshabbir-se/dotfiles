@@ -592,7 +592,9 @@ calendar:indeterminate {
 }
 
 calendar:selected {
-  color: $secondary;
+  color: $on_primary;
+  background-color: $primary;
+  border-radius: 3px;
 }
 
 calendar.header {
