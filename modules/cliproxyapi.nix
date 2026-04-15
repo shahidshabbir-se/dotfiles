@@ -8,7 +8,7 @@
 let
   version = "6.8.55"; # ← update this only
 
-  system = pkgs.stdenv.hostPlatform.system;
+  inherit (pkgs.stdenv.hostPlatform) system;
 
   platformMap = {
     x86_64-linux = "linux_amd64";
@@ -41,8 +41,8 @@ let
     '';
   };
 
-  isLinux = pkgs.stdenv.isLinux;
-  isDarwin = pkgs.stdenv.isDarwin;
+  inherit (pkgs.stdenv) isLinux;
+  inherit (pkgs.stdenv) isDarwin;
 
 in
 {
