@@ -22,7 +22,7 @@ let
   userGithub = "shahidshabbir-se";
   inherit (config.lib.file) mkOutOfStoreSymlink;
 
-  system = pkgs.stdenv.hostPlatform.system;
+  inherit (pkgs.stdenv.hostPlatform) system;
 
   unstable = import inputs.unstable {
     inherit system;
@@ -30,7 +30,7 @@ let
   };
 
   # Allow unfree packages for corefonts
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "corefonts" ];
+  # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "corefonts" ];
 
 in
 {
@@ -45,13 +45,6 @@ in
   # ───────────────────────────────────────────────
   # ▶ Home Directory & Package Set
   # ───────────────────────────────────────────────
-  home.pointerCursor = {
-    x11.enable = true;
-    gtk.enable = true;
-    package = pkgs.catppuccin-cursors.mochaDark;
-    size = 24;
-    name = "catppuccin-mocha-dark-cursors";
-  };
   # home.pointerCursor = {
   #   x11.enable = true;
   #   gtk.enable = true;
@@ -61,22 +54,31 @@ in
   # };
   home = {
     username = "shahid";
-    homeDirectory = homeDirectory;
+    inherit homeDirectory;
     stateVersion = "24.05";
+    pointerCursor = {
+      x11.enable = true;
+      gtk.enable = true;
+      package = pkgs.catppuccin-cursors.mochaDark;
+      size = 24;
+      name = "catppuccin-mocha-dark-cursors";
+    };
 
     packages =
       (import ../../modules/pkgs/common.nix { inherit pkgs; })
       # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/antigravity.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/zed.nix { inherit pkgs lib; }) ]
       # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
       ++ (with unstable; [
-        # zed-editor
+        # zed-editor --still not the latest update
         # jetbrains.rust-rover
+        vscode
       ])
       ++ (with pkgs; [
         upwork
         git-filter-repo
         wmctrl
-        vscode
         chromium
         matugen
         corefonts
@@ -102,82 +104,86 @@ in
         # (import ../../modules/void.nix { inherit pkgs; })
       ]);
   };
+  xdg = {
 
-  # ───────────────────────────────────────────────
-  # ▶ XDG Configuration
-  # ───────────────────────────────────────────────
-  xdg.enable = true;
-  xdg.configFile.nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-  xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
-  xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
-  xdg.configFile.eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
-  xdg.configFile.rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
-
-  xdg.desktopEntries = {
-    whatsapp = {
-      name = "Whatsapp";
-      genericName = "Messaging";
-      comment = "Whatsapp Web";
-      icon = "whatsapp";
-      exec = "chromium --disable-features=UseOzonePlatform --app=https://web.whatsapp.com";
-      terminal = false;
-      categories = [
-        "Network"
-        "Chat"
-      ];
-    };
-
-    microsoft-excel = {
-      name = "Microsoft Excel";
-      genericName = "Spreadsheet";
-      comment = "Microsoft Excel Online";
-      icon = "ms-excel";
-      exec = "chromium --disable-features=UseOzonePlatform --app=https://excel.cloud.microsoft/";
-      terminal = false;
-      categories = [
-        "Office"
-        "Spreadsheet"
-      ];
-    };
-    microsoft-word = {
-      name = "Microsoft Word";
-      genericName = "Word Processor";
-      comment = "Microsoft Word Online";
-      icon = "ms-word";
-      exec = "chromium --disable-features=UseOzonePlatform --app=https://word.cloud.microsoft/";
-      terminal = false;
-      categories = [
-        "Office"
-        "WordProcessor"
-      ];
-    };
-    microsoft-powerpoint = {
-      name = "Microsoft PowerPoint";
-      genericName = "Presentation";
-      comment = "Microsoft PowerPoint Online";
-      icon = "ms-powerpoint";
-      exec = "chromium --disable-features=UseOzonePlatform --app=https://powerpoint.cloud.microsoft/";
-      terminal = false;
-      categories = [
-        "Office"
-        "Presentation"
-      ];
-    };
-  };
-
-  xdg.mimeApps = {
+    # ───────────────────────────────────────────────
+    # ▶ XDG Configuration
+    # ───────────────────────────────────────────────
     enable = true;
-    defaultApplications = {
-      "x-scheme-handler/http" = [ "zen-beta.desktop" ];
-      "x-scheme-handler/https" = [ "zen-beta.desktop" ];
-      "x-scheme-handler/chrome" = [ "zen-beta.desktop" ];
-      "text/html" = [ "zen-beta.desktop" ];
-      "application/x-extension-htm" = [ "zen-beta.desktop" ];
-      "application/x-extension-html" = [ "zen-beta.desktop" ];
-      "application/x-extension-shtml" = [ "zen-beta.desktop" ];
-      "application/xhtml+xml" = [ "zen-beta.desktop" ];
-      "application/x-extension-xhtml" = [ "zen-beta.desktop" ];
-      "application/x-extension-xht" = [ "zen-beta.desktop" ];
+    configFile = {
+      nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
+      # zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
+      yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
+      eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
+      rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
+    };
+
+    desktopEntries = {
+      whatsapp = {
+        name = "Whatsapp";
+        genericName = "Messaging";
+        comment = "Whatsapp Web";
+        icon = "whatsapp";
+        exec = "chromium --disable-features=UseOzonePlatform --app=https://web.whatsapp.com";
+        terminal = false;
+        categories = [
+          "Network"
+          "Chat"
+        ];
+      };
+
+      microsoft-excel = {
+        name = "Microsoft Excel";
+        genericName = "Spreadsheet";
+        comment = "Microsoft Excel Online";
+        icon = "ms-excel";
+        exec = "chromium --disable-features=UseOzonePlatform --app=https://excel.cloud.microsoft/";
+        terminal = false;
+        categories = [
+          "Office"
+          "Spreadsheet"
+        ];
+      };
+      microsoft-word = {
+        name = "Microsoft Word";
+        genericName = "Word Processor";
+        comment = "Microsoft Word Online";
+        icon = "ms-word";
+        exec = "chromium --disable-features=UseOzonePlatform --app=https://word.cloud.microsoft/";
+        terminal = false;
+        categories = [
+          "Office"
+          "WordProcessor"
+        ];
+      };
+      microsoft-powerpoint = {
+        name = "Microsoft PowerPoint";
+        genericName = "Presentation";
+        comment = "Microsoft PowerPoint Online";
+        icon = "ms-powerpoint";
+        exec = "chromium --disable-features=UseOzonePlatform --app=https://powerpoint.cloud.microsoft/";
+        terminal = false;
+        categories = [
+          "Office"
+          "Presentation"
+        ];
+      };
+    };
+
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "x-scheme-handler/http" = [ "zen-beta.desktop" ];
+        "x-scheme-handler/https" = [ "zen-beta.desktop" ];
+        "x-scheme-handler/chrome" = [ "zen-beta.desktop" ];
+        "text/html" = [ "zen-beta.desktop" ];
+        "application/x-extension-htm" = [ "zen-beta.desktop" ];
+        "application/x-extension-html" = [ "zen-beta.desktop" ];
+        "application/x-extension-shtml" = [ "zen-beta.desktop" ];
+        "application/xhtml+xml" = [ "zen-beta.desktop" ];
+        "application/x-extension-xhtml" = [ "zen-beta.desktop" ];
+        "application/x-extension-xht" = [ "zen-beta.desktop" ];
+      };
     };
   };
 
@@ -242,7 +248,7 @@ in
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     atuin = import ../../modules/atuin.nix;
-    # spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
+    spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs; };
     # kitty = import ../../modules/kitty.nix { inherit pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
@@ -269,13 +275,11 @@ in
     enable = true;
     theme = {
       name = "catppuccin-mocha-blue-standard";
-      package = (
-        pkgs.catppuccin-gtk.override {
-          variant = "mocha";
-          accents = [ "blue" ];
-          size = "standard";
-        }
-      );
+      package = pkgs.catppuccin-gtk.override {
+        variant = "mocha";
+        accents = [ "blue" ];
+        size = "standard";
+      };
     };
     iconTheme = {
       name = "Papirus-Dark";
