@@ -75,8 +75,8 @@ with pkgs;
   gammastep
 
   # Networking
-  croc
   dogdns
+  rar
   tree
   doppler
   stripe-cli

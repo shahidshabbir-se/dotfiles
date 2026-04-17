@@ -30,6 +30,8 @@
 
     catppuccin.url = "github:catppuccin/nix";
 
+    atuin.url = "github:atuinsh/atuin";
+
     # macOS
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
@@ -42,9 +44,22 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, unstable, home-manager, spicetify-nix, catppuccin, nix-darwin, nix-homebrew, zen-browser, ... }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      unstable,
+      home-manager,
+      spicetify-nix,
+      catppuccin,
+      nix-darwin,
+      nix-homebrew,
+      zen-browser,
+      atuin,
+      ...
+    }:
     let
-      lib = nixpkgs.lib;
+      inherit (nixpkgs) lib;
 
       # Systems
       systemLinux = "x86_64-linux";
@@ -102,27 +117,36 @@
       };
 
       # Helper to create a NixOS configuration for a given device
-      mkNixos = { device, hardwareConfig }: lib.nixosSystem {
-        system = systemLinux;
-        specialArgs = {
-          inherit inputs;
-        };
-        modules = [
-          hardwareConfig
-          ./configuration.nix
+      mkNixos =
+        { device, hardwareConfig }:
+        lib.nixosSystem {
+          system = systemLinux;
+          specialArgs = {
+            inherit inputs;
+          };
+          modules = [
+            hardwareConfig
+            ./configuration.nix
 
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {
-              inherit inputs unstable device;
-            };
-            home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
-            home-manager.users.shahid = import ./hosts/nix/home.nix;
-          }
-        ];
-      };
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = {
+                  inherit
+                    inputs
+                    unstable
+                    device
+                    atuin
+                    ;
+                };
+                sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
+                users.shahid = import ./hosts/nix/home.nix;
+              };
+            }
+          ];
+        };
 
     in
     {
@@ -154,8 +178,73 @@
           {
             nixpkgs.hostPlatform = systemDarwin;
             nixpkgs.config.allowUnfree = true;
+            system = {
 
-            system.primaryUser = user;
+              primaryUser = user;
+
+              # System defaults (macOS settings)
+              defaults = {
+                dock.autohide = true;
+                dock.persistent-apps = [
+                  "/System/Applications/Apps.app"
+                  # "/System/Applications/Launchpad.app"
+                  "/System/Applications/System Settings.app"
+                  "/Applications/Microsoft Excel.app"
+                  "/Applications/Microsoft PowerPoint.app"
+                  "/Applications/Microsoft Word.app"
+                  "/Applications/WhatsApp.app"
+                  "/Applications/Obsidian.app"
+                  "/Applications/VLC.app"
+                  "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
+                  # "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
+                  "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
+                  "/Applications/Docker.app"
+                  "/Applications/Xcode.app"
+                  "/Applications/Zen.app"
+                ];
+                finder.FXPreferredViewStyle = "clmv";
+                loginwindow.GuestEnabled = false;
+                NSGlobalDomain = {
+                  AppleICUForce24HourTime = false;
+                  AppleInterfaceStyle = "Dark";
+                  KeyRepeat = 2;
+                };
+              };
+
+              # ───────────────────────────────────────────────
+              # ▶ Create /Applications aliases for Nix Apps
+              # ───────────────────────────────────────────────
+              activationScripts.applications.text =
+                let
+                  systemPackages = [
+                    # pkgsDarwin.alacritty
+                    # pkgsDarwin.ghostty-bin
+                    pkgsDarwin.wezterm
+                    pkgsDarwin.mkalias
+                  ];
+
+                  env = pkgsDarwin.buildEnv {
+                    name = "system-applications";
+                    paths = systemPackages;
+                    pathsToLink = [ "/Applications" ];
+                  };
+                in
+                pkgsDarwin.lib.mkForce ''
+                  # Set up applications.
+                  echo "setting up /Applications..." >&2
+                  rm -rf /Applications/Nix\ Apps
+                  mkdir -p /Applications/Nix\ Apps
+                  find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
+                  while read -r src; do
+                    app_name=$(basename "$src")
+                    echo "copying $src" >&2
+                    ${pkgsDarwin.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
+                  done
+                '';
+
+              configurationRevision = self.rev or self.dirtyRev or null;
+              stateVersion = 6;
+            };
             users.users.${user} = {
               home = "/Users/${user}";
               shell = pkgsDarwin.zsh;
@@ -166,126 +255,67 @@
               nerd-fonts.lilex
             ];
 
-            # System defaults (macOS settings)
-            system.defaults = {
-              dock.autohide = true;
-              dock.persistent-apps = [
-                "/System/Applications/Apps.app"
-                # "/System/Applications/Launchpad.app"
-                "/System/Applications/System Settings.app"
-                "/Applications/Microsoft Excel.app"
-                "/Applications/Microsoft PowerPoint.app"
-                "/Applications/Microsoft Word.app"
-                "/Applications/WhatsApp.app"
-                "/Applications/Obsidian.app"
-                "/Applications/VLC.app"
-                "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
-                # "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
-                "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
-                "/Applications/Docker.app"
-                "/Applications/Xcode.app"
-                "/Applications/Zen.app"
+            homebrew = {
+              enable = true;
+              taps = [ ];
+
+              brews = [
+                # "cliproxyapi"
+                "libpq"
               ];
-              finder.FXPreferredViewStyle = "clmv";
-              loginwindow.GuestEnabled = false;
-              NSGlobalDomain = {
-                AppleICUForce24HourTime = false;
-                AppleInterfaceStyle = "Dark";
-                KeyRepeat = 2;
+
+              casks = [
+                "qbittorrent"
+                # "droid"
+                "notunes"
+                "tailscale-app"
+                "betterdisplay"
+                "raycast"
+                "whatsapp"
+                "obsidian"
+                "karabiner-elements"
+                "protonvpn"
+                "zen"
+                "google-chrome"
+                "vlc"
+                "docker-desktop"
+                "camo-studio"
+              ];
+
+              masApps = {
+                # Xcode = 497799835;
               };
+
+              onActivation.cleanup = "zap";
             };
 
-            # ───────────────────────────────────────────────
-            # ▶ Create /Applications aliases for Nix Apps
-            # ───────────────────────────────────────────────
-            system.activationScripts.applications.text =
-              let
-                systemPackages = [
-                  # pkgsDarwin.alacritty
-                  # pkgsDarwin.ghostty-bin
-                  pkgsDarwin.wezterm
-                  pkgsDarwin.mkalias
-                ];
-
-                env = pkgsDarwin.buildEnv {
-                  name = "system-applications";
-                  paths = systemPackages;
-                  pathsToLink = [ "/Applications" ];
-                };
-              in
-              pkgsDarwin.lib.mkForce ''
-                # Set up applications.
-                echo "setting up /Applications..." >&2
-                rm -rf /Applications/Nix\ Apps
-                mkdir -p /Applications/Nix\ Apps
-                find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-                while read -r src; do
-                  app_name=$(basename "$src")
-                  echo "copying $src" >&2
-                  ${pkgsDarwin.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-                done
-              '';
-
-            homebrew =
-              {
-                enable = true;
-                taps = [ ];
-
-                brews = [
-                  # "cliproxyapi"
-                  "libpq"
-                ];
-
-                casks = [
-                  "qbittorrent"
-                  # "droid"
-                  "notunes"
-                  "tailscale-app"
-                  "betterdisplay"
-                  "raycast"
-                  "whatsapp"
-                  "obsidian"
-                  "karabiner-elements"
-                  "protonvpn"
-                  "zen"
-                  "google-chrome"
-                  "vlc"
-                  "docker-desktop"
-                  "camo-studio"
-                ];
-
-                masApps = {
-                  # Xcode = 497799835;
-                };
-
-                onActivation.cleanup = "zap";
-              };
-
-            nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-            system.configurationRevision = self.rev or self.dirtyRev or null;
-            system.stateVersion = 6;
+            nix.settings.experimental-features = [
+              "nix-command"
+              "flakes"
+            ];
           }
 
           # Home Manager (macOS)
           home-manager.darwinModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {
-              inherit inputs unstable;
-              device = devices.mac-mini;
-            };
-            home-manager.sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {
+                inherit inputs unstable;
+                device = devices.mac-mini;
+              };
+              sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];
 
-            home-manager.users.${user} = import ./hosts/mac/home.nix;
+              users.${user} = import ./hosts/mac/home.nix;
+            };
           }
 
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
               enable = true;
-              user = user;
+              inherit user;
               autoMigrate = true;
             };
           }
@@ -295,5 +325,3 @@
       darwinPackages = self.darwinConfigurations.${host}.pkgs;
     };
 }
-
-
