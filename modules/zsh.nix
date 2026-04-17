@@ -374,10 +374,17 @@
 
         # ─────────────────────────────────────────────────────────
         #  Television shell integration
-        #  Ctrl-R = history  |  Ctrl-T = smart autocomplete
+        #  Ctrl-T = smart autocomplete
         # ─────────────────────────────────────────────────────────
         if (( $+commands[tv] )); then
           eval "$(tv init zsh)"
+        fi
+
+        # ─────────────────────────────────────────────────────────
+        #  Rebind Ctrl-R to atuin (tv init overrides it above)
+        # ─────────────────────────────────────────────────────────
+        if (( $+commands[atuin] )); then
+          bindkey '^R' _atuin_search_widget
         fi
 
         # Environment variables

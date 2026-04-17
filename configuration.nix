@@ -10,9 +10,23 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
-  # configuration.nix
-  programs.dconf.enable = true;
-  programs.nix-ld.enable = true;
+  programs = {
+    # configuration.nix
+    localsend = {
+      enable = true;
+      openFirewall = true;
+    };
+
+    dconf.enable = true;
+    nix-ld.enable = true;
+    thunar.enable = true;
+    thunar.plugins = with pkgs.xfce; [
+      thunar-archive-plugin
+      thunar-volman
+    ];
+    xfconf.enable = true;
+    zsh.enable = true;
+  };
   # programs.nix-ld.libraries = with pkgs; [
   # ];
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -70,12 +84,6 @@
 
   services.tumbler.enable = true;
   services.gvfs.enable = true;
-  programs.thunar.enable = true;
-  programs.thunar.plugins = with pkgs.xfce; [
-    thunar-archive-plugin
-    thunar-volman
-  ];
-  programs.xfconf.enable = true;
   time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -184,6 +192,11 @@
   };
   home-manager.backupFileExtension = "bak";
 
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
+
   environment.systemPackages = with pkgs; [
     openvpn
     # swww
@@ -237,7 +250,6 @@
     ];
   };
   virtualisation.docker.enable = true;
-  programs.zsh.enable = true;
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.lilex

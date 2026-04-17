@@ -10,6 +10,7 @@
   config,
   pkgs,
   lib,
+  device,
   ...
 }:
 
@@ -113,8 +114,10 @@ in
   xdg.configFile."xsettingsd/xsettingsd.conf".text = ''
     Net/ThemeName "catppuccin-mocha-blue-standard"
     Net/IconThemeName "Papirus-Dark"
-    Gtk/CursorThemeName "catppuccin-mocha-dark-cursors"
-    Gtk/CursorThemeSize 24
+    Gtk/CursorThemeName "${
+      if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors"
+    }"
+    Gtk/CursorThemeSize ${builtins.toString (if device.type == "laptop" then 48 else 24)}
     Gtk/FontName "SF Pro Display 10"
     Net/EnableEventSounds 0
     Net/EnableInputFeedbackSounds 0
