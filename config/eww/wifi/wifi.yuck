@@ -1,0 +1,51 @@
+(defpoll wifi_state :interval "3s" "./wifi/scripts/wifi --state")
+(defpoll wifi_airplane_state :interval "3s" "./wifi/scripts/wifi --airplane-state")
+(defpoll wifi_connected_name :interval "3s" "./wifi/scripts/wifi --connected-name")
+(defpoll wifi_connected_meta :interval "3s" "./wifi/scripts/wifi --connected-meta")
+(defpoll wifi_nearby_count :interval "8s" "./wifi/scripts/wifi --nearby-count")
+(defpoll wifi_list :interval "8s" :initial "(box :class \"wifi-menu__empty\" (label :class \"wifi-menu__empty-text\" :text \"Loading networks...\"))" "./wifi/scripts/wifi --list")
+
+(defwidget wifi_network_row [name meta signal row_class action]
+  (eventbox :cursor "pointer"
+    (button :class row_class :onclick action
+      (box :orientation "h" :space-evenly false
+        (box :orientation "v" :space-evenly false :spacing 4 :hexpand true
+          (label :class "wifi-menu__network-name" :halign "start" :text name)
+          (label :class "wifi-menu__network-meta" :halign "start" :text meta))
+        (label :class "wifi-menu__signal" :text signal)))))
+
+(defwindow wifi
+  :monitor 0
+  :stacking "fg"
+  :focusable true
+  :geometry (geometry :width "360px" :height "520px" :anchor "top right" :x "-190px" :y "70px")
+  (box :class "wifi-menu" :orientation "v" :space-evenly false :spacing 18
+    (box :class "wifi-menu__header" :orientation "h" :space-evenly false
+      (box :class "wifi-menu__title-block" :orientation "v" :space-evenly false :hexpand true
+        (label :class "wifi-menu__eyebrow" :halign "start" :text "NETWORK")
+        (label :class "wifi-menu__title" :halign "start" :text "Wi-Fi"))
+      (button :class {wifi_state == "ON" ? "wifi-menu__badge wifi-menu__badge--on" : "wifi-menu__badge wifi-menu__badge--off"}
+        :onclick "./wifi/scripts/wifi --toggle-wifi"
+        wifi_state))
+
+    (box :class "wifi-menu__hero" :orientation "v" :space-evenly false :spacing 6
+      (label :class "wifi-menu__hero-label" :halign "start" :text "Connected to")
+      (label :class "wifi-menu__hero-name" :halign "start" :text wifi_connected_name)
+      (label :class "wifi-menu__hero-meta" :halign "start" :text wifi_connected_meta))
+
+    (box :class "wifi-menu__actions" :orientation "h" :space-evenly false :spacing 10
+      (button :class "wifi-menu__action wifi-menu__action--primary" :hexpand true :onclick "./wifi/scripts/wifi --scan" "Scan")
+      (button :class "wifi-menu__action" :hexpand true :onclick "./wifi/scripts/wifi --toggle-wifi" {wifi_state == "ON" ? "Turn off" : "Turn on"})
+      (button :class "wifi-menu__action" :hexpand true :onclick "./wifi/scripts/wifi --settings" "Settings"))
+
+    (box :class "wifi-menu__section" :orientation "v" :space-evenly false :spacing 10
+      (box :class "wifi-menu__section-head" :orientation "h" :space-evenly false
+        (label :class "wifi-menu__section-title" :halign "start" :hexpand true :text "Nearby networks")
+        (label :class "wifi-menu__section-meta" :text {"" + wifi_nearby_count + " found"}))
+
+      (scroll :hscroll false :vscroll true :height 300
+        (literal :content wifi_list)))
+
+    (box :class "wifi-menu__footer" :orientation "h" :space-evenly false :spacing 10
+      (button :class "wifi-menu__footer-btn" :hexpand true :onclick "./wifi/scripts/wifi --toggle-airplane" {wifi_airplane_state == "ON" ? "Airplane on" : "Airplane mode"})
+      (button :class "wifi-menu__footer-btn" :hexpand true :onclick "./wifi/scripts/wifi --disconnect" "Disconnect"))))

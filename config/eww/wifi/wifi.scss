@@ -1,0 +1,175 @@
+.wifi-menu {
+  font-family: "Roboto", "JetBrainsMono Nerd Font", sans-serif;
+  min-width: 22.5rem;
+  min-height: 32.5rem;
+  padding: 1.4rem;
+  border-radius: 10px;
+  background-color: $bg;
+  color: $fg;
+}
+
+.wifi-menu__header {
+  margin-bottom: 0.15rem;
+}
+
+.wifi-menu__eyebrow {
+  color: $on_surface_variant;
+  font-size: 0.7rem;
+  letter-spacing: 0.2rem;
+}
+
+.wifi-menu__title {
+  font-family: "Roboto";
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.wifi-menu__toggle {
+  margin-top: 0.15rem;
+  min-width: 2.6rem;
+  min-height: 1.4rem;
+}
+
+checkbox,
+checkbutton {
+  color: $primary;
+}
+
+checkbox:checked,
+checkbutton:checked {
+  color: $primary;
+}
+
+.wifi-menu__hero {
+  padding: 1.2rem;
+  border-radius: 10px;
+  background: linear-gradient(
+    to right,
+    rgba($primary, 0.35),
+    rgba($background, 0.4)
+  );
+}
+
+.wifi-menu__hero-label {
+  color: $on_background;
+  font-size: 0.85rem;
+}
+
+.wifi-menu__hero-name {
+  font-family: "Roboto";
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.wifi-menu__hero-meta {
+  color: $on_surface;
+  font-size: 0.85rem;
+}
+
+.wifi-menu__action,
+.wifi-menu__footer-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  background-color: $bg-alt;
+  color: $fg;
+  font-size: 0.8rem;
+}
+
+.wifi-menu__action:hover,
+.wifi-menu__footer-btn:hover {
+  color: $on_primary;
+  background-color: $primary;
+}
+
+.wifi-menu__action--primary {
+  background-color: $primary;
+  color: $on_primary;
+}
+
+.wifi-menu__action--primary:hover {
+  background-color: $primary_container;
+}
+
+.wifi-menu__section {
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: $surface_container_low;
+}
+
+.wifi-menu__section-title {
+  font-family: "Roboto";
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.wifi-menu__section-meta {
+  color: $on_surface_variant;
+  font-size: 0.78rem;
+}
+
+scrolledwindow,
+scrolledwindow viewport {
+  background-color: transparent;
+}
+
+scrolledwindow scrollbar,
+scrolledwindow overshoot,
+scrolledwindow undershoot {
+  background-color: transparent;
+}
+
+.wifi-menu__network {
+  border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background-color: $surface_variant;
+}
+
+.wifi-menu__network--active {
+  background-color: $primary_container;
+}
+
+.wifi-menu__network:hover {
+  background-color: $on_surface_variant;
+  color: $background;
+}
+
+.wifi-menu__network--active:hover {
+  background-color: $on_primary_container;
+  color: $primary;
+}
+
+.wifi-menu__network .wifi-menu__network-name,
+.wifi-menu__network--active .wifi-menu__network-name {
+  color: inherit;
+}
+
+.wifi-menu__network-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.wifi-menu__network-meta,
+.wifi-menu__signal {
+  color: $on_surface_variant;
+  font-size: 0.8rem;
+}
+
+.wifi-menu__network:hover .wifi-menu__network-meta,
+.wifi-menu__network:hover .wifi-menu__signal,
+.wifi-menu__network--active:hover .wifi-menu__network-meta,
+.wifi-menu__network--active:hover .wifi-menu__signal {
+  color: rgba($background, 0.8);
+}
+
+.wifi-menu__empty {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background-color: $surface_variant;
+}
+
+.wifi-menu__empty-text {
+  color: $on_surface_variant;
+  font-size: 0.83rem;
+}

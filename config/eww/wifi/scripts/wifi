@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+STATE_FILE="$SCRIPT_DIR/.selected_network"
+
+yuck_escape() {
+  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+wifi_rows() {
+  local saved_ssids count=0 rows=""
+  saved_ssids=$(nmcli -t -f NAME connection show 2>/dev/null || true)
+
+  while IFS=':' read -r active ssid security signal; do
+    [ -n "$ssid" ] || continue
+    count=$((count + 1))
+
+    local state meta class encoded_ssid safe_name safe_meta connect_action select_action needs_password
+    state=""
+    if [ "$active" = "yes" ]; then
+      state="Connected"
+      class="wifi-menu__network wifi-menu__network--active"
+      needs_password=false
+    elif printf '%s\n' "$saved_ssids" | grep -Fxq -- "$ssid"; then
+      state="Saved"
+      class="wifi-menu__network"
+      needs_password=false
+    elif [ -n "$security" ] && [ "$security" != "--" ]; then
+      state="Secured"
+      class="wifi-menu__network"
+      needs_password=true
+    else
+      state="Open network"
+      class="wifi-menu__network"
+      needs_password=false
+    fi
+
+    meta="$state | ${signal:-0}%"
+    safe_name=$(yuck_escape "$ssid")
+    safe_meta=$(yuck_escape "$meta")
+    encoded_ssid=$(printf '%s' "$ssid" | base64 -w0)
+    connect_action=$(yuck_escape "$SCRIPT_DIR/wifi --connect '$encoded_ssid' \"{}\"")
+    select_action=$(yuck_escape "$SCRIPT_DIR/wifi --select '$encoded_ssid'")
+    rows+=$'\n      (wifi_network_row :id "'"$encoded_ssid"'" :name "'"$safe_name"'" :meta "'"$safe_meta"'" :signal "'"${signal:-0}%"'" :row_class "'"$class"'" :connect_action "'"$connect_action"'" :select_action "'"$select_action"'" :needs_password "'"$needs_password"'")'
+  done < <(nmcli -t -f ACTIVE,SSID,SECURITY,SIGNAL device wifi list 2>/dev/null | awk -F':' '!seen[$2]++ && $2 != "" {print}')
+
+  if [ "$count" -eq 0 ]; then
+    rows='(box :class "wifi-menu__empty" (label :class "wifi-menu__empty-text" :text "No networks found"))'
+  fi
+
+  printf '(box :orientation "v" :space-evenly false :spacing 12%s\n  )\n' "$rows"
+}
+
+connected_name() {
+  local ssid
+  ssid=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION device status 2>/dev/null | awk -F: '$2=="wifi" && $3=="connected" {print $4; exit}')
+  if [ -n "$ssid" ]; then
+    printf '%s\n' "$ssid"
+  elif [ "$(wifi_state)" = "OFF" ]; then
+    printf 'Wi-Fi is off\n'
+  else
+    printf 'Not connected\n'
+  fi
+}
+
+connected_meta() {
+  local line security signal
+  line=$(nmcli -t -f ACTIVE,SECURITY,SIGNAL device wifi list 2>/dev/null | awk -F: '$1=="yes"{print; exit}')
+  if [ -n "$line" ]; then
+    IFS=':' read -r _ security signal <<EOF
+$line
+EOF
+    if [ -n "$security" ] && [ "$security" != "--" ]; then
+      printf 'Signal %s%% | Secured network\n' "${signal:-0}"
+    else
+      printf 'Signal %s%% | Open network\n' "${signal:-0}"
+    fi
+  elif [ "$(wifi_state)" = "OFF" ]; then
+    printf 'Turn Wi-Fi on to scan networks\n'
+  else
+    printf 'Choose a network from the list below\n'
+  fi
+}
+
+selected_network() {
+  if [ -f "$STATE_FILE" ]; then
+    cat "$STATE_FILE"
+  fi
+}
+
+select_network() {
+  local encoded_ssid=${1:-}
+  [ -n "$encoded_ssid" ] || exit 1
+  printf '%s\n' "$encoded_ssid" > "$STATE_FILE"
+}
+
+clear_selected_network() {
+  : > "$STATE_FILE"
+}
+
+wifi_state() {
+  if [ "$(nmcli radio wifi 2>/dev/null || printf disabled)" = "enabled" ]; then
+    printf 'ON\n'
+  else
+    printf 'OFF\n'
+  fi
+}
+
+airplane_state() {
+  if [ "$(nmcli networking 2>/dev/null || printf disabled)" = "enabled" ]; then
+    printf 'OFF\n'
+  else
+    printf 'ON\n'
+  fi
+}
+
+nearby_count() {
+  nmcli -t -f SSID device wifi list 2>/dev/null | awk 'NF && !seen[$0]++ {count++} END {print count+0}'
+}
+
+scan_networks() {
+  nmcli device wifi rescan >/dev/null 2>&1 || true
+}
+
+toggle_wifi() {
+  if [ "$(wifi_state)" = "ON" ]; then
+    nmcli radio wifi off
+    dunstify -a eww "Wi-Fi disabled"
+  else
+    nmcli radio wifi on
+    nmcli device wifi rescan >/dev/null 2>&1 || true
+    dunstify -a eww "Wi-Fi enabled"
+  fi
+}
+
+open_settings() {
+  if command -v nm-connection-editor >/dev/null 2>&1; then
+    nohup nm-connection-editor >/dev/null 2>&1 &
+  elif command -v networkmanager_dmenu >/dev/null 2>&1; then
+    nohup networkmanager_dmenu >/dev/null 2>&1 &
+  else
+    dunstify -a eww "No network settings app found"
+  fi
+}
+
+disconnect_wifi() {
+  local device
+  device=$(nmcli -t -f DEVICE,TYPE,STATE device status 2>/dev/null | awk -F: '$2=="wifi" && $3=="connected" {print $1; exit}')
+  if [ -n "$device" ]; then
+    nmcli device disconnect "$device"
+    dunstify -a eww "Wi-Fi disconnected"
+  else
+    dunstify -a eww "No active Wi-Fi connection"
+  fi
+}
+
+toggle_airplane() {
+  if [ "$(airplane_state)" = "ON" ]; then
+    nmcli networking on
+    dunstify -a eww "Airplane mode disabled"
+  else
+    nmcli networking off
+    dunstify -a eww "Airplane mode enabled"
+  fi
+}
+
+connect_wifi() {
+  local encoded_ssid ssid password
+  encoded_ssid=${1:-}
+  [ -n "$encoded_ssid" ] || exit 1
+  ssid=$(printf '%s' "$encoded_ssid" | base64 -d)
+  password=${2:-}
+
+  if nmcli connection up "$ssid" >/dev/null 2>&1; then
+    dunstify -a eww "Connected to $ssid"
+    clear_selected_network
+    exit 0
+  fi
+
+  if [ -n "$password" ]; then
+    if nmcli device wifi connect "$ssid" password "$password" >/dev/null 2>&1; then
+      dunstify -a eww "Connected to $ssid"
+      clear_selected_network
+    else
+      dunstify -a eww "Could not connect to $ssid"
+      exit 1
+    fi
+  elif nmcli device wifi connect "$ssid" >/dev/null 2>&1; then
+    dunstify -a eww "Connected to $ssid"
+    clear_selected_network
+  else
+    dunstify -a eww "Could not connect to $ssid" "If it needs a password, connect once from NetworkManager."
+    exit 1
+  fi
+}
+
+case "${1:-}" in
+  --state) wifi_state ;;
+  --airplane-state) airplane_state ;;
+  --connected-name) connected_name ;;
+  --connected-meta) connected_meta ;;
+  --nearby-count) nearby_count ;;
+  --list) wifi_rows ;;
+  --selected) selected_network ;;
+  --select) shift; select_network "${1:-}" ;;
+  --scan) scan_networks ;;
+  --toggle-wifi) toggle_wifi ;;
+  --settings) open_settings ;;
+  --disconnect) disconnect_wifi ;;
+  --toggle-airplane) toggle_airplane ;;
+  --connect) shift; connect_wifi "${1:-}" ;;
+  *) printf 'usage: %s [--state|--airplane-state|--connected-name|--connected-meta|--nearby-count|--list|--selected|--select|--scan|--toggle-wifi|--settings|--disconnect|--toggle-airplane|--connect]\n' "$0" ;;
+esac

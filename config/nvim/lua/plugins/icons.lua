@@ -17,6 +17,7 @@ return {
       },
       override_by_extension = {
         astro = { icon = "", color = "#FE5D02", name = "Astro" },
+        justfile = { icon = "󰟄", color = "#ef5350", name = "Justfile" },
         javascript = { icon = "" },
         typescript = { icon = "󰛦" },
         lockb = { icon = "", color = "#FBF0DF", name = "bun-lock" },

@@ -135,6 +135,7 @@ in
     # ─────────────────────────────────────────────────────────
     set -as terminal-features ",xterm-256color:RGB"
     set -g extended-keys on
+    set -g extended-keys-format csi-u
 
     set -g pane-active-border-style 'fg=magenta,bg=default'
     set -g pane-border-style 'fg=brightblack,bg=default'
@@ -175,6 +176,9 @@ in
     bind -n S-Right next-window
     bind -n M-h previous-window
     bind -n M-l next-window
+${lib.concatStringsSep "\n" (map (slot: ''
+    bind -n M-${toString slot} select-window -t :=${toString slot}
+'') (lib.range 1 9))}
 
     # ─────────────────────────────────────────────────────────
     #  Window Moving (Ctrl + Shift + Arrow)
@@ -241,6 +245,10 @@ in
     # ─────────────────────────────────────────────────────────
     # Don't exit tmux when closing last session
     set -g detach-on-destroy off
+
+${lib.concatStringsSep "\n" (lib.zipListsWith (slot: symbol: ''
+    bind -n M-${symbol} run-shell "sesh list -t | awk -v current='#{session_name}' '$0 != current { slot++; if (slot == ${toString slot}) { print; exit } }' | xargs -r -I{} sesh connect '{}'"
+'') (lib.range 1 9) [ "!" "@" "#" "$" "%" "^" "&" "*" "(" ])}
 
     # Ctrl-t = open sesh session picker via television popup
     bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'

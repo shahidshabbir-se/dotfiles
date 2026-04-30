@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.0.13";
+  version = "0.0.21";
   pname = "t3code";
 
   desktopEntry = pkgs.writeText "t3code.desktop" ''
@@ -28,7 +28,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
-    sha256 = "0mwiksl1rcl5d1cmjn9g3iaip84p5lr2w2sa3jav3cc7ws3qhwm0";
+    sha256 = "sha256-eQCfskpl+JJOyaYY7ogYCi0ZCuWNRcEpseWMniS/LCQ=";
     name = "t3code-${version}.AppImage";
   };
 
@@ -104,7 +104,7 @@ pkgs.stdenv.mkDerivation {
 
     # Wrap the main binary
     mkdir -p $out/bin
-    makeWrapper $out/opt/t3code/t3-code-desktop $out/bin/t3code \
+    makeWrapper $out/opt/t3code/t3code $out/bin/t3code \
       --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
       --run 'export PATH="$HOME/.local/bin:$PATH"' \
       --add-flags "--no-sandbox"
@@ -115,7 +115,7 @@ pkgs.stdenv.mkDerivation {
 
     # Icon
     mkdir -p $out/share/pixmaps
-    cp $out/opt/t3code/t3-code-desktop.png $out/share/pixmaps/t3code.png
+    cp $out/opt/t3code/usr/share/icons/hicolor/1024x1024/apps/t3code.png $out/share/pixmaps/t3code.png
 
     runHook postInstall
   '';
