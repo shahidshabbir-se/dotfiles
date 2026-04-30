@@ -2,7 +2,8 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ pkgs, inputs, ... }:
+# { pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -15,6 +16,12 @@
     localsend = {
       enable = true;
       openFirewall = true;
+      package = pkgs.localsend.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace lib/config/theme.dart \
+            --replace-fail "    fontFamily = null;" "    fontFamily = checkPlatform([TargetPlatform.linux]) ? 'SF Pro Display' : null;"
+        '';
+      });
     };
 
     dconf.enable = true;
@@ -27,136 +34,212 @@
     xfconf.enable = true;
     zsh.enable = true;
   };
-  # programs.nix-ld.libraries = with pkgs; [
-  # ];
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  services = {
+    xserver = {
+      # programs.nix-ld.libraries = with pkgs; [
+      # ];
+      videoDrivers = [ "amdgpu" ];
 
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  hardware.bluetooth.settings = {
-    General = {
-      Enable = "Source,Sink,Media,Socket";
-      Experimental = true;
+      enable = true;
+
+      # programs.hyprland.enable = true;
+
+      # i3 (X11 session for Upwork compatibility)
+      windowManager.i3 = {
+        enable = true;
+        extraPackages = with pkgs; [
+          i3lock-color
+          i3status
+          numlockx
+          xclip
+          xsel
+          maim
+          xdotool
+          xorg.xrandr
+          arandr
+          autorandr
+          picom
+          feh
+          dunst
+          polybar
+          haskellPackages.greenclip
+        ];
+      };
+    };
+    openssh.enable = true;
+    tailscale.enable = true;
+
+    # networking.hostName = "nixos"; # Define your hostname.
+    # Pick only one of the below networking options.
+    # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+    # Set your time zone.
+    # time.timeZone = "Europe/Amsterdam";
+
+    # Configure network proxy if necessary
+    # networking.proxy.default = "http://user:password@proxy:port/";
+    # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+    # Select internationalisation properties.
+    # i18n.defaultLocale = "en_US.UTF-8";
+    # console = {
+    #   font = "Lat2-Terminus16";
+    #   keyMap = "us";
+    #   useXkbConfig = true; # use xkb.options in tty.
+    # };
+
+    # Enable the X11 windowing system.
+    # services.xserver.enable = true;
+
+    tumbler.enable = true;
+    gvfs.enable = true;
+    blueman.enable = true;
+    power-profiles-daemon.enable = true;
+    pulseaudio.enable = false;
+
+    pipewire = {
+      enable = true;
+      pulse.enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      jack.enable = true;
+      wireplumber.extraConfig = {
+        "10-bluez" = {
+          "monitor.bluez.properties" = {
+            "bluez5.enable-sbc-xq" = true;
+            "bluez5.enable-msbc" = true;
+            "bluez5.enable-hw-volume" = true;
+            "bluez5.roles" = [
+              "a2dp_sink"
+              "a2dp_source"
+              "bap_sink"
+              "bap_source"
+              "hsp_hs"
+              "hsp_ag"
+              "hfp_hf"
+              "hfp_ag"
+            ];
+          };
+        };
+        "20-jieli-usb-speaker" = {
+          "monitor.alsa.rules" = [
+            {
+              matches = [
+                { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; }
+              ];
+              actions = {
+                update-props = {
+                  "api.alsa.soft-mixer" = true;
+                  "device.profile" = "output:analog-stereo";
+                  "priority.session" = 1500; # Lower than BT so BT takes over when connected
+                };
+              };
+            }
+          ];
+        };
+        "30-bluetooth-priority" = {
+          "monitor.bluez.rules" = [
+            {
+              matches = [ { "device.name" = "~bluez_card.*"; } ];
+              actions = {
+                update-props = {
+                  "priority.session" = 2000; # Highest — auto-switches to BT when connected
+                };
+              };
+            }
+          ];
+        };
+      };
+    };
+
+    # Restart WirePlumber when USB speaker is plugged in so it initializes on boot
+    udev.extraRules = ''
+      SUBSYSTEM=="sound", ACTION=="add", ATTRS{idVendor}=="3654", ATTRS{idProduct}=="4755", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="wireplumber-usb-reset.service"
+    '';
+
+    libinput.enable = true;
+    libinput.touchpad.accelSpeed = "1.0";
+    upower.enable = true;
+    keyd = {
+      enable = true;
+      keyboards = {
+        default = {
+          ids = [ "*" ];
+          settings = {
+            main = { };
+            otherlayer = { };
+          };
+          extraConfig = ''
+            [ids]
+            *
+
+            [main]
+            capslock = overload(control, esc)
+            esc = capslock
+            ctrl+equal = page_up
+          '';
+        };
+      };
+    };
+
+    displayManager.sddm = {
+      enable = true;
+      package = pkgs.kdePackages.sddm;
+      autoNumlock = true;
+      theme = "sddm-astronaut-theme";
+      # wayland = {
+      #   enable = true;
+      #   compositor = "weston";
+      # };
+      extraPackages = with pkgs; [
+        kdePackages.qtsvg
+        kdePackages.qtvirtualkeyboard
+        kdePackages.qtmultimedia
+      ];
     };
   };
-
-  networking.hostName = "nixos";
-  networking.firewall.allowedTCPPorts = [ 4096 ];
-  networking.networkmanager.enable = true;
-  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
-
-  # Use GRUB for dual-boot with Windows
-  boot.loader.systemd-boot.enable = false;
-  boot.loader.grub = {
-    enable = true;
-    device = "nodev"; # For EFI systems
-    efiSupport = true;
-    useOSProber = true; # Detect Windows automatically
-    theme = pkgs.catppuccin-grub;
-    gfxmodeEfi = "1920x1080"; # Adjust to your screen resolution
+  hardware = {
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Enable = "Source,Sink,Media,Socket";
+          Experimental = true;
+        };
+      };
+    };
   };
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot";
-  services.openssh.enable = true;
-  services.tailscale.enable = true;
-
-  # networking.hostName = "nixos"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Set your time zone.
-  # time.timeZone = "Europe/Amsterdam";
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
-
-  # Enable the X11 windowing system.
-  # services.xserver.enable = true;
-
-  services.tumbler.enable = true;
-  services.gvfs.enable = true;
+  networking = {
+    hostName = "nixos";
+    firewall.allowedTCPPorts = [ 4096 ];
+    networkmanager.enable = true;
+    networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
+  };
+  boot = {
+    loader = {
+      # Use GRUB for dual-boot with Windows
+      systemd-boot.enable = false;
+      grub = {
+        enable = true;
+        device = "nodev"; # For EFI systems
+        efiSupport = true;
+        useOSProber = true; # Detect Windows automatically
+        theme = pkgs.catppuccin-grub;
+        gfxmodeEfi = "1920x1080"; # Adjust to your screen resolution
+      };
+      efi.canTouchEfiVariables = true;
+      efi.efiSysMountPoint = "/boot";
+    };
+  };
   time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
-
-  services.xserver.enable = true;
-  services.blueman.enable = true;
-  services.power-profiles-daemon.enable = true;
   security.sudo = {
     enable = true;
     wheelNeedsPassword = false;
   };
   security.rtkit.enable = true;
-  services.pulseaudio.enable = false;
-
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    jack.enable = true;
-    wireplumber.extraConfig = {
-      "10-bluez" = {
-        "monitor.bluez.properties" = {
-          "bluez5.enable-sbc-xq" = true;
-          "bluez5.enable-msbc" = true;
-          "bluez5.enable-hw-volume" = true;
-          "bluez5.roles" = [
-            "a2dp_sink"
-            "a2dp_source"
-            "bap_sink"
-            "bap_source"
-            "hsp_hs"
-            "hsp_ag"
-            "hfp_hf"
-            "hfp_ag"
-          ];
-        };
-      };
-      "20-jieli-usb-speaker" = {
-        "monitor.alsa.rules" = [
-          {
-            matches = [
-              { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; }
-            ];
-            actions = {
-              update-props = {
-                "api.alsa.soft-mixer" = true;
-                "device.profile" = "output:analog-stereo";
-                "priority.session" = 1500; # Lower than BT so BT takes over when connected
-              };
-            };
-          }
-        ];
-      };
-      "30-bluetooth-priority" = {
-        "monitor.bluez.rules" = [
-          {
-            matches = [ { "device.name" = "~bluez_card.*"; } ];
-            actions = {
-              update-props = {
-                "priority.session" = 2000; # Highest — auto-switches to BT when connected
-              };
-            };
-          }
-        ];
-      };
-    };
-  };
-
-  # Restart WirePlumber when USB speaker is plugged in so it initializes on boot
-  services.udev.extraRules = ''
-    SUBSYSTEM=="sound", ACTION=="add", ATTRS{idVendor}=="3654", ATTRS{idProduct}=="4755", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="wireplumber-usb-reset.service"
-  '';
 
   systemd.user.services.wireplumber-usb-reset = {
     description = "Restart WirePlumber when USB speaker connects";
@@ -166,10 +249,6 @@
       ExecStart = "${pkgs.systemd}/bin/systemctl --user restart wireplumber";
     };
   };
-
-  services.libinput.enable = true;
-  services.libinput.touchpad.accelSpeed = "1.0";
-  services.upower.enable = true;
 
   users.users.shahid = {
     isNormalUser = true;
@@ -225,31 +304,18 @@
       };
     })
   ];
-
-  # programs.hyprland.enable = true;
-
-  # i3 (X11 session for Upwork compatibility)
-  services.xserver.windowManager.i3 = {
-    enable = true;
-    extraPackages = with pkgs; [
-      i3lock-color
-      i3status
-      numlockx
-      xclip
-      xsel
-      maim
-      xdotool
-      xorg.xrandr
-      arandr
-      autorandr
-      picom
-      feh
-      dunst
-      polybar
-      haskellPackages.greenclip
-    ];
-  };
   virtualisation.docker.enable = true;
+  fonts = {
+    fontconfig = {
+      enable = true;
+
+      defaultFonts = {
+        sansSerif = [ "SF Pro Display" ];
+        serif = [ "SF Pro Display" ];
+        monospace = [ "SF Mono" ];
+      };
+    };
+  };
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.lilex
@@ -274,27 +340,6 @@
       '';
     })
   ];
-  services.keyd = {
-    enable = true;
-    keyboards = {
-      default = {
-        ids = [ "*" ];
-        settings = {
-          main = { };
-          otherlayer = { };
-        };
-        extraConfig = ''
-          [ids]
-          *
-
-          [main]
-          capslock = overload(control, esc)
-          esc = capslock
-          ctrl+equal = page_up
-        '';
-      };
-    };
-  };
 
   # programs.hyprland.xwayland.enable = true;
 
@@ -305,22 +350,6 @@
   };
 
   nix.settings.auto-optimise-store = true;
-
-  services.displayManager.sddm = {
-    enable = true;
-    package = pkgs.kdePackages.sddm;
-    autoNumlock = true;
-    theme = "sddm-astronaut-theme";
-    # wayland = {
-    #   enable = true;
-    #   compositor = "weston";
-    # };
-    extraPackages = with pkgs; [
-      kdePackages.qtsvg
-      kdePackages.qtvirtualkeyboard
-      kdePackages.qtmultimedia
-    ];
-  };
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";

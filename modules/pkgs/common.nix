@@ -12,6 +12,8 @@ with pkgs;
   gh-dash
   postgresql
   redis
+  restish
+  uv
   k6
   nixfmt
   go
@@ -65,10 +67,10 @@ with pkgs;
   gitleaks
   openssl
 
-  # Media
-  mpd
-  mpv
-  yt-dlp
+  # # Media
+  # mpd
+  # mpv
+  # yt-dlp
 
   # Night Light
   redshift

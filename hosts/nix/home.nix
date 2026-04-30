@@ -25,10 +25,26 @@ let
 
   inherit (pkgs.stdenv.hostPlatform) system;
 
-  # unstable = import inputs.unstable {
-  #   inherit system;
-  #   config.allowUnfree = true;
-  # };
+  unstable = import inputs.unstable {
+    inherit system;
+    config.allowUnfree = true;
+  };
+
+  cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
+  cursorSize = if device.type == "laptop" then 48 else 24;
+  gtkTheme = "catppuccin-mocha-blue-standard";
+  wpsOffice = unstable.wpsoffice.overrideAttrs (old: {
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+    postFixup = (old.postFixup or "") + ''
+      for i in wps wpp et wpspdf; do
+        wrapProgram "$out/bin/$i" \
+          --set GTK_THEME "${gtkTheme}" \
+          --set QT_QPA_PLATFORMTHEME gtk3 \
+          --set XCURSOR_THEME "${cursorTheme}" \
+          --set XCURSOR_SIZE "${toString cursorSize}"
+      done
+    '';
+  });
 
   # Allow unfree packages for corefonts
   # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "corefonts" ];
@@ -39,7 +55,7 @@ in
     ../../modules/node.nix
     ../../modules/i3.nix
     ../../modules/hyprland.nix
-    # ../../modules/cliproxyapi.nix
+    ../../modules/cliproxyapi.nix
     ../../modules/television.nix
   ];
   home = {
@@ -53,16 +69,16 @@ in
           x11.enable = true;
           gtk.enable = true;
           package = import ../../modules/banana-cursor.nix { inherit pkgs; };
-          size = 48;
-          name = "Banana";
+          size = cursorSize;
+          name = cursorTheme;
         }
       else
         {
           x11.enable = true;
           gtk.enable = true;
           package = pkgs.catppuccin-cursors.mochaDark;
-          size = 24;
-          name = "catppuccin-mocha-dark-cursors";
+          size = cursorSize;
+          name = cursorTheme;
         };
 
     username = "shahid";
@@ -72,13 +88,17 @@ in
     packages =
       (import ../../modules/pkgs/common.nix { inherit pkgs; })
       # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/droid.nix { inherit pkgs lib; }) ]
       # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
-      # ++ (with unstable; [
-      #   # zed-editor
-      #   # jetbrains.rust-rover
-      # ])
+      ++ [ wpsOffice ]
       ++ (with pkgs; [
         git-filter-repo
+        vscode
+        upwork
+        image-roll
+        qbittorrent
+        vlc
+        libnotify
         wmctrl
         chromium
         matugen
@@ -143,7 +163,7 @@ in
     enable = true;
     configFile = {
       nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-      zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
+      # zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
       yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
       eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
       rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
@@ -260,10 +280,10 @@ in
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
-      gtk-theme = "catppuccin-mocha-blue-standard";
+      gtk-theme = gtkTheme;
       icon-theme = "Papirus-Dark";
-      cursor-theme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
-      cursor-size = if device.type == "laptop" then 48 else 24;
+      cursor-theme = cursorTheme;
+      cursor-size = cursorSize;
       font-name = "SF Pro Display 10";
       document-font-name = "SF Pro Display 10";
       monospace-font-name = "JetBrainsMono Nerd Font 10";
@@ -273,7 +293,7 @@ in
   gtk = {
     enable = true;
     theme = {
-      name = "catppuccin-mocha-blue-standard";
+      name = gtkTheme;
       package = pkgs.catppuccin-gtk.override {
         variant = "mocha";
         accents = [ "blue" ];

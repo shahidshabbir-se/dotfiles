@@ -7,7 +7,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 {
-  config,
+  # config,
   pkgs,
   lib,
   device,
@@ -17,7 +17,7 @@
 let
   homeDirectory = "/home/shahid";
   browser = "zen-beta";
-  inherit (config.lib.file) mkOutOfStoreSymlink;
+  # inherit (config.lib.file) mkOutOfStoreSymlink;
 
   mod = "Mod4";
   terminal = "ghostty";
@@ -25,69 +25,82 @@ let
   menu = "${homeDirectory}/dotfiles/config/rofi/app-menu-x11-launch.sh";
 in
 {
-  # ───────────────────────────────────────────────
-  # ▶ i3 / X11 Packages
-  # ───────────────────────────────────────────────
-  home.packages = with pkgs; [
-    # Window management
-    i3lock-color
+  home = {
+    # ───────────────────────────────────────────────
+    # ▶ i3 / X11 Packages
+    # ───────────────────────────────────────────────
+    packages = with pkgs; [
+      # Window management
+      i3lock-color
 
-    # Screenshot / Clipboard
-    maim
-    xclip
-    xsel
+      # Screenshot / Clipboard
+      maim
+      xclip
+      xsel
 
-    # X11 utilities
-    xdotool
-    xorg.xrandr
-    numlockx
-    autorandr
-    bc
-    jq
+      # X11 utilities
+      xdotool
+      xorg.xrandr
+      numlockx
+      autorandr
+      bc
+      jq
 
-    # Clipboard manager
-    haskellPackages.greenclip
+      # Clipboard manager
+      haskellPackages.greenclip
 
-    # GTK bridge for X11
-    xsettingsd
+      # GTK bridge for X11
+      xsettingsd
 
-    # Touchpad gestures / mouse bindings
-    libinput-gestures
-    xbindkeys
+      # Touchpad gestures / mouse bindings
+      libinput-gestures
+      xbindkeys
 
-    # Image viewer
-    feh
+      # Image viewer
+      feh
 
-    # Media / Audio / Brightness
-    playerctl
-    brightnessctl
-    alsa-utils
+      # Media / Audio / Brightness
+      playerctl
+      brightnessctl
+      alsa-utils
 
-    # Rofi launcher
-    rofi
-    rofi-bluetooth
+      # Rofi launcher
+      rofi
+      rofi-bluetooth
 
-    # Notifications
-    libnotify
+      # Notifications
+      libnotify
 
-    # Bar / Widgets
-    eww
+      # Bar / Widgets
+      eww
 
-    # Audio visualizer
-    glava
-  ];
+      # Audio visualizer
+      glava
+    ];
 
-  # ───────────────────────────────────────────────
-  # ▶ GLava (audio visualizer)
-  # ───────────────────────────────────────────────
-  home.activation.glavaConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    # Copy default shaders if missing, then symlink our overrides
-    if [ ! -d "${homeDirectory}/.config/glava/bars" ]; then
-      ${pkgs.glava}/bin/glava --copy-config 2>/dev/null || true
-    fi
-    ln -sf ${homeDirectory}/dotfiles/config/glava/rc.glsl ${homeDirectory}/.config/glava/rc.glsl
-    ln -sf ${homeDirectory}/dotfiles/config/glava/bars.glsl ${homeDirectory}/.config/glava/bars.glsl
-  '';
+    # ───────────────────────────────────────────────
+    # ▶ GLava (audio visualizer)
+    # ───────────────────────────────────────────────
+    activation.glavaConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      # Copy default shaders if missing, then symlink our overrides
+      if [ ! -d "${homeDirectory}/.config/glava/bars" ]; then
+        ${pkgs.glava}/bin/glava --copy-config 2>/dev/null || true
+      fi
+      ln -sf ${homeDirectory}/dotfiles/config/glava/rc.glsl ${homeDirectory}/.config/glava/rc.glsl
+      ln -sf ${homeDirectory}/dotfiles/config/glava/bars.glsl ${homeDirectory}/.config/glava/bars.glsl
+    '';
+
+    # ───────────────────────────────────────────────
+    # ▶ xbindkeys (Super+scroll to switch workspaces)
+    # ───────────────────────────────────────────────
+    file.".xbindkeysrc".text = ''
+      "i3-msg workspace prev"
+        Mod4 + b:4
+
+      "i3-msg workspace next"
+        Mod4 + b:5
+    '';
+  };
 
   # ───────────────────────────────────────────────
   # ▶ libinput-gestures (touchpad 3-finger swipe)
@@ -95,17 +108,6 @@ in
   xdg.configFile."libinput-gestures.conf".text = ''
     gesture swipe right 3 i3-msg workspace prev
     gesture swipe left 3 i3-msg workspace next
-  '';
-
-  # ───────────────────────────────────────────────
-  # ▶ xbindkeys (Super+scroll to switch workspaces)
-  # ───────────────────────────────────────────────
-  home.file.".xbindkeysrc".text = ''
-    "i3-msg workspace prev"
-      Mod4 + b:4
-
-    "i3-msg workspace next"
-      Mod4 + b:5
   '';
 
   # ───────────────────────────────────────────────
@@ -124,14 +126,14 @@ in
     Xft/Antialias 1
     Xft/Hinting 1
     Xft/HintStyle "hintfull"
-    Xft/DPI ${builtins.toString (112 * 1024)}
+    Xft/DPI ${builtins.toString (144 * 1024)}
   '';
 
   # ───────────────────────────────────────────────
   # ▶ X11 DPI / Xresources (scaling for i3)
   # ───────────────────────────────────────────────
   xresources.properties = {
-    "Xft.dpi" = 112;
+    "Xft.dpi" = 144;
     "Xft.autohint" = 0;
     "Xft.lcdfilter" = "lcddefault";
     "Xft.hintstyle" = "hintfull";
@@ -158,7 +160,7 @@ in
 
     config = {
       modifier = mod;
-      terminal = terminal;
+      inherit terminal;
       defaultWorkspace = "workspace number 1";
 
       fonts = {
@@ -260,7 +262,8 @@ in
         "Ctrl+Shift+Escape" = "exec ghostty --title=btop -e btop";
         "${mod}+b" = "workspace number 2; exec ${browser}";
         "${mod}+Shift+b" = "workspace number 5; exec ${browser} --private-window";
-        "${mod}+x" = "exec code";
+        "${mod}+w" = "workspace number 3; exec ";
+        # "${mod}+x" = "exec code";
         "${mod}+o" = "exec obsidian";
         "${mod}+Mod1+p" = "exec systemctl poweroff";
         "${mod}+Mod1+r" = "exec systemctl reboot";
@@ -471,7 +474,7 @@ in
     };
 
     extraConfig = ''
-      exec --no-startup-id xrandr --dpi 112 --output HDMI-A-0 --mode 1920x1080 --rate 200 --primary --output eDP-1 --mode 1920x1080 --rate 60 --right-of HDMI-A-0
+      exec --no-startup-id xrandr --dpi 144 --output DisplayPort-0 --mode 3440x1440 --rate 240 --primary --set "max bpc" 16 --output HDMI-A-0 --off
 
       focus_follows_mouse yes
 
