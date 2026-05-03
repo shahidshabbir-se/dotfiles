@@ -474,7 +474,8 @@ in
     };
 
     extraConfig = ''
-      exec --no-startup-id xrandr --dpi 144 --output DisplayPort-0 --mode 3440x1440 --rate 240 --primary --set "max bpc" 16 --output HDMI-A-0 --off
+      # Monitor from EDID: VG34WQML5A on DisplayPort-0 (3440x1440, max 240Hz, VRR-capable, max bpc range 8-16)
+      exec --no-startup-id xrandr --dpi 144 --output DisplayPort-0 --primary --mode 3440x1440 --rate 240 --set "max bpc" 16 --set "TearFree" on --set "scaling mode" None --output HDMI-A-0 --off --output DisplayPort-1 --off --output DisplayPort-2 --off
 
       focus_follows_mouse yes
 

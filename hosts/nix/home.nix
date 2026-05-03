@@ -6,14 +6,13 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  device,
-  atuin,
-  ...
+{ config
+, pkgs
+, lib
+, inputs
+, device
+, atuin
+, ...
 }:
 
 let
@@ -33,18 +32,18 @@ let
   cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
   cursorSize = if device.type == "laptop" then 48 else 24;
   gtkTheme = "catppuccin-mocha-blue-standard";
-  wpsOffice = unstable.wpsoffice.overrideAttrs (old: {
-    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
-    postFixup = (old.postFixup or "") + ''
-      for i in wps wpp et wpspdf; do
-        wrapProgram "$out/bin/$i" \
-          --set GTK_THEME "${gtkTheme}" \
-          --set QT_QPA_PLATFORMTHEME gtk3 \
-          --set XCURSOR_THEME "${cursorTheme}" \
-          --set XCURSOR_SIZE "${toString cursorSize}"
-      done
-    '';
-  });
+  # wpsOffice = unstable.wpsoffice.overrideAttrs (old: {
+  #   nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+  #   postFixup = (old.postFixup or "") + ''
+  #     for i in wps wpp et wpspdf; do
+  #       wrapProgram "$out/bin/$i" \
+  #         --set GTK_THEME "${gtkTheme}" \
+  #         --set QT_QPA_PLATFORMTHEME gtk3 \
+  #         --set XCURSOR_THEME "${cursorTheme}" \
+  #         --set XCURSOR_SIZE "${toString cursorSize}"
+  #     done
+  #   '';
+  # });
 
   # Allow unfree packages for corefonts
   # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "corefonts" ];
@@ -90,17 +89,19 @@ in
       # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       # ++ [ (import ../../modules/pkgs/droid.nix { inherit pkgs lib; }) ]
       # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
-      ++ [ wpsOffice ]
+      # ++ [ wpsOffice ]
       ++ (with pkgs; [
         git-filter-repo
-        vscode
+        unstable.zed-editor-fhs
         upwork
+        cava
         image-roll
         qbittorrent
         vlc
         libnotify
         wmctrl
         chromium
+        onlyoffice-desktopeditors
         matugen
         corefonts
         fastfetch
@@ -129,7 +130,8 @@ in
     # ▶ Developer Workspace
     # ───────────────────────────────────────────────
     activation.createDevWorkspace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      mkdir -p ${homeDirectory}/Developer/{freelance,personal,opensource,learning}
+      # mkdir -p ${homeDirectory}/Developer/{freelance,personal,opensource,learning}
+      # mkdir -p ${homeDirectory}/Projects}
 
       # Auto-clone repos if not present (SSH key decrypted via age)
       export GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh -o StrictHostKeyChecking=accept-new"
@@ -163,63 +165,63 @@ in
     enable = true;
     configFile = {
       nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-      # zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
+      zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
       yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
       eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
       rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";
     };
 
-    desktopEntries = {
-      whatsapp = {
-        name = "Whatsapp";
-        genericName = "Messaging";
-        comment = "Whatsapp Web";
-        icon = "whatsapp";
-        exec = "chromium --disable-features=UseOzonePlatform --app=https://web.whatsapp.com";
-        terminal = false;
-        categories = [
-          "Network"
-          "Chat"
-        ];
-      };
-
-      microsoft-excel = {
-        name = "Microsoft Excel";
-        genericName = "Spreadsheet";
-        comment = "Microsoft Excel Online";
-        icon = "ms-excel";
-        exec = "chromium --disable-features=UseOzonePlatform --app=https://excel.cloud.microsoft/";
-        terminal = false;
-        categories = [
-          "Office"
-          "Spreadsheet"
-        ];
-      };
-      microsoft-word = {
-        name = "Microsoft Word";
-        genericName = "Word Processor";
-        comment = "Microsoft Word Online";
-        icon = "ms-word";
-        exec = "chromium --disable-features=UseOzonePlatform --app=https://word.cloud.microsoft/";
-        terminal = false;
-        categories = [
-          "Office"
-          "WordProcessor"
-        ];
-      };
-      microsoft-powerpoint = {
-        name = "Microsoft PowerPoint";
-        genericName = "Presentation";
-        comment = "Microsoft PowerPoint Online";
-        icon = "ms-powerpoint";
-        exec = "chromium --disable-features=UseOzonePlatform --app=https://powerpoint.cloud.microsoft/";
-        terminal = false;
-        categories = [
-          "Office"
-          "Presentation"
-        ];
-      };
-    };
+    # desktopEntries = {
+    #   whatsapp = {
+    #     name = "Whatsapp";
+    #     genericName = "Messaging";
+    #     comment = "Whatsapp Web";
+    #     icon = "whatsapp";
+    #     exec = "chromium --disable-features=UseOzonePlatform --app=https://web.whatsapp.com";
+    #     terminal = false;
+    #     categories = [
+    #       "Network"
+    #       "Chat"
+    #     ];
+    #   };
+    #
+    #   microsoft-excel = {
+    #     name = "Microsoft Excel";
+    #     genericName = "Spreadsheet";
+    #     comment = "Microsoft Excel Online";
+    #     icon = "ms-excel";
+    #     exec = "chromium --disable-features=UseOzonePlatform --app=https://excel.cloud.microsoft/";
+    #     terminal = false;
+    #     categories = [
+    #       "Office"
+    #       "Spreadsheet"
+    #     ];
+    #   };
+    #   microsoft-word = {
+    #     name = "Microsoft Word";
+    #     genericName = "Word Processor";
+    #     comment = "Microsoft Word Online";
+    #     icon = "ms-word";
+    #     exec = "chromium --disable-features=UseOzonePlatform --app=https://word.cloud.microsoft/";
+    #     terminal = false;
+    #     categories = [
+    #       "Office"
+    #       "WordProcessor"
+    #     ];
+    #   };
+    #   microsoft-powerpoint = {
+    #     name = "Microsoft PowerPoint";
+    #     genericName = "Presentation";
+    #     comment = "Microsoft PowerPoint Online";
+    #     icon = "ms-powerpoint";
+    #     exec = "chromium --disable-features=UseOzonePlatform --app=https://powerpoint.cloud.microsoft/";
+    #     terminal = false;
+    #     categories = [
+    #       "Office"
+    #       "Presentation"
+    #     ];
+    #   };
+    # };
 
     mimeApps = {
       enable = true;
@@ -234,6 +236,12 @@ in
         "application/xhtml+xml" = [ "zen-beta.desktop" ];
         "application/x-extension-xhtml" = [ "zen-beta.desktop" ];
         "application/x-extension-xht" = [ "zen-beta.desktop" ];
+        "application/pdf" = [ "zen-beta.desktop" ];
+        "image/png" = [ "com.github.weclaw1.ImageRoll.desktop" ];
+        "image/jpeg" = [ "com.github.weclaw1.ImageRoll.desktop" ];
+        "image/gif" = [ "com.github.weclaw1.ImageRoll.desktop" ];
+        "image/webp" = [ "com.github.weclaw1.ImageRoll.desktop" ];
+        "image/bmp" = [ "com.github.weclaw1.ImageRoll.desktop" ];
       };
     };
   };

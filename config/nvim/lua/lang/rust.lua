@@ -74,7 +74,6 @@ M.formatters = {
 }
 
 M.tools = {
-	"rustfmt",
 	"codelldb", -- Debugger
 }
 

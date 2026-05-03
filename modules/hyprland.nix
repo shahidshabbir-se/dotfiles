@@ -6,7 +6,14 @@
 # ║    programs.hyprland.xwayland.enable = true;                ║
 # ╚══════════════════════════════════════════════════════════════╝
 
-{ config, pkgs, lib, inputs, device, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  device,
+  ...
+}:
 
 let
   homeDirectory = "/home/shahid";
@@ -14,9 +21,15 @@ let
   inherit (config.lib.file) mkOutOfStoreSymlink;
 
   d = device.display;
+  desktopRefreshRate = if device.type == "desktop" then 240 else d.refreshRate;
   monitorLine =
-    "${d.connector},${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale}"
-    + (if device.type == "desktop" then ",bitdepth,10,cm,hdr,sdrbrightness,1.2,sdrsaturation,0.98,vrr,1" else "");
+    "${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale}"
+    + (
+      if device.type == "desktop" then
+        ",bitdepth,10,cm,hdr,sdrbrightness,1.25,vrr,0"
+      else
+        ""
+    );
 in
 {
   # ───────────────────────────────────────────────
@@ -91,6 +104,7 @@ in
       ];
 
       exec-once = [
+        "pkill -x glava 2>/dev/null || true"
         "swww-daemon &"
         "eww --config ~/.config/eww daemon &"
         "waybar &"
@@ -104,11 +118,11 @@ in
         "xdg-mime default vlc.desktop audio/mpeg"
         "xdg-mime default vlc.desktop audio/x-wav"
         "xdg-mime default vlc.desktop audio/flac"
-        "xdg-mime default feh.desktop image/png"
-        "xdg-mime default feh.desktop image/jpeg"
-        "xdg-mime default feh.desktop image/gif"
-        "xdg-mime default feh.desktop image/webp"
-        "xdg-mime default feh.desktop image/bmp"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/png"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/jpeg"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/gif"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/webp"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/bmp"
         # "hyprctl setcursor Banana 36"
         "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
         ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl dispatch togglefloating "address:0x$addr" && hyprctl dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
@@ -169,13 +183,14 @@ in
       ];
 
       animation = [
-        "windowsIn,1,5,easeOutBack,popin"
-        "windowsOut,1,5,easeInBack,popin"
-        "fadeIn,1,5,easeInOutCubic"
-        "fadeOut,1,10,easeInCubic"
-        "workspaces,1,4,easeInOutCubic,slide"
-        "layersIn, 1, 5, easeInOutCubic, fade"
-        "layersOut, 1, 3, easeInCubic, fade"
+        "global,1,2,default"
+        "windowsIn,1,2,easeOutBack,popin"
+        "windowsOut,1,2,easeInBack,popin"
+        "fadeIn,1,2,easeInOutCubic"
+        "fadeOut,1,2,easeInCubic"
+        "workspaces,1,2,easeInOutCubic,slide"
+        "layersIn,1,2,easeInOutCubic,fade"
+        "layersOut,1,2,easeInCubic,fade"
       ];
 
       dwindle = {
@@ -191,6 +206,7 @@ in
         force_default_wallpaper = -1;
         disable_hyprland_logo = true;
         vfr = true;
+        vrr = 0;
       };
 
       input = {
@@ -224,7 +240,7 @@ in
         "$mod, O, exec, obsidian"
         "$mod + alt, p, exec, shutdown -h 0"
         "$mod + alt, r, exec, reboot"
-        "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
+        "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
         "$mod SHIFT, L, exec, hyprlock"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
@@ -268,24 +284,23 @@ in
         ", F7, exec, playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
         ", F8, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
         ", F9, exec, playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
-      ] ++ (
-        builtins.concatLists (builtins.genList
-          (
-            x:
-            let
-              ws =
-                let
-                  c = (x + 1) / 10;
-                in
-                builtins.toString (x + 1 - (c * 10));
-            in
-            [
-              "$mod, ${ws}, workspace, ${toString (x + 1)}"
-              "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-            ]
-          )
-          6)
-      );
+      ]
+      ++ (builtins.concatLists (
+        builtins.genList (
+          x:
+          let
+            ws =
+              let
+                c = (x + 1) / 10;
+              in
+              builtins.toString (x + 1 - (c * 10));
+          in
+          [
+            "$mod, ${ws}, workspace, ${toString (x + 1)}"
+            "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+          ]
+        ) 6
+      ));
 
       bindm = [
         "$mod, mouse:272, movewindow"
@@ -305,15 +320,23 @@ in
         ", XF86AudioPause, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
         ", XF86AudioPlay, exec, playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
         ", XF86AudioPrev, exec, playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh"
-      ] ++ (if device.type == "laptop" then [
-        ", switch:on:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,disable\""
-        ", switch:off:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale}\""
-      ] else []);
+      ]
+      ++ (
+        if device.type == "laptop" then
+          [
+            ", switch:on:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,disable\""
+            ", switch:off:Lid Switch, exec, hyprctl keyword monitor \"eDP-1,${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale}\""
+          ]
+        else
+          [ ]
+      );
 
       windowrulev2 = [
         "float, title:^(yazi)$"
         "size 800 500, title:^(yazi)$"
         "center, title:^(yazi)$"
+        "float, class:^(com.github.weclaw1.ImageRoll)$"
+        "center, class:^(com.github.weclaw1.ImageRoll)$"
         "noblur,class:^(Brave-browser)$"
         "float, title:^(btop)$"
         "size 900 600, title:^(btop)$"
