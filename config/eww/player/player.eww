@@ -172,11 +172,12 @@
 ;; Windows ;;
 (defwindow music
   :monitor 0
+  :stacking "fg"
+  :focusable true
   :geometry
   (geometry
-    :y "-1%"
+    :y "1%"
     :anchor "bottom center"
   )
-	:wm-ignore true
   (player)
 )
