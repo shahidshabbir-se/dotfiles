@@ -3,7 +3,16 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 # { pkgs, inputs, ... }:
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
+
+let
+  inherit (pkgs.stdenv.hostPlatform) system;
+
+  unstable = import inputs.unstable {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in
 
 {
   imports = [
@@ -33,6 +42,7 @@
     ];
     xfconf.enable = true;
     zsh.enable = true;
+    gamemode.enable = true;
   };
   services = {
     xserver = {
@@ -41,8 +51,6 @@
       videoDrivers = [ "amdgpu" ];
 
       enable = true;
-
-      # programs.hyprland.enable = true;
 
       # i3 (X11 session for Upwork compatibility)
       windowManager.i3 = {
@@ -199,6 +207,11 @@
     };
   };
   hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+
     bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -278,6 +291,9 @@
 
   environment.systemPackages = with pkgs; [
     openvpn
+    unstable.winetricks
+    unstable.wineWow64Packages.staging
+    unstable.mangohud
     # swww
     (sddm-astronaut.override {
       themeConfig = {
@@ -341,7 +357,24 @@
     })
   ];
 
-  # programs.hyprland.xwayland.enable = true;
+  programs.hyprland.enable = true;
+  programs.hyprland.xwayland.enable = true;
+
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-hyprland
+    ];
+    config.common.default = [
+      "hyprland"
+      "gtk"
+    ];
+  };
+
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
 
   nix.gc = {
     automatic = true;

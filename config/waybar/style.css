@@ -1,3 +1,5 @@
+@import url("colors.css");
+
 * {
 	border: none;
 	border-radius: 0;
@@ -10,7 +12,7 @@
 }
 
 window#waybar {
-	background-color: #1a1b26;
+	background-color: alpha(@surface_container_low, 0.8);
 	border-radius: 12px;
 }
 
@@ -29,7 +31,7 @@ window#waybar {
 #custom-updates,
 #clock,
 #tray {
-	background-color: #222330;
+	background-color: @surface_container_high;
 	border-radius: 999px;
 	padding: 0 10px;
 	margin: 6px 4px;
@@ -38,6 +40,8 @@ window#waybar {
 /* Style for grouped elements */
 #battery,
 #network,
+#custom-cava-left,
+#custom-cava-right,
 #custom-prev,
 #custom-play-pause,
 #custom-next {
@@ -68,6 +72,23 @@ window#waybar {
 	font-size: 15px; /* Same as hardware/global */
 }
 
+#custom-cava-left,
+#custom-cava-right {
+	padding-left: 10px;
+	padding-right: 8px;
+	font-size: 14px;
+	letter-spacing: 1px;
+	color: alpha(@primary, 0.75);
+}
+
+#custom-cava-left {
+	padding-right: 4px;
+}
+
+#custom-cava-right {
+	padding-left: 4px;
+}
+
 /* Modules without background (Launchers) */
 #custom-launcher,
 #custom-power {
@@ -77,68 +98,68 @@ window#waybar {
 }
 
 #custom-launcher {
-	color: #7aa2f7;
+	color: @primary;
 	margin-left: 20px;
 	padding-right: 15px;
 }
 
 #custom-power {
-	color: #f7768e;
+	color: @error;
 	margin-right: 20px;
 }
 
 #workspaces button {
 	padding: 0 8px;
-	color: #7dcfff;
+	color: @on_surface_variant;
 	background: transparent;
 	min-width: 20px;
 }
 
 #workspaces button.empty {
-	color: #583794;
+	color: @surface_bright;
 }
 
 #workspaces button.active {
-	color: #e0af68;
+	color: @primary;
 }
 
 #workspaces button.urgent {
-	color: #f7768e;
+	color: @error;
 }
 
 #workspaces button:hover {
-	background: rgba(255, 255, 255, 0.1);
+	background: alpha(@on_background, 0.1);
 	border-radius: 999px;
 }
 
 /* Colors */
 #cpu {
-	color: #f7768e;
+	color: @primary;
 }
 #memory {
-	color: #7dcfff;
+	color: @secondary;
 }
 #disk {
-	color: #fbc02d;
+	color: @tertiary;
 }
 #network {
-	color: #9ece6a;
+	color: @secondary;
 }
 #pulseaudio {
-	color: #6c77bb;
+	color: @tertiary;
 }
 #battery {
-	color: #7aa2f7;
+	color: @primary;
 }
 #clock {
-	color: #f1f1f1;
+	color: @on_background;
 }
 #custom-updates {
-	color: #b9c244;
+	color: @primary;
 }
 #custom-mplayer {
-	color: #9ece6a;
+	color: @secondary;
 }
 #bluetooth {
-	color: #7aa2f7;
+	color: @tertiary;
 }

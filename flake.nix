@@ -85,16 +85,16 @@
         };
 
         pc = {
-          name = "PC + MAG 255F E20";
+          name = "PC + ASUS VG34WQML5A";
           type = "desktop";
           display = {
-            connector = "HDMI-A-1";
-            width = 1920;
-            height = 1080;
-            scale = 1.2;
-            refreshRate = 200;
+            connector = "DP-1";
+            width = 3440;
+            height = 1440;
+            scale = 1.3333;
+            refreshRate = 240;
           };
-          fontSize = 13.0;
+          fontSize = 14.5;
         };
 
         mac-mini = {

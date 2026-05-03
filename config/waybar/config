@@ -20,7 +20,7 @@
 
   "group/music-controls": {
     "orientation": "horizontal",
-    "modules": ["custom/prev", "custom/play-pause", "custom/next"]
+    "modules": ["custom/cava-left", "custom/prev", "custom/play-pause", "custom/next", "custom/cava-right"]
   },
 
   "group/hardware": {
@@ -144,6 +144,20 @@
   "custom/mplayer": {
     "format": "",
     "on-click": "eww open --toggle music",
+    "tooltip": false
+  },
+
+  "custom/cava-left": {
+    "format": "{}",
+    "exec": "/home/shahid/.config/waybar/scripts/cava.sh left",
+	"restart-interval": 2,
+	"tooltip": false
+	},
+
+  "custom/cava-right": {
+	"format": "{}",
+	"exec": "/home/shahid/.config/waybar/scripts/cava.sh right",
+    "restart-interval": 2,
     "tooltip": false
   },
 
