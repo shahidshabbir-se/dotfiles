@@ -3,7 +3,7 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 # { pkgs, inputs, ... }:
-{ pkgs, inputs, ... }:
+{ lib, pkgs, inputs, ... }:
 
 let
   inherit (pkgs.stdenv.hostPlatform) system;
@@ -48,7 +48,7 @@ in
     xserver = {
       # programs.nix-ld.libraries = with pkgs; [
       # ];
-      videoDrivers = [ "amdgpu" ];
+      videoDrivers = lib.mkDefault [ "amdgpu" ];
 
       enable = true;
 
@@ -148,7 +148,7 @@ in
         "30-bluetooth-priority" = {
           "monitor.bluez.rules" = [
             {
-              matches = [ { "device.name" = "~bluez_card.*"; } ];
+              matches = [{ "device.name" = "~bluez_card.*"; }];
               actions = {
                 update-props = {
                   "priority.session" = 2000; # Highest — auto-switches to BT when connected
@@ -334,9 +334,8 @@ in
   };
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.lilex
-    pkgs.nerd-fonts.iosevka
-    pkgs.nerd-fonts.daddy-time-mono
+    pkgs.nerd-fonts.geist-mono
+    pkgs.rubik
     pkgs.icomoon-feather
     pkgs.inter
     (pkgs.stdenv.mkDerivation {

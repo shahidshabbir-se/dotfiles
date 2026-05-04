@@ -1,0 +1,83 @@
+(defpoll bar_time :interval "5s" "date '+%H:%M'")
+(defpoll bar_date :interval "30m" "date '+%A, %-d %b'")
+(deflisten cava_left :initial '(box :class "cava-visualizer cava-left" :orientation "h" :spacing 1 :space-evenly false :vexpand false :valign "end")' "bash scripts/media/cava-bar left")
+(deflisten cava_right :initial '(box :class "cava-visualizer cava-right" :orientation "h" :spacing 1 :space-evenly false :vexpand false :valign "end")' "bash scripts/media/cava-bar right")
+(deflisten hypr_workspaces :initial '(box :class "workspaces" :orientation "h" :spacing 24 :space-evenly false :valign "center" :vexpand false (eventbox :class "workspace-event" :cursor "pointer" (button :class "workspace active" :hexpand false :valign "center" (box :class "workspace-inner" :halign "center" :valign "center" (label :class "workspace-label" :text "01")))) (eventbox :class "workspace-event" :cursor "pointer" (button :class "workspace empty" :hexpand false :valign "center" (box :class "workspace-inner" :halign "center" :valign "center" (label :class "workspace-label" :text "02")))) (eventbox :class "workspace-event" :cursor "pointer" (button :class "workspace empty" :hexpand false :valign "center" (box :class "workspace-inner" :halign "center" :valign "center" (label :class "workspace-label" :text "03")))) (eventbox :class "workspace-event" :cursor "pointer" (button :class "workspace empty" :hexpand false :valign "center" (box :class "workspace-inner" :halign "center" :valign "center" (label :class "workspace-label" :text "04")))) (eventbox :class "workspace-event" :cursor "pointer" (button :class "workspace empty" :hexpand false :valign "center" (box :class "workspace-inner" :halign "center" :valign "center" (label :class "workspace-label" :text "05")))) (eventbox :class "workspace-event" :cursor "pointer" (button :class "workspace empty" :hexpand false :valign "center" (box :class "workspace-inner" :halign "center" :valign "center" (label :class "workspace-label" :text "06")))))' "bash scripts/hyprland/workspaces")
+(deflisten hypr_active_window :initial '(box :class "active-window-group empty")' "bash scripts/hyprland/active-window")
+
+(defwidget grid_dots []
+  (box :class "grid-dots"
+       :orientation "v"
+       :valign "center"
+       :spacing 3
+    (box :orientation "h"
+         :spacing 3
+      (box :class "grid-dot grid-dot-tl")
+      (box :class "grid-dot grid-dot-tr"))
+    (box :orientation "h"
+         :spacing 3
+      (box :class "grid-dot grid-dot-bl")
+      (box :class "grid-dot grid-dot-br"))))
+
+(defwidget power_icon []
+  (image :class "power-icon"
+         :path "assets/power.svg"
+         :image-width 20
+         :image-height 20))
+
+(defwidget bar_content []
+  (centerbox :class "bar-content bar-horizontal"
+             :orientation "h"
+    (box :class "bar-left"
+         :orientation "h"
+         :halign "start"
+         :valign "center"
+         :vexpand true
+         :space-evenly false
+         :spacing 22
+      (grid_dots)
+      (literal :content hypr_workspaces)
+      (literal :content hypr_active_window))
+    (box :class "bar-center"
+         :orientation "v"
+         :halign "center"
+         :valign "center"
+         :vexpand true
+         :space-evenly false
+         :spacing 0
+      (label :class "bar-time" :text bar_time)
+      (box :class "bar-visualizers"
+           :orientation "h"
+           :halign "center"
+           :valign "end"
+           :vexpand false
+           :space-evenly false
+           :spacing 4
+        (literal :content cava_left)
+        (label :class "bar-date" :text bar_date)
+        (literal :content cava_right)))
+    (box :class "bar-right"
+         :orientation "h"
+         :halign "end"
+         :valign "center"
+         :vexpand true
+      (power_icon))))
+
+(defwidget bar_shell []
+  (box :class "bar-shell"
+       :orientation "v"
+       :halign "fill"
+       :valign "fill"
+    (bar_content)))
+
+(defwindow bar
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "1%"
+                      :width "88%"
+                      :height "56px"
+                      :anchor "top center")
+  :stacking "fg"
+  :exclusive false
+  :wm-ignore true
+  (bar_shell))

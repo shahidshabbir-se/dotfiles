@@ -1,0 +1,44 @@
+// styles/_mixins.scss
+
+@mixin glass-surface {
+  background: $bg-panel;
+  border: 1px solid $border-soft;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-soft;
+}
+
+@mixin glass-card {
+  background: $bg-card;
+  border: 1px solid $border-soft;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+}
+
+@mixin hover-card {
+  background: $bg-card-hover;
+  border-color: $border-strong;
+}
+
+@mixin pill {
+  border-radius: 999px;
+  background: $bg-card;
+  border: 1px solid $border-soft;
+}
+
+@mixin icon-button {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: $radius-md;
+  background: $bg-card;
+  color: $text-main;
+  border: 1px solid transparent;
+}
+
+@mixin icon-button-hover {
+  background: $bg-card-hover;
+  border-color: $border-soft;
+}
+
+@mixin accent-gradient {
+  background: linear-gradient(90deg, $accent-pink, $accent, $accent-2);
+}

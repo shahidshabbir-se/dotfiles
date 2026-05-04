@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+workspace_count="${EWW_WORKSPACE_COUNT:-6}"
+render() {
+  local active="0"
+  local occupied
+
+  active="$(hyprctl -j activeworkspace 2>/dev/null | jq -r '.id // 0' 2>/dev/null || printf '0')"
+  occupied="$(hyprctl -j workspaces 2>/dev/null | jq -r '.[].id' 2>/dev/null || true)"
+
+  printf '(box :class "workspaces" :orientation "h" :spacing 24 :space-evenly false :halign "center" :valign "center" :hexpand false :vexpand false'
+  for ((id = 1; id <= workspace_count; id++)); do
+    class="workspace"
+
+    if [[ "$id" == "$active" ]]; then
+      class+=" active"
+    elif grep -qx "$id" <<<"$occupied"; then
+      class+=" occupied"
+    else
+      class+=" empty"
+    fi
+
+    printf ' (eventbox :class "workspace-event" :halign "center" :valign "center" :hexpand false :vexpand false :cursor "pointer" (button :class "%s" :halign "center" :valign "center" :hexpand false :vexpand false :onclick "hyprctl dispatch workspace %s" (box :class "workspace-inner" :halign "center" :valign "center" :hexpand false :vexpand false (label :class "workspace-label" :text "%02d"))))' "$class" "$id" "$id"
+  done
+  printf ')\n'
+}
+
+render
+
+if [[ "${1:-}" == "once" ]]; then
+  exit 0
+fi
+
+socket="${XDG_RUNTIME_DIR:-/tmp}/hypr/${HYPRLAND_INSTANCE_SIGNATURE:-}/.socket2.sock"
+
+if [[ -S "$socket" ]]; then
+  socat -u "UNIX-CONNECT:${socket}" - | while IFS= read -r event; do
+    case "$event" in
+      workspace*|focusedmon*|createworkspace*|destroyworkspace*|moveworkspace*|openwindow*|closewindow*)
+        render
+        ;;
+    esac
+  done
+else
+  while sleep 2; do
+    render
+  done
+fi

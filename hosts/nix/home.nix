@@ -92,7 +92,8 @@ in
       # ++ [ wpsOffice ]
       ++ (with pkgs; [
         git-filter-repo
-        unstable.zed-editor-fhs
+        # (import ../../modules/pkgs/zed.nix { inherit pkgs lib; })
+        ollama
         upwork
         cava
         image-roll
@@ -165,7 +166,7 @@ in
     enable = true;
     configFile = {
       nvim.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/nvim";
-      zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
+      # zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
       yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
       eww.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/eww";
       rofi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/rofi";

@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+eww_config="${EWW_CONFIG_DIR:-$(cd -- "${script_dir}/../.." && pwd)}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/eww"
+state_file="${state_dir}/bar-state"
+
+mkdir -p "$state_dir"
+
+monitor_name() {
+  hyprctl monitors -j 2>/dev/null | jq -r '.[] | select(.focused) | .name' | head -n 1
+}
+
+bar_is_open() {
+  eww --config "$eww_config" active-windows 2>/dev/null | awk -F: '$1 == "bar" { found = 1 } END { exit !found }'
+}
+
+reserve_top() {
+  local monitor="$1"
+  [[ -n "$monitor" ]] || return 0
+  hyprctl keyword monitor "${monitor},addreserved,68,0,0,0" >/dev/null 2>&1 || true
+}
+
+clear_reserved() {
+  local monitor="$1"
+  [[ -n "$monitor" ]] || return 0
+  hyprctl keyword monitor "${monitor},addreserved,0,0,0,0" >/dev/null 2>&1 || true
+}
+
+open_top_bar() {
+  eww --config "$eww_config" open bar --anchor "top center" --pos "0%x1%" --size "88%x56" >/dev/null 2>&1 || true
+}
+
+apply_top_bar() {
+  local monitor
+
+  monitor="$(monitor_name || true)"
+  printf 'orientation=horizontal\nlocation=top\n' > "$state_file"
+
+  eww --config "$eww_config" ping >/dev/null 2>&1 || eww --config "$eww_config" daemon >/dev/null 2>&1 || true
+  reserve_top "$monitor"
+
+  if ! bar_is_open; then
+    open_top_bar
+  fi
+}
+
+toggle_top_bar() {
+  local monitor
+
+  monitor="$(monitor_name || true)"
+  printf 'orientation=horizontal\nlocation=top\n' > "$state_file"
+
+  eww --config "$eww_config" ping >/dev/null 2>&1 || eww --config "$eww_config" daemon >/dev/null 2>&1 || true
+
+  if bar_is_open; then
+    eww --config "$eww_config" close bar >/dev/null 2>&1 || true
+    clear_reserved "$monitor"
+  else
+    reserve_top "$monitor"
+    open_top_bar
+  fi
+}
+
+case "${1:-apply}" in
+  apply|set|top|horizontal)
+    apply_top_bar
+    ;;
+  toggle)
+    toggle_top_bar
+    ;;
+  print)
+    printf 'horizontal top\n'
+    ;;
+  *)
+    printf 'usage: %s apply|toggle|print\n' "$0" >&2
+    exit 2
+    ;;
+esac

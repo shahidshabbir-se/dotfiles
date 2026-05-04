@@ -1,4 +1,1 @@
-(include "profilecard/profilecard.yuck")
-(include "player/player.yuck")
-(include "calendar/calendar.yuck")
-(include "wifi/wifi.yuck")
+(include "widgets/bar.yuck")

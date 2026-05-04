@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+side="${1:-full}"
+total_bars="${EWW_CAVA_BARS:-80}"
+framerate="${EWW_CAVA_FRAMERATE:-40}"
+sensitivity="${EWW_CAVA_SENSITIVITY:-105}"
+
+config_dir="${XDG_RUNTIME_DIR:-/tmp}"
+config_file="${config_dir}/eww-cava-${side}-${$}.conf"
+
+cleanup() {
+  rm -f "$config_file"
+}
+
+trap cleanup EXIT INT TERM
+
+cat > "$config_file" <<EOF
+[general]
+bars = ${total_bars}
+framerate = ${framerate}
+sensitivity = ${sensitivity}
+
+[output]
+method = raw
+raw_target = /dev/stdout
+data_format = ascii
+ascii_max_range = 7
+
+[smoothing]
+integral = 82
+monstercat = 1
+waves = 0
+EOF
+
+render_boxes() {
+  local side_class="$1"
+  local levels="$2"
+  local scale="${3:-100}"
+  local has_signal=0
+
+  for ((i = 0; i < ${#levels}; i++)); do
+    digit="${levels:i:1}"
+    [[ "$digit" =~ [1-7] ]] || continue
+    has_signal=1
+    break
+  done
+
+  printf '(box :class "cava-visualizer %s" :orientation "h" :spacing 1 :space-evenly false :vexpand false :valign "end"' "$side_class"
+  for ((i = 0; i < ${#levels}; i++)); do
+    digit="${levels:i:1}"
+    [[ "$digit" =~ [0-7] ]] || continue
+
+    adjusted=$(( (digit * scale + 50) / 100 ))
+    if (( adjusted == 0 )); then
+      if (( has_signal == 1 )); then
+        printf ' (box :class "cava-segment cava-level-idle" :vexpand false :valign "end")'
+      else
+        printf ' (box :class "cava-spacer" :vexpand false :valign "end")'
+      fi
+      continue
+    fi
+
+    printf ' (box :class "cava-segment cava-level-%s" :vexpand false :valign "end")' "$adjusted"
+  done
+  printf ')\n'
+}
+
+cava -p "$config_file" | while IFS= read -r line; do
+  line=${line//;/}
+  levels=""
+
+  for ((i = 0; i < ${#line}; i++)); do
+    digit="${line:i:1}"
+    [[ "$digit" =~ [0-7] ]] || continue
+    levels+="$digit"
+  done
+
+  third=$(( ${#levels} / 3 ))
+  left_part="${levels:0:third}"
+  center_part="${levels:third:third}"
+  right_part="${levels:$((third * 2))}"
+
+  case "$side" in
+    left)
+      reversed=""
+      for ((i = ${#left_part} - 1; i >= 0; i--)); do
+        reversed+="${left_part:i:1}"
+      done
+      render_boxes "cava-left" "$reversed" 100
+      ;;
+    center)
+      render_boxes "cava-center" "$center_part" 35
+      ;;
+    right)
+      render_boxes "cava-right" "$right_part" 100
+      ;;
+    *)
+      render_boxes "cava-full" "$levels" 100
+      ;;
+  esac
+done

@@ -24,21 +24,13 @@ let
   desktopRefreshRate = if device.type == "desktop" then 240 else d.refreshRate;
   monitorLine =
     "${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale}"
-    + (
-      if device.type == "desktop" then
-        ",bitdepth,10,cm,hdr,sdrbrightness,1.25,vrr,0"
-      else
-        ""
-    );
+    + (if device.type == "desktop" then ",bitdepth,10,cm,hdr,sdrbrightness,1.25,vrr,0" else "");
 in
 {
   # ───────────────────────────────────────────────
   # ▶ Hyprland Packages
   # ───────────────────────────────────────────────
   home.packages = with pkgs; [
-    # Bar / Widgets
-    waybar
-
     # Wallpaper
     swww
     mpvpaper
@@ -73,11 +65,6 @@ in
   ];
 
   # ───────────────────────────────────────────────
-  # ▶ XDG Symlinks (Hyprland-specific configs)
-  # ───────────────────────────────────────────────
-  xdg.configFile.waybar.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/waybar";
-
-  # ───────────────────────────────────────────────
   # ▶ Swaync (Notification Center)
   # ───────────────────────────────────────────────
   services.swaync = import ./swaync.nix {
@@ -105,9 +92,9 @@ in
 
       exec-once = [
         "pkill -x glava 2>/dev/null || true"
+        "pkill -x waybar 2>/dev/null || true"
         "swww-daemon &"
-        "eww --config ~/.config/eww daemon &"
-        "waybar &"
+        "sleep 1 && ${homeDirectory}/dotfiles/config/eww/scripts/bar/state apply &"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
@@ -183,14 +170,14 @@ in
       ];
 
       animation = [
-        "global,1,2,default"
-        "windowsIn,1,2,easeOutBack,popin"
-        "windowsOut,1,2,easeInBack,popin"
-        "fadeIn,1,2,easeInOutCubic"
-        "fadeOut,1,2,easeInCubic"
-        "workspaces,1,2,easeInOutCubic,slide"
-        "layersIn,1,2,easeInOutCubic,fade"
-        "layersOut,1,2,easeInCubic,fade"
+        "global,1,3,default"
+        "windowsIn,1,3,easeOutBack,popin"
+        "windowsOut,1,3,easeInBack,popin"
+        "fadeIn,1,3,easeInOutCubic"
+        "fadeOut,1,3,easeInCubic"
+        "workspaces,1,3,easeInOutCubic,slide"
+        "layersIn,1,3,easeInOutCubic,fade"
+        "layersOut,1,3,easeInCubic,fade"
       ];
 
       dwindle = {
@@ -212,7 +199,7 @@ in
       input = {
         kb_layout = "us";
         follow_mouse = 1;
-        sensitivity = 0.5;
+        sensitivity = 0.8;
         numlock_by_default = true;
 
         touchpad = {
@@ -225,7 +212,7 @@ in
 
       device = {
         name = "epic-mouse-v1";
-        sensitivity = -0.5;
+        sensitivity = 0.5;
       };
 
       bind = [
@@ -255,7 +242,7 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod, N, exec, swaync-client -t -sw"
-        "$mod, Z, exec, pkill -SIGUSR1 waybar"
+        "$mod, Z, exec, ${homeDirectory}/dotfiles/config/eww/scripts/bar/state toggle"
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
         "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
         "ALT SHIFT, W, exec, bash ~/.config/rofi/WallSelect"

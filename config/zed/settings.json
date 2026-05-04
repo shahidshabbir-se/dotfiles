@@ -1,24 +1,6 @@
 {
 	"agent_servers": {
-		"kilo": {
-			"favorite_config_option_values": {
-				"model": [
-					"openai/gpt-5.5",
-					"openai/gpt-5.4",
-					"openai/gpt-5.5-fast",
-					"openai/gpt-5.4-mini",
-					"openai/gpt-5.3-codex",
-				],
-			},
-			"type": "registry",
-		},
 		"codex-acp": {
-			"type": "registry",
-		},
-		"opencode": {
-			"favorite_config_option_values": {
-				"model": ["openai/gpt-5.5"],
-			},
 			"type": "registry",
 		},
 	},
@@ -45,7 +27,7 @@
 	"theme": {
 		"mode": "dark",
 		"light": "One Light",
-		"dark": "Panda",
+		"dark": "Panda Nebula",
 	},
 	"telemetry": {
 		"diagnostics": false,
