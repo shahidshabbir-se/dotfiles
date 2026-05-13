@@ -77,7 +77,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    systemd.enable = true;
+    systemd.enable = false;
 
     settings = {
       "$mod" = "SUPER";
@@ -88,6 +88,7 @@ in
 
       monitor = [
         monitorLine
+        "${d.connector},addreserved,68,0,0,0"
       ];
 
       exec-once = [
@@ -194,6 +195,10 @@ in
         disable_hyprland_logo = true;
         vfr = true;
         vrr = 0;
+      };
+
+      render = {
+        cm_enabled = true;
       };
 
       input = {

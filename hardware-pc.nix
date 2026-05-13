@@ -11,33 +11,52 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/9d636c7e-765c-487f-98b7-031179e9f8b6";
-      fsType = "ext4";
+    { device = "/dev/disk/by-uuid/b4d46fcf-e595-4ba3-8a3c-24a0c19f911d";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/b4d46fcf-e595-4ba3-8a3c-24a0c19f911d";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/E001-DFA1";
+    { device = "/dev/disk/by-uuid/E727-EC4C";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/6eef48ee-ddca-45cc-a115-c560aa33b0b7"; }
+    [ { device = "/dev/disk/by-uuid/bd60973d-2876-4b2a-91f8-c8852517a1cf"; }
     ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
+  # NVIDIA RTX 5070
   services.xserver.videoDrivers = [ "nvidia" ];
+
+  boot.blacklistedKernelModules = [ "nouveau" ];
+  boot.kernelParams = [ "nvidia_drm.modeset=1" "pcie_aspm=off" ];
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = false;
+    powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
+
+  boot.extraModulePackages = [ config.boot.kernelPackages.nvidiaPackages.stable ];
+
+  environment.sessionVariables = {
+    WLR_NO_HARDWARE_CURSORS = "1";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    NIXOS_OZONE_WL = "1";
+  };
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
