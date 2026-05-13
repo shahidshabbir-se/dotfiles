@@ -124,139 +124,156 @@ in
   ];
 
   extraConfig = ''
-    # ─────────────────────────────────────────────────────────
-    #  Default Shell (MUST be first!)
-    # ─────────────────────────────────────────────────────────
-    set -g default-shell "${pkgs.zsh}/bin/zsh"
-    set -g default-command "${pkgs.zsh}/bin/zsh -l"
+        # ─────────────────────────────────────────────────────────
+        #  Default Shell (MUST be first!)
+        # ─────────────────────────────────────────────────────────
+        set -g default-shell "${pkgs.zsh}/bin/zsh"
+        set -g default-command "${pkgs.zsh}/bin/zsh -l"
 
-    # ─────────────────────────────────────────────────────────
-    #  Terminal Features
-    # ─────────────────────────────────────────────────────────
-    set -as terminal-features ",xterm-256color:RGB"
-    set -g extended-keys on
-    set -g extended-keys-format csi-u
+        # ─────────────────────────────────────────────────────────
+        #  Terminal Features
+        # ─────────────────────────────────────────────────────────
+        set -as terminal-features ",xterm-256color:RGB"
+        set -g extended-keys on
+        set -g extended-keys-format csi-u
 
-    set -g pane-active-border-style 'fg=magenta,bg=default'
-    set -g pane-border-style 'fg=brightblack,bg=default'
+        set -g pane-active-border-style 'fg=magenta,bg=default'
+        set -g pane-border-style 'fg=brightblack,bg=default'
 
 
-    # ─────────────────────────────────────────────────────────
-    #  Pane Navigation (Vim style)
-    # ─────────────────────────────────────────────────────────
-    bind h select-pane -L
-    bind j select-pane -D
-    bind k select-pane -U
-    bind l select-pane -R
+        # ─────────────────────────────────────────────────────────
+        #  Pane Navigation (Vim style)
+        # ─────────────────────────────────────────────────────────
+        bind h select-pane -L
+        bind j select-pane -D
+        bind k select-pane -U
+        bind l select-pane -R
 
-    # ─────────────────────────────────────────────────────────
-    #  Window and Pane Indexing
-    # ─────────────────────────────────────────────────────────
-    set -g base-index 1
-    set -g pane-base-index 1
-    set-option -g renumber-windows on
+        # ─────────────────────────────────────────────────────────
+        #  Window and Pane Indexing
+        # ─────────────────────────────────────────────────────────
+        set -g base-index 1
+        set -g pane-base-index 1
+        set-option -g renumber-windows on
 
-    # ─────────────────────────────────────────────────────────
-    #  Clear Screen — Ctrl-Shift-L (no prefix)
-    # ─────────────────────────────────────────────────────────
-    bind -n C-S-l send-keys '^L'
+        # ─────────────────────────────────────────────────────────
+        #  Clear Screen — Ctrl-Shift-L (no prefix)
+        # ─────────────────────────────────────────────────────────
+        bind -n C-S-l send-keys '^L'
 
-    # ─────────────────────────────────────────────────────────
-    #  Pane Switching (Alt + Arrow)
-    # ─────────────────────────────────────────────────────────
-    bind -n M-Left select-pane -L
-    bind -n M-Right select-pane -R
-    bind -n M-Up select-pane -U
-    bind -n M-Down select-pane -D
+        # ─────────────────────────────────────────────────────────
+        #  Pane Switching (Alt + Arrow)
+        # ─────────────────────────────────────────────────────────
+        bind -n M-Left select-pane -L
+        bind -n M-Right select-pane -R
+        bind -n M-Up select-pane -U
+        bind -n M-Down select-pane -D
 
-    # ─────────────────────────────────────────────────────────
-    #  Window Switching (Shift + Arrow or Alt + Vim)
-    # ─────────────────────────────────────────────────────────
-    bind -n S-Left previous-window
-    bind -n S-Right next-window
-    bind -n M-h previous-window
-    bind -n M-l next-window
-${lib.concatStringsSep "\n" (map (slot: ''
-    bind -n M-${toString slot} select-window -t :=${toString slot}
-'') (lib.range 1 9))}
+        # ─────────────────────────────────────────────────────────
+        #  Window Switching (Shift + Arrow or Alt + Vim)
+        # ─────────────────────────────────────────────────────────
+        bind -n S-Left previous-window
+        bind -n S-Right next-window
+        bind -n M-h previous-window
+        bind -n M-l next-window
+    ${lib.concatStringsSep "\n" (
+      map (slot: ''
+        bind -n M-${toString slot} select-window -t :=${toString slot}
+      '') (lib.range 1 9)
+    )}
 
-    # ─────────────────────────────────────────────────────────
-    #  Window Moving (Ctrl + Shift + Arrow)
-    # ─────────────────────────────────────────────────────────
-    bind -n M-< swap-window -t -1\; select-window -t -1
-    bind -n M-> swap-window -t +1\; select-window -t +1
+        # ─────────────────────────────────────────────────────────
+        #  Window Moving (Ctrl + Shift + Arrow)
+        # ─────────────────────────────────────────────────────────
+        bind -n M-< swap-window -t -1\; select-window -t -1
+        bind -n M-> swap-window -t +1\; select-window -t +1
 
-    # ─────────────────────────────────────────────────────────
-    #  Vim-Tmux Navigator Integration
-    # ─────────────────────────────────────────────────────────
-    set -g @vim_navigator_mapping_left "C-Left C-h"
-    set -g @vim_navigator_mapping_right "C-Right C-l"
-    set -g @vim_navigator_mapping_up "C-k"
-    set -g @vim_navigator_mapping_down "C-j"
-    set -g @vim_navigator_mapping_prev ""
+        # ─────────────────────────────────────────────────────────
+        #  Vim-Tmux Navigator Integration
+        # ─────────────────────────────────────────────────────────
+        set -g @vim_navigator_mapping_left "C-Left C-h"
+        set -g @vim_navigator_mapping_right "C-Right C-l"
+        set -g @vim_navigator_mapping_up "C-k"
+        set -g @vim_navigator_mapping_down "C-j"
+        set -g @vim_navigator_mapping_prev ""
 
-    # ─────────────────────────────────────────────────────────
-    #  Copy Mode (vi style)
-    # ─────────────────────────────────────────────────────────
-    set-window-option -g mode-keys vi
-    bind-key -T copy-mode-vi v send-keys -X begin-selection
-    bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-    bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+        # ─────────────────────────────────────────────────────────
+        #  Copy Mode (vi style)
+        # ─────────────────────────────────────────────────────────
+        set-window-option -g mode-keys vi
+        bind-key -T copy-mode-vi v send-keys -X begin-selection
+        bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+        bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
 
-    # ─────────────────────────────────────────────────────────
-    #  Smart Directory Context
-    # ─────────────────────────────────────────────────────────
-    bind v split-window -v -c "#{pane_current_path}"
-    bind h split-window -h -c "#{pane_current_path}"
-    bind c new-window -c "#{pane_current_path}"
+        # ─────────────────────────────────────────────────────────
+        #  Smart Directory Context
+        # ─────────────────────────────────────────────────────────
+        bind v split-window -v -c "#{pane_current_path}"
+        bind h split-window -h -c "#{pane_current_path}"
+        bind c new-window -c "#{pane_current_path}"
 
-    set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
-    set -g @fzf-url-history-limit '2000'
+        set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
+        set -g @fzf-url-history-limit '2000'
 
-    set -g status-position bottom
+        set -g status-position bottom
 
-    # ─────────────────────────────────────────────────────────
-    #  Scroll up/down with Alt-u/d
-    # ─────────────────────────────────────────────────────────
-    bind -n M-u if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
-    bind -n M-d if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "copy-mode; send-keys -X scroll-down"
+        # ─────────────────────────────────────────────────────────
+        #  Scroll up/down with Alt-u/d
+        # ─────────────────────────────────────────────────────────
+        bind -n M-k if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
+        bind -n M-j if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "copy-mode; send-keys -X scroll-down"
 
-    # ─────────────────────────────────────────────────────────
-    #  Kill Pane and Window
-    # ─────────────────────────────────────────────────────────
-    bind x kill-pane
-    bind w kill-window
+        # ─────────────────────────────────────────────────────────
+        #  Kill Pane and Window
+        # ─────────────────────────────────────────────────────────
+        bind x kill-pane
+        bind w kill-window
 
-    # ─────────────────────────────────────────────────────────
-    #  Pane Resizing (Alt + H/J/K/L)
-    # ─────────────────────────────────────────────────────────
-    bind -n M-H resize-pane -L 5
-    bind -n M-J resize-pane -D 5
-    bind -n M-K resize-pane -U 5
-    bind -n M-L resize-pane -R 5
+        # ─────────────────────────────────────────────────────────
+        #  Pane Resizing (Alt + H/J/K/L)
+        # ─────────────────────────────────────────────────────────
+        bind -n M-H resize-pane -L 5
+        bind -n M-J resize-pane -D 5
+        bind -n M-K resize-pane -U 5
+        bind -n M-L resize-pane -R 5
 
-    # ─────────────────────────────────────────────────────────
-    #  Zoom Toggle (Alt-z)
-    # ─────────────────────────────────────────────────────────
-    bind -n M-z resize-pane -Z
+        # ─────────────────────────────────────────────────────────
+        #  Zoom Toggle (Alt-z)
+        # ─────────────────────────────────────────────────────────
+        bind -n M-z resize-pane -Z
 
-    # ─────────────────────────────────────────────────────────
-    #  Sesh - Smart Session Manager
-    # ─────────────────────────────────────────────────────────
-    # Don't exit tmux when closing last session
-    set -g detach-on-destroy off
+        # ─────────────────────────────────────────────────────────
+        #  Sesh - Smart Session Manager
+        # ─────────────────────────────────────────────────────────
+        # Don't exit tmux when closing last session
+        set -g detach-on-destroy off
 
-${lib.concatStringsSep "\n" (lib.zipListsWith (slot: symbol: ''
-    bind -n M-${symbol} run-shell "sesh list -t | awk -v current='#{session_name}' '$0 != current { slot++; if (slot == ${toString slot}) { print; exit } }' | xargs -r -I{} sesh connect '{}'"
-'') (lib.range 1 9) [ "!" "@" "#" "$" "%" "^" "&" "*" "(" ])}
+    ${lib.concatStringsSep "\n" (
+      lib.zipListsWith
+        (slot: symbol: ''
+          bind -n M-${symbol} run-shell "sesh list -t | awk -v current='#{session_name}' '$0 != current { slot++; if (slot == ${toString slot}) { print; exit } }' | xargs -r -I{} sesh connect '{}'"
+        '')
+        (lib.range 1 9)
+        [
+          "!"
+          "@"
+          "#"
+          "$"
+          "%"
+          "^"
+          "&"
+          "*"
+          "("
+        ]
+    )}
 
-    # Ctrl-t = open sesh session picker via television popup
-    bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'
+        # Ctrl-t = open sesh session picker via television popup
+        bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'
 
-    # Ctrl-l = jump to last session (via sesh)
-    bind -N "last-session (via sesh)" C-l run-shell "sesh last"
+        # Ctrl-l = jump to last session (via sesh)
+        bind -N "last-session (via sesh)" C-l run-shell "sesh last"
 
-    # 9 = connect to root of current git repo/worktree (via sesh)
-    bind -N "switch to root session (via sesh)" 9 run-shell "sesh connect --root $(pwd)"
+        # 9 = connect to root of current git repo/worktree (via sesh)
+        bind -N "switch to root session (via sesh)" 9 run-shell "sesh connect --root $(pwd)"
   '';
 }
