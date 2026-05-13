@@ -88,7 +88,7 @@
           name = "PC + ASUS VG34WQML5A";
           type = "desktop";
           display = {
-            connector = "DP-1";
+            connector = "DP-4";
             width = 3440;
             height = 1440;
             scale = 1.3333;
