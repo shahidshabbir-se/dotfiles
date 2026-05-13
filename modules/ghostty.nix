@@ -1,31 +1,32 @@
 #  ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗████████╗██╗   ██╗
 # ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝
-# ██║  ███╗███████║██║   ██║███████╗   ██║      ██║    ╚████╔╝ 
-# ██║   ██║██╔══██║██║   ██║╚════██║   ██║      ██║     ╚██╔╝  
-# ╚██████╔╝██║  ██║╚██████╔╝███████║   ██║      ██║      ██║   
-#  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝      ╚═╝   
+# ██║  ███╗███████║██║   ██║███████╗   ██║      ██║    ╚████╔╝
+# ██║   ██║██╔══██║██║   ██║╚════██║   ██║      ██║     ╚██╔╝
+# ╚██████╔╝██║  ██║╚██████╔╝███████║   ██║      ██║      ██║
+#  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝      ╚═╝
 # https://github.com/shahidshabbir-se/dotfiles
 
-{ pkgs
-, device
-, ...
+{
+  pkgs,
+  device,
+  ...
 }:
 let
   # Use device-specific font size, or fall back to scale-based calculation
   fontSize =
-    if device ? fontSize
-    then device.fontSize
-    else if device.display.scale >= 2.0 then 17.0 else 14.0;
+    if device ? fontSize then
+      device.fontSize
+    else if device.display.scale >= 2.0 then
+      17.0
+    else
+      14.0;
 in
 {
   enable = true;
   enableZshIntegration = true;
 
   # pkg
-  package =
-    if pkgs.stdenv.isDarwin
-    then pkgs.ghostty-bin
-    else pkgs.ghostty;
+  package = if pkgs.stdenv.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
 
   settings = {
     theme = "TokyoNight";
@@ -35,7 +36,10 @@ in
     # Font
     font-family = "JetBrainsMono Nerd Font";
     font-size = fontSize;
-    font-feature = [ "+calt" "+liga" ];
+    font-feature = [
+      "+calt"
+      "+liga"
+    ];
     font-style = "regular";
     font-style-bold = "bold";
     font-style-italic = "italic";
@@ -72,7 +76,8 @@ in
 
     # Keybinds
     keybind = [
-      "shift+enter=text:\\x1b\\r"
+      # Forward Shift+Enter as a Kitty/CSI-u modified Enter so pi can use it for new lines.
+      "shift+enter=text:\\x1b[13;2u"
       "ctrl+shift+r=reload_config"
     ];
   };
