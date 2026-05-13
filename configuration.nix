@@ -3,7 +3,12 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 # { pkgs, inputs, ... }:
-{ lib, pkgs, inputs, ... }:
+{
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 let
   inherit (pkgs.stdenv.hostPlatform) system;
@@ -148,7 +153,7 @@ in
         "30-bluetooth-priority" = {
           "monitor.bluez.rules" = [
             {
-              matches = [{ "device.name" = "~bluez_card.*"; }];
+              matches = [ { "device.name" = "~bluez_card.*"; } ];
               actions = {
                 update-props = {
                   "priority.session" = 2000; # Highest — auto-switches to BT when connected
@@ -361,7 +366,10 @@ in
 
   xdg.portal = {
     enable = true;
-    xdgOpenUsePortal = true;
+    # Keep xdg-open on the normal MIME-handler path. Upwork's Electron login
+    # opens the browser through xdg-open, and the portal OpenURI path is flaky
+    # under Hyprland on this setup.
+    xdgOpenUsePortal = false;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
       xdg-desktop-portal-hyprland
