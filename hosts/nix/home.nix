@@ -81,8 +81,8 @@ in
     ../../modules/node.nix
     ../../modules/i3.nix
     ../../modules/hyprland.nix
-    ../../modules/cliproxyapi.nix
-    ../../modules/television.nix
+    # ../../modules/cliproxyapi.nix
+    # ../../modules/television.nix
   ];
 
   home = {
@@ -108,7 +108,10 @@ in
     # ───────────────────────────────────────────────
     packages =
       commonPackages
+      ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
+        upwork
+
         # Development tools
         fastfetch
         gcc
@@ -211,6 +214,10 @@ in
         "image/gif" = [ imageViewerDesktopFile ];
         "image/webp" = [ imageViewerDesktopFile ];
         "image/bmp" = [ imageViewerDesktopFile ];
+        "image/svg+xml" = [ imageViewerDesktopFile ];
+        "image/tiff" = [ imageViewerDesktopFile ];
+        "image/avif" = [ imageViewerDesktopFile ];
+        "image/heic" = [ imageViewerDesktopFile ];
       };
     };
   };

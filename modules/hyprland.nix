@@ -61,7 +61,7 @@ in
     alsa-utils
 
     # Image viewer (hyprland mime defaults)
-    feh
+    image-roll
   ];
 
   # ───────────────────────────────────────────────
@@ -111,6 +111,10 @@ in
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/gif"
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/webp"
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/bmp"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/svg+xml"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/tiff"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/avif"
+        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/heic"
         # "hyprctl setcursor Banana 36"
         "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
         ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl dispatch togglefloating "address:0x$addr" && hyprctl dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''

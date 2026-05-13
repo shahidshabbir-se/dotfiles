@@ -98,7 +98,7 @@ in
         set -g @resurrect-strategy-vim 'session'
         set -g @resurrect-strategy-nvim 'session'
         set -g @resurrect-capture-pane-contents 'on'
-        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~droid->droid" "~claude->claude"'
+        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~droid->droid" ~pi->pi" "~claude->claude"'
       ''
       + ''
         # Taken from: https://github.com/p3t33/nixos_flake/blob/5a989e5af403b4efe296be6f39ffe6d5d440d6d6/home/modules/tmux.nix
