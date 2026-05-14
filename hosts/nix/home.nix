@@ -12,6 +12,7 @@
   lib,
   inputs,
   device,
+  unstable,
   atuin,
   ...
 }:
@@ -47,10 +48,10 @@ let
   cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
   cursorSize = if device.type == "laptop" then 48 else 24;
   cursorPackage =
-    if device.type == "laptop" then
-      import ../../modules/banana-cursor.nix { inherit pkgs; }
-    else
-      pkgs.catppuccin-cursors.mochaDark;
+    # if device.type == "laptop" then
+    import ../../modules/banana-cursor.nix { inherit pkgs; };
+  # else
+  # pkgs.catppuccin-cursors.mochaDark;
 
   gtkThemePackage = pkgs.catppuccin-gtk.override {
     variant = "mocha";
@@ -63,6 +64,11 @@ let
   # ───────────────────────────────────────────────
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (config.lib.file) mkOutOfStoreSymlink;
+
+  unstablePackages = import unstable {
+    inherit system;
+    config.allowUnfree = true;
+  };
 
   commonPackages = import ../../modules/pkgs/common.nix { inherit pkgs; };
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
@@ -108,7 +114,7 @@ in
     # ───────────────────────────────────────────────
     packages =
       commonPackages
-      ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
         upwork
 
@@ -130,6 +136,7 @@ in
         qbittorrent
         vlc
         xfce.thunar
+        unstablePackages.zed-editor-fhs
         zenBrowserPackage
 
         # Media and system utilities
@@ -179,6 +186,13 @@ in
       ".p10k.zsh".source = ../../config/p10k.zsh;
       ".zsh/aliases".source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/zsh/aliases";
     };
+
+    sessionVariables = {
+      CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb";
+      CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb";
+      # Lutris 0.5.x still trips over newer protobuf Python bindings on NixOS.
+      PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION = "python";
+    };
   };
 
   # ───────────────────────────────────────────────
@@ -188,6 +202,10 @@ in
     enable = true;
 
     configFile = {
+      "chromium-flags.conf".text = ''
+        --disable-features=WaylandWpColorManagerV1
+        --force-color-profile=srgb
+      '';
       nvim.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/nvim";
       yazi.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/yazi";
       eww.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/eww";
@@ -251,6 +269,7 @@ in
     atuin = import ../../modules/atuin.nix { inherit atuin; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
+    # wezterm = import ../../modules/wezterm.nix { inherit config device pkgs; };
   };
 
   # ───────────────────────────────────────────────

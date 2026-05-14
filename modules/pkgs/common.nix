@@ -85,6 +85,7 @@ with pkgs;
   socat
 
   # System / Terminal
+  playerctl
   sesh
   television
   tmux

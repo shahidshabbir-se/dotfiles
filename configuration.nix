@@ -296,6 +296,8 @@ in
 
   environment.systemPackages = with pkgs; [
     openvpn
+    gamescope
+    lutris-unwrapped
     unstable.winetricks
     unstable.wineWow64Packages.staging
     unstable.mangohud
@@ -340,6 +342,7 @@ in
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.geist-mono
+    pkgs.noto-fonts
     pkgs.rubik
     pkgs.icomoon-feather
     pkgs.inter
@@ -375,8 +378,8 @@ in
       xdg-desktop-portal-hyprland
     ];
     config.common.default = [
-      "hyprland"
       "gtk"
+      "hyprland"
     ];
   };
 

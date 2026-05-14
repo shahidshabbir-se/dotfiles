@@ -38,9 +38,10 @@
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
     cc = "claude";
+    ki = "kilo";
     oc = "opencode";
-    cr = "crush";
-    cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
+    # cr = "crush";
+    # cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
     sed = "sd";
     time = "hyperfine";
 

@@ -11,12 +11,12 @@
 let
   tokyo-night = pkgs.tmuxPlugins.mkTmuxPlugin {
     pluginName = "tokyo-night";
-    version = "unstable-2025-02-26";
+    version = "v1.8.1";
     src = pkgs.fetchFromGitHub {
       owner = "janoamaral";
       repo = "tokyo-night-tmux";
-      rev = "master";
-      sha256 = "sha256-TOS9+eOEMInAgosB3D9KhahudW2i1ZEH+IXEc0RCpU0=";
+      rev = "v1.8.1";
+      sha256 = "sha256-tmS0MBANSsTg53E2GB0TnjwGcZXboTRFNeDE6Ehn+bM=";
     };
   };
 in
@@ -51,10 +51,11 @@ in
         ''}
         set -g @tokyo-night-tmux_path_format relative
         set -g @tokyo-night-tmux_show_git 1
+        set -g @tokyo-night-tmux_window_id_style digital
         set -g @tokyo-night-tmux_terminal_icon ""
         set -g @tokyo-night-tmux_active_terminal_icon ""
         set -g @tokyo-night-tmux_show_path 0
-        set -g @tokyo-night-tmux_show_music 0
+        set -g @tokyo-night-tmux_show_music 1
         set -g @tokyo-night-tmux_window_tidy_icons 0
         set -g @tokyo-night-tmux_transparent 1
 
@@ -98,7 +99,7 @@ in
         set -g @resurrect-strategy-vim 'session'
         set -g @resurrect-strategy-nvim 'session'
         set -g @resurrect-capture-pane-contents 'on'
-        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~droid->droid" ~pi->pi" "~claude->claude"'
+        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~droid->droid" "~kilo->kilo" "~pi->pi" "~claude->claude"'
       ''
       + ''
         # Taken from: https://github.com/p3t33/nixos_flake/blob/5a989e5af403b4efe296be6f39ffe6d5d440d6d6/home/modules/tmux.nix
@@ -220,8 +221,8 @@ in
         # ─────────────────────────────────────────────────────────
         #  Scroll up/down with Alt-u/d
         # ─────────────────────────────────────────────────────────
-        bind -n M-k if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
-        bind -n M-j if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "copy-mode; send-keys -X scroll-down"
+        bind -n M-u if-shell -F "#{pane_in_mode}" "send-keys -X scroll-up" "copy-mode; send-keys -X scroll-up"
+        bind -n M-d if-shell -F "#{pane_in_mode}" "send-keys -X scroll-down" "copy-mode; send-keys -X scroll-down"
 
         # ─────────────────────────────────────────────────────────
         #  Kill Pane and Window
@@ -267,8 +268,8 @@ in
         ]
     )}
 
-        # Ctrl-t = open sesh session picker via television popup
-        bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'tv sesh'
+        # Ctrl-t = open sesh's built-in picker in a popup
+        bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'sesh picker -i'
 
         # Ctrl-l = jump to last session (via sesh)
         bind -N "last-session (via sesh)" C-l run-shell "sesh last"
