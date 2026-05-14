@@ -34,7 +34,7 @@ in
     title = " ";
 
     # Font
-    font-family = "JetBrainsMono Nerd Font";
+    font-family = "GeistMono Nerd Font";
     font-size = fontSize;
     font-feature = [
       "+calt"

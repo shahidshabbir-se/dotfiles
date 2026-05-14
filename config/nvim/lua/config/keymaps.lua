@@ -31,6 +31,40 @@ map("n", "<leader>hs", ":split<CR>", { desc = "Horizontal split" })
 map("n", "<leader>vs", ":vsplit<CR>", { desc = "Vertical split" })
 
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>fi", function()
+  require("telescope.builtin").find_files({
+    prompt_title = "Images",
+    hidden = true,
+    find_command = {
+      "rg",
+      "--files",
+      "--hidden",
+      "--no-ignore",
+      "--glob",
+      "!.git/*",
+      "--iglob",
+      "*.png",
+      "--iglob",
+      "*.jpg",
+      "--iglob",
+      "*.jpeg",
+      "--iglob",
+      "*.gif",
+      "--iglob",
+      "*.webp",
+      "--iglob",
+      "*.bmp",
+      "--iglob",
+      "*.svg",
+      "--iglob",
+      "*.avif",
+      "--iglob",
+      "*.heic",
+      "--iglob",
+      "*.tiff",
+    },
+  })
+end, { desc = "Find images" })
 map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { noremap = true, silent = true })
 map("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { noremap = true, silent = true })
 map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { noremap = true, silent = true })

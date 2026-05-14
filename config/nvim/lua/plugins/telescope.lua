@@ -13,6 +13,8 @@ return {
   config = function()
     local telescope = require("telescope")
     local actions = require("telescope.actions")
+    local image = require("snacks.image")
+    local image_buf = require("snacks.image.buf")
 
     telescope.setup({
       defaults = {
@@ -63,6 +65,16 @@ return {
         grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
         qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
         buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
+        preview = {
+          filetype_hook = function(filepath, bufnr, _)
+            if not image.supports_file(filepath) then
+              return true
+            end
+
+            image_buf.attach(bufnr, { src = filepath })
+            return false
+          end,
+        },
         mappings = {
           i = {
             ["<C-h>"] = actions.preview_scrolling_left,
