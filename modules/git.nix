@@ -17,6 +17,7 @@
   # ▶ Extensions
   # ───────────────────────────────────────────────
   lfs.enable = true;
+  signing.format = "openpgp";
 
   # ───────────────────────────────────────────────
   # ▶ Git Identity & Configuration
