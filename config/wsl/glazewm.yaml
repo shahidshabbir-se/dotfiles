@@ -85,6 +85,7 @@ window_rules:
         window_class: { not_regex: 'OpusApp' }
       - window_process: { equals: 'POWERPNT' }
         window_class: { not_regex: 'PPTFrameClass' }
+      - window_process: { regex: 'cod23-cod|sp23-cod|sp23-code|bootstrapper' }
 
   - commands: ['move --workspace 1']
     match:
@@ -170,11 +171,11 @@ keybindings:
 
   # Resize mode.
   - commands: ['wm-enable-binding-mode --name resize']
-    bindings: ['win+r']
+    bindings: ['win+ctrl+r']
   - commands: ['resize --width -2%']
     bindings: ['win+u']
   - commands: ['resize --height -2%']
-    bindings: ['win+i']
+    bindings: ['win+shift+i']
   - commands: ['resize --height +2%']
     bindings: ['win+o']
   - commands: ['resize --width +2%']
@@ -189,16 +190,20 @@ keybindings:
     bindings: ['win+shift+b']
   - commands: ['shell-exec explorer.exe']
     bindings: ['win+e']
+  - commands: ['shell-exec cmd /c start "" "ms-photos:"']
+    bindings: ['win+i']
   - commands: ['shell-exec obsidian.exe']
     bindings: ['win+shift+o']
   - commands: ['shell-exec taskmgr.exe']
     bindings: ['ctrl+shift+escape']
+  - commands: ['shell-exec SnippingTool.exe /clip']
+    bindings: ['win+ctrl+s']
 
   # Workspace focus.
   - commands: ['focus --next-active-workspace']
     bindings: ['win+s']
   - commands: ['focus --recent-workspace']
-    bindings: ['win+d']
+    bindings: ['win+r']
   - commands: ['focus --workspace 1']
     bindings: ['win+1']
   - commands: ['focus --workspace 2']

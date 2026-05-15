@@ -119,5 +119,6 @@ in
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
+    atuin = import ../../modules/atuin.nix { inherit pkgs; };
   };
 }
