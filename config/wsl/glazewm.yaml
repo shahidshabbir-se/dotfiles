@@ -146,12 +146,13 @@ keybindings:
     bindings: ['win+shift+w']
   - commands: ['wm-exit']
     bindings: ['win+shift+e']
-
+  - commands: ['shell-exec tsdiscon.exe']
+    bindings: ['win+shift+l']
   # Focus navigation, matching Hyprland hjkl/arrows as closely as Windows allows.
   - commands: ['focus --direction left']
     bindings: ['win+h', 'win+left']
   - commands: ['focus --direction right']
-    bindings: ['win+semicolon', 'win+right']
+    bindings: ['win+l', 'win+right']
   - commands: ['focus --direction up']
     bindings: ['win+k', 'win+up']
   - commands: ['focus --direction down']
@@ -161,7 +162,7 @@ keybindings:
   - commands: ['move --direction left']
     bindings: ['win+shift+h', 'win+shift+left']
   - commands: ['move --direction right']
-    bindings: ['win+shift+l', 'win+shift+right']
+    bindings: ['win+shift+right']
   - commands: ['move --direction up']
     bindings: ['win+shift+k', 'win+shift+up']
   - commands: ['move --direction down']
@@ -194,8 +195,6 @@ keybindings:
     bindings: ['ctrl+shift+escape']
 
   # Workspace focus.
-  - commands: ['focus --prev-active-workspace']
-    bindings: ['win+a']
   - commands: ['focus --next-active-workspace']
     bindings: ['win+s']
   - commands: ['focus --recent-workspace']
