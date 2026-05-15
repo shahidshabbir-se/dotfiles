@@ -128,6 +128,32 @@ install_windows_app "AutoHotkey" "AutoHotkey.AutoHotkey" "C:\\Users\\$USER_NAME\
 install_windows_app "GlazeWM" "glzr-io.glazewm" "C:\\Program Files\\glzr.io\\GlazeWM\\glazewm.exe"
 install_windows_app "Spotify" "Spotify.Spotify" "C:\\Users\\$USER_NAME\\AppData\\Roaming\\Spotify\\Spotify.exe"
 
+ensure_windows_key_policy() {
+  local ps_script
+
+  ps_script="\
+    \$ErrorActionPreference = 'Stop'; \
+    \$systemPath = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System'; \
+    \$explorerPath = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer'; \
+    New-Item -Path \$systemPath -Force | Out-Null; \
+    New-Item -Path \$explorerPath -Force | Out-Null; \
+    New-ItemProperty -Path \$systemPath -Name DisableLockWorkstation -Value 1 -PropertyType DWord -Force | Out-Null; \
+    New-ItemProperty -Path \$explorerPath -Name NoWinKeys -Value 1 -PropertyType DWord -Force | Out-Null"
+
+  if powershell.exe -NoProfile -NonInteractive -Command "\
+    \$system = Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System' -Name DisableLockWorkstation -ErrorAction SilentlyContinue; \
+    \$explorer = Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer' -Name NoWinKeys -ErrorAction SilentlyContinue; \
+    if (\$system.DisableLockWorkstation -eq 1 -and \$explorer.NoWinKeys -eq 1) { exit 0 } else { exit 1 }" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Configuring Windows key policy. Approve the Windows sudo/UAC prompt if shown."
+  powershell.exe -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1 || \
+    { command -v sudo.exe >/dev/null 2>&1 && sudo.exe --new-window powershell.exe -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1; } || true
+}
+
+ensure_windows_key_policy
+
 ensure_windows_symlink() {
   local link_path="$1"
   local target_path="$2"

@@ -12,6 +12,10 @@ if !A_IsAdmin {
 ; Reload this script with Ctrl+Alt+R.
 ^!r::Reload
 
+; Stop a bare Windows key press from opening Start while preserving Win+key hotkeys.
+~LWin::Send "{Blind}{vkE8}"
+~RWin::Send "{Blind}{vkE8}"
+
 ; Open WezTerm with Win+Enter.
 #Enter::Run "wezterm-gui.exe"
 
