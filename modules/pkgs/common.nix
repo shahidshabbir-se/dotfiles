@@ -77,7 +77,7 @@ with pkgs;
   gammastep
 
   # Networking
-  dogdns
+  doggo
   rar
   tree
   doppler
