@@ -49,7 +49,7 @@ config.font = wezterm.font_with_fallback({
 config.font_size = 14.0
 config.warn_about_missing_glyphs = false
 config.audible_bell = "Disabled"
-
+config.window_background_opacity = 1.0
 config.keys = {
 	{
 		key = "v",
