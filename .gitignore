@@ -10,3 +10,4 @@ config/rofi/.current_wallpaper
 *~
 *.bak
 *.toml-*
+result/
