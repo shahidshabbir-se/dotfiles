@@ -26,6 +26,22 @@ WINDOWS_STARTUP_DIR="/mnt/c/Users/$USER_NAME/AppData/Roaming/Microsoft/Windows/S
 WINDOWS_GLAZEWM_DIR="/mnt/c/Users/$USER_NAME/.glzr/glazewm"
 WINDOWS_HOME_LINK="/mnt/c/home"
 
+POWERSHELL_EXE="$(command -v powershell.exe || true)"
+WINGET_EXE="$(command -v winget.exe || true)"
+SUDO_EXE="$(command -v sudo.exe || true)"
+
+if [ -z "$POWERSHELL_EXE" ] && [ -x /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe ]; then
+  POWERSHELL_EXE="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+fi
+
+if [ -z "$WINGET_EXE" ] && [ -x "/mnt/c/Users/$USER_NAME/AppData/Local/Microsoft/WindowsApps/winget.exe" ]; then
+  WINGET_EXE="/mnt/c/Users/$USER_NAME/AppData/Local/Microsoft/WindowsApps/winget.exe"
+fi
+
+if [ -z "$SUDO_EXE" ] && [ -x /mnt/c/Windows/System32/sudo.exe ]; then
+  SUDO_EXE="/mnt/c/Windows/System32/sudo.exe"
+fi
+
 mkdir -p "$HOME/tmp"
 export TMPDIR="$HOME/tmp"
 
@@ -105,18 +121,18 @@ install_windows_app() {
   local winget_id="$2"
   local check_path="$3"
 
-  if ! command -v powershell.exe >/dev/null 2>&1 || ! command -v winget.exe >/dev/null 2>&1; then
+  if [ -z "$POWERSHELL_EXE" ] || [ -z "$WINGET_EXE" ]; then
     echo "Skipping $name install because Windows PowerShell or winget is unavailable."
     return 0
   fi
 
-  if powershell.exe -NoProfile -NonInteractive -Command "Test-Path '$check_path'" | grep -qi true; then
+  if "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "Test-Path '$check_path'" | grep -qi true; then
     echo "$name already installed."
     return 0
   fi
 
   echo "Installing $name on Windows..."
-  winget.exe install --id "$winget_id" --exact --silent --accept-package-agreements --accept-source-agreements || {
+  "$WINGET_EXE" install --id "$winget_id" --exact --silent --accept-package-agreements --accept-source-agreements || {
     echo "Could not install $name with winget. Skipping."
     return 0
   }
@@ -127,6 +143,7 @@ install_windows_app "WezTerm" "wez.wezterm" "C:\\Program Files\\WezTerm\\wezterm
 install_windows_app "AutoHotkey" "AutoHotkey.AutoHotkey" "C:\\Users\\$USER_NAME\\AppData\\Local\\Programs\\AutoHotkey\\v2\\AutoHotkey64.exe"
 install_windows_app "GlazeWM" "glzr-io.glazewm" "C:\\Program Files\\glzr.io\\GlazeWM\\glazewm.exe"
 install_windows_app "Spotify" "Spotify.Spotify" "C:\\Users\\$USER_NAME\\AppData\\Roaming\\Spotify\\Spotify.exe"
+install_windows_app "VLC" "VideoLAN.VLC" "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
 
 ensure_windows_key_policy() {
   local ps_script
@@ -140,7 +157,12 @@ ensure_windows_key_policy() {
     New-ItemProperty -Path \$systemPath -Name DisableLockWorkstation -Value 1 -PropertyType DWord -Force | Out-Null; \
     New-ItemProperty -Path \$explorerPath -Name NoWinKeys -Value 1 -PropertyType DWord -Force | Out-Null"
 
-  if powershell.exe -NoProfile -NonInteractive -Command "\
+  if [ -z "$POWERSHELL_EXE" ]; then
+    echo "Skipping Windows key policy because PowerShell is unavailable."
+    return 0
+  fi
+
+  if "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "\
     \$system = Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System' -Name DisableLockWorkstation -ErrorAction SilentlyContinue; \
     \$explorer = Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer' -Name NoWinKeys -ErrorAction SilentlyContinue; \
     if (\$system.DisableLockWorkstation -eq 1 -and \$explorer.NoWinKeys -eq 1) { exit 0 } else { exit 1 }" >/dev/null 2>&1; then
@@ -148,8 +170,8 @@ ensure_windows_key_policy() {
   fi
 
   echo "Configuring Windows key policy. Approve the Windows sudo/UAC prompt if shown."
-  powershell.exe -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1 || \
-    { command -v sudo.exe >/dev/null 2>&1 && sudo.exe --new-window powershell.exe -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1; } || true
+  "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1 || \
+    { [ -n "$SUDO_EXE" ] && "$SUDO_EXE" --new-window "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1; } || true
 }
 
 ensure_windows_key_policy
@@ -161,7 +183,12 @@ ensure_windows_symlink() {
   local target_path_win="$4"
   local ps_script
 
-  if powershell.exe -NoProfile -NonInteractive -Command "\
+  if [ -z "$POWERSHELL_EXE" ]; then
+    echo "Could not create symlink $link_path because PowerShell is unavailable; falling back where possible."
+    return 1
+  fi
+
+  if "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "\
     \$link = '$link_path_win'; \
     \$target = '$target_path_win'; \
     \$item = Get-Item -LiteralPath \$link -Force -ErrorAction SilentlyContinue; \
@@ -185,15 +212,27 @@ ensure_windows_symlink() {
     } \
     New-Item -ItemType SymbolicLink -Path \$link -Target \$target -Force | Out-Null"
 
-  powershell.exe -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1 || {
+  "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "$ps_script" >/dev/null 2>&1 || {
     echo "Could not create symlink $link_path. Existing link is missing or points elsewhere; falling back where possible."
     return 1
   }
 }
 
+copy_windows_file() {
+  local source_path="$1"
+  local target_path="$2"
+
+  rm -f "$target_path" 2>/dev/null || true
+  cp "$source_path" "$target_path" || {
+    echo "Could not copy $source_path to $target_path. Skipping."
+    return 0
+  }
+}
+
 if [ -d "/mnt/c/Users/$USER_NAME" ]; then
   echo "Setting up Spicetify on Windows..."
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "\
+  if [ -n "$POWERSHELL_EXE" ]; then
+  "$POWERSHELL_EXE" -NoProfile -ExecutionPolicy Bypass -Command "\
     \$ErrorActionPreference = 'Continue'; \
     \$spotify = 'C:\\Users\\$USER_NAME\\AppData\\Roaming\\Spotify\\Spotify.exe'; \
     \$spotifyDir = 'C:\\Users\\$USER_NAME\\AppData\\Roaming\\Spotify'; \
@@ -269,6 +308,9 @@ if [ -d "/mnt/c/Users/$USER_NAME" ]; then
     } else { \
       Write-Output 'Spotify executable not found yet; rerun bootstrap after Spotify finishes installing.'; \
     }" || true
+  else
+    echo "Skipping Spicetify setup because PowerShell is unavailable."
+  fi
 
   echo "Linking Windows config files to WSL dotfiles..."
   ensure_windows_symlink \
@@ -281,26 +323,27 @@ if [ -d "/mnt/c/Users/$USER_NAME" ]; then
     "/mnt/c/Users/$USER_NAME/.wezterm.lua" \
     "$DOTFILES/config/wsl/wezterm.lua" \
     "C:\\Users\\$USER_NAME\\.wezterm.lua" \
-    "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\wezterm.lua" || cp "$DOTFILES/config/wsl/wezterm.lua" "/mnt/c/Users/$USER_NAME/.wezterm.lua"
+    "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\wezterm.lua" || copy_windows_file "$DOTFILES/config/wsl/wezterm.lua" "/mnt/c/Users/$USER_NAME/.wezterm.lua"
 
   mkdir -p "$WINDOWS_AHK_DIR"
   ensure_windows_symlink \
     "$WINDOWS_AHK_SCRIPT" \
     "$DOTFILES/config/wsl/autohotkey.ahk" \
     "C:\\Users\\$USER_NAME\\.config\\autohotkey\\wsl.ahk" \
-    "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\autohotkey.ahk" || cp "$DOTFILES/config/wsl/autohotkey.ahk" "$WINDOWS_AHK_SCRIPT"
+    "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\autohotkey.ahk" || copy_windows_file "$DOTFILES/config/wsl/autohotkey.ahk" "$WINDOWS_AHK_SCRIPT"
 
   if [ -d "$WINDOWS_STARTUP_DIR" ]; then
     ensure_windows_symlink \
       "$WINDOWS_STARTUP_DIR/wsl.ahk" \
       "$DOTFILES/config/wsl/autohotkey.ahk" \
       "C:\\Users\\$USER_NAME\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\wsl.ahk" \
-      "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\autohotkey.ahk" || cp "$DOTFILES/config/wsl/autohotkey.ahk" "$WINDOWS_STARTUP_DIR/wsl.ahk"
+      "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\autohotkey.ahk" || copy_windows_file "$DOTFILES/config/wsl/autohotkey.ahk" "$WINDOWS_STARTUP_DIR/wsl.ahk"
     echo "AutoHotkey startup file: C:\\Users\\$USER_NAME\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\wsl.ahk"
   fi
   echo "AutoHotkey file: C:\\Users\\$USER_NAME\\.config\\autohotkey\\wsl.ahk"
 
-  powershell.exe -NoProfile -NonInteractive -Command "\
+  if [ -n "$POWERSHELL_EXE" ]; then
+  "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "\
     \$script = 'C:\\Users\\$USER_NAME\\.config\\autohotkey\\wsl.ahk'; \
     \$exe = 'C:\\Users\\$USER_NAME\\AppData\\Local\\Programs\\AutoHotkey\\v2\\AutoHotkey64.exe'; \
     \$running = Get-Process -Name 'AutoHotkey*' -ErrorAction SilentlyContinue; \
@@ -317,6 +360,9 @@ if [ -d "/mnt/c/Users/$USER_NAME" ]; then
     } elseif ((Test-Path \$exe) -and (Test-Path \$script)) { \
       Start-Process -FilePath \$exe -ArgumentList ('\"' + \$script + '\"'); \
     }" || true
+  else
+    echo "Skipping AutoHotkey launch because PowerShell is unavailable."
+  fi
 fi
 
 if [ -d "/mnt/c/Users/$USER_NAME" ]; then
@@ -326,13 +372,17 @@ if [ -d "/mnt/c/Users/$USER_NAME" ]; then
     "$WINDOWS_GLAZEWM_DIR/config.yaml" \
     "$DOTFILES/config/wsl/glazewm.yaml" \
     "C:\\Users\\$USER_NAME\\.glzr\\glazewm\\config.yaml" \
-    "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\glazewm.yaml" || cp "$DOTFILES/config/wsl/glazewm.yaml" "$WINDOWS_GLAZEWM_DIR/config.yaml"
+    "\\\\wsl$\\$WSL_DISTRO\\home\\$USER_NAME\\dotfiles\\config\\wsl\\glazewm.yaml" || copy_windows_file "$DOTFILES/config/wsl/glazewm.yaml" "$WINDOWS_GLAZEWM_DIR/config.yaml"
 
-  powershell.exe -NoProfile -NonInteractive -Command "\
+  if [ -n "$POWERSHELL_EXE" ]; then
+  "$POWERSHELL_EXE" -NoProfile -NonInteractive -Command "\
     \$exe = 'C:\\Program Files\\glzr.io\\GlazeWM\\glazewm.exe'; \
     \$running = Get-Process -Name glazewm -ErrorAction SilentlyContinue; \
     if ((Test-Path \$exe) -and \$running) { & \$exe command wm-reload-config } \
     elseif (Test-Path \$exe) { Start-Process -FilePath \$exe }" || true
+  else
+    echo "Skipping GlazeWM reload because PowerShell is unavailable."
+  fi
 fi
 
 if [ -d "$WALLPAPERS_DIR" ] && [ -d "/mnt/c/Users/$USER_NAME/Pictures" ]; then
