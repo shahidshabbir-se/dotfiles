@@ -44,6 +44,7 @@ in
         ripgrep
         chromium
         home-manager
+        superfile
         neovim
         nodejs_24
         python3
@@ -74,11 +75,11 @@ in
       }
 
       backup_if_real_path "${homeDirectory}/.config/nvim"
-      backup_if_real_path "${homeDirectory}/.config/yazi"
+      # backup_if_real_path "${homeDirectory}/.config/yazi"
       backup_if_real_path "${homeDirectory}/.zsh/aliases"
 
       $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/nvim" "${homeDirectory}/.config/nvim"
-      $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/yazi" "${homeDirectory}/.config/yazi"
+      # $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/yazi" "${homeDirectory}/.config/yazi"
       $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/zsh/aliases" "${homeDirectory}/.zsh/aliases"
 
     '';
