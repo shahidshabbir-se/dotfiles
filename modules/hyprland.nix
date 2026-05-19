@@ -19,6 +19,11 @@ let
   homeDirectory = "/home/shahid";
   browser = "zen-beta";
   inherit (config.lib.file) mkOutOfStoreSymlink;
+  exitScript = pkgs.writeShellScript "exit.sh" ''
+    if env -u GTK_THEME zenity --question --title="Exit Hyprland" --text="Do you wish to exit?"; then
+      hyprctl -i 0 dispatch exit
+    fi
+  '';
 
   d = device.display;
   desktopRefreshRate = if device.type == "desktop" then 240 else d.refreshRate;
@@ -88,7 +93,7 @@ in
 
       monitor = [
         monitorLine
-        "${d.connector},addreserved,68,0,0,0"
+        # "${d.connector},addreserved,68,0,0,0"
       ];
 
       exec-once = [
@@ -117,7 +122,7 @@ in
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/heic"
         # "hyprctl setcursor Banana 36"
         "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
-        ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl dispatch togglefloating "address:0x$addr" && hyprctl dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
+        ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl -i 0 clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl -i 0 dispatch togglefloating "address:0x$addr" && hyprctl -i 0 dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl -i 0 dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
       ];
 
       env = [
@@ -250,6 +255,7 @@ in
         "$mod SHIFT, J, togglesplit,"
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
+        "$mod SHIFT, Q, exec, ${exitScript}"
         "$mod, N, exec, swaync-client -t -sw"
         "$mod, Z, exec, ${homeDirectory}/dotfiles/config/eww/scripts/bar/state toggle"
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
