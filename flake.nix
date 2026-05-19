@@ -94,7 +94,7 @@
             scale = 1.3333;
             refreshRate = 240;
           };
-          fontSize = 14.5;
+          fontSize = 14;
         };
 
         mac-mini = {

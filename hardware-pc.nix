@@ -13,25 +13,18 @@
   boot.kernelModules = [ "kvm-amd" ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/b4d46fcf-e595-4ba3-8a3c-24a0c19f911d";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/b4d46fcf-e595-4ba3-8a3c-24a0c19f911d";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
+    { device = "/dev/disk/by-uuid/9dfdf3ee-8f38-4ff8-be31-8fc3282dbbc4";
+      fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/E727-EC4C";
+    { device = "/dev/disk/by-uuid/005E-F76F";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/bd60973d-2876-4b2a-91f8-c8852517a1cf"; }
+    [ { device = "/dev/disk/by-uuid/66862d1c-906b-48d2-a84d-8437eeb9701d"; }
     ];
 
   # NVIDIA RTX 5070
@@ -45,10 +38,9 @@
     powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
-  boot.extraModulePackages = [ config.boot.kernelPackages.nvidiaPackages.stable ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [ nvidiaPackages.stable.open ];
 
   environment.sessionVariables = {
     WLR_NO_HARDWARE_CURSORS = "1";
