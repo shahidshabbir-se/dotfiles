@@ -26,6 +26,8 @@ case $chosen in
         systemctl suspend
         ;;
     $logout)
-        hyprctl dispatch exit
+        if env -u GTK_THEME zenity --question --title="Exit Hyprland" --text="Do you wish to exit?"; then
+            hyprctl -i 0 dispatch exit
+        fi
         ;;
 esac

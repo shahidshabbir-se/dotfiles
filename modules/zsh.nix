@@ -39,7 +39,7 @@
     yz = "yazi";
     cc = "claude";
     ki = "kilo";
-    oc = "opencode";
+    oc = "OPENCODE_ENABLE_EXA=1 opencode";
     # cr = "crush";
     # cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
     sed = "sd";
@@ -119,6 +119,18 @@
   initContent = ''
         # Force emacs keybindings (prevents EDITOR=nvim from switching to vi mode)
         bindkey -e
+
+        # Avoid stale Hyprland socket signatures in interactive shells
+        unset HYPRLAND_INSTANCE_SIGNATURE
+
+        # Default hyprctl to the first running instance when available
+        hyprctl() {
+          if command hyprctl -j instances >/dev/null 2>&1; then
+            command hyprctl -i 0 "$@"
+          else
+            command hyprctl "$@"
+          fi
+        }
 
         # Set ZSH cache directory (for dynamic completions)
         export ZSH_CACHE_DIR="${config.xdg.cacheHome}/zsh"
