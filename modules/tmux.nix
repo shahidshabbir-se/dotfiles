@@ -268,8 +268,9 @@ in
         ]
     )}
 
-        # Ctrl-t = open television sesh picker in a popup
-        bind-key C-t display-popup -B -E -w 80% -h 70% -d '#{pane_current_path}' 'tv sesh'
+        # Ctrl-t (with and without prefix) = open sesh picker (fzf) in a popup
+        bind -n C-t display-popup -B -E -w 80% -h 70% -d '#{pane_current_path}' "sesh list | fzf --prompt='sesh> ' --height=100% --layout=reverse | xargs -r -I{} sesh connect '{}'"
+        bind C-t display-popup -B -E -w 80% -h 70% -d '#{pane_current_path}' "sesh list | fzf --prompt='sesh> ' --height=100% --layout=reverse | xargs -r -I{} sesh connect '{}'"
 
         # Ctrl-l = jump to last session (via sesh)
         bind -N "last-session (via sesh)" C-l run-shell "sesh last"

@@ -47,7 +47,7 @@ with pkgs;
   imagemagick
   jq
   jless
-  lsd
+  eza
   lsof
   moreutils
   ncdu

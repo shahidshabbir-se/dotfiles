@@ -9,7 +9,7 @@ suspend="󰤄"
 logout="󰍃"
 
 # Rofi prompt
-chosen=$(echo -e "$lock\n$logout\n$suspend\n$reboot\n$shutdown" | rofi -dmenu -i -p "Power Menu" -theme ~/.config/rofi/power.rasi -theme-str '* { font: "JetBrainsMono NF Bold 12"; }')
+chosen=$(echo -e "$lock\n$logout\n$suspend\n$reboot\n$shutdown" | rofi -dmenu -i -p "Power Menu" -theme-str '* { font: "JetBrainsMono NF Bold 12"; }')
 
 # Execute action
 case $chosen in

@@ -14,7 +14,7 @@
 		"dock": "left",
 	},
 	"agent": {
-		"dock": "left",
+		"dock": "right",
 		"favorite_models": [],
 		"model_parameters": [],
 	},
@@ -27,7 +27,7 @@
 	"theme": {
 		"mode": "dark",
 		"light": "One Light",
-		"dark": "Panda Nebula",
+		"dark": "Panda Darker",
 	},
 	"telemetry": {
 		"diagnostics": false,

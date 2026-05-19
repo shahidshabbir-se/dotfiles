@@ -20,11 +20,11 @@
   # ▶ Shell Aliases
   # ───────────────────────────────────────────────
   shellAliases = {
-    ls = "lsd --icon=always --color=always -a --ignore-glob=node_modules --ignore-glob=.DS_Store";
-    ll = "lsd --icon=always --color=always -la --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ls = "eza --icons=always --color=always -a --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ll = "eza --icons=always --color=always -la --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
     mkdir = "mkdir -p";
 
-    tree = "lsd --tree --depth 1";
+    tree = "eza --tree --level=1 --icons=always";
 
     # Basic utilities
     rm = "rm -rI";
@@ -82,14 +82,14 @@
       file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
     }
     {
-      name = "zsh-you-should-use";
-      src = pkgs.zsh-you-should-use;
-      file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
-    }
-    {
       name = "fzf-tab";
       src = pkgs.zsh-fzf-tab;
       file = "share/fzf-tab/fzf-tab.plugin.zsh";
+    }
+    {
+      name = "zsh-you-should-use";
+      src = pkgs.zsh-you-should-use;
+      file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
     }
     {
       name = "zsh-syntax-highlighting";
@@ -163,21 +163,6 @@
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
         zstyle ':completion:*' menu no
-
-        # FZF-TAB configuration
-        zstyle ":fzf-tab:*" fzf-flags --border=rounded --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-rounded --height=60% --min-height=15
-
-        # Disable preview by default
-        zstyle ":fzf-tab:*" fzf-preview ""
-
-        # Enable preview only for specific commands
-        zstyle ":fzf-tab:complete:cd:*" fzf-preview "lsd --color=always --icon=always \$realpath"
-        zstyle ":fzf-tab:complete:__zoxide_z:*" fzf-preview "lsd --color=always --icon=always \$realpath"
-        zstyle ":fzf-tab:complete:ls:*" fzf-preview "[[ -d \$realpath ]] && lsd --color=always --icon=always \$realpath || bat --style=numbers --color=always --paging=never \$realpath"
-        zstyle ":fzf-tab:complete:cat:*" fzf-preview "bat --style=numbers --color=always --paging=never \$realpath"
-        zstyle ":fzf-tab:complete:bat:*" fzf-preview "bat --style=numbers --color=always --paging=never \$realpath"
-        zstyle ":fzf-tab:complete:nvim:*" fzf-preview "[[ -d \$realpath ]] && lsd --color=always --icon=always \$realpath || bat --style=numbers --color=always --paging=never \$realpath"
-        zstyle ":fzf-tab:complete:vi:*" fzf-preview "[[ -d \$realpath ]] && lsd --color=always --icon=always \$realpath || bat --style=numbers --color=always --paging=never \$realpath"
 
         # FZF colors (Tokyo Night theme)
         export FZF_DEFAULT_OPTS="\
@@ -295,7 +280,7 @@
         # Custom lt function for tree view
         lt() {
           local depth=''${1:-2}
-          lsd --tree --depth "$depth" --long --icon=always --git --ignore-glob=node_modules
+          eza --tree --level="$depth" --long --icons=always --git-ignore --ignore-glob=node_modules
         }
 
         ghc() {
@@ -380,21 +365,29 @@
         # Directory history with fzf (using zoxide)
         fz() {
           local dir
-          dir=$(zoxide query -l | fzf --preview 'lsd --color=always --icon=always {}' --header='[zoxide:jump]') &&
+          dir=$(zoxide query -l | fzf --preview 'eza --color=always --icons=always {}' --header='[zoxide:jump]') &&
           cd "$dir"
         }
 
 
-        # ─────────────────────────────────────────────────────────
-        #  Television shell integration
-        #  Ctrl-T = smart autocomplete
-        # ─────────────────────────────────────────────────────────
-        if (( $+commands[tv] )); then
-          eval "$(tv init zsh)"
-        fi
+        # fzf-tab UI configuration
+        zstyle ':completion:*' menu no
+        zstyle ':completion:*:descriptions' format '[%d]'
+        zstyle ':fzf-tab:*' fzf-flags --border=rounded --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-rounded --height=60% --min-height=15
+        zstyle ':fzf-tab:*' switch-group '<' '>'
+
+        # Disable preview globally, then enable for selected commands
+        zstyle ':fzf-tab:*' fzf-preview ""
+        zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --color=always --icons=always $realpath'
+        zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza --color=always --icons=always $realpath'
+        zstyle ':fzf-tab:complete:ls:*' fzf-preview '[[ -d $realpath ]] && eza --color=always --icons=always $realpath || bat --style=numbers --color=always --paging=never $realpath'
+        zstyle ':fzf-tab:complete:cat:*' fzf-preview 'bat --style=numbers --color=always --paging=never $realpath'
+        zstyle ':fzf-tab:complete:bat:*' fzf-preview 'bat --style=numbers --color=always --paging=never $realpath'
+        zstyle ':fzf-tab:complete:nvim:*' fzf-preview '[[ -d $realpath ]] && eza --color=always --icons=always $realpath || bat --style=numbers --color=always --paging=never $realpath'
+        zstyle ':fzf-tab:complete:vi:*' fzf-preview '[[ -d $realpath ]] && eza --color=always --icons=always $realpath || bat --style=numbers --color=always --paging=never $realpath'
 
         # ─────────────────────────────────────────────────────────
-        #  Rebind Ctrl-R to atuin (tv init overrides it above)
+        #  Rebind Ctrl-R to atuin
         # ─────────────────────────────────────────────────────────
         if (( $+commands[atuin] )); then
           bindkey '^R' _atuin_search_widget
