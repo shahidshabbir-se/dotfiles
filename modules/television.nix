@@ -26,8 +26,8 @@
     ui_scale    = 100
 
     [ui.input_bar]
-    position    = "bottom"
-    prompt      = "  "
+    position    = "top"
+    prompt      = " "
     border_type = "rounded"
 
     [ui.results_panel]
@@ -42,6 +42,7 @@
     [ui.status_bar]
     separator_open  = ""
     separator_close = ""
+    hidden          = true
 
     [ui.help_panel]
     hidden           = true

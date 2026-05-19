@@ -87,8 +87,8 @@ in
     ../../modules/node.nix
     ../../modules/i3.nix
     ../../modules/hyprland.nix
+    ../../modules/television.nix
     # ../../modules/cliproxyapi.nix
-    # ../../modules/television.nix
   ];
 
   home = {
@@ -121,6 +121,7 @@ in
         # Development tools
         fastfetch
         obsidian
+        zenity
         gcc
         git-filter-repo
         gnumake
@@ -135,6 +136,7 @@ in
         onlyoffice-desktopeditors
         protonvpn-gui
         qbittorrent
+        unstablePackages.television
         vlc
         xfce.thunar
         unstablePackages.zed-editor-fhs

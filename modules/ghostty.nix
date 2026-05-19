@@ -59,7 +59,7 @@ in
     background-opacity = 1.0;
     window-decoration = false;
     window-padding-x = 6;
-    window-padding-y = 4;
+    window-padding-y = 6;
     window-padding-balance = true;
 
     # Cursor

@@ -268,8 +268,8 @@ in
         ]
     )}
 
-        # Ctrl-t = open sesh's built-in picker in a popup
-        bind-key C-t display-popup -E -w 80% -h 70% -d '#{pane_current_path}' -T ' sesh ' 'sesh picker -i'
+        # Ctrl-t = open television sesh picker in a popup
+        bind-key C-t display-popup -B -E -w 80% -h 70% -d '#{pane_current_path}' 'tv sesh'
 
         # Ctrl-l = jump to last session (via sesh)
         bind -N "last-session (via sesh)" C-l run-shell "sesh last"

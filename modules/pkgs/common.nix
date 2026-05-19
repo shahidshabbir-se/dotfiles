@@ -87,7 +87,6 @@ with pkgs;
   # System / Terminal
   playerctl
   sesh
-  television
   tmux
 
   # Fun
