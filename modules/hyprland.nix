@@ -44,7 +44,6 @@ in
     wofi
     rofi
     rofi-bluetooth
-    wlogout
 
     # Lock screen
     hyprlock
@@ -68,6 +67,28 @@ in
     # Image viewer (hyprland mime defaults)
     image-roll
   ];
+
+  xdg.configFile = {
+    "hypr/hyprlock.conf".text = ''
+      $hyprlockDir = $HOME/.config/hyprlock
+
+      $music = $hyprlockDir/scripts/playerctlock.sh
+      $battery = $hyprlockDir/scripts/battery.sh
+      $location = $hyprlockDir/scripts/location.sh
+      $weather = $hyprlockDir/scripts/weather.sh
+
+      source = $hyprlockDir/layouts/layout16.conf
+      ${if device.type == "laptop" then "source = $hyprlockDir/layouts/layout16-battery.conf" else ""}
+    '';
+    "hyprlock/layouts/layout16.conf".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16.conf";
+    "hyprlock/layouts/layout16-battery.conf".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16-battery.conf";
+    "hyprlock/wallpapers/16.jpeg".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/wallpapers/16.jpeg";
+
+    "hyprlock/scripts/playerctlock.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/playerctlock.sh";
+    "hyprlock/scripts/battery.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/battery.sh";
+    "hyprlock/scripts/weather.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/weather.sh";
+    "hyprlock/scripts/location.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/location.sh";
+  };
 
   # ───────────────────────────────────────────────
   # ▶ Swaync (Notification Center)
@@ -166,8 +187,10 @@ in
 
         blur = {
           enabled = true;
-          size = 3;
-          passes = 1;
+          size = 8;
+          passes = 2;
+          ignore_opacity = true;
+          new_optimizations = true;
           vibrancy = 0.1696;
         };
       };
@@ -261,7 +284,7 @@ in
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
         "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
         "ALT SHIFT, W, exec, bash ~/.config/rofi/WallSelect"
-        "ALT SHIFT, P, exec, ${homeDirectory}/dotfiles/config/rofi/power-launch.sh"
+        "ALT SHIFT, P, exec, ${homeDirectory}/.config/wlogout/launch.sh"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
         "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"
         "SUPER, SUPER_L, exec, $menu"
@@ -349,6 +372,11 @@ in
         "float, class:^(Rofi)$"
         "suppressevent maximize, class:.*"
         "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+      ];
+
+      layerrule = [
+        "blur,logout_dialog"
+        "ignorealpha 0,logout_dialog"
       ];
 
       xwayland = {

@@ -45,13 +45,17 @@ let
   font = "SF Pro Display 10";
   monospaceFont = "JetBrainsMono Nerd Font 10";
 
-  cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
-  cursorSize = if device.type == "laptop" then 48 else 24;
-  cursorPackage =
-    if device.type == "laptop" then
-      import ../../modules/banana-cursor.nix { inherit pkgs; }
-    else
-      pkgs.catppuccin-cursors.mochaDark;
+  # cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
+  # cursorSize = if device.type == "laptop" then 48 else 24;
+  # cursorPackage =
+  #   if device.type == "laptop" then
+  #     import ../../modules/banana-cursor.nix { inherit pkgs; }
+  #   else
+  #     pkgs.catppuccin-cursors.mochaDark;
+
+  cursorTheme = "Banana";
+  cursorSize = 32;
+  cursorPackage = import ../../modules/banana-cursor.nix { inherit pkgs; };
 
   gtkThemePackage = pkgs.catppuccin-gtk.override {
     variant = "mocha";
@@ -87,7 +91,7 @@ in
     ../../modules/node.nix
     ../../modules/i3.nix
     ../../modules/hyprland.nix
-    ../../modules/television.nix
+    ../../modules/wlogout.nix
     # ../../modules/cliproxyapi.nix
   ];
 
@@ -120,6 +124,7 @@ in
 
         # Development tools
         fastfetch
+        quickshell
         obsidian
         zenity
         gcc
@@ -136,7 +141,6 @@ in
         onlyoffice-desktopeditors
         protonvpn-gui
         qbittorrent
-        unstablePackages.television
         vlc
         xfce.thunar
         unstablePackages.zed-editor-fhs
@@ -213,6 +217,7 @@ in
       yazi.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/yazi";
       eww.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/eww";
       rofi.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/rofi";
+      zed.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/zed";
     };
 
     mimeApps = {
