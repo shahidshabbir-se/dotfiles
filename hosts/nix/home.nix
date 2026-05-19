@@ -48,10 +48,10 @@ let
   cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
   cursorSize = if device.type == "laptop" then 48 else 24;
   cursorPackage =
-    # if device.type == "laptop" then
-    import ../../modules/banana-cursor.nix { inherit pkgs; };
-  # else
-  # pkgs.catppuccin-cursors.mochaDark;
+    if device.type == "laptop" then
+      import ../../modules/banana-cursor.nix { inherit pkgs; }
+    else
+      pkgs.catppuccin-cursors.mochaDark;
 
   gtkThemePackage = pkgs.catppuccin-gtk.override {
     variant = "mocha";
@@ -116,10 +116,11 @@ in
       commonPackages
       # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
-        upwork
+        # upwork
 
         # Development tools
         fastfetch
+        obsidian
         gcc
         git-filter-repo
         gnumake

@@ -8,9 +8,10 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "uas" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/9dfdf3ee-8f38-4ff8-be31-8fc3282dbbc4";
@@ -26,28 +27,6 @@
   swapDevices =
     [ { device = "/dev/disk/by-uuid/66862d1c-906b-48d2-a84d-8437eeb9701d"; }
     ];
-
-  # NVIDIA RTX 5070
-  services.xserver.videoDrivers = [ "nvidia" ];
-
-  boot.blacklistedKernelModules = [ "nouveau" ];
-  boot.kernelParams = [ "nvidia_drm.modeset=1" "pcie_aspm=off" ];
-
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = true;
-    open = true;
-    nvidiaSettings = true;
-  };
-
-  boot.extraModulePackages = with config.boot.kernelPackages; [ nvidiaPackages.stable.open ];
-
-  environment.sessionVariables = {
-    WLR_NO_HARDWARE_CURSORS = "1";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    NIXOS_OZONE_WL = "1";
-  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
