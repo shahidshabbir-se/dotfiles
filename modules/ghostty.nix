@@ -56,10 +56,10 @@ in
     # Window
     window-inherit-working-directory = true;
     window-inherit-font-size = false;
-    background-opacity = 1.0;
+    background-opacity = 0.90;
     window-decoration = false;
     window-padding-x = 6;
-    window-padding-y = 6;
+    window-padding-y = "6,2";
     window-padding-balance = true;
 
     # Cursor
