@@ -75,6 +75,7 @@ let
   };
 
   commonPackages = import ../../modules/pkgs/common.nix { inherit pkgs; };
+  zedPackage = import ../../modules/pkgs/zed.nix { inherit pkgs lib; };
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
   # Use absolute store paths in activation scripts so they do not depend on PATH.
@@ -143,7 +144,7 @@ in
         qbittorrent
         vlc
         xfce.thunar
-        unstablePackages.zed-editor-fhs
+        zedPackage
         zenBrowserPackage
 
         # Media and system utilities
