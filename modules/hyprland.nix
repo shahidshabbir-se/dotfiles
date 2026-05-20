@@ -69,6 +69,8 @@ in
   ];
 
   xdg.configFile = {
+    "quickshell/bar".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/bar";
+    "quickshell/visualizer".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
     "quickshell/wallpaper".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
     "hypr/hyprlock.conf".text = ''
       $hyprlockDir = $HOME/.config/hyprlock
@@ -111,7 +113,7 @@ in
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
       "$fileManager" = "ghostty --title=yazi -e yazi";
-      "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
+        "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/toggle-launcher.sh";
 
       monitor = [
         monitorLine
@@ -121,8 +123,10 @@ in
       exec-once = [
         "pkill -x glava 2>/dev/null || true"
         "pkill -x waybar 2>/dev/null || true"
+        "pkill -x eww 2>/dev/null || true"
         "swww-daemon &"
-        "sleep 1 && ${homeDirectory}/dotfiles/config/eww/scripts/bar/state apply &"
+        "sleep 1 && sh ${homeDirectory}/.config/quickshell/bar/launch.sh &"
+        "sleep 1 && sh ${homeDirectory}/dotfiles/config/quickshell/visualizer/launch.sh &"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
@@ -281,7 +285,7 @@ in
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
         "$mod, N, exec, swaync-client -t -sw"
-        "$mod, Z, exec, ${homeDirectory}/dotfiles/config/eww/scripts/bar/state toggle"
+        "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/toggle-bar.sh"
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
         "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
         "ALT SHIFT, W, exec, quickshell --no-duplicate -c wallpaper"
@@ -371,6 +375,9 @@ in
         "size 1000 600, class:^(podman-tui)$"
         "center, class:^(podman-tui)$"
         "float, class:^(Rofi)$"
+        "opacity 1.0 override 1.0 override 1.0 override,class:^(com.mitchellh.ghostty)$,fullscreen:1"
+        "forcergbx,class:^(com.mitchellh.ghostty)$,fullscreen:1"
+        "noblur,class:^(com.mitchellh.ghostty)$,fullscreen:1"
         "suppressevent maximize, class:.*"
         "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
       ];
@@ -378,6 +385,14 @@ in
       layerrule = [
         "blur,logout_dialog"
         "ignorealpha 0,logout_dialog"
+        "blur,quickshell_bar"
+        "ignorealpha 0,quickshell_bar"
+        "blur,quickshell_launcher_popup"
+        "ignorealpha 0,quickshell_launcher_popup"
+        "blur,quickshell_player_popup"
+        "ignorealpha 0,quickshell_player_popup"
+        "blur,quickshell_volume_osd"
+        "ignorealpha 0,quickshell_volume_osd"
       ];
 
       xwayland = {

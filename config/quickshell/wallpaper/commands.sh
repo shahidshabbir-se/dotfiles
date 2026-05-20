@@ -23,6 +23,15 @@ swww img "$selected_path" \
 
 cp -f "$selected_path" "$HOME/.cache/hyprlock.png"
 
+if command -v magick > /dev/null; then
+    mkdir -p "$HOME/.cache/amadeus-bar"
+    magick "$HOME/.cache/hyprlock.png" \
+        -resize "380x168^" \
+        -gravity center \
+        -extent "380x168" \
+        "$HOME/.cache/amadeus-bar/menu-banner.png"
+fi
+
 if command -v matugen > /dev/null; then
     matugen image --config "$HOME/dotfiles/config/matugen/config.toml" "$selected_path" &
 fi

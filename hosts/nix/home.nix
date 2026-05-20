@@ -126,6 +126,7 @@ in
         # Development tools
         fastfetch
         quickshell
+        kdePackages.qt5compat
         obsidian
         zenity
         gcc
