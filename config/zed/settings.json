@@ -5,7 +5,7 @@
 		},
 	},
 	"project_panel": {
-		"dock": "right",
+		"dock": "left",
 	},
 	"outline_panel": {
 		"dock": "left",
@@ -14,7 +14,8 @@
 		"dock": "left",
 	},
 	"agent": {
-		"dock": "right",
+		"sidebar_side": "right",
+  "dock": "right",
 		"favorite_models": [],
 		"model_parameters": [],
 	},
@@ -27,7 +28,7 @@
 	"theme": {
 		"mode": "dark",
 		"light": "One Light",
-		"dark": "Panda Darker",
+		"dark": "Kaimandres",
 	},
 	"telemetry": {
 		"diagnostics": false,
