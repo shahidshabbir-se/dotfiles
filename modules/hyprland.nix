@@ -69,6 +69,7 @@ in
   ];
 
   xdg.configFile = {
+    "quickshell/wallpaper".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
     "hypr/hyprlock.conf".text = ''
       $hyprlockDir = $HOME/.config/hyprlock
 
@@ -283,7 +284,7 @@ in
         "$mod, Z, exec, ${homeDirectory}/dotfiles/config/eww/scripts/bar/state toggle"
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
         "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
-        "ALT SHIFT, W, exec, bash ~/.config/rofi/WallSelect"
+        "ALT SHIFT, W, exec, quickshell --no-duplicate -c wallpaper"
         "ALT SHIFT, P, exec, ${homeDirectory}/.config/wlogout/launch.sh"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
         "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"
