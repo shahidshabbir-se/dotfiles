@@ -332,7 +332,6 @@ in
         "${mod}+space" = "exec ${menu}";
         "Mod1+Shift+b" = "exec ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh";
         "Mod1+Shift+n" = "exec ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh";
-        "Mod1+Shift+w" = "exec bash ~/.config/rofi/WallSelect-x11";
         "Mod1+Shift+p" = "exec ${homeDirectory}/dotfiles/config/rofi/power-x11-launch.sh";
         "Mod1+Shift+s" = "exec ${homeDirectory}/dotfiles/config/rofi/screenshot-x11-launch.sh";
         "Mod1+c" = "exec ${homeDirectory}/dotfiles/config/rofi/clipboard-x11-launch.sh";

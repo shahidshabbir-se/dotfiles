@@ -246,10 +246,10 @@ in
         theme = pkgs.catppuccin-grub.overrideAttrs (old: {
           nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.imagemagick ];
           installPhase = old.installPhase + ''
-            ${pkgs.imagemagick}/bin/convert ${./assets/grub.jpg} $out/background.png
+            ${pkgs.imagemagick}/bin/magick ${./assets/grub.jpg} $out/background.png
           '';
           # cp ${./assets/logo.png} $out/logo.png
-          # ${pkgs.imagemagick}/bin/convert ${./assets/profile.png} $out/logo.png
+          # ${pkgs.imagemagick}/bin/magick ${./assets/profile.png} $out/logo.png
         });
         gfxmodeEfi = "3440x1440"; # Adjust to your screen resolution
       };
