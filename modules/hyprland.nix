@@ -70,8 +70,10 @@ in
 
   xdg.configFile = {
     "quickshell/bar".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/bar";
-    "quickshell/visualizer".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
-    "quickshell/wallpaper".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
+    "quickshell/visualizer".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
+    "quickshell/wallpaper".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
     "hypr/hyprlock.conf".text = ''
       $hyprlockDir = $HOME/.config/hyprlock
 
@@ -83,14 +85,21 @@ in
       source = $hyprlockDir/layouts/layout16.conf
       ${if device.type == "laptop" then "source = $hyprlockDir/layouts/layout16-battery.conf" else ""}
     '';
-    "hyprlock/layouts/layout16.conf".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16.conf";
-    "hyprlock/layouts/layout16-battery.conf".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16-battery.conf";
-    "hyprlock/wallpapers/16.jpeg".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/wallpapers/16.jpeg";
+    "hyprlock/layouts/layout16.conf".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16.conf";
+    "hyprlock/layouts/layout16-battery.conf".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16-battery.conf";
+    "hyprlock/wallpapers/16.jpeg".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/wallpapers/16.jpeg";
 
-    "hyprlock/scripts/playerctlock.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/playerctlock.sh";
-    "hyprlock/scripts/battery.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/battery.sh";
-    "hyprlock/scripts/weather.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/weather.sh";
-    "hyprlock/scripts/location.sh".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/location.sh";
+    "hyprlock/scripts/playerctlock.sh".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/playerctlock.sh";
+    "hyprlock/scripts/battery.sh".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/battery.sh";
+    "hyprlock/scripts/weather.sh".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/weather.sh";
+    "hyprlock/scripts/location.sh".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/location.sh";
   };
 
   # ───────────────────────────────────────────────
@@ -113,7 +122,7 @@ in
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
       "$fileManager" = "ghostty --title=yazi -e yazi";
-        "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/toggle-launcher.sh";
+      "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/toggle-launcher.sh";
 
       monitor = [
         monitorLine
@@ -146,8 +155,8 @@ in
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/tiff"
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/avif"
         "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/heic"
-        # "hyprctl setcursor Banana 36"
         "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
+        # "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
         ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl -i 0 clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl -i 0 dispatch togglefloating "address:0x$addr" && hyprctl -i 0 dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl -i 0 dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
       ];
 
@@ -170,7 +179,7 @@ in
       general = {
         gaps_in = 5;
         gaps_out = 10;
-        border_size = 0;
+        border_size = 2;
         "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
         "col.inactive_border" = "rgba(595959aa)";
         resize_on_border = false;
@@ -261,6 +270,7 @@ in
         "$mod, Return, exec, hyprctl dispatch workspace 1 && $terminal"
         "$mod, Q, killactive,"
         "$mod, E, exec, $fileManager"
+        "$mod SHIFT, E, exec, thunar"
         "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
         "$mod, B, exec, hyprctl dispatch workspace 2 && $browser"
         "$mod SHIFT, B, exec, hyprctl dispatch workspace 5 && $browser --private-window"
@@ -365,6 +375,9 @@ in
         "float, title:^(yazi)$"
         "size 800 500, title:^(yazi)$"
         "center, title:^(yazi)$"
+        "float, class:^(Thunar)$"
+        "size 1100 700, class:^(Thunar)$"
+        "center, class:^(Thunar)$"
         "float, class:^(com.github.weclaw1.ImageRoll)$"
         "center, class:^(com.github.weclaw1.ImageRoll)$"
         "noblur,class:^(Brave-browser)$"

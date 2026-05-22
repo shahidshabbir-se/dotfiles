@@ -45,17 +45,17 @@ let
   font = "SF Pro Display 10";
   monospaceFont = "JetBrainsMono Nerd Font 10";
 
-  # cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
-  # cursorSize = if device.type == "laptop" then 48 else 24;
-  # cursorPackage =
-  #   if device.type == "laptop" then
-  #     import ../../modules/banana-cursor.nix { inherit pkgs; }
-  #   else
-  #     pkgs.catppuccin-cursors.mochaDark;
+  cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
+  cursorSize = if device.type == "laptop" then 48 else 24;
+  cursorPackage =
+    if device.type == "laptop" then
+      import ../../modules/banana-cursor.nix { inherit pkgs; }
+    else
+      pkgs.catppuccin-cursors.mochaDark;
 
-  cursorTheme = "Banana";
-  cursorSize = 32;
-  cursorPackage = import ../../modules/banana-cursor.nix { inherit pkgs; };
+  # cursorTheme = "Banana-Catppuccin-Mocha";
+  # cursorSize = 48;
+  # cursorPackage = import ../../modules/banana-cursor.nix { inherit pkgs; };
 
   gtkThemePackage = pkgs.catppuccin-gtk.override {
     variant = "mocha";
@@ -69,10 +69,10 @@ let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (config.lib.file) mkOutOfStoreSymlink;
 
-  unstablePackages = import unstable {
-    inherit system;
-    config.allowUnfree = true;
-  };
+  # unstablePackages = import unstable {
+  #   inherit system;
+  #   config.allowUnfree = true;
+  # };
 
   commonPackages = import ../../modules/pkgs/common.nix { inherit pkgs; };
   zedPackage = import ../../modules/pkgs/zed.nix { inherit pkgs lib; };
@@ -139,11 +139,13 @@ in
         # Desktop applications
         anydesk
         chromium
+        glycin-loaders
         image-roll
         onlyoffice-desktopeditors
         protonvpn-gui
         qbittorrent
         vlc
+        webp-pixbuf-loader
         xfce.thunar
         zedPackage
         zenBrowserPackage
