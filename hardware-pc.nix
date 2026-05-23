@@ -23,9 +23,7 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/66862d1c-906b-48d2-a84d-8437eeb9701d"; }
-    ];
+  swapDevices = [ ];
 
   # NVIDIA RTX 5070
   services.xserver.videoDrivers = [ "nvidia" ];
