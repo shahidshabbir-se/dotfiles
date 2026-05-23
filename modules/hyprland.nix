@@ -165,6 +165,9 @@ in
         "TERMINAL,wezterm"
         "BROWSER,${browser}"
         "EDITOR,nvim"
+        # HDR + cm on desktop makes Chromium/Electron render dim without these.
+        "CHROMIUM_FLAGS,--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
+        "CHROMIUM_USER_FLAGS,--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
         # "XCURSOR_THEME,Banana"
         # "XCURSOR_SIZE,36"
         # "HYPRCURSOR_SIZE,36"
@@ -381,6 +384,8 @@ in
         "float, class:^(com.github.weclaw1.ImageRoll)$"
         "center, class:^(com.github.weclaw1.ImageRoll)$"
         "noblur,class:^(Brave-browser)$"
+        "noblur,class:^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
+        "opacity 1.0 override 1.0 override 1.0 override,class:^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
         "float, title:^(btop)$"
         "size 900 600, title:^(btop)$"
         "center, title:^(btop)$"

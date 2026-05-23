@@ -127,6 +127,7 @@
           modules = [
             hardwareConfig
             ./configuration.nix
+            inputs.catppuccin.nixosModules.catppuccin
 
             home-manager.nixosModules.home-manager
             {

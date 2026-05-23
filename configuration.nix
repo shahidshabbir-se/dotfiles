@@ -17,6 +17,20 @@ let
     inherit system;
     config.allowUnfree = true;
   };
+
+  adi1090x-lone = pkgs.stdenv.mkDerivation {
+    name = "adi1090x-lone";
+    src = pkgs.fetchFromGitHub {
+      owner = "adi1090x";
+      repo = "plymouth-themes";
+      rev = "5d8817458d764bff4ff9daae94cf1bbaabf16ede";
+      hash = "sha256-e3lRgIBzDkKcWEp5yyRCzQJM6yyTjYC5XmNUZZroDuw=";
+    };
+    installPhase = ''
+      mkdir -p $out/share/plymouth/themes/lone
+      cp -r $src/pack_3/lone/* $out/share/plymouth/themes/lone/
+    '';
+  };
 in
 
 {
