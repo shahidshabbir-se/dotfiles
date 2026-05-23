@@ -1,6 +1,9 @@
 {
 	"agent_servers": {
-		"codex-acp": {
+		"cursor": {
+   "type": "registry"
+  },
+  "codex-acp": {
 			"type": "registry",
 		},
 	},

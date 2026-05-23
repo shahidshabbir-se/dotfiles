@@ -199,8 +199,8 @@ in
     };
 
     sessionVariables = {
-      CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb";
-      CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb";
+      CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb";
+      CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb";
       # Lutris 0.5.x still trips over newer protobuf Python bindings on NixOS.
       PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION = "python";
     };
@@ -214,7 +214,7 @@ in
 
     configFile = {
       "chromium-flags.conf".text = ''
-        --disable-features=WaylandWpColorManagerV1
+        --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
         --force-color-profile=srgb
       '';
       nvim.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/nvim";
