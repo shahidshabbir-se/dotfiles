@@ -413,7 +413,13 @@ in
     options = "--delete-older-than 3d";
   };
 
-  nix.settings.auto-optimise-store = true;
+  nix.settings = {
+    auto-optimise-store = true;
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";

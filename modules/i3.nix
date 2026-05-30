@@ -152,6 +152,15 @@ in
   # ───────────────────────────────────────────────
   services.dunst = import ./dunst.nix { };
 
+  # Only auto-start Dunst for i3 sessions. Hyprland uses SwayNC instead.
+  systemd.user.services.dunst = {
+    Unit.ConditionEnvironment = "XDG_CURRENT_DESKTOP=i3";
+    Service = {
+      Type = lib.mkForce "simple";
+      BusName = lib.mkForce "";
+    };
+  };
+
   # ───────────────────────────────────────────────
   # ▶ i3 Window Manager
   # ───────────────────────────────────────────────
@@ -368,6 +377,10 @@ in
       };
 
       startup = [
+        {
+          command = "sh -c 'pkill -x swaync 2>/dev/null || true; pgrep -x dunst >/dev/null || dunst -conf ${homeDirectory}/dotfiles/config/dunst/dunstrc &'";
+          notification = false;
+        }
         {
           command = "sh -c '[ -f ~/.fehbg ] && sh ~/.fehbg || feh --bg-fill ${homeDirectory}/.cache/wallpaper-cache/wallpaper.jpg'";
           always = true;

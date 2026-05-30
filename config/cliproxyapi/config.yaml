@@ -1,31 +1,24 @@
 # CLIProxyAPI Configuration
 # Server host/interface to bind to. Default is empty which binds to all interfaces.
 host: ""
-
 # Server port to listen on. Default is 8317.
 port: 8317
-
 # TLS configuration
 tls:
   enable: false
   cert: ""
   key: ""
-
 # Management API settings
 remote-management:
   allow-remote: false
-  secret-key: "pyTl0frWpX97QYyNL1bgy1WctV/+gPDQiFA811APo/g="
+  secret-key: "$2a$10$Tq7pdqq1J0hx63S/x5gBQ.xdGYwGyq.RDScsWO7Cw2ujHTDx3q//m"
   disable-control-panel: true
-
 # Authentication directory (supports ~ for home directory)
 auth-dir: "~/.config/cliproxyapi/auth"
-
 # API keys for authentication
 api-keys:
   - "sk-dummy"
-
 # Enable debug logging
 debug: true
-
 # Logging configuration
 logging-to-file: false

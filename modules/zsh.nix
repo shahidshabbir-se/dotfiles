@@ -400,7 +400,7 @@
         export BROWSER="${browser}"
         export _ZO_DOCTOR=0
         export GOPATH="$HOME/go"
-        export PATH="$HOME/.npm-global/bin:$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"
+        export PATH="$HOME/.cargo/bin:$HOME/.npm-global/bin:$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"
         export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
   '';
 }

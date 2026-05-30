@@ -69,10 +69,10 @@ let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (config.lib.file) mkOutOfStoreSymlink;
 
-  # unstablePackages = import unstable {
-  #   inherit system;
-  #   config.allowUnfree = true;
-  # };
+  unstablePackages = import unstable {
+    inherit system;
+    config.allowUnfree = true;
+  };
 
   commonPackages = import ../../modules/pkgs/common.nix { inherit pkgs; };
   zedPackage = import ../../modules/pkgs/zed.nix { inherit pkgs lib; };
@@ -119,7 +119,7 @@ in
     # ───────────────────────────────────────────────
     packages =
       commonPackages
-      # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
         # upwork
 
@@ -139,6 +139,7 @@ in
         # Desktop applications
         anydesk
         chromium
+        nautilus
         glycin-loaders
         image-roll
         onlyoffice-desktopeditors
@@ -199,6 +200,7 @@ in
     };
 
     sessionVariables = {
+      AGENT_BROWSER_EXECUTABLE_PATH = "/etc/profiles/per-user/shahid/bin/chromium";
       CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb";
       CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb";
       # Lutris 0.5.x still trips over newer protobuf Python bindings on NixOS.
