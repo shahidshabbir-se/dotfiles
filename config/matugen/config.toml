@@ -22,7 +22,7 @@ output_path = "~/.config/rofi/shared.rasi"
 [templates.dunst]
 input_path = "templates/dunstrc"
 output_path = "~/dotfiles/config/dunst/dunstrc"
-post_hook = "dunstctl reload 2>/dev/null || (pkill dunst 2>/dev/null; dunst &)"
+post_hook = "if [ \"$XDG_CURRENT_DESKTOP\" = \"i3\" ] || [ \"$DESKTOP_SESSION\" = \"i3\" ]; then dunstctl reload 2>/dev/null || (pkill dunst 2>/dev/null; dunst -conf $HOME/dotfiles/config/dunst/dunstrc &); fi"
 
 [templates.waybar-colors]
 input_path = "templates/waybar-colors.css"

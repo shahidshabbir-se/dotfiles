@@ -52,7 +52,7 @@ in
         set -g @tokyo-night-tmux_path_format relative
         set -g @tokyo-night-tmux_show_git 1
         set -g @tokyo-night-tmux_window_id_style digital
-        set -g @tokyo-night-tmux_terminal_icon ""
+        set -g @tokyo-night-tmux_terminal_icon ""
         set -g @tokyo-night-tmux_active_terminal_icon ""
         set -g @tokyo-night-tmux_show_path 0
         set -g @tokyo-night-tmux_show_music 1
@@ -269,7 +269,6 @@ in
     )}
 
         # Ctrl-t (with and without prefix) = open sesh picker (fzf) in a popup
-        bind -n C-t display-popup -B -E -w 80% -h 70% -d '#{pane_current_path}' "sesh list | fzf --prompt='sesh> ' --height=100% --layout=reverse | xargs -r -I{} sesh connect '{}'"
         bind C-t display-popup -B -E -w 80% -h 70% -d '#{pane_current_path}' "sesh list | fzf --prompt='sesh> ' --height=100% --layout=reverse | xargs -r -I{} sesh connect '{}'"
 
         # Ctrl-l = jump to last session (via sesh)

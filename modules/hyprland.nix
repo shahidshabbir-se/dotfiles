@@ -109,6 +109,15 @@ in
     inherit pkgs homeDirectory;
   };
 
+  # Only auto-start SwayNC for Hyprland sessions. i3 uses Dunst instead.
+  systemd.user.services.swaync = {
+    Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+    Service = {
+      Type = lib.mkForce "simple";
+      BusName = lib.mkForce "";
+    };
+  };
+
   # ───────────────────────────────────────────────
   # ▶ Hyprland Window Manager
   # ───────────────────────────────────────────────
@@ -130,6 +139,8 @@ in
       ];
 
       exec-once = [
+        "pkill -x dunst 2>/dev/null || true"
+        "pgrep -x swaync >/dev/null || swaync &"
         "pkill -x glava 2>/dev/null || true"
         "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"

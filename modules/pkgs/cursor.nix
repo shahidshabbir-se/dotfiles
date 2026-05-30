@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "2.6";
+  version = "3.5";
   pname = "cursor";
 
   desktopEntry = pkgs.writeText "cursor.desktop" ''
@@ -27,7 +27,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://api2.cursor.sh/updates/download/golden/linux-x64/cursor/${version}";
-    sha256 = "sha256-rmPXBpIHIp87yF0PDJhqIgvtXOVYT0JXHT66Yynwggg=";
+    sha256 = "sha256-xtM0m1KJld1RfMxbMxG4GadODNh2Uzww11c+AaQibc8=";
     name = "cursor-${version}.AppImage";
   };
 
@@ -57,6 +57,7 @@ pkgs.stdenv.mkDerivation {
     libuuid
     libxkbcommon
     mesa
+    musl
     nspr
     nss
     pango
