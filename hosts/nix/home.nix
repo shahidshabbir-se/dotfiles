@@ -35,7 +35,18 @@ let
   # ───────────────────────────────────────────────
   browser = "zen-beta";
   browserDesktopFile = "${browser}.desktop";
-  imageViewerDesktopFile = "com.github.weclaw1.ImageRoll.desktop";
+  imageViewerDesktopFile = "org.gnome.gThumb.desktop";
+
+  gtkBookmarks = ''
+    file://${homeDirectory}/Documents Documents
+    file://${dotfilesDirectory} Dotfiles
+    file://${homeDirectory}/Downloads Downloads
+    file://${homeDirectory}/Extras Extras
+    file://${homeDirectory}/Music Music
+    file://${homeDirectory}/Pictures Pictures
+    file://${workspaceDirectory} Projects
+    file://${homeDirectory}/Videos Videos
+  '';
 
   # ───────────────────────────────────────────────
   # Theme defaults
@@ -80,8 +91,10 @@ let
 
   # Use absolute store paths in activation scripts so they do not depend on PATH.
   git = "${pkgs.git}/bin/git";
+  gio = "${pkgs.glib}/bin/gio";
   grep = "${pkgs.gnugrep}/bin/grep";
   mkdir = "${pkgs.coreutils}/bin/mkdir";
+  papirusPlaces = "${pkgs.catppuccin-papirus-folders}/share/icons/Papirus/64x64/places";
   ssh = "${pkgs.openssh}/bin/ssh";
 in
 {
@@ -127,6 +140,7 @@ in
         fastfetch
         quickshell
         kdePackages.qt5compat
+        kdePackages.qtmultimedia
         obsidian
         zenity
         gcc
@@ -140,14 +154,14 @@ in
         anydesk
         chromium
         nautilus
+        gnome-online-accounts-gtk
         glycin-loaders
-        image-roll
+        gthumb
         onlyoffice-desktopeditors
         protonvpn-gui
         qbittorrent
         vlc
         webp-pixbuf-loader
-        xfce.thunar
         zedPackage
         zenBrowserPackage
 
@@ -170,7 +184,17 @@ in
     # Workspace and repository bootstrap
     # ───────────────────────────────────────────────
     activation.createProjectsWorkspace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${mkdir} -p "${workspaceDirectory}"
+      ${mkdir} -p \
+        "${workspaceDirectory}" \
+        "${homeDirectory}/Desktop" \
+        "${homeDirectory}/Documents" \
+        "${homeDirectory}/Downloads" \
+        "${homeDirectory}/Extras" \
+        "${homeDirectory}/Music" \
+        "${homeDirectory}/Pictures" \
+        "${homeDirectory}/Public" \
+        "${homeDirectory}/Templates" \
+        "${homeDirectory}/Videos"
 
       # Auto-clone repos if not present. SSH host keys are accepted on first use
       # so fresh machines can complete activation non-interactively.
@@ -191,10 +215,39 @@ in
       fi
     '';
 
+    activation.setNautilusFolderIcons =
+      lib.hm.dag.entryAfter [ "writeBoundary" "createProjectsWorkspace" ]
+        ''
+          set_folder_icon() {
+            folder="$1"
+            icon="$2"
+            [ -d "$folder" ] || return 0
+            [ -f "$icon" ] || return 0
+            ${gio} set -t string "$folder" metadata::custom-icon "file://$icon" 2>/dev/null || true
+          }
+
+          set_folder_icon "${homeDirectory}/Desktop" "${papirusPlaces}/user-desktop.svg"
+          set_folder_icon "${homeDirectory}/Documents" "${papirusPlaces}/folder-documents.svg"
+          set_folder_icon "${dotfilesDirectory}" "${papirusPlaces}/folder-git.svg"
+          set_folder_icon "${homeDirectory}/Downloads" "${papirusPlaces}/folder-download.svg"
+          set_folder_icon "${homeDirectory}/Extras" "${papirusPlaces}/folder-favorites.svg"
+          set_folder_icon "${homeDirectory}/Music" "${papirusPlaces}/folder-music.svg"
+          set_folder_icon "${homeDirectory}/Pictures" "${papirusPlaces}/folder-pictures.svg"
+          set_folder_icon "${workspaceDirectory}" "${papirusPlaces}/folder-code.svg"
+          set_folder_icon "${homeDirectory}/Storage" "${papirusPlaces}/folder-remote.svg"
+          set_folder_icon "${homeDirectory}/Public" "${papirusPlaces}/folder-publicshare.svg"
+          set_folder_icon "${homeDirectory}/Templates" "${papirusPlaces}/folder-templates.svg"
+          set_folder_icon "${homeDirectory}/Videos" "${papirusPlaces}/folder-videos.svg"
+        '';
+
     # ───────────────────────────────────────────────
     # Managed files in $HOME
     # ───────────────────────────────────────────────
     file = {
+      ".hidden".text = ''
+        go
+        tmp
+      '';
       ".p10k.zsh".source = ../../config/p10k.zsh;
       ".zsh/aliases".source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/zsh/aliases";
     };
@@ -219,6 +272,8 @@ in
         --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
         --force-color-profile=srgb
       '';
+      "gtk-3.0/bookmarks".text = gtkBookmarks;
+      "gtk-4.0/bookmarks".text = gtkBookmarks;
       nvim.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/nvim";
       yazi.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/yazi";
       eww.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/eww";
