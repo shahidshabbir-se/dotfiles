@@ -39,6 +39,9 @@ in
   ];
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "libsoup-2.74.3"
+  ];
   programs = {
     # configuration.nix
     localsend = {
@@ -119,7 +122,13 @@ in
     # services.xserver.enable = true;
 
     tumbler.enable = true;
-    gvfs.enable = true;
+    gvfs = {
+      enable = true;
+      package = pkgs.gnome.gvfs.override {
+        googleSupport = true;
+      };
+    };
+    gnome.gnome-online-accounts.enable = true;
     blueman.enable = true;
     power-profiles-daemon.enable = true;
     pulseaudio.enable = false;

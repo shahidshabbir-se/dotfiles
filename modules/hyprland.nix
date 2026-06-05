@@ -45,9 +45,6 @@ in
     rofi
     rofi-bluetooth
 
-    # Lock screen
-    hyprlock
-
     # Screenshot
     grimblast
 
@@ -65,7 +62,7 @@ in
     alsa-utils
 
     # Image viewer (hyprland mime defaults)
-    image-roll
+    gthumb
   ];
 
   xdg.configFile = {
@@ -74,32 +71,7 @@ in
       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
     "quickshell/wallpaper".source =
       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
-    "hypr/hyprlock.conf".text = ''
-      $hyprlockDir = $HOME/.config/hyprlock
-
-      $music = $hyprlockDir/scripts/playerctlock.sh
-      $battery = $hyprlockDir/scripts/battery.sh
-      $location = $hyprlockDir/scripts/location.sh
-      $weather = $hyprlockDir/scripts/weather.sh
-
-      source = $hyprlockDir/layouts/layout16.conf
-      ${if device.type == "laptop" then "source = $hyprlockDir/layouts/layout16-battery.conf" else ""}
-    '';
-    "hyprlock/layouts/layout16.conf".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16.conf";
-    "hyprlock/layouts/layout16-battery.conf".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/layouts/layout16-battery.conf";
-    "hyprlock/wallpapers/16.jpeg".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/wallpapers/16.jpeg";
-
-    "hyprlock/scripts/playerctlock.sh".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/playerctlock.sh";
-    "hyprlock/scripts/battery.sh".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/battery.sh";
-    "hyprlock/scripts/weather.sh".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/weather.sh";
-    "hyprlock/scripts/location.sh".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/hyprlock/scripts/location.sh";
+    # lock-screen is cloned to ~/.config/lock-screen via post-install.sh (not a nix-managed path)
   };
 
   # ───────────────────────────────────────────────
@@ -157,15 +129,15 @@ in
         "xdg-mime default vlc.desktop audio/mpeg"
         "xdg-mime default vlc.desktop audio/x-wav"
         "xdg-mime default vlc.desktop audio/flac"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/png"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/jpeg"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/gif"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/webp"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/bmp"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/svg+xml"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/tiff"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/avif"
-        "xdg-mime default com.github.weclaw1.ImageRoll.desktop image/heic"
+        "xdg-mime default org.gnome.gThumb.desktop image/png"
+        "xdg-mime default org.gnome.gThumb.desktop image/jpeg"
+        "xdg-mime default org.gnome.gThumb.desktop image/gif"
+        "xdg-mime default org.gnome.gThumb.desktop image/webp"
+        "xdg-mime default org.gnome.gThumb.desktop image/bmp"
+        "xdg-mime default org.gnome.gThumb.desktop image/svg+xml"
+        "xdg-mime default org.gnome.gThumb.desktop image/tiff"
+        "xdg-mime default org.gnome.gThumb.desktop image/avif"
+        "xdg-mime default org.gnome.gThumb.desktop image/heic"
         "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
         # "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
         ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl -i 0 clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl -i 0 dispatch togglefloating "address:0x$addr" && hyprctl -i 0 dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl -i 0 dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
@@ -284,9 +256,10 @@ in
         "$mod, Return, exec, hyprctl dispatch workspace 1 && $terminal"
         "$mod, Q, killactive,"
         "$mod, E, exec, $fileManager"
-        "$mod SHIFT, E, exec, thunar"
+        "$mod SHIFT, E, exec, nautilus"
         "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
         "$mod, B, exec, hyprctl dispatch workspace 2 && $browser"
+        "$mod CTRL, B, exec, hyprctl dispatch workspace 5 && chromium"
         "$mod SHIFT, B, exec, hyprctl dispatch workspace 5 && $browser --private-window"
         "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
         # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
@@ -294,7 +267,7 @@ in
         "$mod + alt, p, exec, shutdown -h 0"
         "$mod + alt, r, exec, reboot"
         "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
-        "$mod SHIFT, L, exec, hyprlock"
+        "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
         "$mod CTRL, S, exec, grimblast --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
@@ -389,11 +362,12 @@ in
         "float, title:^(yazi)$"
         "size 800 500, title:^(yazi)$"
         "center, title:^(yazi)$"
-        "float, class:^(Thunar)$"
-        "size 1100 700, class:^(Thunar)$"
-        "center, class:^(Thunar)$"
-        "float, class:^(com.github.weclaw1.ImageRoll)$"
-        "center, class:^(com.github.weclaw1.ImageRoll)$"
+        "float, class:^(org.gnome.Nautilus|Nautilus|nautilus)$"
+        "size 1100 700, class:^(org.gnome.Nautilus|Nautilus|nautilus)$"
+        "center, class:^(org.gnome.Nautilus|Nautilus|nautilus)$"
+        "float, class:^(gthumb|org\\.gnome\\.gThumb)$"
+        "size 1200 800, class:^(gthumb|org\\.gnome\\.gThumb)$"
+        "center, class:^(gthumb|org\\.gnome\\.gThumb)$"
         "noblur,class:^(Brave-browser)$"
         "noblur,class:^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
         "opacity 1.0 override 1.0 override 1.0 override,class:^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"

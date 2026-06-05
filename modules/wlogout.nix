@@ -10,176 +10,192 @@ let
 
   wlogoutPointer = pkgs.wlogout.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
-      ${pkgs.python3}/bin/python3 - <<'PY'
-from pathlib import Path
+            ${pkgs.python3}/bin/python3 - <<'PY'
+      from pathlib import Path
 
-path = Path("main.c")
-data = path.read_text()
+      path = Path("main.c")
+      data = path.read_text()
 
-old = """static gboolean background_clicked(GtkWidget *widget, GdkEventButton event,
+      old = """static gboolean background_clicked(GtkWidget *widget, GdkEventButton event,
+                                         gpointer user_data)
+      {
+          for (int i = 0; i < num_of_monitors; i++)
+          {
+              if (i != primary_monitor)
+              {
+                  gtk_widget_destroy(GTK_WIDGET(window[i]));
+              }
+          }
+          gtk_main_quit();
+          return TRUE;
+      }
+
+      static char *get_substring(char *s, int start, int end, char *buf)
+      """
+
+      new = """static gboolean background_clicked(GtkWidget *widget, GdkEventButton event,
+                                         gpointer user_data)
+      {
+          for (int i = 0; i < num_of_monitors; i++)
+          {
+              if (i != primary_monitor)
+              {
+                  gtk_widget_destroy(GTK_WIDGET(window[i]));
+              }
+          }
+          gtk_main_quit();
+          return TRUE;
+      }
+
+      static gboolean button_enter(GtkWidget *widget, GdkEventCrossing *event,
                                    gpointer user_data)
-{
-    for (int i = 0; i < num_of_monitors; i++)
-    {
-        if (i != primary_monitor)
-        {
-            gtk_widget_destroy(GTK_WIDGET(window[i]));
-        }
-    }
-    gtk_main_quit();
-    return TRUE;
-}
+      {
+          GtkWidget *toplevel = gtk_widget_get_toplevel(widget);
+          GdkWindow *window = gtk_widget_get_window(toplevel);
+          GdkCursor *cursor = gdk_cursor_new_from_name(gdk_display_get_default(), "pointer");
 
-static char *get_substring(char *s, int start, int end, char *buf)
-"""
+          if (!cursor)
+          {
+              cursor = gdk_cursor_new_from_name(gdk_display_get_default(), "hand2");
+          }
 
-new = """static gboolean background_clicked(GtkWidget *widget, GdkEventButton event,
+          if (window && cursor)
+          {
+              gdk_window_set_cursor(window, cursor);
+          }
+
+          if (cursor)
+          {
+              g_object_unref(cursor);
+          }
+
+          return FALSE;
+      }
+
+      static gboolean button_leave(GtkWidget *widget, GdkEventCrossing *event,
                                    gpointer user_data)
-{
-    for (int i = 0; i < num_of_monitors; i++)
-    {
-        if (i != primary_monitor)
-        {
-            gtk_widget_destroy(GTK_WIDGET(window[i]));
-        }
-    }
-    gtk_main_quit();
-    return TRUE;
-}
+      {
+          GtkWidget *toplevel = gtk_widget_get_toplevel(widget);
+          GdkWindow *window = gtk_widget_get_window(toplevel);
 
-static gboolean button_enter(GtkWidget *widget, GdkEventCrossing *event,
-                             gpointer user_data)
-{
-    GtkWidget *toplevel = gtk_widget_get_toplevel(widget);
-    GdkWindow *window = gtk_widget_get_window(toplevel);
-    GdkCursor *cursor = gdk_cursor_new_from_name(gdk_display_get_default(), "pointer");
+          if (window)
+          {
+              gdk_window_set_cursor(window, NULL);
+          }
 
-    if (!cursor)
-    {
-        cursor = gdk_cursor_new_from_name(gdk_display_get_default(), "hand2");
-    }
+          return FALSE;
+      }
 
-    if (window && cursor)
-    {
-        gdk_window_set_cursor(window, cursor);
-    }
+      static char *get_substring(char *s, int start, int end, char *buf)
+      """
 
-    if (cursor)
-    {
-        g_object_unref(cursor);
-    }
+      old2 = """            g_signal_connect(but[i][j], \"clicked\", G_CALLBACK(execute),
+                                   buttons[count].action);
+                  gtk_widget_set_hexpand(but[i][j], TRUE);
+                  gtk_widget_set_vexpand(but[i][j], TRUE);
+      """
 
-    return FALSE;
-}
+      new2 = """            g_signal_connect(but[i][j], \"clicked\", G_CALLBACK(execute),
+                                   buttons[count].action);
+                  gtk_widget_add_events(but[i][j], GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+                  g_signal_connect(but[i][j], \"enter-notify-event\", G_CALLBACK(button_enter), NULL);
+                  g_signal_connect(but[i][j], \"leave-notify-event\", G_CALLBACK(button_leave), NULL);
+                  gtk_widget_set_hexpand(but[i][j], TRUE);
+                  gtk_widget_set_vexpand(but[i][j], TRUE);
+      """
 
-static gboolean button_leave(GtkWidget *widget, GdkEventCrossing *event,
-                             gpointer user_data)
-{
-    GtkWidget *toplevel = gtk_widget_get_toplevel(widget);
-    GdkWindow *window = gtk_widget_get_window(toplevel);
+      if old not in data:
+          raise SystemExit("failed to patch wlogout main.c: anchor 1 not found")
+      if old2 not in data:
+          raise SystemExit("failed to patch wlogout main.c: anchor 2 not found")
 
-    if (window)
-    {
-        gdk_window_set_cursor(window, NULL);
-    }
-
-    return FALSE;
-}
-
-static char *get_substring(char *s, int start, int end, char *buf)
-"""
-
-old2 = """            g_signal_connect(but[i][j], \"clicked\", G_CALLBACK(execute),
-                             buttons[count].action);
-            gtk_widget_set_hexpand(but[i][j], TRUE);
-            gtk_widget_set_vexpand(but[i][j], TRUE);
-"""
-
-new2 = """            g_signal_connect(but[i][j], \"clicked\", G_CALLBACK(execute),
-                             buttons[count].action);
-            gtk_widget_add_events(but[i][j], GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
-            g_signal_connect(but[i][j], \"enter-notify-event\", G_CALLBACK(button_enter), NULL);
-            g_signal_connect(but[i][j], \"leave-notify-event\", G_CALLBACK(button_leave), NULL);
-            gtk_widget_set_hexpand(but[i][j], TRUE);
-            gtk_widget_set_vexpand(but[i][j], TRUE);
-"""
-
-if old not in data:
-    raise SystemExit("failed to patch wlogout main.c: anchor 1 not found")
-if old2 not in data:
-    raise SystemExit("failed to patch wlogout main.c: anchor 2 not found")
-
-data = data.replace(old, new, 1)
-data = data.replace(old2, new2, 1)
-path.write_text(data)
-PY
+      data = data.replace(old, new, 1)
+      data = data.replace(old2, new2, 1)
+      path.write_text(data)
+      PY
     '';
   });
 
   wlogoutLaunch = pkgs.writeShellScript "wlogout-launch.sh" ''
+        set -euo pipefail
+
+        if pgrep -x wlogout >/dev/null; then
+          pkill -x wlogout
+          exit 0
+        fi
+
+        conf_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout"
+        layout="$conf_dir/layout"
+        template="$conf_dir/style.css"
+        colors="$conf_dir/colors.css"
+
+        mkdir -p "$conf_dir"
+
+        if [[ ! -f "$colors" ]]; then
+          cat > "$colors" <<'EOF'
+    /* wlogout colors fallback */
+    @define-color main-bg alpha(#20243a, 0.88);
+    @define-color wb-act-bg alpha(#b17ea7, 0.60);
+    @define-color wb-hvr-bg alpha(#c08cb5, 0.72);
+    EOF
+        fi
+
+        monitor_json="$(hyprctl -i 0 -j monitors 2>/dev/null || true)"
+
+        if printf '%s' "$monitor_json" | jq -e . >/dev/null 2>&1; then
+          x_mon="$(printf '%s' "$monitor_json" | jq -r 'first(.[] | select(.focused==true) | .width) // first(.[] | .width) // 1920')"
+          y_mon="$(printf '%s' "$monitor_json" | jq -r 'first(.[] | select(.focused==true) | .height) // first(.[] | .height) // 1080')"
+          scale_raw="$(printf '%s' "$monitor_json" | jq -r 'first(.[] | select(.focused==true) | .scale) // first(.[] | .scale) // 1')"
+        else
+          x_mon=1920
+          y_mon=1080
+          scale_raw=1
+        fi
+
+        hypr_scale="$(printf '%s' "$scale_raw" | tr -d '.')"
+        hypr_scale=''${hypr_scale:-10}
+
+        wl_cols=6
+        export mgn=$((y_mon * 28 / hypr_scale))
+        export hvr=$((y_mon * 23 / hypr_scale))
+        export fntSize=$((y_mon * 2 / 100))
+        export BtnCol="white"
+        export active_rad=40
+        export button_rad=64
+
+        rendered_css="$(${pkgs.python3}/bin/python3 - "$template" <<'PY'
+    import os
+    import sys
+
+    template_path = sys.argv[1]
+    with open(template_path, 'r', encoding='utf-8') as f:
+        data = f.read()
+
+    print(os.path.expandvars(data), end="")
+    PY
+        )"
+
+        wlogout \
+          --layout "$layout" \
+          --css <(printf '%s\n' "$rendered_css") \
+          -b "$wl_cols" -c 0 -r 0 -m 0 \
+          --protocol layer-shell
+  '';
+
+  wlogoutHibernate = pkgs.writeShellScript "wlogout-hibernate-hdr.sh" ''
     set -euo pipefail
 
-    if pgrep -x wlogout >/dev/null; then
-      pkill -x wlogout
-      exit 0
-    fi
+    ${pkgs.systemd}/bin/systemctl hibernate
 
-    conf_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout"
-    layout="$conf_dir/layout"
-    template="$conf_dir/style.css"
-    colors="$conf_dir/colors.css"
+    for delay in 1 2 3; do
+      ${pkgs.coreutils}/bin/sleep "$delay"
+      if ${pkgs.hyprland}/bin/hyprctl -i 0 reload >/dev/null 2>&1; then
+        exit 0
+      fi
+    done
 
-    mkdir -p "$conf_dir"
-
-    if [[ ! -f "$colors" ]]; then
-      cat > "$colors" <<'EOF'
-/* wlogout colors fallback */
-@define-color main-bg alpha(#20243a, 0.88);
-@define-color wb-act-bg alpha(#b17ea7, 0.60);
-@define-color wb-hvr-bg alpha(#c08cb5, 0.72);
-EOF
-    fi
-
-    monitor_json="$(hyprctl -i 0 -j monitors 2>/dev/null || true)"
-
-    if printf '%s' "$monitor_json" | jq -e . >/dev/null 2>&1; then
-      x_mon="$(printf '%s' "$monitor_json" | jq -r 'first(.[] | select(.focused==true) | .width) // first(.[] | .width) // 1920')"
-      y_mon="$(printf '%s' "$monitor_json" | jq -r 'first(.[] | select(.focused==true) | .height) // first(.[] | .height) // 1080')"
-      scale_raw="$(printf '%s' "$monitor_json" | jq -r 'first(.[] | select(.focused==true) | .scale) // first(.[] | .scale) // 1')"
-    else
-      x_mon=1920
-      y_mon=1080
-      scale_raw=1
-    fi
-
-    hypr_scale="$(printf '%s' "$scale_raw" | tr -d '.')"
-    hypr_scale=''${hypr_scale:-10}
-
-    wl_cols=6
-    export mgn=$((y_mon * 28 / hypr_scale))
-    export hvr=$((y_mon * 23 / hypr_scale))
-    export fntSize=$((y_mon * 2 / 100))
-    export BtnCol="white"
-    export active_rad=40
-    export button_rad=64
-
-    rendered_css="$(${pkgs.python3}/bin/python3 - "$template" <<'PY'
-import os
-import sys
-
-template_path = sys.argv[1]
-with open(template_path, 'r', encoding='utf-8') as f:
-    data = f.read()
-
-print(os.path.expandvars(data), end="")
-PY
-    )"
-
-    wlogout \
-      --layout "$layout" \
-      --css <(printf '%s\n' "$rendered_css") \
-      -b "$wl_cols" -c 0 -r 0 -m 0 \
-      --protocol layer-shell
+    printf '%s\n' 'failed to reload Hyprland after hibernate' >&2
+    exit 1
   '';
 in
 {
@@ -189,7 +205,7 @@ in
     "wlogout/layout".text = ''
       {
           "label": "lock",
-          "action": "hyprlock",
+          "action": "sh $HOME/.config/lock-screen/lock.sh",
           "text": "Lock",
           "keybind": "l"
       }
@@ -203,7 +219,7 @@ in
 
       {
           "label": "suspend",
-          "action": "hyprlock & disown && systemctl suspend",
+          "action": "sh $HOME/.config/lock-screen/lock.sh & disown && systemctl suspend",
           "text": "Suspend",
           "keybind": "u"
       }
@@ -217,7 +233,7 @@ in
 
       {
           "label": "hibernate",
-          "action": "systemctl hibernate",
+          "action": "${wlogoutHibernate}",
           "text": "Hibernate",
           "keybind": "h"
       }
