@@ -229,6 +229,7 @@ in
         # ─────────────────────────────────────────────────────────
         bind x kill-pane
         bind w kill-window
+        bind -n C-x kill-window
 
         # ─────────────────────────────────────────────────────────
         #  Pane Resizing (Alt + H/J/K/L)
