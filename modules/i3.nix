@@ -355,9 +355,9 @@ in
 
         # Volume
         "XF86AudioRaiseVolume" =
-          "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
+          "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
         "XF86AudioLowerVolume" =
-          "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
+          "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
         "XF86AudioMute" =
           "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ${homeDirectory}/dotfiles/scripts/volume-notify.sh";
 

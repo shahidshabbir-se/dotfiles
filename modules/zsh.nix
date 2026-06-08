@@ -164,12 +164,12 @@
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
         zstyle ':completion:*' menu no
 
-        # FZF colors (Tokyo Night theme)
+        # FZF colors (Tokyo Night theme, transparent bg like terminal)
         export FZF_DEFAULT_OPTS="\
-          --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 \
-          --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff \
+          --color=fg:#c0caf5,bg:-1,hl:#bb9af7 \
+          --color=fg+:#c0caf5,bg+:-1,hl+:#7dcfff \
           --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff \
-          --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a \
+          --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a,preview-bg:-1 \
           --border=rounded \
           --color=border:#7dcfff \
           --preview 'bat --style=numbers --color=always --line-range :500 {}' \
@@ -373,7 +373,8 @@
         # fzf-tab UI configuration
         zstyle ':completion:*' menu no
         zstyle ':completion:*:descriptions' format '[%d]'
-        zstyle ':fzf-tab:*' fzf-flags --border=rounded --color=border:#7dcfff --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a --preview-window=right:50%:wrap:border-rounded --height=60% --min-height=15
+        zstyle ':fzf-tab:*' default-color ""
+        zstyle ':fzf-tab:*' fzf-flags --border=rounded --color=border:#7dcfff --color=fg:#c0caf5,bg:-1,hl:#bb9af7 --color=fg+:#c0caf5,bg+:-1,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a,preview-bg:-1 --preview-window=right:50%:wrap:border-rounded --height=60% --min-height=15
         zstyle ':fzf-tab:*' switch-group '<' '>'
 
         # Disable preview globally, then enable for selected commands

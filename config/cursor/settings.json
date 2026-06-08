@@ -1,0 +1,25 @@
+{
+  "window.titleBarStyle": "custom",
+  "window.menuBarVisibility": "toggle",
+  "workbench.productIconTheme": "fluent-icons",
+  "editor.fontFamily": "GeistMono Nerd Font",
+  "editor.fontSize": 16,
+  "editor.lineHeight": 25,
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.tree.enableStickyScroll": false,
+  "breadcrumbs.enabled": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "terminal.integrated.fontSize": 16,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "workbench.colorTheme": "One Dark Pro Night Flat",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "cursor.composer.conversationDensity": "detailed",
+  "cursor.general.emailPrivacyEnabled": true,
+  "cursor.composer.shouldChimeAfterChatFinishes": true,
+  "cursor.cpp.enablePartialAccepts": true,
+}

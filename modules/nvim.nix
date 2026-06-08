@@ -11,6 +11,15 @@
 {
   enable = true;
 
+  # Dotfiles nvim config is symlinked via xdg.configFile.nvim — do not write
+  # init.lua into that tree (HM 26.x would resolve it outside $HOME at build time).
+  sideloadInitLua = true;
+
+  # LazyVim config lives in ~/dotfiles/config/nvim; skip HM provider bootstrapping.
+  withRuby = false;
+  withPython3 = false;
+  withNodeJs = false;
+
   # ───────────────────────────────────────────────
   # ▶ Set Vim as the default editor
   # ───────────────────────────────────────────────

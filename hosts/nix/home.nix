@@ -56,17 +56,17 @@ let
   font = "SF Pro Display 10";
   monospaceFont = "JetBrainsMono Nerd Font 10";
 
-  cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
-  cursorSize = if device.type == "laptop" then 48 else 24;
-  cursorPackage =
-    if device.type == "laptop" then
-      import ../../modules/banana-cursor.nix { inherit pkgs; }
-    else
-      pkgs.catppuccin-cursors.mochaDark;
+  cursorTheme = "Banana";
+  cursorSize = if device.type == "laptop" then 48 else 36;
+  cursorPackage = import ../../modules/banana-cursor.nix { inherit pkgs; };
 
-  # cursorTheme = "Banana-Catppuccin-Mocha";
-  # cursorSize = 48;
-  # cursorPackage = import ../../modules/banana-cursor.nix { inherit pkgs; };
+  # cursorTheme = if device.type == "laptop" then "Banana" else "catppuccin-mocha-dark-cursors";
+  # cursorSize = if device.type == "laptop" then 48 else 24;
+  # cursorPackage =
+  #   if device.type == "laptop" then
+  #     import ../../modules/banana-cursor.nix { inherit pkgs; }
+  #   else
+  #     pkgs.catppuccin-cursors.mochaDark;
 
   gtkThemePackage = pkgs.catppuccin-gtk.override {
     variant = "mocha";
@@ -83,6 +83,19 @@ let
   unstablePackages = import unstable {
     inherit system;
     config.allowUnfree = true;
+  };
+
+  # Hyprland HDR/color management makes Electron apps render dim unless these
+  # flags are passed (same fix as CHROMIUM_FLAGS in hyprland.nix).
+  codeCursorFhs = pkgs.symlinkJoin {
+    name = "code-cursor-fhs";
+    paths = [ unstablePackages.code-cursor-fhs ];
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/cursor \
+        --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+        --add-flags "--force-color-profile=srgb"
+    '';
   };
 
   commonPackages = import ../../modules/pkgs/common.nix { inherit pkgs; };
@@ -103,7 +116,7 @@ in
   # ───────────────────────────────────────────────
   imports = [
     ../../modules/node.nix
-    ../../modules/i3.nix
+    # ../../modules/i3.nix  # disabled in favor of GNOME
     ../../modules/hyprland.nix
     ../../modules/wlogout.nix
     # ../../modules/cliproxyapi.nix
@@ -132,12 +145,13 @@ in
     # ───────────────────────────────────────────────
     packages =
       commonPackages
-      ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/cursor.nix { inherit pkgs lib; }) ]
       ++ (with pkgs; [
         # upwork
 
         # Development tools
         fastfetch
+        codeCursorFhs
         quickshell
         kdePackages.qt5compat
         kdePackages.qtmultimedia
@@ -279,6 +293,8 @@ in
       eww.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/eww";
       rofi.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/rofi";
       zed.source = mkOutOfStoreSymlink "${dotfilesDirectory}/config/zed";
+      "Cursor/User/settings.json".source =
+        mkOutOfStoreSymlink "${dotfilesDirectory}/config/cursor/settings.json";
     };
 
     mimeApps = {
@@ -338,7 +354,7 @@ in
     atuin = import ../../modules/atuin.nix { inherit atuin; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
-    # wezterm = import ../../modules/wezterm.nix { inherit config device pkgs; };
+    wezterm = import ../../modules/wezterm.nix { inherit config device pkgs; };
   };
 
   # ───────────────────────────────────────────────
@@ -354,6 +370,73 @@ in
       font-name = font;
       document-font-name = font;
       monospace-font-name = monospaceFont;
+    };
+
+    "org/gnome/mutter" = {
+      experimental-features = [
+        "scale-monitor-framebuffer"
+        "xwayland-native-scaling"
+      ];
+    };
+
+    # GNOME: default terminal → WezTerm
+    "org/gnome/desktop/default-applications/terminal" = {
+      exec = "wezterm";
+      exec-arg = "-e";
+    };
+
+    # GNOME: custom keybindings (migrated from Hyprland)
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      custom-keybindings = [
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/"
+      ];
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      name = "Terminal";
+      binding = "<Super>Return";
+      command = "wezterm";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+      name = "Browser";
+      binding = "<Super>b";
+      command = "zen-beta";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+      name = "VS Code";
+      binding = "<Super>x";
+      command = "code";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
+      name = "Obsidian";
+      binding = "<Super>o";
+      command = "obsidian";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
+      name = "Spotify";
+      binding = "<Super>m";
+      command = "spotify";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
+      name = "System Monitor";
+      binding = "<Ctrl><Shift>Escape";
+      command = "ghostty -e btop";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6" = {
+      name = "Bluetooth";
+      binding = "<Alt><Shift>b";
+      command = "${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7" = {
+      name = "WiFi";
+      binding = "<Alt><Shift>n";
+      command = "${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh";
     };
   };
 
