@@ -31,6 +31,46 @@ let
       cp -r $src/pack_3/lone/* $out/share/plymouth/themes/lone/
     '';
   };
+
+  # Qylock "sword" SDDM theme — sparse fetch (~42 MiB), not the full ~1 GiB repo.
+  qylockSwordSrc = pkgs.fetchFromGitHub {
+    owner = "Darkkal44";
+    repo = "qylock";
+    rev = "db61a972b4b23728d9944a906e70029ca8a5899d";
+    hash = "sha256-pkodIJQPKaaFwsj/TbFuWIDm8RbvQPmB9tsS3fFMZCA=";
+    sparseCheckout = [ "themes/sword" ];
+  };
+
+  sddmQylockSword = pkgs.stdenvNoCC.mkDerivation {
+    pname = "sddm-qylock-sword";
+    version = qylockSwordSrc.rev;
+    src = qylockSwordSrc;
+    dontBuild = true;
+    nativeBuildInputs = [ pkgs.gnused ];
+    installPhase = ''
+      mkdir -p $out/share/sddm/themes/sword
+      cp -r $src/themes/sword/. $out/share/sddm/themes/sword/
+
+      # Default to Hyprland in the greeter UI (GNOME is first alphabetically).
+      substituteInPlace $out/share/sddm/themes/sword/Main.qml \
+        --replace 'Component.onCompleted: { fadeAnim.start(); keyboard.numLock = true }' \
+        'Component.onCompleted: {\
+            fadeAnim.start();\
+            keyboard.numLock = true;\
+            if (typeof sessionModel !== "undefined") {\
+                for (var i = 0; i < sessionModel.rowCount(); i++) {\
+                    var label = sessionModel.data(sessionModel.index(i, 0), 0x101).toString().toLowerCase();\
+                    if (label.indexOf("hyprland") !== -1 && label.indexOf("uwsm") === -1) {\
+                        root.sessionIndex = i;\
+                        break;\
+                    }\
+                }\
+            }\
+        }'
+    '';
+  };
+
+  bananaCursor = import ./modules/banana-cursor.nix { inherit pkgs; };
 in
 
 {
@@ -74,28 +114,31 @@ in
 
       enable = true;
 
-      # i3 (X11 session for Upwork compatibility)
-      windowManager.i3 = {
-        enable = true;
-        extraPackages = with pkgs; [
-          i3lock-color
-          i3status
-          numlockx
-          xclip
-          xsel
-          maim
-          xdotool
-          xorg.xrandr
-          arandr
-          autorandr
-          picom
-          feh
-          dunst
-          polybar
-          haskellPackages.greenclip
-        ];
-      };
+      # i3 (X11 session) — disabled in favor of GNOME
+      # windowManager.i3 = {
+      #   enable = true;
+      #   extraPackages = with pkgs; [
+      #     i3lock-color
+      #     i3status
+      #     numlockx
+      #     xclip
+      #     xsel
+      #     maim
+      #     xdotool
+      #     xorg.xrandr
+      #     arandr
+      #     autorandr
+      #     picom
+      #     feh
+      #     dunst
+      #     polybar
+      #     haskellPackages.greenclip
+      #   ];
+      # };
     };
+    # GNOME desktop environment
+    xserver.desktopManager.gnome.enable = true;
+
     openssh.enable = true;
     tailscale.enable = true;
 
@@ -122,12 +165,7 @@ in
     # services.xserver.enable = true;
 
     tumbler.enable = true;
-    gvfs = {
-      enable = true;
-      package = pkgs.gnome.gvfs.override {
-        googleSupport = true;
-      };
-    };
+    gvfs.enable = true;
     gnome.gnome-online-accounts.enable = true;
     blueman.enable = true;
     power-profiles-daemon.enable = true;
@@ -218,20 +256,51 @@ in
       };
     };
 
-    displayManager.sddm = {
-      enable = true;
-      package = pkgs.kdePackages.sddm;
-      autoNumlock = true;
-      theme = "sddm-astronaut-theme";
-      # wayland = {
-      #   enable = true;
-      #   compositor = "weston";
-      # };
-      extraPackages = with pkgs; [
-        kdePackages.qtsvg
-        kdePackages.qtvirtualkeyboard
-        kdePackages.qtmultimedia
-      ];
+    displayManager = {
+      defaultSession = "hyprland";
+
+      environment = {
+        XCURSOR_THEME = "Banana";
+        XCURSOR_SIZE = "48";
+      };
+
+      sddm = {
+        enable = true;
+        package = pkgs.kdePackages.sddm;
+        autoNumlock = true;
+        # X11 greeter: setupScript/xrdb actually run (Wayland SDDM ignores them).
+        wayland.enable = false;
+        theme = "sword";
+        setupScript = ''
+          ${pkgs.xrdb}/bin/xrdb -merge - <<EOF
+          Xcursor.theme: Banana
+          Xcursor.size: 48
+          EOF
+          ${pkgs.xorg.xset}/bin/xsetroot -cursor_name left_ptr
+        '';
+        settings = {
+          General = {
+            DefaultSession = "hyprland.desktop";
+            RememberLastSession = false;
+            GreeterEnvironment = "XCURSOR_THEME=Banana,XCURSOR_SIZE=48";
+          };
+          Theme = {
+            CursorTheme = "Banana";
+            CursorSize = 48;
+          };
+        };
+        extraPackages = [
+          sddmQylockSword
+          bananaCursor
+          pkgs.qt6.qt5compat
+          pkgs.qt6.qtmultimedia
+          pkgs.qt6.qtsvg
+          pkgs.gst_all_1.gst-plugins-base
+          pkgs.gst_all_1.gst-plugins-good
+          pkgs.gst_all_1.gst-plugins-bad
+          pkgs.gst_all_1.gst-plugins-ugly
+        ];
+      };
     };
   };
   hardware = {
@@ -310,7 +379,6 @@ in
     ];
     packages = with pkgs; [
       # hyprland
-      starship
       git
       openssh
       home-manager
@@ -331,31 +399,8 @@ in
     unstable.winetricks
     unstable.wineWow64Packages.staging
     unstable.mangohud
-    # swww
-    (sddm-astronaut.override {
-      themeConfig = {
-        ScreenWidth = "1920";
-        ScreenHeight = "1080";
-        Font = "SF Pro Display";
-        FontSize = "12";
-        RoundCorners = "20";
-
-        # Video background
-        Background = "${./assets/login-background.mp4}";
-        BackgroundSpeed = "1.0";
-        PauseBackground = "false"; # Set to true to pause video
-        CropBackground = "true";
-        BackgroundHorizontalAlignment = "center";
-        BackgroundVerticalAlignment = "center";
-        DimBackground = "0.3";
-
-        PartialBlur = "false";
-        BlurMax = "35";
-        Blur = "2.0";
-        HaveFormBackground = "false";
-        FormPosition = "center";
-      };
-    })
+    sddmQylockSword
+    bananaCursor
   ];
   virtualisation.docker.enable = true;
   fonts = {
@@ -396,6 +441,19 @@ in
 
   programs.hyprland.enable = true;
   programs.hyprland.xwayland.enable = true;
+
+  systemd.services.sddm.preStart = lib.mkAfter ''
+    install -d -m 755 /var/lib/sddm
+    STATE=/var/lib/sddm/state.conf
+    if [ -f "$STATE" ]; then
+      ${pkgs.gnused}/bin/sed -i 's|^Session=.*|Session=hyprland.desktop|' "$STATE"
+    else
+      cat > "$STATE" <<EOF
+[Last]
+Session=hyprland.desktop
+EOF
+    fi
+  '';
 
   xdg.portal = {
     enable = true;

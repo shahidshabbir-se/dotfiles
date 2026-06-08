@@ -1,88 +1,210 @@
 //@ pragma Env QT_SCALE_FACTOR=1.0
+//@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma IconTheme Papirus-Dark
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
-import Quickshell.Wayland
-import Quickshell.Hyprland
-import Quickshell.Services.UPower
-import Quickshell.Services.SystemTray
-import Quickshell.Services.Pipewire
-import Quickshell.Services.Mpris
-import Qt5Compat.GraphicalEffects
-import 'components' as Components
-import qs.configuration
+import Quickshell.Services.Notifications
+import QtQuick
+import "bar"
+import "popups"
 
 Scope {
-  id: root
+    id: root
 
-  property bool barVisible: true
+    property bool barVisible: true
+    property bool musicPlayerOpen: false
+    property bool notificationsOpen: false
+    property bool volumePopupOpen: false
+    property bool dateTimeOpen: false
 
-  IpcHandler {
-    target: "bar"
-
-    function toggleBar(): void { root.barVisible = !root.barVisible }
-    function showBar(): void { root.barVisible = true }
-    function hideBar(): void { root.barVisible = false }
-  }
-
-  MouseArea {
-    anchors.fill: parent
-    onWheel: wheel => {
-      Hyprland.dispatch("workspace 1")
-      Mpris.players.values.forEach((player, idx) => player.pause())
-    }
-  }
-
-  Components.PopoutVolume {}
-
-  WlrLayershell {
-    id: bar
-    namespace: "quickshell_bar"
-    margins { top: 10; bottom: 10; left: 8 }
-    anchors { top: true; bottom: true; left: true }
-    visible: root.barVisible
-    
-    layer: WlrLayer.Top
-
-    implicitWidth: 44
-    color: "transparent"
-
-    MouseArea {
-      anchors.fill: parent
-      onWheel: wheel => {
-        Hyprland.dispatch("workspace 1")
-        Mpris.players.values.forEach((player, idx) => player.pause())
-      }
+    function closeAllPopups() {
+        musicPlayerOpen = false
+        notificationsOpen = false
+        volumePopupOpen = false
+        dateTimeOpen = false
     }
 
-    // The actual bar - Extra rect to achieve bar-rounding
-    Rectangle {
-      id: barBackground
-      anchors.fill: parent
-      color: Colors.barBackground
-      radius: 4
-
-      border.width: 0
-
-      Behavior on height {
-        NumberAnimation {
-          duration: 1000
-          easing.type: Easing.InOutQuart
+    function toggleMusicPlayer() {
+        if (musicPlayerOpen) {
+            musicPlayerOpen = false
+            return
         }
-      }
-
-      ColumnLayout {
-        id: barContent
-        anchors { fill: parent; topMargin: 3; bottomMargin: 6; leftMargin: 3; rightMargin: 3 }
-        spacing: 4
-
-        TopSection {}
-        CenterSection {}
-        BottomSection {}
-      }
+        notificationsOpen = false
+        volumePopupOpen = false
+        dateTimeOpen = false
+        musicPlayerOpen = true
     }
-  }
+
+    function toggleNotifications() {
+        if (notificationsOpen) {
+            notificationsOpen = false
+            return
+        }
+        musicPlayerOpen = false
+        volumePopupOpen = false
+        dateTimeOpen = false
+        notificationsOpen = true
+    }
+
+    function toggleDateTime() {
+        if (dateTimeOpen) {
+            dateTimeOpen = false
+            return
+        }
+        musicPlayerOpen = false
+        notificationsOpen = false
+        volumePopupOpen = false
+        dateTimeOpen = true
+    }
+
+    function toggleVolumePopup() {
+        if (volumePopupOpen) {
+            volumePopupOpen = false
+            return
+        }
+        musicPlayerOpen = false
+        notificationsOpen = false
+        dateTimeOpen = false
+        volumePopupOpen = true
+    }
+
+    IpcHandler {
+        target: "bar"
+
+        function toggleBar(): void { root.barVisible = !root.barVisible }
+        function showBar(): void { root.barVisible = true }
+        function hideBar(): void { root.barVisible = false }
+    }
+
+    IpcHandler {
+        target: "notifications"
+
+        function toggle(): void { root.toggleNotifications() }
+        function show(): void {
+            root.musicPlayerOpen = false
+            root.volumePopupOpen = false
+            root.dateTimeOpen = false
+            root.notificationsOpen = true
+        }
+        function hide(): void { root.notificationsOpen = false }
+        function clear_all(): void { notificationCenter.clearAll() }
+        function dnd_toggle(): void { notificationCenter.dnd = !notificationCenter.dnd }
+    }
+
+    IpcHandler {
+        target: "music"
+
+        function toggle(): void { root.toggleMusicPlayer() }
+        function show(): void {
+            root.notificationsOpen = false
+            root.volumePopupOpen = false
+            root.dateTimeOpen = false
+            root.musicPlayerOpen = true
+        }
+        function hide(): void { root.musicPlayerOpen = false }
+    }
+
+    IpcHandler {
+        target: "volume"
+
+        function toggle(): void { root.toggleVolumePopup() }
+        function show(): void {
+            root.musicPlayerOpen = false
+            root.notificationsOpen = false
+            root.dateTimeOpen = false
+            root.volumePopupOpen = true
+        }
+        function hide(): void { root.volumePopupOpen = false }
+    }
+
+    IpcHandler {
+        target: "datetime"
+
+        function toggle(): void { root.toggleDateTime() }
+        function show(): void {
+            root.musicPlayerOpen = false
+            root.notificationsOpen = false
+            root.volumePopupOpen = false
+            root.dateTimeOpen = true
+        }
+        function hide(): void { root.dateTimeOpen = false }
+    }
+
+    IpcHandler {
+        target: "popups"
+
+        function close(): void { root.closeAllPopups() }
+    }
+
+    NotificationServer {
+        id: notifServer
+        actionsSupported: true
+        actionIconsSupported: true
+        imageSupported: true
+        bodySupported: true
+        bodyMarkupSupported: true
+        bodyImagesSupported: true
+        bodyHyperlinksSupported: true
+        persistenceSupported: true
+        keepOnReload: true
+
+        onNotification: notification => {
+            notification.tracked = true
+            notificationCenter.ingest(notification)
+        }
+    }
+
+    Bar {
+        id: bar
+        barVisible: root.barVisible
+        notificationUnreadCount: notificationCenter.unreadCount
+        onToggleMusicPlayer: root.toggleMusicPlayer()
+        onToggleNotifications: root.toggleNotifications()
+        onToggleLauncher: appLauncher.toggle()
+        onToggleDateTime: root.toggleDateTime()
+    }
+
+    AppLauncher {
+        id: appLauncher
+    }
+
+    MusicPlayerPanel {
+        open: root.musicPlayerOpen
+        barRef: bar
+        onClosed: root.musicPlayerOpen = false
+    }
+
+    NotificationCenter {
+        id: notificationCenter
+        open: root.notificationsOpen
+        barRef: bar
+        onRequestOpen: root.notificationsOpen = true
+        onClosed: root.notificationsOpen = false
+    }
+
+    VolumePopup {
+        open: root.volumePopupOpen
+        barRef: bar
+        onClosed: root.volumePopupOpen = false
+    }
+
+    DateTimePanel {
+        open: root.dateTimeOpen
+        barRef: bar
+        onClosed: root.dateTimeOpen = false
+    }
+
+    PopoutVolume {}
+
+    Connections {
+        target: Quickshell
+
+        function onReloadCompleted(): void {
+            Quickshell.inhibitReloadPopup()
+        }
+
+        function onReloadFailed(error: string): void {
+            Quickshell.inhibitReloadPopup()
+        }
+    }
 }

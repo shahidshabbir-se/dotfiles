@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Screenshot menu with rofi using grimblast
 
+SCREENSHOT_CAPTURE="$HOME/dotfiles/scripts/screenshot-capture.sh"
+
 # Screenshot directory
 SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
 
@@ -23,18 +25,18 @@ filename="$SCREENSHOT_DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
 # Execute action
 case $chosen in
     "$screen")
-        grimblast --notify copysave screen "$filename"
+        sh "$SCREENSHOT_CAPTURE" --notify copysave screen "$filename"
         ;;
     "$area")
-        grimblast --notify copysave area "$filename"
+        sh "$SCREENSHOT_CAPTURE" --notify copysave area "$filename"
         ;;
     "$window")
-        grimblast --notify copysave active "$filename"
+        sh "$SCREENSHOT_CAPTURE" --notify copysave active "$filename"
         ;;
     "$screen_delay")
-        sleep 5 && grimblast --notify copysave screen "$filename"
+        sleep 5 && sh "$SCREENSHOT_CAPTURE" --notify copysave screen "$filename"
         ;;
     "$area_delay")
-        sleep 5 && grimblast --notify copysave area "$filename"
+        sleep 5 && sh "$SCREENSHOT_CAPTURE" --notify copysave area "$filename"
         ;;
 esac

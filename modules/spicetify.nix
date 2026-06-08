@@ -11,6 +11,26 @@
 let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 
+  # Lucid was dropped from spicetify-nix; fetch upstream directly.
+  lucidSrc = pkgs.fetchFromGitHub {
+    owner = "sanoojes";
+    repo = "Spicetify-Lucid";
+    rev = "3746c1eb8cdda4d5b680dcc769ad629b467a4520";
+    hash = "sha256-ciA3LptZeflCwkUq66E2ZCvxpLH8/XVJyMimjdU9Fk0=";
+  };
+
+  lucidTheme = {
+    name = "Lucid";
+    src = "${lucidSrc}/src";
+    overwriteAssets = true;
+    requiredExtensions = [
+      {
+        src = "${lucidSrc}/src";
+        name = "theme.js";
+      }
+    ];
+  };
+
   # Override Spotify package with correct hash for macOS only
   # spotifyOverride =
   #   if pkgs.stdenv.isDarwin then
@@ -60,6 +80,7 @@ in
   # ───────────────────────────────────────────────
   # ▶ Theme Configuration
   # ───────────────────────────────────────────────
-  theme = spicePkgs.themes.lucid;
-  # colorScheme = "TokyoNight";
+  theme = lucidTheme;
+  # Valid schemes in this Lucid pin: dark, use-lucid, settings, to-change, colors
+  colorScheme = "use-lucid";
 }

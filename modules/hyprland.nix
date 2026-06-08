@@ -27,9 +27,66 @@ let
 
   d = device.display;
   desktopRefreshRate = if device.type == "desktop" then 240 else d.refreshRate;
+  cursorTheme = "Banana";
+  cursorSize = if device.type == "laptop" then 48 else 36;
+
+  layerRuleNamespaces = [
+    "logout_dialog"
+    "quickshell"
+    "quickshell_bar"
+    "quickshell_launcher_popup"
+    "quickshell_music_popup"
+    "quickshell_volume_popup"
+    "quickshell_volume_osd"
+    "quickshell_notifications"
+    "quickshell_datetime_popup"
+  ];
+
+  # Hyprland 0.55+ layerrules need named blocks in extraConfig.
+  # ignore_alpha must stay low (0–0.2): higher values skip blur on more pixels;
+  # at 1.0 layer blur is effectively invisible.
+  layerRuleBlock = ns: ''
+    layerrule {
+      name = blur-${lib.replaceStrings [ "_" ] [ "-" ] ns}
+      match:namespace = ${ns}
+      blur = on
+      ignore_alpha = 0
+    }'';
+
+  layerRuleBlocks = lib.concatStringsSep "\n\n" (map layerRuleBlock layerRuleNamespaces);
+
+  windowRules = [
+    "float on, match:title ^(yazi)$"
+    "size 800 500, match:title ^(yazi)$"
+    "center on, match:title ^(yazi)$"
+    "float on, match:class ^(org.gnome.Nautilus|Nautilus|nautilus)$"
+    "size 1100 700, match:class ^(org.gnome.Nautilus|Nautilus|nautilus)$"
+    "center on, match:class ^(org.gnome.Nautilus|Nautilus|nautilus)$"
+    "float on, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
+    "size 1200 800, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
+    "center on, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
+    "no_blur on, match:class ^(Brave-browser)$"
+    "no_blur on, match:class ^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
+    "opacity 1.00 override 1.00 override 1.00 override, match:class ^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
+    "float on, match:title ^(btop)$"
+    "size 900 600, match:title ^(btop)$"
+    "center on, match:title ^(btop)$"
+    "float on, match:class ^(podman-tui)$"
+    "size 1000 600, match:class ^(podman-tui)$"
+    "center on, match:class ^(podman-tui)$"
+    "float on, match:class ^(Rofi)$"
+    "opacity 1.00 override 1.00 override 1.00 override, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    "force_rgbx on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    "no_blur on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    "suppress_event maximize on, match:class .*"
+    "no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0"
+  ];
+  # HDR desktop. Screencopy tone-mapping for PNGs was fixed in Hyprland PR
+  # #12204 (0.54+). Keep sdrbrightness for panel brightness; run `nix flake update`
+  # so nixpkgs ships a new enough Hyprland.
   monitorLine =
     "${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale}"
-    + (if device.type == "desktop" then ",bitdepth,10,cm,hdr,sdrbrightness,1.25,vrr,0" else "");
+    + (if device.type == "desktop" then ",bitdepth,10,cm,hdredid,sdrbrightness,4.0,vrr,0" else "");
 in
 {
   # ───────────────────────────────────────────────
@@ -37,7 +94,7 @@ in
   # ───────────────────────────────────────────────
   home.packages = with pkgs; [
     # Wallpaper
-    swww
+    awww
     mpvpaper
 
     # Launcher / Menus
@@ -95,6 +152,7 @@ in
   # ───────────────────────────────────────────────
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
     xwayland.enable = true;
     systemd.enable = false;
 
@@ -103,7 +161,11 @@ in
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
       "$fileManager" = "ghostty --title=yazi -e yazi";
-      "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/toggle-launcher.sh";
+      "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-launcher.sh";
+      "$musicPopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh music toggle";
+      "$volumePopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh volume toggle";
+      "$notificationsPopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh notifications toggle";
+      "$closePopups" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh popups close";
 
       monitor = [
         monitorLine
@@ -112,13 +174,14 @@ in
 
       exec-once = [
         "pkill -x dunst 2>/dev/null || true"
-        "pgrep -x swaync >/dev/null || swaync &"
+        "pkill -x swaync 2>/dev/null || true"
         "pkill -x glava 2>/dev/null || true"
         "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"
-        "swww-daemon &"
+        "awww-daemon &"
         "sleep 1 && sh ${homeDirectory}/.config/quickshell/bar/launch.sh &"
         "sleep 1 && sh ${homeDirectory}/dotfiles/config/quickshell/visualizer/launch.sh &"
+        "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
@@ -138,8 +201,7 @@ in
         "xdg-mime default org.gnome.gThumb.desktop image/tiff"
         "xdg-mime default org.gnome.gThumb.desktop image/avif"
         "xdg-mime default org.gnome.gThumb.desktop image/heic"
-        "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
-        # "hyprctl setcursor catppuccin-mocha-dark-cursors 24"
+        "hyprctl setcursor ${cursorTheme} ${toString cursorSize}"
         ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl -i 0 clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl -i 0 dispatch togglefloating "address:0x$addr" && hyprctl -i 0 dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl -i 0 dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
       ];
 
@@ -151,14 +213,14 @@ in
         # HDR + cm on desktop makes Chromium/Electron render dim without these.
         "CHROMIUM_FLAGS,--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
         "CHROMIUM_USER_FLAGS,--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
-        # "XCURSOR_THEME,Banana"
-        # "XCURSOR_SIZE,36"
-        # "HYPRCURSOR_SIZE,36"
-        # "HYPRCURSOR_THEME,Banana"
-        "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
-        "XCURSOR_SIZE,24"
-        "HYPRCURSOR_SIZE,24"
-        "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
+        "XCURSOR_THEME,${cursorTheme}"
+        "XCURSOR_SIZE,${toString cursorSize}"
+        "HYPRCURSOR_SIZE,${toString cursorSize}"
+        "HYPRCURSOR_THEME,${cursorTheme}"
+        # "XCURSOR_THEME,catppuccin-mocha-dark-cursors"
+        # "XCURSOR_SIZE,24"
+        # "HYPRCURSOR_SIZE,24"
+        # "HYPRCURSOR_THEME,catppuccin-mocha-dark-cursors"
         "GTK_THEME,catppuccin-mocha-blue-standard"
       ];
 
@@ -166,15 +228,13 @@ in
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
-        "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-        "col.inactive_border" = "rgba(595959aa)";
-        resize_on_border = false;
+        resize_on_border = true;
         allow_tearing = false;
         layout = "dwindle";
       };
 
       decoration = {
-        rounding = 8;
+        rounding = 5;
         active_opacity = 1.0;
         inactive_opacity = 0.98;
 
@@ -187,8 +247,8 @@ in
 
         blur = {
           enabled = true;
-          size = 8;
-          passes = 2;
+          size = 12;
+          passes = 3;
           ignore_opacity = true;
           new_optimizations = true;
           vibrancy = 0.1696;
@@ -214,7 +274,6 @@ in
       ];
 
       dwindle = {
-        pseudotile = true;
         preserve_split = true;
       };
 
@@ -225,12 +284,14 @@ in
       misc = {
         force_default_wallpaper = -1;
         disable_hyprland_logo = true;
-        vfr = true;
         vrr = 0;
       };
 
       render = {
         cm_enabled = true;
+        cm_sdr_eotf = 1;
+        # Blur is broken on HDR/10-bit outputs in Hyprland 0.55 without this.
+        use_shader_blur_blend = device.type == "desktop";
       };
 
       input = {
@@ -270,19 +331,23 @@ in
         "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
-        "$mod CTRL, S, exec, grimblast --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
+        "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
         "$mod, R, exec, kooha"
         "$mod SHIFT, R, exec, killall kooha"
         # "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
         "$mod, T, togglefloating,"
         "$mod, F, fullscreen, 0"
         "$mod, P, pseudo,"
-        "$mod SHIFT, J, togglesplit,"
+        "$mod SHIFT, J, layoutmsg, togglesplit,"
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "$mod, N, exec, swaync-client -t -sw"
-        "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/toggle-bar.sh"
+        "$mod, N, exec, $notificationsPopup"
+        "$mod SHIFT, N, exec, quickshell ipc -c bar call notifications clear_all"
+        "$mod, V, exec, $volumePopup"
+        "$mod SHIFT, M, exec, $musicPopup"
+        "$mod SHIFT, ESCAPE, exec, $closePopups"
+        "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-bar.sh"
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
         "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
         "ALT SHIFT, W, exec, quickshell --no-duplicate -c wallpaper"
@@ -335,8 +400,8 @@ in
       ];
 
       bindel = [
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && ${homeDirectory}/dotfiles/scripts/volume-notify.sh"
-        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && ${homeDirectory}/dotfiles/scripts/volume-notify.sh"
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
         ",XF86MonBrightnessUp, exec, brightnessctl s 10%+ && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh"
         ",XF86MonBrightnessDown, exec, brightnessctl s 10%- && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh"
       ];
@@ -358,53 +423,20 @@ in
           [ ]
       );
 
-      windowrulev2 = [
-        "float, title:^(yazi)$"
-        "size 800 500, title:^(yazi)$"
-        "center, title:^(yazi)$"
-        "float, class:^(org.gnome.Nautilus|Nautilus|nautilus)$"
-        "size 1100 700, class:^(org.gnome.Nautilus|Nautilus|nautilus)$"
-        "center, class:^(org.gnome.Nautilus|Nautilus|nautilus)$"
-        "float, class:^(gthumb|org\\.gnome\\.gThumb)$"
-        "size 1200 800, class:^(gthumb|org\\.gnome\\.gThumb)$"
-        "center, class:^(gthumb|org\\.gnome\\.gThumb)$"
-        "noblur,class:^(Brave-browser)$"
-        "noblur,class:^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
-        "opacity 1.0 override 1.0 override 1.0 override,class:^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
-        "float, title:^(btop)$"
-        "size 900 600, title:^(btop)$"
-        "center, title:^(btop)$"
-        "float, class:^(podman-tui)$"
-        "size 1000 600, class:^(podman-tui)$"
-        "center, class:^(podman-tui)$"
-        "float, class:^(Rofi)$"
-        "opacity 1.0 override 1.0 override 1.0 override,class:^(com.mitchellh.ghostty)$,fullscreen:1"
-        "forcergbx,class:^(com.mitchellh.ghostty)$,fullscreen:1"
-        "noblur,class:^(com.mitchellh.ghostty)$,fullscreen:1"
-        "suppressevent maximize, class:.*"
-        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
-      ];
-
-      layerrule = [
-        "blur,logout_dialog"
-        "ignorealpha 0,logout_dialog"
-        "blur,quickshell_bar"
-        "ignorealpha 0,quickshell_bar"
-        "blur,quickshell_launcher_popup"
-        "ignorealpha 0,quickshell_launcher_popup"
-        "blur,quickshell_player_popup"
-        "ignorealpha 0,quickshell_player_popup"
-        "blur,quickshell_volume_osd"
-        "ignorealpha 0,quickshell_volume_osd"
-      ];
+      windowrule = windowRules;
 
       xwayland = {
         use_nearest_neighbor = false;
+        force_zero_scaling = true;
       };
     };
 
     extraConfig = ''
+      source = ${homeDirectory}/dotfiles/config/hypr/matugen-borders.conf
+
       gesture = 3, horizontal, workspace
+
+      ${layerRuleBlocks}
     '';
   };
 }
