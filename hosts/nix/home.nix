@@ -13,7 +13,6 @@
   inputs,
   device,
   unstable,
-  atuin,
   ...
 }:
 
@@ -116,6 +115,7 @@ in
   # ───────────────────────────────────────────────
   imports = [
     ../../modules/node.nix
+    ../../modules/nvim.nix
     # ../../modules/i3.nix  # disabled in favor of GNOME
     ../../modules/hyprland.nix
     ../../modules/wlogout.nix
@@ -346,9 +346,8 @@ in
     };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
-    neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-    atuin = import ../../modules/atuin.nix { inherit atuin; };
+    atuin = import ../../modules/atuin.nix { inherit pkgs; };
     spicetify = import ../../modules/spicetify.nix { inherit inputs lib pkgs; };
     ghostty = import ../../modules/ghostty.nix { inherit config device pkgs; };
     wezterm = import ../../modules/wezterm.nix { inherit config device pkgs; };
