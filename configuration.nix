@@ -444,16 +444,16 @@ in
   programs.hyprland.xwayland.enable = true;
 
   systemd.services.sddm.preStart = lib.mkAfter ''
-    install -d -m 755 /var/lib/sddm
-    STATE=/var/lib/sddm/state.conf
-    if [ -f "$STATE" ]; then
-      ${pkgs.gnused}/bin/sed -i 's|^Session=.*|Session=hyprland.desktop|' "$STATE"
-    else
-      cat > "$STATE" <<EOF
-[Last]
-Session=hyprland.desktop
-EOF
-    fi
+        install -d -m 755 /var/lib/sddm
+        STATE=/var/lib/sddm/state.conf
+        if [ -f "$STATE" ]; then
+          ${pkgs.gnused}/bin/sed -i 's|^Session=.*|Session=hyprland.desktop|' "$STATE"
+        else
+          cat > "$STATE" <<EOF
+    [Last]
+    Session=hyprland.desktop
+    EOF
+        fi
   '';
 
   xdg.portal = {
@@ -475,18 +475,22 @@ EOF
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.sddm.enableGnomeKeyring = true;
 
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 3d";
-  };
+  nix = {
+    settings.warn-dirty = false;
 
-  nix.settings = {
-    auto-optimise-store = true;
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 3d";
+    };
+
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+    };
   };
 
   # Configure keymap in X11
