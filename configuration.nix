@@ -272,7 +272,7 @@ in
         wayland.enable = false;
         theme = "sword";
         setupScript = ''
-          ${pkgs.xrdb}/bin/xrdb -merge - <<EOF
+          ${pkgs.xorg.xrdb}/bin/xrdb -merge - <<EOF
           Xcursor.theme: Banana
           Xcursor.size: 48
           EOF
@@ -403,6 +403,7 @@ in
     bananaCursor
   ];
   virtualisation.docker.enable = true;
+  virtualisation.docker.package = pkgs.docker_29;
   fonts = {
     fontconfig = {
       enable = true;

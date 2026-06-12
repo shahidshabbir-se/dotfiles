@@ -28,10 +28,6 @@
       url = "github:0xc000022070/zen-browser-flake";
     };
 
-    catppuccin.url = "github:catppuccin/nix";
-
-    atuin.url = "github:atuinsh/atuin";
-
     # macOS
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
@@ -51,11 +47,9 @@
       unstable,
       home-manager,
       spicetify-nix,
-      catppuccin,
       nix-darwin,
       nix-homebrew,
       zen-browser,
-      atuin,
       ...
     }:
     let
@@ -85,29 +79,29 @@
         };
 
         pc = {
-          name = "PC + ASUS VG34WQML5A";
+          name = "workstation";
           type = "desktop";
           display = {
             connector = "DP-4";
             width = 3440;
             height = 1440;
             scale = 1.3333;
-            refreshRate = 240;
+            refreshRate = 250;
           };
-          fontSize = 14;
+          fontSize = 14.0;
         };
 
         mac-mini = {
           name = "Mac Mini M4";
           type = "desktop";
           display = {
-            connector = "HDMI-A-1";
-            width = 1920;
-            height = 1080;
+            connector = "DP-4";
+            width = 3440;
+            height = 1440;
+            refreshRate = 250;
             scale = 1.0;
-            refreshRate = 60;
           };
-          fontSize = 13.0;
+          fontSize = 14.0;
         };
       };
 
@@ -127,8 +121,6 @@
           modules = [
             hardwareConfig
             ./configuration.nix
-            inputs.catppuccin.nixosModules.catppuccin
-
             home-manager.nixosModules.home-manager
             {
               home-manager = {
@@ -139,7 +131,6 @@
                     inputs
                     unstable
                     device
-                    atuin
                     ;
                 };
                 sharedModules = [ inputs.spicetify-nix.homeManagerModules.default ];

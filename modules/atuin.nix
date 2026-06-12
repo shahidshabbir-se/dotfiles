@@ -7,12 +7,11 @@
 #  https://github.com/shahidshabbir-se/dotfiles
 
 {
-  atuin ? null,
   pkgs ? null,
 }:
 {
   enable = true;
-  package = if atuin != null then atuin.packages.x86_64-linux.default else pkgs.atuin;
+  package = pkgs.atuin;
 
   # ───────────────────────────────────────────────
   # ▶ Zsh Integration

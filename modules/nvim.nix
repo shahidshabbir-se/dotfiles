@@ -6,28 +6,30 @@
 #  ╚═╝  ╚═══╝╚══════╝  ╚═══╝   ╚═════╝ ╚═╝     ╚═╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  enable = true;
+  programs.neovim = {
+    enable = true;
 
-  # Dotfiles nvim config is symlinked via xdg.configFile.nvim — do not write
-  # init.lua into that tree (HM 26.x would resolve it outside $HOME at build time).
-  sideloadInitLua = true;
+    # LazyVim config lives in ~/dotfiles/config/nvim; skip HM provider bootstrapping.
+    withRuby = false;
+    withPython3 = false;
+    withNodeJs = false;
 
-  # LazyVim config lives in ~/dotfiles/config/nvim; skip HM provider bootstrapping.
-  withRuby = false;
-  withPython3 = false;
-  withNodeJs = false;
+    # ───────────────────────────────────────────────
+    # ▶ Set Vim as the default editor
+    # ───────────────────────────────────────────────
+    defaultEditor = true;
 
-  # ───────────────────────────────────────────────
-  # ▶ Set Vim as the default editor
-  # ───────────────────────────────────────────────
-  defaultEditor = true;
+    # ───────────────────────────────────────────────
+    # ▶ Create `vi` and `vim` aliases
+    # ───────────────────────────────────────────────
+    viAlias = true;
+    vimAlias = true;
+  };
 
-  # ───────────────────────────────────────────────
-  # ▶ Create `vi` and `vim` aliases
-  # ───────────────────────────────────────────────
-  viAlias = true;
-  vimAlias = true;
+  # Keep Home Manager's Neovim package/wrapper, but do not let it write
+  # ~/.config/nvim/init.lua over the symlinked LazyVim configuration.
+  xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
 }

@@ -20,6 +20,7 @@ in
     # ../../modules/cliproxyapi.nix
     ../../modules/karabiner.nix
     ../../modules/node.nix
+    ../../modules/nvim.nix
   ];
 
   # ───────────────────────────────────────────────
@@ -65,10 +66,9 @@ in
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
     tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
-    neovim = import ../../modules/nvim.nix { inherit config pkgs; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
-    atuin = import ../../modules/atuin.nix;
+    atuin = import ../../modules/atuin.nix { inherit pkgs; };
     aerospace = import ../../modules/aerospace.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
     wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
