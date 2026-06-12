@@ -54,11 +54,11 @@ pkgs.stdenv.mkDerivation {
     vulkan-loader
     wayland
     xkeyboard_config
-    xorg.libX11
-    xorg.libxcb
-    xorg.libXcursor
-    xorg.libXi
-    xorg.libXrandr
+    libX11
+    libxcb
+    libXcursor
+    libXi
+    libXrandr
     zlib
   ];
 

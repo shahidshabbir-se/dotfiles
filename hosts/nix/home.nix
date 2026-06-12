@@ -127,7 +127,7 @@ in
     # Account and Home Manager state
     # ───────────────────────────────────────────────
     inherit username homeDirectory;
-    stateVersion = "24.05";
+    stateVersion = "26.05";
 
     # ───────────────────────────────────────────────
     # Cursor theme
@@ -169,7 +169,7 @@ in
         glycin-loaders
         gthumb
         onlyoffice-desktopeditors
-        protonvpn-gui
+        proton-vpn
         qbittorrent
         vlc
         webp-pixbuf-loader

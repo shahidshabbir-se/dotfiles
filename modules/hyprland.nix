@@ -66,9 +66,9 @@ let
     "size 1000 600, match:class ^(podman-tui)$"
     "center on, match:class ^(podman-tui)$"
     "float on, match:class ^(Rofi)$"
-    "opacity 1.00 override 1.00 override 1.00 override, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
-    "force_rgbx on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
-    "no_blur on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    # "opacity 1.00 override 1.00 override 1.00 override, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    # "force_rgbx on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    # "no_blur on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
     "suppress_event maximize on, match:class .*"
     "no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0"
   ];
