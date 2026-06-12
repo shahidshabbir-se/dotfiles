@@ -18,7 +18,6 @@
 let
   homeDirectory = "/home/shahid";
   browser = "zen-beta";
-  inherit (config.lib.file) mkOutOfStoreSymlink;
   exitScript = pkgs.writeShellScript "exit.sh" ''
     if env -u GTK_THEME zenity --question --title="Exit Hyprland" --text="Do you wish to exit?"; then
       hyprctl -i 0 dispatch exit
@@ -32,14 +31,6 @@ let
 
   layerRuleNamespaces = [
     "logout_dialog"
-    "quickshell"
-    "quickshell_bar"
-    "quickshell_launcher_popup"
-    "quickshell_music_popup"
-    "quickshell_volume_popup"
-    "quickshell_volume_osd"
-    "quickshell_notifications"
-    "quickshell_datetime_popup"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
@@ -122,15 +113,6 @@ in
     gthumb
   ];
 
-  xdg.configFile = {
-    "quickshell/bar".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/bar";
-    "quickshell/visualizer".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
-    "quickshell/wallpaper".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
-    # lock-screen is cloned to ~/.config/lock-screen via post-install.sh (not a nix-managed path)
-  };
-
   # ───────────────────────────────────────────────
   # ▶ Swaync (Notification Center)
   # ───────────────────────────────────────────────
@@ -161,11 +143,7 @@ in
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
       "$fileManager" = "ghostty --title=yazi -e yazi";
-      "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-launcher.sh";
-      "$musicPopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh music toggle";
-      "$volumePopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh volume toggle";
-      "$notificationsPopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh notifications toggle";
-      "$closePopups" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh popups close";
+      "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
 
       monitor = [
         monitorLine
@@ -179,8 +157,6 @@ in
         "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"
         "awww-daemon &"
-        "sleep 1 && sh ${homeDirectory}/.config/quickshell/bar/launch.sh &"
-        "sleep 1 && sh ${homeDirectory}/dotfiles/config/quickshell/visualizer/launch.sh &"
         "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
@@ -342,15 +318,8 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "$mod, N, exec, $notificationsPopup"
-        "$mod SHIFT, N, exec, quickshell ipc -c bar call notifications clear_all"
-        "$mod, V, exec, $volumePopup"
-        "$mod SHIFT, M, exec, $musicPopup"
-        "$mod SHIFT, ESCAPE, exec, $closePopups"
-        "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-bar.sh"
         "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
         "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
-        "ALT SHIFT, W, exec, quickshell --no-duplicate -c wallpaper"
         "ALT SHIFT, P, exec, ${homeDirectory}/.config/wlogout/launch.sh"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
         "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"

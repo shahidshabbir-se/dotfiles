@@ -152,9 +152,6 @@ in
         # Development tools
         fastfetch
         codeCursorFhs
-        quickshell
-        kdePackages.qt5compat
-        kdePackages.qtmultimedia
         obsidian
         zenity
         gcc
