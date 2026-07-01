@@ -7,7 +7,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 {
-  # config,
+  config,
   pkgs,
   lib,
   # inputs,
@@ -16,6 +16,7 @@
 }:
 
 let
+  inherit (config.lib.file) mkOutOfStoreSymlink;
   homeDirectory = "/home/shahid";
   browser = "zen-beta";
   exitScript = pkgs.writeShellScript "exit.sh" ''
@@ -25,12 +26,41 @@ let
   '';
 
   d = device.display;
+  hdr = device.hdr or { };
+  hdrDesktop = device.type == "desktop" && hdr != { };
+  nvidiaDesktop = device.type == "desktop";
   desktopRefreshRate = if device.type == "desktop" then 240 else d.refreshRate;
+  chromiumHdrFlags = "--enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime --enable-hdr";
   cursorTheme = "Banana";
   cursorSize = if device.type == "laptop" then 48 else 36;
 
   layerRuleNamespaces = [
     "logout_dialog"
+    "wlogout"
+    "vicinae"
+    "quickshell"
+    "quickshell_bar"
+    "quickshell_launcher_popup"
+    "quickshell_music_popup"
+    "quickshell_volume_popup"
+    "quickshell_volume_osd"
+    "quickshell_notifications"
+    "quickshell_datetime_popup"
+    "quickshell_screenshot_overlay"
+  ];
+
+  # Popups unload instantly in Quickshell (LazyLoader); layersOut fade leaves blur behind.
+  layerRuleNoAnimNamespaces = [
+    "logout_dialog"
+    "wlogout"
+    "vicinae"
+    "quickshell_launcher_popup"
+    "quickshell_music_popup"
+    "quickshell_volume_popup"
+    "quickshell_volume_osd"
+    "quickshell_notifications"
+    "quickshell_datetime_popup"
+    "quickshell_screenshot_overlay"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
@@ -44,7 +74,16 @@ let
       ignore_alpha = 0
     }'';
 
-  layerRuleBlocks = lib.concatStringsSep "\n\n" (map layerRuleBlock layerRuleNamespaces);
+  layerRuleNoAnimBlock = ns: ''
+    layerrule {
+      name = no-anim-${lib.replaceStrings [ "_" ] [ "-" ] ns}
+      match:namespace = ${ns}
+      no_anim = on
+    }'';
+
+  layerRuleBlocks = lib.concatStringsSep "\n\n" (
+    (map layerRuleBlock layerRuleNamespaces) ++ (map layerRuleNoAnimBlock layerRuleNoAnimNamespaces)
+  );
 
   windowRules = [
     "float on, match:title ^(yazi)$"
@@ -66,18 +105,42 @@ let
     "size 1000 600, match:class ^(podman-tui)$"
     "center on, match:class ^(podman-tui)$"
     "float on, match:class ^(Rofi)$"
-    # "opacity 1.00 override 1.00 override 1.00 override, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
-    # "force_rgbx on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
-    # "no_blur on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    "opacity 1.00 override 1.00 override 1.00 override, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
+    "force_rgbx on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
     "suppress_event maximize on, match:class .*"
     "no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0"
   ];
-  # HDR desktop. Screencopy tone-mapping for PNGs was fixed in Hyprland PR
-  # #12204 (0.54+). Keep sdrbrightness for panel brightness; run `nix flake update`
-  # so nixpkgs ships a new enough Hyprland.
-  monitorLine =
-    "${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale}"
-    + (if device.type == "desktop" then ",bitdepth,10,cm,hdredid,sdrbrightness,4.0,vrr,0" else "");
+  # Desktop HDR uses monitorv2 (monitor= string cannot set luminance tokens on 0.55).
+  # https://github.com/hyprwm/Hyprland/discussions/14682
+  monitorLine = "${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale}";
+
+  hdrMonitorBlock =
+    if hdrDesktop then
+      ''
+        monitorv2 {
+          output = ${d.connector}
+          mode = ${toString d.width}x${toString d.height}@${toString desktopRefreshRate}
+          scale = ${toString d.scale}
+          bitdepth = 10
+          cm = ${hdr.cm or "hdredid"}
+          supports_hdr = 1
+          supports_wide_color = 1
+          sdrbrightness = ${toString (hdr.sdrBrightness or 1.0)}
+          sdrsaturation = ${toString (hdr.sdrSaturation or 1.0)}
+          sdr_max_luminance = ${toString (hdr.sdrMaxLuminance or 280)}
+          sdr_min_luminance = ${toString (hdr.sdrMinLuminance or 0.005)}
+          min_luminance = ${toString (hdr.minLuminance or 0.005)}
+          max_avg_luminance = ${toString (hdr.maxAvgLuminance or 600)}
+          max_luminance = ${toString (hdr.maxLuminance or 1000)}
+          vrr = 0
+        }
+      ''
+    else
+      "";
+
+  # Hyprland 0.55 HDR screencopy regression: grim returns empty frames.
+  # https://github.com/hyprwm/Hyprland/discussions/14931
+  fixHdrScreensharePlugin = pkgs.callPackage ./pkgs/hyprland-fix-hdr-screenshare.nix { };
 in
 {
   # ───────────────────────────────────────────────
@@ -93,8 +156,10 @@ in
     rofi
     rofi-bluetooth
 
-    # Screenshot
+    # Screenshot (grim is pulled in by grimblast but keep it on PATH for scripts)
+    grim
     grimblast
+    slurp
 
     # Clipboard
     cliphist
@@ -111,7 +176,21 @@ in
 
     # Image viewer (hyprland mime defaults)
     gthumb
+
+    # Quickshell bar / visualizer / wallpaper picker
+    quickshell
+    kdePackages.qt5compat
+    kdePackages.qtmultimedia
   ];
+
+  xdg.configFile = {
+    "quickshell/bar".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/bar";
+    "quickshell/visualizer".source =
+       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
+    "quickshell/wallpaper".source =
+       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
+    # lock-screen is cloned to ~/.config/lock-screen via post-install.sh (not a nix-managed path)
+  };
 
   # ───────────────────────────────────────────────
   # ▶ Swaync (Notification Center)
@@ -138,12 +217,22 @@ in
     xwayland.enable = true;
     systemd.enable = false;
 
+    plugins = lib.mkIf hdrDesktop [
+      fixHdrScreensharePlugin
+    ];
+
     settings = {
       "$mod" = "SUPER";
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
       "$fileManager" = "ghostty --title=yazi -e yazi";
-      "$menu" = "${homeDirectory}/dotfiles/config/rofi/app-menu-launch.sh";
+      "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-launcher.sh";
+      "$musicPopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh music toggle";
+      "$volumePopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh volume toggle";
+      "$notificationsPopup" =
+        "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh notifications toggle";
+      "$closePopups" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh popups close";
+      "$powerMenu" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-power.sh";
 
       monitor = [
         monitorLine
@@ -157,6 +246,8 @@ in
         "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"
         "awww-daemon &"
+        "sleep 1 && sh ${homeDirectory}/.config/quickshell/bar/launch.sh &"
+        "sleep 1 && sh ${homeDirectory}/dotfiles/config/quickshell/visualizer/launch.sh &"
         "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
@@ -178,7 +269,6 @@ in
         "xdg-mime default org.gnome.gThumb.desktop image/avif"
         "xdg-mime default org.gnome.gThumb.desktop image/heic"
         "hyprctl setcursor ${cursorTheme} ${toString cursorSize}"
-        ''sleep 2 && socat -U - UNIX-CONNECT:"$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do case "$line" in windowtitlev2\>\>*) data="''${line#windowtitlev2>>}"; addr="''${data%%,*}"; title="''${data#*,}"; case "$title" in *Bitwarden*) floating=$(hyprctl -i 0 clients -j | jq -r ".[] | select(.address == \"0x$addr\") | .floating"); [ "$floating" = "false" ] && hyprctl -i 0 dispatch togglefloating "address:0x$addr" && hyprctl -i 0 dispatch resizewindowpixel exact 500 600,"address:0x$addr" && hyprctl -i 0 dispatch centerwindow "address:0x$addr" ;; esac ;; esac; done &''
       ];
 
       env = [
@@ -186,9 +276,9 @@ in
         "TERMINAL,wezterm"
         "BROWSER,${browser}"
         "EDITOR,nvim"
-        # HDR + cm on desktop makes Chromium/Electron render dim without these.
-        "CHROMIUM_FLAGS,--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
-        "CHROMIUM_USER_FLAGS,--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
+        # HDR + cm: force sRGB in apps; WaylandLinuxDrmSyncobj stops NVIDIA Electron flicker.
+        "CHROMIUM_FLAGS,${chromiumHdrFlags}"
+        "CHROMIUM_USER_FLAGS,${chromiumHdrFlags}"
         "XCURSOR_THEME,${cursorTheme}"
         "XCURSOR_SIZE,${toString cursorSize}"
         "HYPRCURSOR_SIZE,${toString cursorSize}"
@@ -265,9 +355,22 @@ in
 
       render = {
         cm_enabled = true;
-        cm_sdr_eotf = 1;
+        cm_sdr_eotf = 2;
+        # fix-hdr-screenshare plugin hooks the HDR mirror path; keep_unmodified_copy=1
+        # alone still yields empty grim captures on 0.55 (discussion #14931).
+        keep_unmodified_copy = 0;
         # Blur is broken on HDR/10-bit outputs in Hyprland 0.55 without this.
         use_shader_blur_blend = device.type == "desktop";
+        direct_scanout = false;
+      };
+
+      opengl = lib.mkIf nvidiaDesktop {
+        # Default true; disabling fixes NVIDIA HDR/UI strobe on 555+ drivers.
+        nvidia_anti_flicker = false;
+      };
+
+      cursor = lib.mkIf nvidiaDesktop {
+        no_hardware_cursors = true;
       };
 
       input = {
@@ -296,7 +399,7 @@ in
         "$mod SHIFT, E, exec, nautilus"
         "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
         "$mod, B, exec, hyprctl dispatch workspace 2 && $browser"
-        "$mod CTRL, B, exec, hyprctl dispatch workspace 5 && chromium"
+        "$mod CTRL, B, exec, hyprctl dispatch workspace 5 && brave ${chromiumHdrFlags}"
         "$mod SHIFT, B, exec, hyprctl dispatch workspace 5 && $browser --private-window"
         "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
         # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
@@ -307,7 +410,7 @@ in
         "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
-        "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh --notify copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
+        "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
         "$mod, R, exec, kooha"
         "$mod SHIFT, R, exec, killall kooha"
         # "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
@@ -318,12 +421,19 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "ALT SHIFT, B, exec, ${homeDirectory}/dotfiles/config/rofi/bluetooth-launch.sh"
-        "ALT SHIFT, N, exec, ${homeDirectory}/dotfiles/config/rofi/wifi-launch.sh"
-        "ALT SHIFT, P, exec, ${homeDirectory}/.config/wlogout/launch.sh"
+        "$mod, N, exec, $notificationsPopup"
+        "$mod SHIFT, N, exec, quickshell ipc -c bar call notifications clear_all"
+        "$mod, V, exec, $volumePopup"
+        "$mod SHIFT, M, exec, $musicPopup"
+        "$mod SHIFT, ESCAPE, exec, $closePopups"
+        "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-bar.sh"
+        "ALT SHIFT, B, exec, vicinae 'vicinae://launch/@Gelei/vicinae-extension-bluetooth-0/scan?toggle=true'"
+        "ALT SHIFT, N, exec, vicinae 'vicinae://launch/@dagimg-dot/vicinae-extension-wifi-commander-0/scan-wifi'"
+        "ALT SHIFT, W, exec, quickshell --no-duplicate -c wallpaper"
+        "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
-        "ALT, C, exec, ${homeDirectory}/dotfiles/config/rofi/clipboard-launch.sh"
-        "SUPER, SUPER_L, exec, $menu"
+        "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
+        "$mod, SPACE, exec, vicinae toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
         "ALT SHIFT,Tab,cyclenext, prev"
@@ -404,6 +514,8 @@ in
       source = ${homeDirectory}/dotfiles/config/hypr/matugen-borders.conf
 
       gesture = 3, horizontal, workspace
+
+      ${hdrMonitorBlock}
 
       ${layerRuleBlocks}
     '';

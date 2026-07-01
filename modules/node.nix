@@ -2,23 +2,16 @@
   config,
   pkgs,
   lib,
-  inputs,
   ...
 }:
 
 let
-  system = pkgs.stdenv.hostPlatform.system;
-  unstable = import inputs.unstable {
-    inherit system;
-    config.allowUnfree = true;
-  };
-
   npmGlobal = "${config.home.homeDirectory}/.npm-global";
 in
 {
   home.packages = [
     pkgs.nodejs_24
-    unstable.bun
+    pkgs.bun
   ];
 
   home.file.".npmrc".text = ''
@@ -34,7 +27,7 @@ in
 
   # home.activation.installNpmPackages = lib.hm.dag.entryAfter ["writeBoundary"] ''
   #   # Export paths so post-install scripts (like opencode's) can find bun/node
-  #   export PATH="${unstable.bun}/bin:${pkgs.nodejs_24}/bin:$PATH"
+  #   export PATH="${pkgs.bun}/bin:${pkgs.nodejs_24}/bin:$PATH"
   #
   #   echo "Installing/Updating global NPM packages..."
   #   mkdir -p "${npmGlobal}/bin"

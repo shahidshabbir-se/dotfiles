@@ -6,7 +6,7 @@
 }:
 
 let
-  version = "7.1.23"; # ← update this only
+  version = "7.1.75"; # ← update this only
 
   inherit (pkgs.stdenv.hostPlatform) system;
 
@@ -22,7 +22,7 @@ let
   src = pkgs.fetchurl {
     url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_${platform}.tar.gz";
 
-    sha256 = "sha256-uzeJp8KbMXrs3BciibeOATr8zIa/xDcoFXCBsAvSH60=";
+    sha256 = "sha256-RusrQ/rgAYWT9eAJ21ozLCNMYuXEbJ7wGIH+Hx52a0w=";
   };
 
   cliproxyapi = pkgs.stdenv.mkDerivation {
@@ -48,7 +48,7 @@ in
 {
   home.packages = [ cliproxyapi ];
 
-  xdg.configFile."cliproxyapi/config.yaml".source = ../config/cliproxyapi/config.yaml;
+  # xdg.configFile."cliproxyapi/config.yaml".source = ../config/cliproxyapi/config.yaml;
 
   systemd.user.services.cliproxyapi = lib.mkIf isLinux {
     Unit = {
