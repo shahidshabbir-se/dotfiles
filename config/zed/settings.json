@@ -1,9 +1,12 @@
 {
 	"terminal": {
 		"font_size": 16.0,
-		"font_family": "Lilex",
+		"font_family": "JetBrainsMono Nerd Font",
 	},
 	"agent_servers": {
+		"claude-acp": {
+			"type": "registry",
+		},
 		"cursor": {
 			"type": "registry",
 		},
@@ -20,14 +23,16 @@
 	"collaboration_panel": {
 		"dock": "left",
 	},
+	"auto_update": false,
 	"agent": {
-		"default_model": {
-   "provider": "openai-subscribed",
-   "model": "gpt-5.5",
-   "enable_thinking": true,
-   "effort": "medium"
-  },
-  "sidebar_side": "right",
+		"terminal_init_command": "claude",
+  "default_model": {
+			"provider": "openai-subscribed",
+			"model": "gpt-5.4",
+			"enable_thinking": true,
+			"effort": "medium",
+		},
+		"sidebar_side": "right",
 		"dock": "right",
 		"favorite_models": [],
 		"model_parameters": [],
@@ -41,7 +46,7 @@
 	"theme": {
 		"mode": "dark",
 		"light": "One Light",
-		"dark": "One Dark - Darkened",
+		"dark": "Rosé Pine",
 	},
 	"telemetry": {
 		"diagnostics": false,
@@ -58,8 +63,8 @@
 		"light": "Material Icon Theme",
 		"dark": "Material Icon Theme",
 	},
-	"buffer_font_family": "Lilex",
-	"ui_font_family": "SF Pro Display",
+	"buffer_font_family": "JetBrainsMono Nerd Font",
+	"ui_font_family": "JetBrainsMono Nerd Font",
 	"ui_font_size": 15.0,
 	"agent_buffer_font_size": 14.0,
 	"agent_ui_font_size": 16.0,

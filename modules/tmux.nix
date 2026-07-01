@@ -55,7 +55,7 @@ in
         set -g @tokyo-night-tmux_terminal_icon ""
         set -g @tokyo-night-tmux_active_terminal_icon ""
         set -g @tokyo-night-tmux_show_path 0
-        set -g @tokyo-night-tmux_show_music 1
+        set -g @tokyo-night-tmux_show_music 0
         set -g @tokyo-night-tmux_window_tidy_icons 0
         set -g @tokyo-night-tmux_transparent 1
 
@@ -137,6 +137,7 @@ in
         set -as terminal-features ",xterm-256color:RGB"
         set -g extended-keys on
         set -g extended-keys-format csi-u
+        set -g focus-events on
 
         set -g pane-active-border-style 'fg=magenta,bg=default'
         set -g pane-border-style 'fg=brightblack,bg=default'
@@ -195,7 +196,7 @@ in
         set -g @vim_navigator_mapping_left "C-Left C-h"
         set -g @vim_navigator_mapping_right "C-Right C-l"
         set -g @vim_navigator_mapping_up "C-k"
-        set -g @vim_navigator_mapping_down "C-j"
+        set -g @vim_navigator_mapping_down "C-Down C-j C-\\"
         set -g @vim_navigator_mapping_prev ""
 
         # ─────────────────────────────────────────────────────────

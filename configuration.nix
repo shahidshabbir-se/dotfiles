@@ -6,31 +6,23 @@
 {
   lib,
   pkgs,
-  inputs,
   ...
 }:
 
 let
-  inherit (pkgs.stdenv.hostPlatform) system;
-
-  unstable = import inputs.unstable {
-    inherit system;
-    config.allowUnfree = true;
-  };
-
-  adi1090x-lone = pkgs.stdenv.mkDerivation {
-    name = "adi1090x-lone";
-    src = pkgs.fetchFromGitHub {
-      owner = "adi1090x";
-      repo = "plymouth-themes";
-      rev = "5d8817458d764bff4ff9daae94cf1bbaabf16ede";
-      hash = "sha256-e3lRgIBzDkKcWEp5yyRCzQJM6yyTjYC5XmNUZZroDuw=";
-    };
-    installPhase = ''
-      mkdir -p $out/share/plymouth/themes/lone
-      cp -r $src/pack_3/lone/* $out/share/plymouth/themes/lone/
-    '';
-  };
+  # adi1090x-lone = pkgs.stdenv.mkDerivation {
+  #   name = "adi1090x-lone";
+  #   src = pkgs.fetchFromGitHub {
+  #     owner = "adi1090x";
+  #     repo = "plymouth-themes";
+  #     rev = "5d8817458d764bff4ff9daae94cf1bbaabf16ede";
+  #     hash = "sha256-e3lRgIBzDkKcWEp5yyRCzQJM6yyTjYC5XmNUZZroDuw=";
+  #   };
+  #   installPhase = ''
+  #     mkdir -p $out/share/plymouth/themes/lone
+  #     cp -r $src/pack_3/lone/* $out/share/plymouth/themes/lone/
+  #   '';
+  # };
 
   # Qylock "sword" SDDM theme — sparse fetch (~42 MiB), not the full ~1 GiB repo.
   qylockSwordSrc = pkgs.fetchFromGitHub {
@@ -98,7 +90,7 @@ in
     dconf.enable = true;
     nix-ld.enable = true;
     thunar.enable = true;
-    thunar.plugins = with pkgs.xfce; [
+    thunar.plugins = with pkgs; [
       thunar-archive-plugin
       thunar-volman
     ];
@@ -137,7 +129,7 @@ in
       # };
     };
     # GNOME desktop environment
-    xserver.desktopManager.gnome.enable = true;
+    desktopManager.gnome.enable = true;
 
     openssh.enable = true;
     tailscale.enable = true;
@@ -259,7 +251,7 @@ in
     displayManager = {
       defaultSession = "hyprland";
 
-      environment = {
+      generic.environment = {
         XCURSOR_THEME = "Banana";
         XCURSOR_SIZE = "48";
       };
@@ -272,11 +264,11 @@ in
         wayland.enable = false;
         theme = "sword";
         setupScript = ''
-          ${pkgs.xorg.xrdb}/bin/xrdb -merge - <<EOF
+          ${pkgs.xrdb}/bin/xrdb -merge - <<EOF
           Xcursor.theme: Banana
           Xcursor.size: 48
           EOF
-          ${pkgs.xorg.xset}/bin/xsetroot -cursor_name left_ptr
+          ${pkgs.xset}/bin/xsetroot -cursor_name left_ptr
         '';
         settings = {
           General = {
@@ -352,11 +344,6 @@ in
   time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
-  security.sudo = {
-    enable = true;
-    wheelNeedsPassword = false;
-  };
-  security.rtkit.enable = true;
 
   systemd.user.services.wireplumber-usb-reset = {
     description = "Restart WirePlumber when USB speaker connects";
@@ -396,9 +383,9 @@ in
     openvpn
     gamescope
     lutris-unwrapped
-    unstable.winetricks
-    unstable.wineWow64Packages.staging
-    unstable.mangohud
+    winetricks
+    wineWow64Packages.staging
+    mangohud
     sddmQylockSword
     bananaCursor
   ];
@@ -473,7 +460,15 @@ in
   };
 
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.sddm.enableGnomeKeyring = true;
+
+  security = {
+    sudo = {
+      enable = true;
+      wheelNeedsPassword = false;
+    };
+    rtkit.enable = true;
+    pam.services.sddm.enableGnomeKeyring = true;
+  };
 
   nix = {
     settings.warn-dirty = false;
@@ -490,6 +485,8 @@ in
         "nix-command"
         "flakes"
       ];
+      extra-substituters = [ "https://vicinae.cachix.org" ];
+      extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
     };
   };
 

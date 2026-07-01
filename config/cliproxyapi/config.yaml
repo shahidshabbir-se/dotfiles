@@ -11,7 +11,7 @@ tls:
 # Management API settings
 remote-management:
   allow-remote: false
-  secret-key: "$2a$10$Tq7pdqq1J0hx63S/x5gBQ.xdGYwGyq.RDScsWO7Cw2ujHTDx3q//m"
+  secret-key: ""
   disable-control-panel: true
 # Authentication directory (supports ~ for home directory)
 auth-dir: "~/.config/cliproxyapi/auth"

@@ -40,6 +40,11 @@ return {
     opts = {
       image = {
         enabled = true,
+        doc = {
+          enabled = true,
+          inline = false,
+          float = false,
+        },
       },
       picker = {
         enabled = true,

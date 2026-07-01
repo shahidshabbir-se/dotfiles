@@ -13,6 +13,7 @@ with pkgs;
   postgresql
   redis
   restish
+  bubblewrap
   uv
   k6
   nixfmt

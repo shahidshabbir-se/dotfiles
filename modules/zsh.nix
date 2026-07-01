@@ -20,8 +20,9 @@
   # ▶ Shell Aliases
   # ───────────────────────────────────────────────
   shellAliases = {
-    ls = "eza --icons=always --color=always -a --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
-    ll = "eza --icons=always --color=always -la --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ll = "eza --icons=always --color=always -a --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    ls = "eza --icons=always --color=always -la --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
+    l = "eza --icons=always --color=always -la --git-ignore --ignore-glob=node_modules --ignore-glob=.DS_Store";
     mkdir = "mkdir -p";
 
     tree = "eza --tree --level=1 --icons=always";
@@ -37,9 +38,10 @@
     bc = "better-commits";
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
-    cc = "claude";
+    cc = "CLAUDE_CODE_NEW_INIT=1 claude";
     ki = "kilo";
-    oc = "OPENCODE_ENABLE_EXA=1 opencode";
+    oc = "OPENCODE_ENABLE_EXA=1 opencode --port";
+    opencode = "OPENCODE_ENABLE_EXA=1 opencode";
     # cr = "crush";
     # cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
     sed = "sd";
@@ -220,7 +222,7 @@
         _clip() {
           ${
             if pkgs.stdenv.isDarwin then
-              ''pbcopy''
+              "pbcopy"
             else
               ''
                 if [ "$XDG_SESSION_TYPE" = "x11" ]; then

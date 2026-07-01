@@ -22,4 +22,5 @@
   "cursor.general.emailPrivacyEnabled": true,
   "cursor.composer.shouldChimeAfterChatFinishes": true,
   "cursor.cpp.enablePartialAccepts": true,
+  "workbench.statusBar.visible": false,
 }

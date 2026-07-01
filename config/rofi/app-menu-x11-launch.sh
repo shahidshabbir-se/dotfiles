@@ -28,8 +28,8 @@ if pgrep -x rofi > /dev/null; then
     pkill -x rofi
 else
     # Ensure Chromium launched via drun inherits Wayland CM workaround flags.
-    export CHROMIUM_FLAGS="--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
-    export CHROMIUM_USER_FLAGS="--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb"
+    export CHROMIUM_FLAGS="--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj"
+    export CHROMIUM_USER_FLAGS="--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj"
 
     if [ -n "$current_wall" ] && [ -f "$current_wall" ]; then
         rofi -show drun \

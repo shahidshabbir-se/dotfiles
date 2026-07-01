@@ -101,7 +101,6 @@
 			"cmd-l": "assistant::InlineAssist",
 			"space a t": "workspace::ToggleRightDock",
 			"space a m": "agent::ToggleModelSelector",
-			"space a n": "agent::NewExternalAgentThread",
 			// Git
 			"space g g": [
 				"task::Spawn",
