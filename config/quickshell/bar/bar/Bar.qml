@@ -15,6 +15,7 @@ Scope {
     signal toggleNotifications()
     signal toggleLauncher()
     signal toggleDateTime()
+    signal togglePowerProfile()
 
     function windowForScreen(screen) {
         if (!screen)
@@ -102,7 +103,9 @@ Scope {
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 12
 
-                        Widgets.BatteryStatus {}
+                        Widgets.BatteryStatus {
+                            onTogglePopup: root.togglePowerProfile()
+                        }
                         Widgets.BarSeparator {}
                         Widgets.NotificationButton {
                             unreadCount: root.notificationUnreadCount

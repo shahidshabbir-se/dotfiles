@@ -80,6 +80,25 @@
           name = "ThinkPad E14";
           type = "laptop";
 
+          power = {
+            acProfile = "performance";
+            batteryProfile = "power-saver";
+            hibernateDelay = "2h";
+            resumeDevice = "/dev/disk/by-uuid/361fb99a-9f91-4765-a37d-27fc19d07e57";
+            chargeEndThreshold = 80;
+
+            idle = {
+              battery = {
+                lockAndDisplayOff = 300;
+                sleep = 900;
+              };
+              ac = {
+                lockAndDisplayOff = 600;
+                sleep = 1800;
+              };
+            };
+          };
+
           display = {
             connector = "eDP-1";
             width = 1920;
@@ -94,6 +113,18 @@
         pc = {
           name = "workstation";
           type = "desktop";
+
+          power = {
+            acProfile = "performance";
+            hibernateDelay = "2h";
+            resumeDevice = "/dev/disk/by-uuid/a0bafec0-8980-4f08-a450-32c8f13f43d2";
+
+            idle = {
+              lock = 600;
+              displayOff = 900;
+              sleep = 1800;
+            };
+          };
 
           display = {
             connector = "DP-4";

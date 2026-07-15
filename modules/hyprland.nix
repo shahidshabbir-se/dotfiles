@@ -46,6 +46,7 @@ let
     "quickshell_volume_osd"
     "quickshell_notifications"
     "quickshell_datetime_popup"
+    "quickshell_power_profile_popup"
     "quickshell_screenshot_overlay"
   ];
 
@@ -60,6 +61,7 @@ let
     "quickshell_volume_osd"
     "quickshell_notifications"
     "quickshell_datetime_popup"
+    "quickshell_power_profile_popup"
     "quickshell_screenshot_overlay"
   ];
 

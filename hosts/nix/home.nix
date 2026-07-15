@@ -358,6 +358,7 @@ in
 
     # ../../modules/i3.nix
     ../../modules/hyprland.nix
+    ../../modules/hypridle.nix
     ../../modules/wlogout.nix
 
     ../../modules/cliproxyapi.nix
