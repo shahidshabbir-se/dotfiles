@@ -19,7 +19,7 @@ Item {
         id: timeLabel
         anchors.centerIn: parent
         text: Qt.formatDateTime(clock.date, "hh:mm AP")
-        font.family: "Cartograph CF"
+        font.family: "Outfit"
         font.pixelSize: 14
         color: Colors.textPrimary
         opacity: hoverHandler.hovered ? 1 : 0.85

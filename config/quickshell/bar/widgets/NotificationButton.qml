@@ -40,7 +40,7 @@ Item {
             id: countLabel
             anchors.centerIn: parent
             text: unreadCount > 9 ? "9+" : unreadCount
-            font.family: "Cartograph CF"
+            font.family: "Outfit"
             font.pixelSize: 8
             font.weight: Font.Bold
             color: Colors.notificationBadgeText

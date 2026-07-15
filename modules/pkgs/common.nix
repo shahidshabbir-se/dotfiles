@@ -37,6 +37,7 @@ with pkgs;
 
   # CLI Utilities
   bat
+  libsixel
   btop
   calc
   coreutils

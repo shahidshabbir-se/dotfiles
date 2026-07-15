@@ -155,7 +155,7 @@ Scope {
                             Text {
                                 text: "Screenshot captured"
                                 color: Colors.textPrimary
-                                font.family: "Cartograph CF"
+                                font.family: "Outfit"
                                 font.pixelSize: 13
                                 font.weight: Font.DemiBold
                             }
@@ -164,7 +164,7 @@ Scope {
                                 Layout.fillWidth: true
                                 text: root.imagePath.length > 0 ? root.basename(root.imagePath) : ""
                                 color: Colors.textMuted
-                                font.family: "Cartograph CF"
+                                font.family: "Outfit"
                                 font.pixelSize: 10
                                 elide: Text.ElideMiddle
                             }
@@ -288,7 +288,7 @@ Scope {
             Text {
                 text: pill.label
                 color: Colors.textPrimary
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 12
             }
         }

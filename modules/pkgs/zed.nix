@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "1.8.2";
+  version = "1.10.3";
   pname = "zed-editor";
 
   appDir = "zed.app";
@@ -30,7 +30,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://cloud.zed.dev/releases/stable/${version}/download?asset=zed&arch=${arch}&os=linux&source=nix";
-    hash = "sha256-UJY5D20aIJvCrLjZtjTc1RZwmvM6D8L/YqDtsMvIgQg=";
+    hash = "sha256-Vete+LIRyVCpAJ2jC39gPSydLICyB/nelP+rbTHVj4w=";
     name = "zed-${version}-${arch}-linux.tar.gz";
   };
 

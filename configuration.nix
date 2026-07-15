@@ -63,6 +63,7 @@ let
   };
 
   bananaCursor = import ./modules/banana-cursor.nix { inherit pkgs; };
+
 in
 
 {
@@ -97,6 +98,12 @@ in
     xfconf.enable = true;
     zsh.enable = true;
     gamemode.enable = true;
+
+    # Provides Steam's FHS runtime for Proton/umu pressure-vessel.
+    # Lutris can then run GE-Proton without the NixOS `bwrap: execvp true`
+    # failure caused by missing /usr/bin runtime tools.
+    steam.enable = true;
+    steam.extraCompatPackages = with pkgs; [ steam-run ];
   };
   services = {
     xserver = {
@@ -385,9 +392,26 @@ in
     lutris-unwrapped
     winetricks
     wineWow64Packages.staging
+    protonup-qt
     mangohud
     sddmQylockSword
     bananaCursor
+
+    # 32-bit Windows runtime libs required by wine/Proton (vulkan, opengl, gnutls, alsa).
+    # Without these lutris fails with "libGL.so.1 missing" / "libvulkan.so.1 missing"
+    # and pressure-vessel (umu) can't execvp coreutils like `true`.
+    pkgsi686Linux.libGL
+    pkgsi686Linux.vulkan-loader
+    pkgsi686Linux.gnutls
+    pkgsi686Linux.alsa-lib
+    pkgsi686Linux.freetype
+    pkgsi686Linux.glib
+    pkgsi686Linux.dbus
+
+    # Bubblewrap is invoked by pressure-vessel/umu under GE-Proton.
+    bubblewrap
+    steam-run
+    vulkan-tools
   ];
   virtualisation.docker.enable = true;
   virtualisation.docker.package = pkgs.docker_29;
@@ -409,6 +433,17 @@ in
     pkgs.rubik
     pkgs.icomoon-feather
     pkgs.inter
+    (pkgs.stdenvNoCC.mkDerivation {
+      name = "outfit";
+      src = pkgs.fetchurl {
+        url = "https://raw.githubusercontent.com/google/fonts/5174b3333331c966c38f4355d50b03ca1c1df2f9/ofl/outfit/Outfit%5Bwght%5D.ttf";
+        hash = "sha256-/HKHJz5mkpd24rpU8UT+aZCAvsKfYb9knXDYcUaK6t4=";
+      };
+      dontUnpack = true;
+      installPhase = ''
+        install -m 444 -Dt $out/share/fonts/truetype $src
+      '';
+    })
     (pkgs.stdenv.mkDerivation {
       name = "sf-pro-display";
       src = ./config/fonts/sf-pro-display;
@@ -543,7 +578,12 @@ in
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  # Ensure FHS symlinks exist for bwrap/pressure-vessel (umu/Proton)
+  systemd.tmpfiles.rules = [
+    "L+ /usr/bin/true    - - - - /run/current-system/sw/bin/true"
+    "L+ /usr/bin/false   - - - - /run/current-system/sw/bin/false"
+    "L+ /usr/bin/env     - - - - /run/current-system/sw/bin/env"
+  ];
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

@@ -31,6 +31,7 @@ in
   settings = {
     theme = "TokyoNight";
     # theme = "Catppuccin Mocha";
+    # theme = "Rose Pine";
     title = " ";
 
     # Font
@@ -56,7 +57,8 @@ in
     # Window
     window-inherit-working-directory = true;
     window-inherit-font-size = false;
-    background-opacity = 0.85;
+    # background-opacity = 0.85;
+    background-opacity = 1.0;
     window-decoration = false;
     window-padding-x = 6;
     window-padding-y = "6,2";

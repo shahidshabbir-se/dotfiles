@@ -153,7 +153,7 @@ Item {
         anchors.centerIn: parent
         visible: !showImage
         text: fallbackGlyph
-        font.family: "Cartograph CF"
+        font.family: "Outfit"
         font.pixelSize: Math.round(size * 0.38)
         font.weight: Font.DemiBold
         color: Colors.notificationAccent

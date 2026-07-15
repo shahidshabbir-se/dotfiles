@@ -52,7 +52,7 @@ Rectangle {
             Text {
                 Layout.fillWidth: true
                 text: displaySummary
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 color: Colors.textPrimary
@@ -64,7 +64,7 @@ Rectangle {
                 Layout.fillWidth: true
                 visible: displayBody.length > 0
                 text: displayBody
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 12
                 color: Colors.textSecondary
                 elide: Text.ElideRight
@@ -99,7 +99,7 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             text: "×"
-            font.family: "Cartograph CF"
+            font.family: "Outfit"
             font.pixelSize: 16
             font.weight: Font.Medium
             color: closeArea.containsMouse ? Colors.textPrimary : Colors.textMuted

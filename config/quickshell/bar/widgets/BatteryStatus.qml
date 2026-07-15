@@ -59,7 +59,7 @@ RowLayout {
 
     Text {
         text: level + "%"
-        font.family: "Cartograph CF"
+        font.family: "Outfit"
         font.pixelSize: 14
         color: Colors.textPrimary
     }

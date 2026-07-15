@@ -57,11 +57,11 @@ Scope {
 
             margins {
                 top: BarMetrics.barTopMargin
-                left: Math.round(modelData.width * (1 - BarMetrics.barWidthRatio) / 2)
-                right: Math.round(modelData.width * (1 - BarMetrics.barWidthRatio) / 2)
+                left: Math.round(modelData.width * 0.2)
+                right: Math.round(modelData.width * 0.2)
             }
 
-            implicitHeight: BarMetrics.barVisualHeight
+            implicitHeight: 40
             color: "transparent"
             WlrLayershell.namespace: "quickshell_bar"
 
@@ -69,6 +69,10 @@ Scope {
                 id: barBackground
                 anchors.fill: parent
                 radius: 10
+                // topLeftRadius: 15
+                // topRightRadius: 15
+                // bottomLeftRadius: 5
+                // bottomRightRadius: 5
                 color: Colors.barBackground
                 border.width: 0
 

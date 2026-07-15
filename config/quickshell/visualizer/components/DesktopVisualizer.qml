@@ -103,6 +103,7 @@ Scope {
               anchors.bottom: parent.bottom
               height: root.mediaPlaying ? Math.max(root.minPlayingHeight, parent.height * ratio) : 0
               radius: width / 2
+              antialiasing: false
               opacity: root.mediaPlaying ? root.barOpacity : 0
               color: root.barColor
 
