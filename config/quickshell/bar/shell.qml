@@ -16,12 +16,14 @@ Scope {
     property bool notificationsOpen: false
     property bool volumePopupOpen: false
     property bool dateTimeOpen: false
+    property bool powerProfileOpen: false
 
     function closeAllPopups() {
         musicPlayerOpen = false
         notificationsOpen = false
         volumePopupOpen = false
         dateTimeOpen = false
+        powerProfileOpen = false
     }
 
     function toggleMusicPlayer() {
@@ -32,6 +34,7 @@ Scope {
         notificationsOpen = false
         volumePopupOpen = false
         dateTimeOpen = false
+        powerProfileOpen = false
         musicPlayerOpen = true
     }
 
@@ -43,6 +46,7 @@ Scope {
         musicPlayerOpen = false
         volumePopupOpen = false
         dateTimeOpen = false
+        powerProfileOpen = false
         notificationsOpen = true
     }
 
@@ -54,6 +58,7 @@ Scope {
         musicPlayerOpen = false
         notificationsOpen = false
         volumePopupOpen = false
+        powerProfileOpen = false
         dateTimeOpen = true
     }
 
@@ -71,7 +76,17 @@ Scope {
         musicPlayerOpen = false
         notificationsOpen = false
         dateTimeOpen = false
+        powerProfileOpen = false
         volumePopupOpen = true
+    }
+
+    function togglePowerProfile() {
+        if (powerProfileOpen) {
+            powerProfileOpen = false
+            return
+        }
+        closeAllPopups()
+        powerProfileOpen = true
     }
 
     IpcHandler {
@@ -174,6 +189,7 @@ Scope {
         onToggleNotifications: root.toggleNotifications()
         onToggleLauncher: root.toggleLauncher()
         onToggleDateTime: root.toggleDateTime()
+        onTogglePowerProfile: root.togglePowerProfile()
     }
 
     MusicPlayerPanel {
@@ -200,6 +216,12 @@ Scope {
         open: root.dateTimeOpen
         barRef: bar
         onClosed: root.dateTimeOpen = false
+    }
+
+    PowerProfilePanel {
+        open: root.powerProfileOpen
+        barRef: bar
+        onClosed: root.powerProfileOpen = false
     }
 
     ScreenshotOverlay {

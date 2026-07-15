@@ -219,7 +219,7 @@ in
 
       {
           "label": "suspend",
-          "action": "sh $HOME/.config/lock-screen/lock.sh & disown && systemctl suspend",
+          "action": "systemctl suspend-then-hibernate",
           "text": "Suspend",
           "keybind": "u"
       }

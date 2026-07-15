@@ -6,6 +6,7 @@
 {
   lib,
   pkgs,
+  device,
   ...
 }:
 
@@ -69,6 +70,7 @@ in
 {
   imports = [
     # Hardware config is imported per-device from flake.nix
+    ./modules/power-management.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
