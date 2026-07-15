@@ -186,9 +186,9 @@ in
   xdg.configFile = {
     "quickshell/bar".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/bar";
     "quickshell/visualizer".source =
-       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
-    "quickshell/wallpaper".source =
-       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
+    # "quickshell/wallpaper".source =
+    #    mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
     # lock-screen is cloned to ~/.config/lock-screen via post-install.sh (not a nix-managed path)
   };
 
@@ -215,7 +215,10 @@ in
     enable = true;
     configType = "hyprlang";
     xwayland.enable = true;
-    systemd.enable = false;
+    systemd = {
+      enable = true;
+      variables = [ "--all" ];
+    };
 
     plugins = lib.mkIf hdrDesktop [
       fixHdrScreensharePlugin
@@ -240,6 +243,7 @@ in
       ];
 
       exec-once = [
+        "${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM && ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM && ${pkgs.systemd}/bin/systemctl --user restart vicinae.service"
         "pkill -x dunst 2>/dev/null || true"
         "pkill -x swaync 2>/dev/null || true"
         "pkill -x glava 2>/dev/null || true"
@@ -429,7 +433,7 @@ in
         "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-bar.sh"
         "ALT SHIFT, B, exec, vicinae 'vicinae://launch/@Gelei/vicinae-extension-bluetooth-0/scan?toggle=true'"
         "ALT SHIFT, N, exec, vicinae 'vicinae://launch/@dagimg-dot/vicinae-extension-wifi-commander-0/scan-wifi'"
-        "ALT SHIFT, W, exec, quickshell --no-duplicate -c wallpaper"
+        "ALT SHIFT, W, exec, vicinae 'vicinae://launch/@sovereign/vicinae-extension-awww-switcher-0/wpgrid'"
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
         "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"

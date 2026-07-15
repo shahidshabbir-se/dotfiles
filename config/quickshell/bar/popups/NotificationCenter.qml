@@ -611,7 +611,7 @@ Scope {
                                 Text {
                                     Layout.fillWidth: true
                                     text: "Notifications"
-                                    font.family: "Cartograph CF"
+                                    font.family: "Outfit"
                                     font.pixelSize: 17
                                     font.weight: Font.DemiBold
                                     color: Colors.textPrimary
@@ -623,7 +623,7 @@ Scope {
                                     Text {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: "Do Not Disturb"
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 10
                                         color: Colors.textMuted
                                     }
@@ -673,7 +673,7 @@ Scope {
                                         id: clearLabel
                                         anchors.centerIn: parent
                                         text: "Clear"
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 12
                                         font.weight: Font.Medium
                                         color: Colors.textSecondary
@@ -739,7 +739,7 @@ Scope {
                                     Text {
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         text: "No notifications"
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 14
                                         font.weight: Font.Medium
                                         color: Colors.textSecondary
@@ -748,7 +748,7 @@ Scope {
                                     Text {
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         text: "You're all caught up"
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 12
                                         color: Colors.textMuted
                                     }
@@ -770,14 +770,14 @@ Scope {
 
                                     Text {
                                         text: root.anyGroupExpanded ? "Show less" : "Show more"
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 12
                                         color: Colors.textSecondary
                                     }
 
                                     Text {
                                         text: root.anyGroupExpanded ? "\u25b4" : "\u25be"
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 10
                                         color: Colors.textMuted
                                     }

@@ -1,19 +1,20 @@
 {
-	"terminal": {
+	"language_models": {
+  "lmstudio": {
+   "api_url": "http://127.0.0.1:8317/v1/messages"
+  },
+  "opencode": {
+   "show_go_models": false,
+   "show_zen_models": false
+  }
+ },
+ "terminal": {
 		"font_size": 16.0,
 		"font_family": "JetBrainsMono Nerd Font",
 	},
 	"agent_servers": {
-		"claude-acp": {
-			"type": "registry",
-		},
-		"cursor": {
-			"type": "registry",
-		},
-		"codex-acp": {
-			"type": "registry",
-		},
-	},
+  
+ },
 	"project_panel": {
 		"dock": "left",
 	},
@@ -28,9 +29,9 @@
 		"terminal_init_command": "claude",
   "default_model": {
 			"provider": "openai-subscribed",
-			"model": "gpt-5.4",
-			"enable_thinking": true,
-			"effort": "medium",
+			"model": "gpt-5.6-sol",
+			"enable_thinking": false,
+			"effort": "xhigh",
 		},
 		"sidebar_side": "right",
 		"dock": "right",

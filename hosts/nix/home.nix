@@ -119,30 +119,30 @@ let
 
   # Hyprland HDR/color management makes Electron apps render dim unless these
   # flags are passed.
-  codeCursorFhs = pkgs.symlinkJoin {
-    name = "code-cursor-fhs";
-
-    paths = [
-      pkgs.code-cursor-fhs
-    ];
-
-    buildInputs = [
-      pkgs.makeWrapper
-    ];
-
-    postBuild = ''
-      wrapProgram $out/bin/cursor \
-        --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-        --add-flags "--force-color-profile=srgb" \
-        --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-    '';
-  };
+  # codeCursorFhs = pkgs.symlinkJoin {
+  #   name = "code-cursor-fhs";
+  #
+  #   paths = [
+  #     pkgs.code-cursor-fhs
+  #   ];
+  #
+  #   buildInputs = [
+  #     pkgs.makeWrapper
+  #   ];
+  #
+  #   postBuild = ''
+  #     wrapProgram $out/bin/cursor \
+  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+  #       --add-flags "--force-color-profile=srgb" \
+  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+  #   '';
+  # };
 
   # ───────────────────────────────────────────────
   # ▶ Package Groups
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
-    codeCursorFhs
+    # codeCursorFhs
     gcc
     git-filter-repo
     gnumake
@@ -182,6 +182,7 @@ let
     webp-pixbuf-loader
     wmctrl
     zip
+    claude-code
   ];
 
   themePackages = with pkgs; [
@@ -207,6 +208,7 @@ let
     "application/x-extension-xhtml"
     "application/x-extension-xht"
     "application/pdf"
+    "application/json"
   ];
 
   imageMimeTypes = [
@@ -440,7 +442,7 @@ in
       rofi.source = dotfileLink "config/rofi";
       zed.source = dotfileLink "config/zed";
 
-      "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
+      # "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
     };
 
     mimeApps = {
@@ -514,7 +516,9 @@ in
     systemd = {
       enable = true;
       autoStart = true;
-      environment.USE_LAYER_SHELL = 1;
+      environment = {
+        USE_LAYER_SHELL = 1;
+      };
     };
 
     extensions = with inputs.vicinae-extensions.packages.${system}; [
@@ -542,7 +546,7 @@ in
       launcher_window.opacity = 0.7;
 
       theme.dark = {
-        name = "tokyo-night";
+        name = "matugen";
         icon_theme = "Papirus-Dark";
       };
 
@@ -554,14 +558,26 @@ in
     };
   };
 
-  # Vicinae dies hard when Hyprland restarts/crashes (Wayland connection
-  # breaks, exit 255) and without a Restart= policy it stays down. Also
-  # sometimes leaks child threads (vicinae-input-) past the main process,
-  # so kill the whole cgroup on stop.
-  systemd.user.services.vicinae.serviceConfig = {
-    Restart = "on-failure";
-    RestartSec = "2s";
-    KillMode = "process";
+  # Vicinae needs the live Hyprland/Wayland environment. If it starts before
+  # graphical-session.target has the compositor env, it exits with a broken
+  # Wayland connection and stays dead at login.
+  systemd.user.services.vicinae = {
+    Unit = {
+      After = lib.mkForce [ "default.target" ];
+      PartOf = lib.mkForce [ ];
+    };
+
+    Service = {
+      Environment = [
+        "QT_QPA_PLATFORM=wayland"
+        "XDG_CURRENT_DESKTOP=Hyprland"
+        "XDG_SESSION_TYPE=wayland"
+      ];
+      Restart = lib.mkForce "always";
+      RestartSec = lib.mkForce 5;
+    };
+
+    Install.WantedBy = lib.mkForce [ "default.target" ];
   };
 
   # ───────────────────────────────────────────────

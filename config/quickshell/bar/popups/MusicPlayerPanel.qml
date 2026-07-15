@@ -466,7 +466,7 @@ Scope {
                                     Layout.fillWidth: true
                                     text: trackTitle
                                     color: Colors.textPrimary
-                                    font.family: "Cartograph CF"
+                                    font.family: "Outfit"
                                     font.pixelSize: 16
                                     font.weight: Font.Medium
                                 }
@@ -475,7 +475,7 @@ Scope {
                                     Layout.fillWidth: true
                                     text: trackArtist.length > 0 ? trackArtist : (hasPlayer ? "Unknown artist" : "No active media")
                                     elide: Text.ElideRight
-                                    font.family: "Cartograph CF"
+                                    font.family: "Outfit"
                                     font.pixelSize: 12
                                     color: Colors.textSecondary
                                 }
@@ -519,7 +519,7 @@ Scope {
 
                                 Text {
                                     text: formatTime(player?.position ?? 0)
-                                    font.family: "Cartograph CF"
+                                    font.family: "Outfit"
                                     font.pixelSize: 10
                                     color: Colors.textMuted
                                 }
@@ -528,7 +528,7 @@ Scope {
 
                                 Text {
                                     text: formatTime(player?.length ?? 0)
-                                    font.family: "Cartograph CF"
+                                    font.family: "Outfit"
                                     font.pixelSize: 10
                                     color: Colors.textMuted
                                 }
@@ -664,7 +664,7 @@ Scope {
 
                             Text {
                                 text: `${Math.round((hasPlayerVolume ? playerVolume : 0) * 100)}%`
-                                font.family: "Cartograph CF"
+                                font.family: "Outfit"
                                 font.pixelSize: 11
                                 color: Colors.textMuted
                                 Layout.preferredWidth: 34

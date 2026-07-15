@@ -240,7 +240,7 @@ Scope {
                                     color: Colors.textPrimary
                                     selectedTextColor: Colors.barBackground
                                     selectionColor: Colors.workspaceActive
-                                    font.family: "Cartograph CF"
+                                    font.family: "Outfit"
                                     font.pixelSize: 13
                                     clip: true
                                     focus: launcher.open
@@ -251,7 +251,7 @@ Scope {
                                         text: "Search..."
                                         color: Colors.textMuted
                                         visible: searchField.text.length === 0
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 13
                                     }
 
@@ -318,7 +318,7 @@ Scope {
                                         text: modelData.name
                                         color: Colors.textPrimary
                                         elide: Text.ElideRight
-                                        font.family: "Cartograph CF"
+                                        font.family: "Outfit"
                                         font.pixelSize: 13
                                     }
                                 }
@@ -337,7 +337,7 @@ Scope {
                                 visible: launcher.filteredApps.length === 0
                                 text: "No applications found"
                                 color: Colors.textSecondary
-                                font.family: "Cartograph CF"
+                                font.family: "Outfit"
                                 font.pixelSize: 12
                             }
                         }

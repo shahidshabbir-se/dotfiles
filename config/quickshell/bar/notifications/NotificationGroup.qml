@@ -32,7 +32,7 @@ ColumnLayout {
             Text {
                 Layout.fillWidth: true
                 text: appName
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 14
                 font.weight: Font.DemiBold
                 color: Colors.textPrimary
@@ -41,7 +41,7 @@ ColumnLayout {
 
             Text {
                 text: items.length
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 12
                 font.weight: Font.Medium
                 color: Colors.textMuted
@@ -49,7 +49,7 @@ ColumnLayout {
 
             Text {
                 text: collapsed ? "\u25be" : "\u25b4"
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 10
                 color: Colors.textMuted
             }

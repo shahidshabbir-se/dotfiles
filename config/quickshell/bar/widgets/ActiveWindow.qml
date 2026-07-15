@@ -174,7 +174,7 @@ RowLayout {
         visible: displayText.length > 0
         text: displayText
         elide: Text.ElideRight
-        font.family: "Cartograph CF"
+        font.family: "Outfit"
         font.pixelSize: 13
         color: Colors.textPrimary
     }

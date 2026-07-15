@@ -39,9 +39,9 @@
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
     cc = "CLAUDE_CODE_NEW_INIT=1 claude";
-    ki = "kilo";
-    oc = "OPENCODE_ENABLE_EXA=1 opencode --port";
-    opencode = "OPENCODE_ENABLE_EXA=1 opencode";
+    kc = "kilo";
+    oc = "OPENCODE_ENABLE_EXA=1 OPENCODE_DISABLE_CLAUDE_CODE=1 opencode --port";
+    opencode = "OPENCODE_ENABLE_EXA=1 OPENCODE_DISABLE_CLAUDE_CODE=1 opencode --port";
     # cr = "crush";
     # cliproxyapi = "cliproxyapi -config ~/.config/cliproxyapi/config.yaml";
     sed = "sd";
@@ -145,6 +145,8 @@
             [[ -f "$file" ]] && source "$file"
           done
         fi
+
+        [[ -f ~/.secrets ]] && source ~/.secrets
 
         # Add completion directories to fpath
         # Static completions from dotfiles and dynamic completions from cache

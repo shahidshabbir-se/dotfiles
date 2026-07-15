@@ -41,7 +41,7 @@ Rectangle {
             Text {
                 Layout.fillWidth: true
                 text: displaySummary
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 color: Colors.textPrimary
@@ -53,7 +53,7 @@ Rectangle {
                 Layout.fillWidth: true
                 visible: displayBody.length > 0
                 text: displayBody
-                font.family: "Cartograph CF"
+                font.family: "Outfit"
                 font.pixelSize: 12
                 color: Colors.textSecondary
                 elide: Text.ElideRight
@@ -66,7 +66,7 @@ Rectangle {
             Layout.alignment: Qt.AlignTop
             Layout.topMargin: 1
             text: formatClockTime(entry.receivedAt)
-            font.family: "Cartograph CF"
+            font.family: "Outfit"
             font.pixelSize: 11
             color: Colors.textMuted
         }

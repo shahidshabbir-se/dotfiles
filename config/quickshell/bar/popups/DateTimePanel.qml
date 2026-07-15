@@ -320,14 +320,14 @@ Scope {
 
                                             Text {
                                                 text: Qt.formatDateTime(root.now, "dddd")
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 12
                                                 color: Colors.matugen.primary
                                             }
 
                                             Text {
                                                 text: Qt.formatDateTime(root.now, "d MMMM")
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 34
                                                 font.weight: Font.Bold
                                                 color: Colors.textPrimary
@@ -335,7 +335,7 @@ Scope {
 
                                             Text {
                                                 text: Qt.formatDateTime(root.now, "yyyy")
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 14
                                                 color: Colors.textSecondary
                                             }
@@ -352,7 +352,7 @@ Scope {
 
                                             Text {
                                                 text: "No upcoming events"
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 14
                                                 font.weight: Font.Medium
                                                 color: Colors.textPrimary
@@ -360,7 +360,7 @@ Scope {
 
                                             Text {
                                                 text: "Connect a calendar to show events"
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 11
                                                 color: Colors.textMuted
                                                 wrapMode: Text.WordWrap
@@ -380,7 +380,7 @@ Scope {
 
                                             Text {
                                                 text: root.uptimeDuration
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 14
                                                 font.weight: Font.Medium
                                                 color: Colors.textPrimary
@@ -388,7 +388,7 @@ Scope {
 
                                             Text {
                                                 text: root.uptimeSince
-                                                font.family: "Cartograph CF"
+                                                font.family: "Outfit"
                                                 font.pixelSize: 11
                                                 color: Colors.textMuted
                                             }
@@ -416,7 +416,7 @@ Scope {
                                                     Layout.fillWidth: true
                                                     horizontalAlignment: Text.AlignHCenter
                                                     text: root.monthLabel(root.calendarYear, root.calendarMonth)
-                                                    font.family: "Cartograph CF"
+                                                    font.family: "Outfit"
                                                     font.pixelSize: 13
                                                     font.weight: Font.Medium
                                                     color: Colors.textPrimary
@@ -440,7 +440,7 @@ Scope {
                                                         Layout.fillWidth: true
                                                         horizontalAlignment: Text.AlignHCenter
                                                         text: modelData
-                                                        font.family: "Cartograph CF"
+                                                        font.family: "Outfit"
                                                         font.pixelSize: 10
                                                         color: Colors.textMuted
                                                     }
@@ -466,7 +466,7 @@ Scope {
                                                         Text {
                                                             anchors.centerIn: parent
                                                             text: cell.day
-                                                            font.family: "Cartograph CF"
+                                                            font.family: "Outfit"
                                                             font.pixelSize: 11
                                                             font.weight: cell.isToday ? Font.DemiBold : Font.Normal
                                                             color: cell.isToday
@@ -514,7 +514,7 @@ Scope {
 
                                                         Text {
                                                             text: root.weatherTemp
-                                                            font.family: "Cartograph CF"
+                                                            font.family: "Outfit"
                                                             font.pixelSize: 28
                                                             font.weight: Font.Bold
                                                             color: Colors.textPrimary
@@ -523,14 +523,14 @@ Scope {
 
                                                     Text {
                                                         text: root.weatherCondition
-                                                        font.family: "Cartograph CF"
+                                                        font.family: "Outfit"
                                                         font.pixelSize: 12
                                                         color: Colors.textSecondary
                                                     }
 
                                                     Text {
                                                         text: root.weatherLocation
-                                                        font.family: "Cartograph CF"
+                                                        font.family: "Outfit"
                                                         font.pixelSize: 11
                                                         color: Colors.textMuted
                                                         elide: Text.ElideRight
@@ -634,7 +634,7 @@ Scope {
 
         Text {
             text: label
-            font.family: "Cartograph CF"
+            font.family: "Outfit"
             font.pixelSize: 11
             color: Colors.matugen.primary
         }
@@ -649,7 +649,7 @@ Scope {
         Text {
             Layout.preferredWidth: 72
             text: label
-            font.family: "Cartograph CF"
+            font.family: "Outfit"
             font.pixelSize: 11
             color: Colors.textMuted
         }
@@ -658,7 +658,7 @@ Scope {
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignRight
             text: value
-            font.family: "Cartograph CF"
+            font.family: "Outfit"
             font.pixelSize: 11
             font.weight: Font.Medium
             color: Colors.textPrimary

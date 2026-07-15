@@ -3,6 +3,7 @@ import QtQuick
 
 QtObject {
     readonly property int barTopMargin: 8
+    readonly property int barBottomMargin: 8
     readonly property int barVisualHeight: 38
     readonly property int panelHeight: barTopMargin + barVisualHeight
     readonly property real barWidthRatio: 0.75
