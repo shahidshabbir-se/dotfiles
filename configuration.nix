@@ -183,7 +183,9 @@ in
           "monitor.bluez.properties" = {
             "bluez5.enable-sbc-xq" = true;
             "bluez5.enable-msbc" = true;
-            "bluez5.enable-hw-volume" = true;
+            # Keep the PipeWire volume across Bluetooth reconnects instead of
+            # accepting the headset's often-maxed hardware volume.
+            "bluez5.enable-hw-volume" = false;
             "bluez5.roles" = [
               "a2dp_sink"
               "a2dp_source"
@@ -321,6 +323,34 @@ in
       };
     };
   };
+
+  # BlueZ trusts bonded devices but does not initiate Classic Bluetooth
+  # connections after its daemon starts. Retry trusted devices briefly without
+  # blocking Bluetooth startup or NixOS activation.
+  systemd.services.bluetooth-auto-connect = {
+    description = "Reconnect Bluetooth headsets after BlueZ starts";
+    wantedBy = [ "bluetooth.service" ];
+    after = [ "bluetooth.service" ];
+    partOf = [ "bluetooth.service" ];
+    path = with pkgs; [ bluez coreutils gawk ];
+    serviceConfig = {
+      Type = "exec";
+      TimeoutStopSec = "5s";
+    };
+    script = ''
+      bluetoothctl power on || true
+
+      for _ in $(seq 1 6); do
+        bluetoothctl devices Trusted |
+          awk '$1 == "Device" && $2 ~ /^([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}$/ { print $2 }' |
+          while read -r device; do
+            bluetoothctl --timeout 5 connect "$device" || true
+          done
+        sleep 5
+      done
+    '';
+  };
+
   networking = {
     hostName = "nixos";
     firewall.allowedTCPPorts = [ 4096 ];
