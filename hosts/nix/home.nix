@@ -138,6 +138,25 @@ let
   #   '';
   # };
 
+  vscodeFhs = pkgs.symlinkJoin {
+    name = "vscode-fhs";
+
+    paths = [
+      pkgs.vscode-fhs
+    ];
+
+    buildInputs = [
+      pkgs.makeWrapper
+    ];
+
+    postBuild = ''
+      wrapProgram $out/bin/code \
+        --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+        --add-flags "--force-color-profile=srgb" \
+        --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+    '';
+  };
+
   # ───────────────────────────────────────────────
   # ▶ Package Groups
   # ───────────────────────────────────────────────
@@ -147,6 +166,7 @@ let
     git-filter-repo
     gnumake
     python3
+    vscodeFhs
   ];
 
   desktopPackages = with pkgs; [

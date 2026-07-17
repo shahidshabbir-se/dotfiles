@@ -10,6 +10,8 @@ with pkgs;
   # Development
   gh
   gh-dash
+  jujutsu
+  watchman
   postgresql
   redis
   restish
