@@ -1,33 +1,24 @@
 {
-	"language_models": {
-  "lmstudio": {
-   "api_url": "http://127.0.0.1:8317/v1/messages"
-  },
-  "opencode": {
-   "show_go_models": false,
-   "show_zen_models": false
-  }
- },
- "terminal": {
+	"language_models": {},
+	"terminal": {
 		"font_size": 16.0,
-		"font_family": "JetBrainsMono Nerd Font",
+		"font_family": "GeistMono Nerd Font",
 	},
-	"agent_servers": {
-  
- },
 	"project_panel": {
 		"dock": "left",
 	},
+	"buffer_line_height": "comfortable",
 	"outline_panel": {
 		"dock": "left",
 	},
 	"collaboration_panel": {
 		"dock": "left",
 	},
+	"allow_rewrap": "anywhere",
+	"format_on_save": "on",
 	"auto_update": false,
 	"agent": {
-		"terminal_init_command": "claude",
-  "default_model": {
+		"default_model": {
 			"provider": "openai-subscribed",
 			"model": "gpt-5.6-sol",
 			"enable_thinking": false,
@@ -47,7 +38,7 @@
 	"theme": {
 		"mode": "dark",
 		"light": "One Light",
-		"dark": "Rosé Pine",
+		"dark": "Tokyo Night",
 	},
 	"telemetry": {
 		"diagnostics": false,
@@ -64,12 +55,11 @@
 		"light": "Material Icon Theme",
 		"dark": "Material Icon Theme",
 	},
-	"buffer_font_family": "JetBrainsMono Nerd Font",
-	"ui_font_family": "JetBrainsMono Nerd Font",
+	"buffer_font_family": "GeistMono Nerd Font",
 	"ui_font_size": 15.0,
 	"agent_buffer_font_size": 14.0,
-	"agent_ui_font_size": 16.0,
+	"agent_ui_font_size": 15.0,
 	"buffer_font_size": 15.0,
-	"buffer_font_weight": 300,
+	"buffer_font_weight": 400,
 	"autosave": "on_focus_change",
 }
