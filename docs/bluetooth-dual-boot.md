@@ -1,115 +1,106 @@
-# Bluetooth Dual Boot (NixOS + Windows)
+# Bluetooth dual boot: NixOS + Windows
 
-## System
+Use this after reinstalling NixOS or replacing a Bluetooth device. It keeps the
+same device bond usable in both operating systems without repeatedly forgetting
+and pairing devices.
 
-- **Host:** pc (desktop)
-- **NixOS flake:** `<dotfiles_path>` (`. #pc`)
-- **Bluetooth adapter:** `<adapter_mac>`
-- **Windows partition:** `/dev/<windows_partition>` (NTFS)
-- **EFI:** `/boot` (shared, GRUB manages boot)
+## Important rules
 
-## Working method
+- Pair the device in **Linux first**, then pair it in **Windows**.
+- Use Windows as a **read-only source** for the final pairing key. Do not edit
+  the offline Windows `SYSTEM` hive.
+- Keep pairing keys private. Never commit them or paste them into chat.
+- Do not pair or forget a working device after synchronising its key; doing so
+  creates a new bond and requires syncing again.
 
-The reliable approach: **pair on Linux → copy the key to Windows registry.**
+## One-time setup
 
-### Step-by-step
-
-1. **Remove device from both OSes** (forget in Bluetooth settings)
-2. **Put device in pairing mode**
-3. **Pair on Linux:**
-   ```bash
-   bluetoothctl --timeout 15 scan on
-   bluetoothctl pair XX:XX:XX:XX:XX:XX
-   bluetoothctl trust XX:XX:XX:XX:XX:XX
-   bluetoothctl connect XX:XX:XX:XX:XX:XX
+1. Pair and trust each device in Linux.
+2. Boot Windows and pair the same device there.
+3. Fully shut down Windows so its registry is safe to read:
+   ```cmd
+   shutdown /s /t 0
    ```
-4. **Verify a `[LinkKey]` section exists** in the info file:
-   ```bash
-   sudo cat /var/lib/bluetooth/<adapter_mac>/<device_mac>/info
+   Disable Fast Startup permanently if possible.
+4. Back in Linux, verify the Windows system partition with `lsblk`. On this
+   machine it is `/dev/nvme0n1p3`. Mount it read-only:
+   ```sh
+   sudo mkdir -p /mnt/windows
+   sudo mount -o ro -t ntfs-3g /dev/nvme0n1p3 /mnt/windows
    ```
-   Must have `[LinkKey]` with `Key=...`. If missing, the pairing didn't persist — try again.
-5. **Copy Linux key to Windows registry:**
-   ```bash
-   sudo mkdir -p /mnt
-   sudo mount -t ntfs-3g /dev/<windows_partition> /mnt
+5. Open the offline Windows registry:
+   ```sh
+   nix-shell -p chntpw --run 'chntpw -e /mnt/windows/Windows/System32/config/SYSTEM'
    ```
-   Then get the key from Linux info file:
-   ```bash
-   sudo grep Key /var/lib/bluetooth/<adapter_mac>/<device_mac>/info
+6. In `chntpw`, resolve the active control set:
+   ```text
+   cd \Select
+   cat Current
    ```
-   Create a `.reg` file with the key (bytes as comma-separated hex, uppercase):
+   If it prints `1`, use `ControlSet001`; if it prints `2`, use
+   `ControlSet002`.
+7. Navigate to the Bluetooth adapter key. `chntpw` is case-sensitive, so use
+   the lowercase names shown by `ls`:
+   ```text
+   cd \ControlSet001\Services\BTHPORT\Parameters\Keys
+   ls
+   cd <adapter-mac-without-colons>
+   ls
+   hex <device-mac-without-colons>
    ```
-   Windows Registry Editor Version 5.00
+   A classic Bluetooth device has a direct 16-byte `REG_BINARY` value. The
+   `:00000` prefix in the hexdump is an offset, **not** part of the key.
+8. Stop BlueZ and update only the Linux device's `[LinkKey] Key=` value. Join
+   the 16 Windows bytes in their displayed order, uppercase, without spaces or
+   the `00000` offset. The result must be exactly 32 hexadecimal characters.
+   Keep the existing `Type=` and `PINLength=` values unchanged.
+   ```sh
+   sudo systemctl stop bluetooth
+   sudoedit /var/lib/bluetooth/<adapter-MAC>/<device-MAC>/info
+   sudo systemctl start bluetooth
+   ```
+9. Unmount Windows:
+   ```sh
+   sudo umount /mnt/windows
+   ```
 
-   [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\BTHPORT\Parameters\Keys\<adapter_mac_no_colons>]
-   "<device_mac_no_colons>"=hex:XX,XX,XX,XX,XX,XX,XX,XX,XX,XX,XX,XX,XX,XX,XX,XX
-   ```
-   Import it:
-   ```bash
-   nix-shell -p chntpw --run 'reged -I /mnt/Windows/System32/config/SYSTEM "HKEY_LOCAL_MACHINE\SYSTEM" /tmp/<name>.reg -C'
-   ```
-   Verify:
-   ```bash
-   nix-shell -p chntpw --run 'cd /mnt/Windows/System32/config && chntpw -e SYSTEM' <<'EOF'
-   cd ControlSet001\Services\BTHPORT\Parameters\Keys\<adapter_mac_no_colons>
-   cat <device_mac_no_colons>
-   q
-   EOF
-   ```
-   Clean up:
-   ```bash
-   sudo umount /mnt
-   ```
-6. **Reboot to Windows** — device should auto-connect. **Do NOT remove or re-pair.**
+If `chntpw` shows a device subkey containing fields such as `LTK` or `IRK`, it
+is a Bluetooth LE device and needs an LE-specific key mapping; do not replace
+only `[LinkKey]`.
 
-### Extracting key from Windows (reverse direction)
+## Automatic reconnect on NixOS
 
-If you pair on Windows first and need the key for Linux:
+`Trusted=true` permits a device but does not make BlueZ initiate a connection
+after boot or a Bluetooth-service restart. This configuration declares a
+`bluetooth-auto-connect` service that, after BlueZ starts, retries all trusted
+devices for 30 seconds. It discovers devices dynamically; no device MACs are
+hard-coded.
 
-```bash
-sudo mount -t ntfs-3g /dev/<windows_partition> /mnt
-nix-shell -p chntpw --run 'cd /mnt/Windows/System32/config && chntpw -e SYSTEM' <<'EOF'
-cd ControlSet001\Services\BTHPORT\Parameters\Keys\<adapter_mac_no_colons>
-cat <device_mac_no_colons>
-q
-EOF
-sudo umount /mnt
+Apply the NixOS configuration after a reinstall or change:
+
+```sh
+sudo nixos-rebuild switch --flake ~/dotfiles#pc
 ```
 
-Then write the hex value (continuous string, uppercase) into the `[LinkKey]` section of the Linux info file at `/var/lib/bluetooth/<adapter_mac>/<device_mac>/info`:
+Check the reconnect service if devices do not reconnect:
 
-```
-[LinkKey]
-Key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-Type=4
-PINLength=0
+```sh
+systemctl status bluetooth-auto-connect.service
 ```
 
-Then restart Bluetooth:
-```bash
-sudo systemctl restart bluetooth
-```
+The devices must be powered on, in range, and not actively connected to a
+different host.
 
-## Auto-connect behavior
-
-- Device may NOT auto-connect on Linux — some earbuds require manual connect each time
-- Set `Trusted=true` in info file to help, but not guaranteed
-- Windows usually auto-connects once the key matches
+Bluetooth hardware-volume sync is disabled so PipeWire restores the previous
+local volume after reconnect instead of accepting a headset's maximum volume.
+Headset volume buttons therefore do not control the system volume.
 
 ## Troubleshooting
 
-### `br-connection-key-missing`
-
-The key in Linux info file doesn't match what the device expects. The device was likely re-paired on the other OS. Re-sync the key (copy from the OS where it works).
-
-### No `[LinkKey]` in info file after pairing
-
-The pairing didn't persist. Remove the device (`bluetoothctl remove <mac>`), restart Bluetooth (`sudo systemctl restart bluetooth`), and pair again with device in pairing mode.
-
-### Device shows "Paired: no" after "Pairing successful"
-
-BlueZ shows pairing briefly but doesn't save the key. Try removing, restarting Bluetooth service, and re-pairing with the device in fresh pairing mode.
-
-### Windows partition won't mount read-write
-
-Disable Windows Fast Startup (Power Options → Choose what power buttons do → Turn on fast startup) or use a full shutdown (`shutdown /s /t 0` in Windows cmd).
+- `br-connection-key-missing`: the Linux key is stale, malformed, or belongs
+  to a different pairing. Pair the device in Windows again, fully shut down,
+  and repeat the Windows-to-Linux key sync.
+- A `Key=` length other than 32 means the key was copied incorrectly. Commonly,
+  the five `00000` offset characters from `chntpw` were included by mistake.
+- If Windows cannot be mounted read-only, make sure BitLocker is unlocked and
+  Windows was fully shut down rather than hibernated.
