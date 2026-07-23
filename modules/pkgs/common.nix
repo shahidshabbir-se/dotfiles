@@ -9,6 +9,7 @@ with pkgs;
 
   # Development
   gh
+  render-cli
   gh-dash
   jujutsu
   watchman
