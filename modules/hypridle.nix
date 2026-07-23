@@ -10,6 +10,10 @@ let
   power = device.power;
   isLaptop = device.type == "laptop";
   homeDirectory = config.home.homeDirectory;
+  display = device.display;
+  desktopRefreshRate = if device.type == "desktop" then 240 else display.refreshRate;
+  desktopSdrRecoveryRule =
+    "${display.connector},${toString display.width}x${toString display.height}@${toString desktopRefreshRate},auto,${toString display.scale},bitdepth,10,cm,srgb,vrr,0";
 
   lockScreen = pkgs.writeShellScript "lock-screen" ''
     set -eu
@@ -68,16 +72,26 @@ let
   '';
 
   afterSleep = pkgs.writeShellScript "hypridle-after-sleep" ''
-    ${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on || true
-
-    ${lib.optionalString (device.type == "desktop") ''
-      for delay in 1 2 3; do
-        ${pkgs.coreutils}/bin/sleep "$delay"
-        if ${pkgs.hyprland}/bin/hyprctl -i 0 reload >/dev/null 2>&1; then
-          break
-        fi
-      done
-    ''}
+    ${
+      if device.type == "desktop" then
+        ''
+          # NVIDIA can restore the link without restoring HDR metadata. Wait for
+          # DRM to settle, briefly switch to sRGB, then reload the monitorv2 HDR
+          # rule and rebuild the renderer so the metadata is sent again.
+          ${pkgs.coreutils}/bin/sleep 2
+          ${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on ${display.connector} || true
+          ${pkgs.coreutils}/bin/sleep 1
+          ${pkgs.hyprland}/bin/hyprctl -i 0 keyword monitor ${lib.escapeShellArg desktopSdrRecoveryRule} || true
+          ${pkgs.coreutils}/bin/sleep 1
+          ${pkgs.hyprland}/bin/hyprctl -i 0 reload || true
+          ${pkgs.coreutils}/bin/sleep 1
+          ${pkgs.hyprland}/bin/hyprctl -i 0 dispatch force_renderer_reload || true
+        ''
+      else
+        ''
+          ${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on || true
+        ''
+    }
   '';
 
   laptopListeners = [

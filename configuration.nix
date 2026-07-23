@@ -459,6 +459,8 @@ in
     };
   };
   fonts.packages = [
+    pkgs.geist-font
+    pkgs.nerd-fonts.symbols-only
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.geist-mono
     pkgs.noto-fonts
