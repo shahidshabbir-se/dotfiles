@@ -11,20 +11,6 @@
 }:
 
 let
-  # adi1090x-lone = pkgs.stdenv.mkDerivation {
-  #   name = "adi1090x-lone";
-  #   src = pkgs.fetchFromGitHub {
-  #     owner = "adi1090x";
-  #     repo = "plymouth-themes";
-  #     rev = "5d8817458d764bff4ff9daae94cf1bbaabf16ede";
-  #     hash = "sha256-e3lRgIBzDkKcWEp5yyRCzQJM6yyTjYC5XmNUZZroDuw=";
-  #   };
-  #   installPhase = ''
-  #     mkdir -p $out/share/plymouth/themes/lone
-  #     cp -r $src/pack_3/lone/* $out/share/plymouth/themes/lone/
-  #   '';
-  # };
-
   # Qylock "sword" SDDM theme — sparse fetch (~42 MiB), not the full ~1 GiB repo.
   qylockSwordSrc = pkgs.fetchFromGitHub {
     owner = "Darkkal44";
@@ -358,6 +344,22 @@ in
     networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
   };
   boot = {
+    consoleLogLevel = 3;
+    initrd.verbose = false;
+    kernelParams = [
+      "quiet"
+      "logo.nologo"
+      "plymouth.use-simpledrm"
+      "rd.udev.log_level=3"
+      "udev.log_level=3"
+      "vt.global_cursor_default=0"
+      "rd.systemd.show_status=false"
+      "systemd.show_status=false"
+    ];
+    plymouth = {
+      enable = true;
+      theme = "bgrt";
+    };
     loader = {
       # Use GRUB for dual-boot with Windows
       systemd-boot.enable = false;
@@ -370,16 +372,20 @@ in
           nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.imagemagick ];
           installPhase = old.installPhase + ''
             ${pkgs.imagemagick}/bin/magick ${./assets/grub.jpg} $out/background.png
+            ${pkgs.gnused}/bin/sed -i '/# Logo image/,/^}/d' $out/theme.txt
           '';
           # cp ${./assets/logo.png} $out/logo.png
           # ${pkgs.imagemagick}/bin/magick ${./assets/profile.png} $out/logo.png
         });
-        gfxmodeEfi = "3440x1440"; # Adjust to your screen resolution
+        gfxmodeEfi = "auto";
+        gfxpayloadEfi = "keep";
+        splashImage = null;
       };
       efi.canTouchEfiVariables = true;
       efi.efiSysMountPoint = "/boot";
     };
   };
+
   time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
