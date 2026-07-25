@@ -11,7 +11,7 @@ Scope {
 
     PanelWindow {
         screen: root.targetScreen
-        visible: root.controller.kind === "clock"
+        visible: root.controller.kind === "clock" && !root.controller.fullscreenActive
         color: "transparent"
         aboveWindows: false
         exclusionMode: ExclusionMode.Ignore

@@ -1,6 +1,7 @@
 //@ pragma Env QT_SCALE_FACTOR=1.0
 //@ pragma IconTheme Papirus-Dark
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Io
 import QtQuick
 import "core"
@@ -11,6 +12,15 @@ import "ui"
 Scope {
     id: root
     readonly property QtObject palette: MatugenColors {}
+    readonly property bool focusedWorkspaceEmpty: {
+        const focusedWorkspace = Hyprland.focusedWorkspace
+        const activeWorkspace = Hyprland.activeToplevel?.workspace
+        return Boolean(focusedWorkspace)
+            && (!activeWorkspace || activeWorkspace.id !== focusedWorkspace.id)
+    }
+    readonly property bool focusedWorkspaceFullscreen: Boolean(
+        Hyprland.focusedWorkspace?.lastIpcObject?.hasfullscreen ?? false
+    )
 
     function openMedia() {
         if (!mediaSource.available)
@@ -40,6 +50,9 @@ Scope {
 
     IslandController {
         id: islandController
+        persistentReveal: root.focusedWorkspaceEmpty
+        mediaAvailable: mediaSource.available
+        fullscreenActive: root.focusedWorkspaceFullscreen
 
         onSourceHandleReleased: handle => notificationSource.releaseHandle(handle)
         onPresentationDismissed: focusRestorer.restore()
@@ -47,6 +60,15 @@ Scope {
 
     FocusRestorer {
         id: focusRestorer
+    }
+
+    Connections {
+        target: Hyprland
+
+        function onRawEvent(event) {
+            if (event.name === "fullscreen")
+                Hyprland.refreshWorkspaces()
+        }
     }
 
     IpcHandler {
