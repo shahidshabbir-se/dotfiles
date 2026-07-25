@@ -92,6 +92,7 @@ Rectangle {
             case "launcher": return launcherComponent
             case "clipboard": return clipboardComponent
             case "wifi": return wifiComponent
+            case "bluetooth": return bluetoothComponent
             default: return clockComponent
             }
         }
@@ -180,7 +181,18 @@ Rectangle {
     Component {
         id: wifiComponent
         WifiContent {
-            contentModel: typeof root.controller.model?.source?.setEnabled === "function"
+            contentModel: root.controller.model?.source?.panelKind === "wifi"
+                ? root.controller.model
+                : null
+            palette: root.palette
+            onActionRequested: (action, argument) => root.actionRequested(action, argument)
+        }
+    }
+
+    Component {
+        id: bluetoothComponent
+        BluetoothContent {
+            contentModel: root.controller.model?.source?.panelKind === "bluetooth"
                 ? root.controller.model
                 : null
             palette: root.palette

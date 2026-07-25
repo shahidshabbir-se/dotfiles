@@ -66,6 +66,7 @@ Scope {
         case "workspace": return Config.IslandConstants.workspacePriority
         case "media":
         case "notification": return Config.IslandConstants.passivePriority
+        case "bluetooth":
         case "wifi":
         case "clipboard":
         case "launcher":

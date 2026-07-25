@@ -13,20 +13,25 @@ Scope {
         || controller.kind === "launcher"
         || controller.kind === "clipboard"
         || controller.kind === "wifi"
+        || controller.kind === "bluetooth"
     readonly property real contentWidth: controller.kind === "launcher"
         ? Config.IslandConstants.launcherWidth
         : controller.kind === "clipboard"
             ? Config.IslandConstants.clipboardWidth
             : controller.kind === "wifi"
                 ? Config.IslandConstants.wifiWidth
-                : Config.IslandConstants.mediaWidth
+                : controller.kind === "bluetooth"
+                    ? Config.IslandConstants.bluetoothWidth
+                    : Config.IslandConstants.mediaWidth
     readonly property real contentHeight: controller.kind === "launcher"
         ? Config.IslandConstants.launcherHeight
         : controller.kind === "clipboard"
             ? Config.IslandConstants.clipboardHeight
             : controller.kind === "wifi"
                 ? Config.IslandConstants.wifiHeight
-                : Config.IslandConstants.mediaHeight
+                : controller.kind === "bluetooth"
+                    ? Config.IslandConstants.bluetoothHeight
+                    : Config.IslandConstants.mediaHeight
     readonly property real sideWidth: Math.max(
         0,
         (targetScreen.width - contentWidth) / 2

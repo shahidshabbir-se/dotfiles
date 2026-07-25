@@ -91,6 +91,12 @@ QtObject {
     readonly property int wifiHeaderHeight: 48
     readonly property int wifiResultHeight: 48
 
+    readonly property int bluetoothWidth: 500
+    readonly property int bluetoothHeight: 348
+    readonly property int bluetoothPadding: 14
+    readonly property int bluetoothHeaderHeight: 48
+    readonly property int bluetoothResultHeight: 52
+
     readonly property string notificationIcon: "\uf0f3"
     readonly property string mediaIcon: "\uf001"
     readonly property string previousIcon: "\uf048"
@@ -105,4 +111,5 @@ QtObject {
     readonly property string lockIcon: "\uf023"
     readonly property string eyeIcon: "\uf06e"
     readonly property string eyeSlashIcon: "\uf070"
+    readonly property string bluetoothIcon: "\uf293"
 }

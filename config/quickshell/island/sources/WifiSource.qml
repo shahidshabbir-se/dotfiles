@@ -5,6 +5,7 @@ import QtQuick
 Scope {
     id: root
 
+    readonly property string panelKind: "wifi"
     property bool active: false
     readonly property bool enabled: Networking.wifiEnabled
     readonly property bool hardwareEnabled: Networking.wifiHardwareEnabled
