@@ -1,4 +1,5 @@
 //@ pragma Env QT_SCALE_FACTOR=1.0
+//@ pragma IconTheme Papirus-Dark
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -14,6 +15,7 @@ Scope {
     function openMedia() {
         if (!mediaSource.available)
             return
+        focusRestorer.capture()
         islandController.present(
             "media",
             mediaSource.playerModel(mediaSource.isPlaying ? "Playing" : "Paused"),
@@ -21,10 +23,30 @@ Scope {
         )
     }
 
+    function openLauncher() {
+        focusRestorer.capture()
+        islandController.present("launcher", {
+            source: launcherSource
+        }, null)
+    }
+
+    function openClipboard() {
+        focusRestorer.capture()
+        clipboardSource.refresh()
+        islandController.present("clipboard", {
+            source: clipboardSource
+        }, null)
+    }
+
     IslandController {
         id: islandController
 
         onSourceHandleReleased: handle => notificationSource.releaseHandle(handle)
+        onPresentationDismissed: focusRestorer.restore()
+    }
+
+    FocusRestorer {
+        id: focusRestorer
     }
 
     IpcHandler {
@@ -47,6 +69,38 @@ Scope {
                 islandController.dismiss()
             else
                 root.openMedia()
+        }
+    }
+
+    IpcHandler {
+        target: "launcher"
+
+        function open(): void { root.openLauncher() }
+        function close(): void {
+            if (islandController.kind === "launcher")
+                islandController.dismiss()
+        }
+        function toggle(): void {
+            if (islandController.kind === "launcher")
+                islandController.dismiss()
+            else
+                root.openLauncher()
+        }
+    }
+
+    IpcHandler {
+        target: "clipboard"
+
+        function open(): void { root.openClipboard() }
+        function close(): void {
+            if (islandController.kind === "clipboard")
+                islandController.dismiss()
+        }
+        function toggle(): void {
+            if (islandController.kind === "clipboard")
+                islandController.dismiss()
+            else
+                root.openClipboard()
         }
     }
 
@@ -87,6 +141,14 @@ Scope {
         onPresented: model => islandController.present("workspace", model, null)
     }
 
+    LauncherSource {
+        id: launcherSource
+    }
+
+    ClipboardSource {
+        id: clipboardSource
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -102,6 +164,30 @@ Scope {
 
                 if (action === "openMedia") {
                     root.openMedia()
+                    return
+                }
+
+
+                if (action === "launchApp") {
+                    focusRestorer.discard()
+                    islandController.dismiss()
+                    launcherSource.launch(argument)
+                    return
+                }
+
+                if (action === "copyClipboard") {
+                    clipboardSource.copy(argument)
+                    islandController.dismiss()
+                    return
+                }
+
+                if (action === "openClipboardUrl") {
+                    const url = String(argument ?? "").trim()
+                    if (!clipboardSource.isUrl(url))
+                        return
+                    focusRestorer.discard()
+                    islandController.dismiss()
+                    Quickshell.execDetached(["xdg-open", url])
                     return
                 }
 

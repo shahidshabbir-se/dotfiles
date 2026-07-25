@@ -17,6 +17,7 @@ Scope {
     readonly property bool revealed: kind !== "clock" || keyboardReveal || edgeReveal
 
     signal sourceHandleReleased(var handle)
+    signal presentationDismissed(string kind)
 
     function setKeyboardReveal(value) {
         keyboardReveal = value
@@ -56,6 +57,7 @@ Scope {
         case "notification": return Config.IslandConstants.passivePriority
         case "wifi":
         case "clipboard":
+        case "launcher":
         case "menu": return Config.IslandConstants.interactivePriority
         default: return 0
         }
@@ -121,6 +123,7 @@ Scope {
     }
 
     function dismiss() {
+        const dismissedKind = kind
         const dismissedHandle = sourceHandle
         expiryTimer.stop()
         revision += 1
@@ -129,6 +132,7 @@ Scope {
         expanded = false
         sourceHandle = null
         release(dismissedHandle)
+        presentationDismissed(dismissedKind)
     }
 
     function expire(expectedRevision) {

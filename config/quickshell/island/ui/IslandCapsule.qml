@@ -32,9 +32,9 @@ Rectangle {
     clip: true
     opacity: revealed ? 1 : 0
     color: Qt.rgba(
-        palette.surfaceContainer.r,
-        palette.surfaceContainer.g,
-        palette.surfaceContainer.b,
+        palette.surfaceContainerHigh.r,
+        palette.surfaceContainerHigh.g,
+        palette.surfaceContainerHigh.b,
         Config.IslandConstants.capsuleBackgroundOpacity
     )
     layer.enabled: true
@@ -84,6 +84,8 @@ Rectangle {
             case "workspace": return workspaceComponent
             case "notification": return notificationComponent
             case "media": return mediaComponent
+            case "launcher": return launcherComponent
+            case "clipboard": return clipboardComponent
             default: return clockComponent
             }
         }
@@ -143,6 +145,24 @@ Rectangle {
     Component {
         id: mediaComponent
         MediaContent {
+            contentModel: root.controller.model
+            palette: root.palette
+            onActionRequested: (action, argument) => root.actionRequested(action, argument)
+        }
+    }
+
+    Component {
+        id: launcherComponent
+        LauncherContent {
+            contentModel: root.controller.model
+            palette: root.palette
+            onActionRequested: (action, argument) => root.actionRequested(action, argument)
+        }
+    }
+
+    Component {
+        id: clipboardComponent
+        ClipboardContent {
             contentModel: root.controller.model
             palette: root.palette
             onActionRequested: (action, argument) => root.actionRequested(action, argument)

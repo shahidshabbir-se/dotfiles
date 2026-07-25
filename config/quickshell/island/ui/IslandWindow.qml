@@ -25,15 +25,22 @@ PanelWindow {
     color: "transparent"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell_island"
-    WlrLayershell.keyboardFocus: controller.kind === "media"
+    WlrLayershell.keyboardFocus: controller.kind === "launcher"
+            || controller.kind === "clipboard"
+            || controller.kind === "media"
         ? WlrKeyboardFocus.OnDemand
         : WlrKeyboardFocus.None
 
     HyprlandFocusGrab {
-        active: root.controller.kind === "media" && root.visible
+        active: (root.controller.kind === "media"
+                || root.controller.kind === "launcher"
+                || root.controller.kind === "clipboard")
+            && root.visible
         windows: [root]
         onCleared: {
-            if (root.controller.kind === "media")
+            if (root.controller.kind === "media"
+                    || root.controller.kind === "launcher"
+                    || root.controller.kind === "clipboard")
                 root.controller.dismiss()
         }
     }
