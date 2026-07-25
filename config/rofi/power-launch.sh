@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# Compatibility wrapper: power menu is wlogout (bar + Alt+Shift+P).
+# Compatibility wrapper: power menu is wlogout.
 
-exec "$HOME/.config/quickshell/bar/scripts/toggle-power.sh"
+exec "$HOME/.config/wlogout/launch.sh"
