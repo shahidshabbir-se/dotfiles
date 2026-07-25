@@ -29,6 +29,7 @@ PanelWindow {
             || controller.kind === "clipboard"
             || controller.kind === "media"
             || controller.kind === "wifi"
+            || controller.kind === "bluetooth"
         ? WlrKeyboardFocus.OnDemand
         : WlrKeyboardFocus.None
 
@@ -36,14 +37,16 @@ PanelWindow {
         active: (root.controller.kind === "media"
                 || root.controller.kind === "launcher"
                 || root.controller.kind === "clipboard"
-                || root.controller.kind === "wifi")
+                || root.controller.kind === "wifi"
+                || root.controller.kind === "bluetooth")
             && root.visible
         windows: [root]
         onCleared: {
             if (root.controller.kind === "media"
                     || root.controller.kind === "launcher"
                     || root.controller.kind === "clipboard"
-                    || root.controller.kind === "wifi")
+                    || root.controller.kind === "wifi"
+                    || root.controller.kind === "bluetooth")
                 root.controller.dismiss()
         }
     }

@@ -55,6 +55,13 @@ Scope {
         }, null)
     }
 
+    function openBluetooth() {
+        focusRestorer.capture()
+        islandController.present("bluetooth", {
+            source: bluetoothSource
+        }, null)
+    }
+
     function pasteClipboard(entry) {
         pastePending = true
         pasteTargetClass = focusRestorer.capturedAppClass
@@ -154,6 +161,22 @@ Scope {
         }
     }
 
+    IpcHandler {
+        target: "bluetooth"
+
+        function open(): void { root.openBluetooth() }
+        function close(): void {
+            if (islandController.kind === "bluetooth")
+                islandController.dismiss()
+        }
+        function toggle(): void {
+            if (islandController.kind === "bluetooth")
+                islandController.dismiss()
+            else
+                root.openBluetooth()
+        }
+    }
+
     MediaSource {
         id: mediaSource
 
@@ -207,6 +230,11 @@ Scope {
             else
                 root.pasteTargetClass = ""
         }
+    }
+
+    BluetoothSource {
+        id: bluetoothSource
+        active: islandController.kind === "bluetooth"
     }
 
     WifiSource {

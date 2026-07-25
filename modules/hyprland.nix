@@ -378,8 +378,8 @@ in
       };
 
       bind = [
-        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility reveal"
-        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility reveal"
+        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility reveal"
+        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility reveal"
         "$mod, Return, exec, hyprctl dispatch workspace 1 && $terminal"
         "$mod, Q, killactive,"
         "$mod, E, exec, $fileManager"
@@ -396,7 +396,7 @@ in
         "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
         "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
-        "ALT, M, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call media toggle"
+        "ALT SHIFT, M, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call media toggle"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
         "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
         "$mod, R, exec, kooha"
@@ -409,13 +409,13 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "ALT SHIFT, B, exec, vicinae 'vicinae://launch/@Gelei/vicinae-extension-bluetooth-0/scan?toggle=true'"
-        "ALT, N, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call wifi toggle"
+        "ALT SHIFT, B, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call bluetooth toggle"
+        "ALT SHIFT, N, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call wifi toggle"
         "ALT SHIFT, W, exec, quickshell --no-duplicate -p ${homeDirectory}/.config/quickshell/wallpaper"
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
-        "ALT, C, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call clipboard toggle"
-        "$mod, SPACE, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call launcher toggle"
+        "ALT, C, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call clipboard toggle"
+        "$mod, SPACE, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call launcher toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
         "ALT SHIFT,Tab,cyclenext, prev"
@@ -461,8 +461,8 @@ in
       ];
 
       bindr = [
-        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility conceal"
-        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility conceal"
+        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility conceal"
+        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility conceal"
       ];
 
       bindel = [
