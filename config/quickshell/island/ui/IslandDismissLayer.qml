@@ -10,9 +10,21 @@ Scope {
     required property var controller
 
     readonly property bool active: controller.kind === "media"
+        || controller.kind === "launcher"
+        || controller.kind === "clipboard"
+    readonly property real contentWidth: controller.kind === "launcher"
+        ? Config.IslandConstants.launcherWidth
+        : controller.kind === "clipboard"
+            ? Config.IslandConstants.clipboardWidth
+            : Config.IslandConstants.mediaWidth
+    readonly property real contentHeight: controller.kind === "launcher"
+        ? Config.IslandConstants.launcherHeight
+        : controller.kind === "clipboard"
+            ? Config.IslandConstants.clipboardHeight
+            : Config.IslandConstants.mediaHeight
     readonly property real sideWidth: Math.max(
         0,
-        (targetScreen.width - Config.IslandConstants.mediaWidth) / 2
+        (targetScreen.width - contentWidth) / 2
     )
 
     signal dismissed()
@@ -55,7 +67,7 @@ Scope {
             right: true
         }
         margins.top: Config.IslandConstants.windowTopMargin
-            + Config.IslandConstants.mediaHeight
+            + root.contentHeight
 
         MouseArea {
             anchors.fill: parent
@@ -78,7 +90,7 @@ Scope {
         }
         margins.top: Config.IslandConstants.windowTopMargin
         implicitWidth: root.sideWidth
-        implicitHeight: Config.IslandConstants.mediaHeight
+        implicitHeight: root.contentHeight
 
         MouseArea {
             anchors.fill: parent
@@ -101,7 +113,7 @@ Scope {
         }
         margins.top: Config.IslandConstants.windowTopMargin
         implicitWidth: root.sideWidth
-        implicitHeight: Config.IslandConstants.mediaHeight
+        implicitHeight: root.contentHeight
 
         MouseArea {
             anchors.fill: parent

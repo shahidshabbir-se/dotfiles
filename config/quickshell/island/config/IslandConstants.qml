@@ -2,7 +2,8 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    readonly property string textFontFamily: "Rubik"
+    readonly property string textFontFamily: "Geist"
+    readonly property string monoFontFamily: "Geist Mono"
     readonly property string iconFontFamily: "Symbols Nerd Font Mono"
     readonly property string timeFormat: "h:mm AP"
     readonly property string workspaceReserveText: "Workspace 10"
@@ -15,7 +16,7 @@ QtObject {
     readonly property int clockRefreshInterval: 1000
 
     readonly property int windowTopMargin: 8
-    readonly property int windowSurfaceHeight: 240
+    readonly property int windowSurfaceHeight: 348
     readonly property int windowExclusiveZone: 0
     readonly property int windowHorizontalInset: 24
     readonly property int edgeRevealHeight: 10
@@ -60,6 +61,30 @@ QtObject {
     readonly property int mediaProgressPollInterval: 500
     readonly property int mediaSeekSettleInterval: 1000
 
+    readonly property int launcherWidth: 520
+    readonly property int launcherHeight: 306
+    readonly property int launcherPadding: 16
+    readonly property int launcherSearchHeight: 44
+    readonly property int launcherResultHeight: 44
+    readonly property int launcherVisibleResults: 5
+    readonly property int launcherContentSpacing: 10
+    readonly property int launcherIconSize: 30
+
+    readonly property int clipboardWidth: 600
+    readonly property int clipboardHeight: 348
+    readonly property int clipboardPadding: 12
+    readonly property int clipboardSearchHeight: 40
+    readonly property int clipboardResultHeight: 46
+    readonly property int clipboardVisibleResults: 6
+    readonly property int clipboardContentSpacing: 8
+    readonly property int clipboardIconSize: 17
+    readonly property int clipboardThumbnailSize: 30
+    readonly property int clipboardListWidth: 235
+    readonly property int clipboardPaneSpacing: 8
+    readonly property bool clipboardShowLinkVisuals: true
+    readonly property int clipboardMaximumPreviewPixels: 33554432
+    readonly property string clipboardFaviconService: "https://icons.duckduckgo.com/ip3/"
+
     readonly property string notificationIcon: "\uf0f3"
     readonly property string mediaIcon: "\uf001"
     readonly property string previousIcon: "\uf048"
@@ -67,4 +92,6 @@ QtObject {
     readonly property string pauseIcon: "\uf04c"
     readonly property string nextIcon: "\uf051"
     readonly property string closeIcon: "\uf00d"
+    readonly property string searchIcon: "\uf002"
+    readonly property string imageIcon: "\uf03e"
 }
