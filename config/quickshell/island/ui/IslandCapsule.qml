@@ -91,6 +91,7 @@ Rectangle {
             case "media": return mediaComponent
             case "launcher": return launcherComponent
             case "clipboard": return clipboardComponent
+            case "wifi": return wifiComponent
             default: return clockComponent
             }
         }
@@ -168,7 +169,20 @@ Rectangle {
     Component {
         id: clipboardComponent
         ClipboardContent {
-            contentModel: root.controller.model
+            contentModel: typeof root.controller.model?.source?.typeFor === "function"
+                ? root.controller.model
+                : null
+            palette: root.palette
+            onActionRequested: (action, argument) => root.actionRequested(action, argument)
+        }
+    }
+
+    Component {
+        id: wifiComponent
+        WifiContent {
+            contentModel: typeof root.controller.model?.source?.setEnabled === "function"
+                ? root.controller.model
+                : null
             palette: root.palette
             onActionRequested: (action, argument) => root.actionRequested(action, argument)
         }

@@ -85,6 +85,12 @@ QtObject {
     readonly property int clipboardMaximumPreviewPixels: 33554432
     readonly property string clipboardFaviconService: "https://icons.duckduckgo.com/ip3/"
 
+    readonly property int wifiWidth: 500
+    readonly property int wifiHeight: 348
+    readonly property int wifiPadding: 14
+    readonly property int wifiHeaderHeight: 48
+    readonly property int wifiResultHeight: 48
+
     readonly property string notificationIcon: "\uf0f3"
     readonly property string mediaIcon: "\uf001"
     readonly property string previousIcon: "\uf048"
@@ -94,4 +100,9 @@ QtObject {
     readonly property string closeIcon: "\uf00d"
     readonly property string searchIcon: "\uf002"
     readonly property string imageIcon: "\uf03e"
+    readonly property string wifiIcon: "\uf1eb"
+    readonly property string refreshIcon: "\uf2f1"
+    readonly property string lockIcon: "\uf023"
+    readonly property string eyeIcon: "\uf06e"
+    readonly property string eyeSlashIcon: "\uf070"
 }
