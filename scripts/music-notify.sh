@@ -6,6 +6,10 @@ title=$(playerctl metadata xesam:title 2>/dev/null)
 identity=$(playerctl metadata --format '{{playerIdentity}}' 2>/dev/null)
 player_name=$(playerctl metadata --format '{{playerName}}' 2>/dev/null)
 
+dotfiles="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+find_icon="${dotfiles}/config/quickshell/bar/scripts/find-icon.sh"
+music_icon="${dotfiles}/config/quickshell/bar/assets/svg/music.svg"
+
 resolve_app() {
     local id="${identity,,}"
     local bus="${player_name,,}"
@@ -41,6 +45,21 @@ resolve_app() {
     fi
 }
 
+resolve_icon_path() {
+    local key
+    for key in "$@"; do
+        [ -n "$key" ] || continue
+        if [ -x "$find_icon" ]; then
+            local path
+            path="$("$find_icon" "$key" 2>/dev/null || true)"
+            if [ -n "$path" ] && [ -f "$path" ]; then
+                printf '%s' "$path"
+                return
+            fi
+        fi
+    done
+}
+
 IFS='|' read -r app_name icon_name desktop_entry <<< "$(resolve_app)"
 
 case "$status" in
@@ -57,8 +76,16 @@ else
     body="Media playback"
 fi
 
+if [ -f "$music_icon" ]; then
+    icon_path="$music_icon"
+else
+    icon_path="$(resolve_icon_path "$desktop_entry" "$icon_name" "zen-beta" "zen-browser")"
+fi
+
 icon_args=()
-if [ -n "$icon_name" ]; then
+if [ -n "$icon_path" ]; then
+    icon_args=(-i "$icon_path")
+elif [ -n "$icon_name" ]; then
     icon_args=(-i "$icon_name")
 fi
 

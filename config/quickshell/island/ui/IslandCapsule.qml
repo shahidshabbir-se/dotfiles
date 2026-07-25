@@ -93,7 +93,7 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        enabled: root.controller.kind === "clock"
+        enabled: root.controller.kind === "clock" && root.controller.mediaAvailable
         visible: enabled
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -101,7 +101,7 @@ Rectangle {
     }
 
     HoverHandler {
-        cursorShape: root.controller.kind === "clock"
+        cursorShape: root.controller.kind === "clock" && root.controller.mediaAvailable
             ? Qt.PointingHandCursor
             : Qt.ArrowCursor
         onHoveredChanged: root.hoverChanged(hovered)

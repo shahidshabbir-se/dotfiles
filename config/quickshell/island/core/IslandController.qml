@@ -14,7 +14,13 @@ Scope {
     property bool keyboardReveal: false
     property bool edgeReveal: false
     property bool pointerInside: false
-    readonly property bool revealed: kind !== "clock" || keyboardReveal || edgeReveal
+    property bool persistentReveal: false
+    property bool mediaAvailable: false
+    property bool fullscreenActive: false
+    readonly property bool revealed: kind !== "clock"
+        || keyboardReveal
+        || (edgeReveal && !fullscreenActive)
+        || persistentReveal
 
     signal sourceHandleReleased(var handle)
     signal presentationDismissed(string kind)
@@ -25,6 +31,10 @@ Scope {
 
     function setEdgeReveal(value) {
         edgeHideTimer.stop()
+        if (fullscreenActive) {
+            edgeReveal = false
+            return
+        }
         if (value) {
             edgeReveal = true
             return

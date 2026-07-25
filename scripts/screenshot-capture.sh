@@ -6,6 +6,7 @@ set -euo pipefail
 # fix-hdr-screenshare plugin + a short settle delay before capture helps.
 
 min_png_bytes=2048
+overlay_script="${HOME}/.config/quickshell/bar/scripts/show-screenshot-overlay.sh"
 
 png_too_small() {
   local file="$1"
@@ -13,8 +14,17 @@ png_too_small() {
   [[ "$(wc -c <"$file")" -lt "$min_png_bytes" ]]
 }
 
+show_screenshot_overlay() {
+  local out="$1"
+  [[ -f "$out" && -f "$overlay_script" ]] || return 1
+  sh "$overlay_script" "$out"
+}
+
 screenshot_feedback() {
   local out="$1"
+  if show_screenshot_overlay "$out"; then
+    return 0
+  fi
   notify-send -a "Screenshot" -t 5000 "Screenshot saved" \
     "Copied to clipboard · $(basename "$out")"
 }
