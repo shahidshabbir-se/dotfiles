@@ -39,15 +39,7 @@ let
     "wlogout"
     "vicinae"
     "quickshell"
-    "quickshell_bar"
-    "quickshell_launcher_popup"
-    "quickshell_music_popup"
-    "quickshell_volume_popup"
-    "quickshell_volume_osd"
-    "quickshell_notifications"
-    "quickshell_datetime_popup"
-    "quickshell_power_profile_popup"
-    "quickshell_screenshot_overlay"
+    "quickshell_island"
   ];
 
   # Popups unload instantly in Quickshell (LazyLoader); layersOut fade leaves blur behind.
@@ -55,14 +47,6 @@ let
     "logout_dialog"
     "wlogout"
     "vicinae"
-    "quickshell_launcher_popup"
-    "quickshell_music_popup"
-    "quickshell_volume_popup"
-    "quickshell_volume_osd"
-    "quickshell_notifications"
-    "quickshell_datetime_popup"
-    "quickshell_power_profile_popup"
-    "quickshell_screenshot_overlay"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
@@ -73,7 +57,7 @@ let
       name = blur-${lib.replaceStrings [ "_" ] [ "-" ] ns}
       match:namespace = ${ns}
       blur = on
-      ignore_alpha = 0
+      ignore_alpha = ${if ns == "quickshell_island" then "0.1" else "0"}
     }'';
 
   layerRuleNoAnimBlock = ns: ''
@@ -179,18 +163,19 @@ in
     # Image viewer (hyprland mime defaults)
     gthumb
 
-    # Quickshell bar / visualizer / wallpaper picker
+    # Quickshell island / visualizer / wallpaper picker
     quickshell
     kdePackages.qt5compat
     kdePackages.qtmultimedia
   ];
 
   xdg.configFile = {
-    "quickshell/bar".source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/bar";
+    "quickshell/island".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/island";
     "quickshell/visualizer".source =
       mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
-    # "quickshell/wallpaper".source =
-    #    mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
+    "quickshell/wallpaper".source =
+      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
     # lock-screen is cloned to ~/.config/lock-screen via post-install.sh (not a nix-managed path)
   };
 
@@ -231,13 +216,7 @@ in
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
       "$fileManager" = "ghostty --title=yazi -e yazi";
-      "$menu" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-launcher.sh";
-      "$musicPopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh music toggle";
-      "$volumePopup" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh volume toggle";
-      "$notificationsPopup" =
-        "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh notifications toggle";
-      "$closePopups" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-popup.sh popups close";
-      "$powerMenu" = "sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-power.sh";
+      "$powerMenu" = "sh ${homeDirectory}/.config/wlogout/launch.sh";
 
       monitor = [
         monitorLine
@@ -252,7 +231,7 @@ in
         "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"
         "awww-daemon &"
-        "sleep 1 && sh ${homeDirectory}/.config/quickshell/bar/launch.sh &"
+        "sleep 1 && sh ${homeDirectory}/.config/quickshell/island/launch.sh &"
         "sleep 1 && sh ${homeDirectory}/dotfiles/config/quickshell/visualizer/launch.sh &"
         "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
@@ -299,14 +278,14 @@ in
       general = {
         gaps_in = 5;
         gaps_out = 10;
-        border_size = 2;
+        border_size = 0;
         resize_on_border = true;
         allow_tearing = false;
         layout = "dwindle";
       };
 
       decoration = {
-        rounding = 5;
+        rounding = 28;
         active_opacity = 1.0;
         inactive_opacity = 0.98;
 
@@ -399,6 +378,8 @@ in
       };
 
       bind = [
+        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility reveal"
+        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility reveal"
         "$mod, Return, exec, hyprctl dispatch workspace 1 && $terminal"
         "$mod, Q, killactive,"
         "$mod, E, exec, $fileManager"
@@ -415,6 +396,7 @@ in
         "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
         "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
+        "$mod SHIFT, M, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call media toggle"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
         "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
         "$mod, R, exec, kooha"
@@ -427,19 +409,13 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "$mod, N, exec, $notificationsPopup"
-        "$mod SHIFT, N, exec, quickshell ipc -c bar call notifications clear_all"
-        "$mod, V, exec, $volumePopup"
-        "$mod SHIFT, M, exec, $musicPopup"
-        "$mod SHIFT, ESCAPE, exec, $closePopups"
-        "$mod, Z, exec, sh ${homeDirectory}/.config/quickshell/bar/scripts/toggle-bar.sh"
         "ALT SHIFT, B, exec, vicinae 'vicinae://launch/@Gelei/vicinae-extension-bluetooth-0/scan?toggle=true'"
         "ALT SHIFT, N, exec, vicinae 'vicinae://launch/@dagimg-dot/vicinae-extension-wifi-commander-0/scan-wifi'"
-        "ALT SHIFT, W, exec, vicinae 'vicinae://launch/@sovereign/vicinae-extension-awww-switcher-0/wpgrid'"
+        "ALT SHIFT, W, exec, quickshell --no-duplicate -p ${homeDirectory}/.config/quickshell/wallpaper"
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
-        "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
-        "$mod, SPACE, exec, vicinae toggle"
+        "ALT, C, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call clipboard toggle"
+        "$mod, SPACE, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call launcher toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
         "ALT SHIFT,Tab,cyclenext, prev"
@@ -482,6 +458,11 @@ in
       bindm = [
         "$mod, mouse:272, movewindow"
         "$mod, mouse:273, resizewindow"
+      ];
+
+      bindr = [
+        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility conceal"
+        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call visibility conceal"
       ];
 
       bindel = [
