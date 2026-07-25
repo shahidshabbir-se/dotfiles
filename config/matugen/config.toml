@@ -31,7 +31,7 @@ post_hook = "pkill -SIGUSR2 waybar 2>/dev/null || true"
 
 [templates.quickshell-bar-colors]
 input_path = "templates/quickshell-bar-colors.qml"
-output_path = "~/dotfiles/config/quickshell/bar/configuration/MatugenColors.qml"
+output_path = "~/dotfiles/config/quickshell/island/MatugenColors.qml"
 
 [templates.quickshell-visualizer-colors]
 input_path = "templates/quickshell-bar-colors.qml"

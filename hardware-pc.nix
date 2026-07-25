@@ -46,16 +46,17 @@
     ];
   };
 
-  # fileSystems."/home/shahid/Storage" = {
-  #   device = "/dev/disk/by-uuid/D47A2A7A7A2A598E";
-  #   fsType = "ntfs-3g";
-  #   options = [
-  #     "uid=1000"
-  #     "gid=100"
-  #     "rw"
-  #     "noatime"
-  #   ];
-  # };
+  fileSystems."/home/shahid/Storage" = {
+    device = "/dev/disk/by-id/nvme-eui.e8238fa6bf530001001b448b423c59f6-part3";
+    fsType = "ntfs-3g";
+    options = [
+      "uid=1000"
+      "gid=100"
+      "rw"
+      "noatime"
+      "nofail"
+    ];
+  };
 
   swapDevices = [
     { device = "/dev/disk/by-uuid/a0bafec0-8980-4f08-a450-32c8f13f43d2"; }

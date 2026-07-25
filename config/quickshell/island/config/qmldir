@@ -1,0 +1,2 @@
+module IslandConfig
+singleton IslandConstants 1.0 IslandConstants.qml
