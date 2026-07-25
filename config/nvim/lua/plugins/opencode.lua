@@ -1,92 +1,71 @@
 return {
   "nickjvandyke/opencode.nvim",
   version = "*",
-  dependencies = {
-    "folke/snacks.nvim",
-  },
-  opts = function()
-    local socket = assert(vim.uv.new_tcp())
-    assert(socket:bind("127.0.0.1", 0))
-    local kilocode_port = socket:getsockname().port
-    socket:close()
-    local kilocode_password = vim.fn.sha256(("%s:%s"):format(vim.uv.hrtime(), vim.fn.getpid()))
-    local kilocode_pane_id = nil
-    local kilocode_visible = false
+  config = function()
+    local opencode_pane_id = nil
+    local opencode_visible = false
 
     local function pane_exists()
-      if not kilocode_pane_id then
+      if not opencode_pane_id then
         return false
       end
-      local check = vim.fn.system("tmux has-session -t " .. kilocode_pane_id .. " 2>/dev/null; echo $?")
+
+      local check = vim.fn.system("tmux has-session -t " .. opencode_pane_id .. " 2>/dev/null; echo $?")
       if vim.trim(check) == "0" then
         return true
       end
-      kilocode_pane_id = nil
-      kilocode_visible = false
+
+      opencode_pane_id = nil
+      opencode_visible = false
       return false
     end
 
     local function start()
-      if pane_exists() and kilocode_visible then
+      if pane_exists() and opencode_visible then
         return
       end
 
       if pane_exists() then
-        vim.fn.system("tmux join-pane -h -l 35% -s " .. kilocode_pane_id)
+        vim.fn.system("tmux join-pane -h -l 35% -s " .. opencode_pane_id)
       else
-        local command = ("KILO_SERVER_USERNAME=opencode KILO_SERVER_PASSWORD=%s kilocode --port %d"):format(
-          kilocode_password,
-          kilocode_port
-        )
-        local result = vim.fn.system("tmux split-window -h -p 35 -P -F '#{pane_id}' '" .. command .. "'")
-        kilocode_pane_id = vim.trim(result)
+        local result = vim.fn.system("tmux split-window -h -p 35 -P -F '#{pane_id}' 'opencode --port'")
+        opencode_pane_id = vim.trim(result)
       end
-      kilocode_visible = true
+      opencode_visible = true
     end
 
     local function stop()
       if not pane_exists() then
         return
       end
-      vim.fn.system("tmux send-keys -t " .. kilocode_pane_id .. " C-c")
+
+      vim.fn.system("tmux send-keys -t " .. opencode_pane_id .. " C-c")
       vim.defer_fn(function()
-        vim.fn.system("tmux kill-pane -t " .. kilocode_pane_id)
-        kilocode_pane_id = nil
-        kilocode_visible = false
+        vim.fn.system("tmux kill-pane -t " .. opencode_pane_id)
+        opencode_pane_id = nil
+        opencode_visible = false
       end, 500)
     end
 
     local function toggle()
       if not pane_exists() then
         start()
-      elseif kilocode_visible then
-        vim.fn.system("tmux break-pane -d -s " .. kilocode_pane_id)
-        kilocode_visible = false
+      elseif opencode_visible then
+        vim.fn.system("tmux break-pane -d -s " .. opencode_pane_id)
+        opencode_visible = false
       else
-        vim.fn.system("tmux join-pane -h -l 35% -s " .. kilocode_pane_id)
-        kilocode_visible = true
+        vim.fn.system("tmux join-pane -h -l 35% -s " .. opencode_pane_id)
+        opencode_visible = true
       end
     end
 
-    return {
+    vim.g.opencode_opts = {
       server = {
-        url = "http://127.0.0.1:" .. kilocode_port,
-        username = "opencode",
-        password = kilocode_password,
         start = start,
         stop = stop,
         toggle = toggle,
       },
-      ask = {
-        prompt = "Ask KiloCode: ",
-      },
-      select = {
-        prompt = "KiloCode: ",
-      },
     }
-  end,
-  config = function(_, opts)
-    vim.g.opencode_opts = opts
 
     vim.o.autoread = true
   end,
@@ -96,7 +75,7 @@ return {
       function()
         require("opencode").ask("@this: ")
       end,
-      desc = "Ask KiloCode",
+      desc = "Ask OpenCode",
       mode = { "n", "x" },
     },
     {
@@ -104,7 +83,7 @@ return {
       function()
         require("opencode").select()
       end,
-      desc = "KiloCode commands/prompts",
+      desc = "Select OpenCode",
       mode = { "n", "x" },
     },
     {
@@ -112,7 +91,7 @@ return {
       function()
         return require("opencode").operator("@this ")
       end,
-      desc = "Append range to KiloCode",
+      desc = "Append range to OpenCode",
       expr = true,
       mode = { "n", "x" },
     },
@@ -121,29 +100,43 @@ return {
       function()
         return require("opencode").operator("@this ") .. "_"
       end,
-      desc = "Append line to KiloCode",
+      desc = "Append line to OpenCode",
       expr = true,
+    },
+    {
+      "<S-C-u>",
+      function()
+        require("opencode").command("session.half.page.up")
+      end,
+      desc = "Scroll OpenCode up",
+    },
+    {
+      "<S-C-d>",
+      function()
+        require("opencode").command("session.half.page.down")
+      end,
+      desc = "Scroll OpenCode down",
     },
     {
       "<leader>os",
       function()
         vim.g.opencode_opts.server.start()
       end,
-      desc = "KiloCode start pane",
+      desc = "OpenCode start pane",
     },
     {
       "<leader>ot",
       function()
         vim.g.opencode_opts.server.toggle()
       end,
-      desc = "KiloCode toggle pane",
+      desc = "OpenCode toggle pane",
     },
     {
       "<leader>oq",
       function()
         vim.g.opencode_opts.server.stop()
       end,
-      desc = "KiloCode quit pane",
+      desc = "OpenCode quit pane",
     },
   },
 }
