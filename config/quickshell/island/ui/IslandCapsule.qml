@@ -31,12 +31,17 @@ Rectangle {
         : Config.IslandConstants.capsuleLargeRadius
     clip: true
     opacity: revealed ? 1 : 0
-    color: Qt.rgba(
-        palette.surfaceContainerHigh.r,
-        palette.surfaceContainerHigh.g,
-        palette.surfaceContainerHigh.b,
-        Config.IslandConstants.capsuleBackgroundOpacity
-    )
+    color: {
+        const base = palette.surfaceContainerHigh
+        const accent = palette.primary
+        const accentMix = 0.16
+        return Qt.rgba(
+            base.r + (accent.r - base.r) * accentMix,
+            base.g + (accent.g - base.g) * accentMix,
+            base.b + (accent.b - base.b) * accentMix,
+            Config.IslandConstants.capsuleBackgroundOpacity
+        )
+    }
     layer.enabled: true
     layer.smooth: true
     layer.effect: OpacityMask {

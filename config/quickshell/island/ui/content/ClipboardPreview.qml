@@ -9,7 +9,7 @@ Item {
     required property var source
     required property var palette
 
-    signal copyRequested(var entry)
+    signal pasteRequested(var entry)
     signal openUrlRequested(string url)
 
     readonly property bool selectedDecoded: Boolean(source)
@@ -333,7 +333,7 @@ Item {
                 rightMargin: 9
                 verticalCenter: parent.verticalCenter
             }
-            text: "↵ Copy"
+            text: "↵ Paste"
             color: root.palette.surfaceForeground
             font.family: Config.IslandConstants.textFontFamily
             font.pixelSize: 12
@@ -344,7 +344,7 @@ Item {
             anchors.fill: parent
             enabled: Boolean(root.entry)
             cursorShape: Qt.PointingHandCursor
-            onClicked: root.copyRequested(root.entry)
+            onClicked: root.pasteRequested(root.entry)
         }
     }
 }

@@ -14,6 +14,8 @@ Scope {
     property string pendingDecodeId: ""
     property string runningDecodeId: ""
 
+    signal copyFinished(bool success)
+
     function imageMetadata(preview) {
         const match = preview.match(/^\[\[ binary data\s+([0-9]+(?:\.[0-9]+)?\s+(?:B|KiB|MiB|GiB))\s+([a-zA-Z0-9.+-]+)\s+(\d+)x(\d+)\s*\]\]$/)
         if (!match)
@@ -159,6 +161,8 @@ Scope {
 
     Process {
         id: copyProcess
+
+        onExited: exitCode => root.copyFinished(exitCode === 0)
     }
 
     Timer {

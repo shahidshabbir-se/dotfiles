@@ -6,6 +6,7 @@ Scope {
     id: root
 
     property string capturedAddress: ""
+    property string capturedAppClass: ""
     property string capturedWorkspaceId: ""
     property string pendingAddress: ""
     property string pendingWorkspaceId: ""
@@ -23,11 +24,15 @@ Scope {
 
         const ipc = window?.lastIpcObject || {}
         capturedAddress = String(ipc.address || "")
+        capturedAppClass = String(
+            ipc.class || ipc.initialClass || window.wayland?.appId || ""
+        ).toLowerCase()
         capturedWorkspaceId = capturedAddress ? String(focusedWorkspace.id) : ""
     }
 
     function discard() {
         capturedAddress = ""
+        capturedAppClass = ""
         capturedWorkspaceId = ""
         pendingAddress = ""
         pendingWorkspaceId = ""
@@ -41,6 +46,7 @@ Scope {
         pendingAddress = capturedAddress
         pendingWorkspaceId = capturedWorkspaceId
         capturedAddress = ""
+        capturedAppClass = ""
         capturedWorkspaceId = ""
         restoreTimer.restart()
     }
