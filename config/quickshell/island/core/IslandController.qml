@@ -17,16 +17,17 @@ Scope {
     property bool persistentReveal: false
     property bool mediaAvailable: false
     property bool fullscreenActive: false
-    readonly property bool revealed: kind !== "clock"
-        || keyboardReveal
-        || (edgeReveal && !fullscreenActive)
-        || persistentReveal
+    readonly property bool revealed: kind !== "clock" || (!fullscreenActive
+        && (keyboardReveal || edgeReveal || persistentReveal))
 
     signal sourceHandleReleased(var handle)
     signal presentationDismissed(string kind)
 
     function setKeyboardReveal(value) {
         keyboardReveal = value
+        keyboardRevealTimer.stop()
+        if (value)
+            keyboardRevealTimer.restart()
     }
 
     function setEdgeReveal(value) {
@@ -172,5 +173,20 @@ Scope {
         id: edgeHideTimer
         interval: Config.IslandConstants.edgeRevealHideDelay
         onTriggered: root.edgeReveal = false
+    }
+
+    Timer {
+        id: keyboardRevealTimer
+        interval: 1500
+        onTriggered: root.keyboardReveal = false
+    }
+
+    onFullscreenActiveChanged: {
+        if (!fullscreenActive)
+            return
+        keyboardReveal = false
+        edgeReveal = false
+        keyboardRevealTimer.stop()
+        edgeHideTimer.stop()
     }
 }

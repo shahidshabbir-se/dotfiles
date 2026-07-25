@@ -14,13 +14,11 @@ Scope {
     readonly property QtObject palette: MatugenColors {}
     readonly property bool focusedWorkspaceEmpty: {
         const focusedWorkspace = Hyprland.focusedWorkspace
-        const activeWorkspace = Hyprland.activeToplevel?.workspace
         return Boolean(focusedWorkspace)
-            && (!activeWorkspace || activeWorkspace.id !== focusedWorkspace.id)
+            && (focusedWorkspace.toplevels?.values?.length ?? 0) === 0
     }
-    readonly property bool focusedWorkspaceFullscreen: Boolean(
-        Hyprland.focusedWorkspace?.lastIpcObject?.hasfullscreen ?? false
-    )
+    readonly property bool focusedWorkspaceFullscreen:
+        Hyprland.focusedWorkspace?.hasFullscreen ?? false
     property bool pastePending: false
     property string pasteTargetClass: ""
 
@@ -76,15 +74,6 @@ Scope {
 
     FocusRestorer {
         id: focusRestorer
-    }
-
-    Connections {
-        target: Hyprland
-
-        function onRawEvent(event) {
-            if (event.name === "fullscreen")
-                Hyprland.refreshWorkspaces()
-        }
     }
 
     IpcHandler {
