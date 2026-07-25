@@ -46,9 +46,9 @@ FocusScope {
         resultList.positionViewAtIndex(selectedIndex, ListView.Contain)
     }
 
-    function copySelected() {
+    function pasteSelected() {
         if (selectedEntry)
-            actionRequested("copyClipboard", selectedEntry)
+            actionRequested("pasteClipboard", selectedEntry)
     }
 
     function openSelectedUrl() {
@@ -162,7 +162,7 @@ FocusScope {
                         event.accepted = true
                     }
                 }
-                onAccepted: root.copySelected()
+                onAccepted: root.pasteSelected()
                 onTextChanged: root.selectedIndex = 0
 
                 Text {
@@ -405,8 +405,8 @@ FocusScope {
                     onClicked: {
                         root.selectedIndex = resultRow.index
                         resultList.currentIndex = resultRow.index
+                        root.actionRequested("pasteClipboard", resultRow.modelData)
                     }
-                    onDoubleClicked: root.actionRequested("copyClipboard", resultRow.modelData)
                 }
             }
 
@@ -444,7 +444,7 @@ FocusScope {
             entry: root.selectedEntry
             source: root.source
             palette: root.palette
-            onCopyRequested: entry => root.actionRequested("copyClipboard", entry)
+            onPasteRequested: entry => root.actionRequested("pasteClipboard", entry)
             onOpenUrlRequested: url => root.actionRequested("openClipboardUrl", url)
         }
     }

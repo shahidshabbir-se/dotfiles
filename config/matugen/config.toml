@@ -32,10 +32,12 @@ post_hook = "pkill -SIGUSR2 waybar 2>/dev/null || true"
 [templates.quickshell-island-colors]
 input_path = "templates/quickshell-bar-colors.qml"
 output_path = "~/dotfiles/config/quickshell/island/MatugenColors.qml"
+post_hook = "touch $HOME/dotfiles/config/quickshell/island/shell.qml"
 
 [templates.quickshell-visualizer-colors]
 input_path = "templates/quickshell-bar-colors.qml"
 output_path = "~/dotfiles/config/quickshell/visualizer/configuration/MatugenColors.qml"
+post_hook = "touch $HOME/dotfiles/config/quickshell/visualizer/shell.qml"
 
 [templates.vicinae]
 input_path = "templates/vicinae.toml"

@@ -21,6 +21,8 @@ Scope {
     readonly property bool focusedWorkspaceFullscreen: Boolean(
         Hyprland.focusedWorkspace?.lastIpcObject?.hasfullscreen ?? false
     )
+    property bool pastePending: false
+    property string pasteTargetClass: ""
 
     function openMedia() {
         if (!mediaSource.available)
@@ -46,6 +48,20 @@ Scope {
         islandController.present("clipboard", {
             source: clipboardSource
         }, null)
+    }
+
+    function pasteClipboard(entry) {
+        pastePending = true
+        pasteTargetClass = focusRestorer.capturedAppClass
+        clipboardSource.copy(entry)
+        islandController.dismiss()
+    }
+
+    function pasteModifiers() {
+        const appClass = pasteTargetClass.toLowerCase()
+        return /ghostty|kitty|alacritty|foot|wezterm|konsole|gnome-terminal|gnome-console|blackbox|tilix|rio|xterm/.test(appClass)
+            ? "CTRL SHIFT"
+            : "CTRL"
     }
 
     IslandController {
@@ -169,6 +185,25 @@ Scope {
 
     ClipboardSource {
         id: clipboardSource
+
+        onCopyFinished: success => {
+            if (!root.pastePending)
+                return
+            root.pastePending = false
+            if (success)
+                pasteTimer.restart()
+            else
+                root.pasteTargetClass = ""
+        }
+    }
+
+    Timer {
+        id: pasteTimer
+        interval: 260
+        onTriggered: {
+            Hyprland.dispatch("sendshortcut " + root.pasteModifiers() + ",V,activewindow")
+            root.pasteTargetClass = ""
+        }
     }
 
     Variants {
@@ -200,6 +235,11 @@ Scope {
                 if (action === "copyClipboard") {
                     clipboardSource.copy(argument)
                     islandController.dismiss()
+                    return
+                }
+
+                if (action === "pasteClipboard") {
+                    root.pasteClipboard(argument)
                     return
                 }
 
