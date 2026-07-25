@@ -28,19 +28,22 @@ PanelWindow {
     WlrLayershell.keyboardFocus: controller.kind === "launcher"
             || controller.kind === "clipboard"
             || controller.kind === "media"
+            || controller.kind === "wifi"
         ? WlrKeyboardFocus.OnDemand
         : WlrKeyboardFocus.None
 
     HyprlandFocusGrab {
         active: (root.controller.kind === "media"
                 || root.controller.kind === "launcher"
-                || root.controller.kind === "clipboard")
+                || root.controller.kind === "clipboard"
+                || root.controller.kind === "wifi")
             && root.visible
         windows: [root]
         onCleared: {
             if (root.controller.kind === "media"
                     || root.controller.kind === "launcher"
-                    || root.controller.kind === "clipboard")
+                    || root.controller.kind === "clipboard"
+                    || root.controller.kind === "wifi")
                 root.controller.dismiss()
         }
     }

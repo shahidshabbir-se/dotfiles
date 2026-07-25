@@ -12,16 +12,21 @@ Scope {
     readonly property bool active: controller.kind === "media"
         || controller.kind === "launcher"
         || controller.kind === "clipboard"
+        || controller.kind === "wifi"
     readonly property real contentWidth: controller.kind === "launcher"
         ? Config.IslandConstants.launcherWidth
         : controller.kind === "clipboard"
             ? Config.IslandConstants.clipboardWidth
-            : Config.IslandConstants.mediaWidth
+            : controller.kind === "wifi"
+                ? Config.IslandConstants.wifiWidth
+                : Config.IslandConstants.mediaWidth
     readonly property real contentHeight: controller.kind === "launcher"
         ? Config.IslandConstants.launcherHeight
         : controller.kind === "clipboard"
             ? Config.IslandConstants.clipboardHeight
-            : Config.IslandConstants.mediaHeight
+            : controller.kind === "wifi"
+                ? Config.IslandConstants.wifiHeight
+                : Config.IslandConstants.mediaHeight
     readonly property real sideWidth: Math.max(
         0,
         (targetScreen.width - contentWidth) / 2

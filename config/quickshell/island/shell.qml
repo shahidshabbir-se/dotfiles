@@ -48,6 +48,13 @@ Scope {
         }, null)
     }
 
+    function openWifi() {
+        focusRestorer.capture()
+        islandController.present("wifi", {
+            source: wifiSource
+        }, null)
+    }
+
     function pasteClipboard(entry) {
         pastePending = true
         pasteTargetClass = focusRestorer.capturedAppClass
@@ -131,6 +138,22 @@ Scope {
         }
     }
 
+    IpcHandler {
+        target: "wifi"
+
+        function open(): void { root.openWifi() }
+        function close(): void {
+            if (islandController.kind === "wifi")
+                islandController.dismiss()
+        }
+        function toggle(): void {
+            if (islandController.kind === "wifi")
+                islandController.dismiss()
+            else
+                root.openWifi()
+        }
+    }
+
     MediaSource {
         id: mediaSource
 
@@ -184,6 +207,11 @@ Scope {
             else
                 root.pasteTargetClass = ""
         }
+    }
+
+    WifiSource {
+        id: wifiSource
+        active: islandController.kind === "wifi"
     }
 
     Timer {
