@@ -12,9 +12,6 @@
 #
 # Depends on: rofi, NetworkManager (nmcli), notify-send (optional)
 
-# shellcheck source=./_x11-wrapper.sh
-. "${0%/*}/_x11-wrapper.sh"
-
 # Theme — X11/Wayland variants
 if [ "$XDG_SESSION_TYPE" = "x11" ] || [ -z "$WAYLAND_DISPLAY" ]; then
 	THEME="$HOME/.config/rofi/wifi-x11.rasi"

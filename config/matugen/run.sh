@@ -7,8 +7,6 @@ IMAGE="${1:?usage: run.sh /path/to/wallpaper}"
 
 command -v matugen >/dev/null || exit 0
 
-mkdir -p "$HOME/.local/share/vicinae/themes"
-
 exec matugen image \
   --config "$CONFIG" \
   --source-color-index 0 \

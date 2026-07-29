@@ -24,13 +24,13 @@ let
   #   else
   #     pkgs.spotify;
 
-  spotifyWrapped = pkgs.spotify.overrideAttrs (old: {
-    buildInputs = (old.buildInputs or []) ++ [ pkgs.makeWrapper ];
-    postInstall = (old.postInstall or "") + ''
-      wrapProgram $out/bin/spotify \
-        --add-flags "--force-device-scale-factor=1.4"
-    '';
-  });
+  # spotifyWrapped = pkgs.spotify.overrideAttrs (old: {
+  #   buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+  #   postInstall = (old.postInstall or "") + ''
+  #     wrapProgram $out/bin/spotify \
+  #       --add-flags "--force-device-scale-factor=1.4"
+  #   '';
+  # });
 
   # Lucid ships its prebuilt theme in `remote/user.css` as a stub
   # that `@import`s the bundled CSS from a jsdelivr URL. The CDN URL
@@ -61,7 +61,7 @@ in
   # ▶ Enable Spicetify with Customizations
   # ───────────────────────────────────────────────
   enable = true;
-  spotifyPackage = spotifyWrapped;
+  spotifyPackage = pkgs.spotify;
 
   # ───────────────────────────────────────────────
   # ▶ Extensions

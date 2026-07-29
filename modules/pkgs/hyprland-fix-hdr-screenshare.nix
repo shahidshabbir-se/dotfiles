@@ -6,13 +6,13 @@
 }:
 hyprlandPlugins.mkHyprlandPlugin (_: {
   pluginName = "fix-hdr-screenshare";
-  version = "0.1";
+  version = "0.4";
 
   src = fetchFromGitHub {
     owner = "yayuuu";
     repo = "hyprland-fix-hdr-screenshare";
-    rev = "cd6a8fbae550a970420679b4b71bf6f79194bf76";
-    hash = "sha256-Nodgm1/BvDB/BQcvJY0+pm1IuMgnI3RdB11lNcBc7ok=";
+    rev = "dbce003830d18be5272c135cd00fa05976144cee";
+    hash = "sha256-t6Oe1vyegvE/4Un2QfXYC1Okb5v2X9W5IdKGz5slIDI=";
   };
 
   nativeBuildInputs = [ pkg-config ];
@@ -20,13 +20,12 @@ hyprlandPlugins.mkHyprlandPlugin (_: {
   buildPhase = "make";
   installPhase = ''
     runHook preInstall
-    mkdir -p "$out/lib"
-    cp fix-hdr-screenshare.so "$out/lib/"
+    install -Dm755 fix-hdr-screenshare.so "$out/lib/libfix-hdr-screenshare.so"
     runHook postInstall
   '';
 
   meta = {
-    description = "Hyprland HDR screenshare/screenshot workaround for 0.55";
+    description = "Hyprland HDR screenshare/screenshot workaround";
     homepage = "https://github.com/yayuuu/hyprland-fix-hdr-screenshare";
     license = lib.licenses.mit;
     platforms = lib.platforms.linux;

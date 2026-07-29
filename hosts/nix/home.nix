@@ -111,9 +111,9 @@ let
     inherit pkgs;
   };
 
-  zedPackage = import ../../modules/pkgs/zed.nix {
-    inherit pkgs lib;
-  };
+  # zedPackage = import ../../modules/pkgs/zed.nix {
+  #   inherit pkgs lib;
+  # };
 
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
@@ -138,24 +138,24 @@ let
   #   '';
   # };
 
-  vscodeFhs = pkgs.symlinkJoin {
-    name = "vscode-fhs";
-
-    paths = [
-      pkgs.vscode-fhs
-    ];
-
-    buildInputs = [
-      pkgs.makeWrapper
-    ];
-
-    postBuild = ''
-      wrapProgram $out/bin/code \
-        --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-        --add-flags "--force-color-profile=srgb" \
-        --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-    '';
-  };
+  # vscodeFhs = pkgs.symlinkJoin {
+  #   name = "vscode-fhs";
+  #
+  #   paths = [
+  #     pkgs.vscode-fhs
+  #   ];
+  #
+  #   buildInputs = [
+  #     pkgs.makeWrapper
+  #   ];
+  #
+  #   postBuild = ''
+  #     wrapProgram $out/bin/code \
+  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+  #       --add-flags "--force-color-profile=srgb" \
+  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+  #   '';
+  # };
 
   # ───────────────────────────────────────────────
   # ▶ Package Groups
@@ -166,19 +166,16 @@ let
     git-filter-repo
     gnumake
     python3
-    vscodeFhs
+    # vscodeFhs
   ];
 
   desktopPackages = with pkgs; [
-    anydesk
     brave
-    gnome-online-accounts-gtk
-    nautilus
     obsidian
     onlyoffice-desktopeditors
     proton-vpn
     qbittorrent
-    zedPackage
+    # zedPackage
     rustdesk-flutter
     zenBrowserPackage
     zenity
@@ -246,65 +243,6 @@ let
   mimeDefaultApplications =
     lib.genAttrs browserMimeTypes (_: [ apps.browserDesktopFile ])
     // lib.genAttrs imageMimeTypes (_: [ apps.imageViewerDesktopFile ]);
-
-  # ───────────────────────────────────────────────
-  # ▶ GNOME Keybindings
-  # ───────────────────────────────────────────────
-  gnomeKeybindingBase = "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings";
-
-  gnomeKeybindings = [
-    {
-      name = "Terminal";
-      binding = "<Super>Return";
-      command = "wezterm";
-    }
-    {
-      name = "Browser";
-      binding = "<Super>b";
-      command = apps.browser;
-    }
-    {
-      name = "VS Code";
-      binding = "<Super>x";
-      command = "code";
-    }
-    {
-      name = "Obsidian";
-      binding = "<Super>o";
-      command = "obsidian";
-    }
-    {
-      name = "Spotify";
-      binding = "<Super>m";
-      command = "spotify";
-    }
-    {
-      name = "System Monitor";
-      binding = "<Ctrl><Shift>Escape";
-      command = "ghostty -e btop";
-    }
-    {
-      name = "Bluetooth";
-      binding = "<Alt><Shift>b";
-      command = "${dotfilesDirectory}/config/rofi/bluetooth-launch.sh";
-    }
-    {
-      name = "WiFi";
-      binding = "<Alt><Shift>n";
-      command = "${dotfilesDirectory}/config/rofi/wifi-launch.sh";
-    }
-  ];
-
-  gnomeKeybindingPaths = lib.imap0 (
-    index: _: "${gnomeKeybindingBase}/custom${toString index}/"
-  ) gnomeKeybindings;
-
-  gnomeKeybindingSettings = lib.listToAttrs (
-    lib.imap0 (index: keybinding: {
-      name = "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom${toString index}";
-      value = keybinding;
-    }) gnomeKeybindings
-  );
 
   # ───────────────────────────────────────────────
   # ▶ Activation Scripts
@@ -393,6 +331,7 @@ in
     stateVersion = "26.05";
 
     pointerCursor = {
+      enable = true;
       x11.enable = true;
       gtk.enable = true;
 
@@ -461,7 +400,7 @@ in
       yazi.source = dotfileLink "config/yazi";
       eww.source = dotfileLink "config/eww";
       rofi.source = dotfileLink "config/rofi";
-      zed.source = dotfileLink "config/zed";
+      # zed.source = dotfileLink "config/zed";
 
       # "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
     };
@@ -528,114 +467,8 @@ in
     };
   };
 
-  # ───────────────────────────────────────────────
-  # ▶ Services
-  # ───────────────────────────────────────────────
-  services.vicinae = {
-    enable = true;
-
-    systemd = {
-      enable = true;
-      autoStart = true;
-      environment = {
-        USE_LAYER_SHELL = 1;
-      };
-    };
-
-    extensions = with inputs.vicinae-extensions.packages.${system}; [
-      awww-switcher
-      bluetooth
-      nix
-      port-killer
-      power-profile
-      process-manager
-      wifi-commander
-    ];
-
-    settings = {
-      close_on_focus_loss = true;
-      consider_preedit = true;
-      pop_to_root_on_close = true;
-      favicon_service = "twenty";
-      search_files_in_root = true;
-
-      font.normal = {
-        size = 10.5;
-        family = "Outfit";
-      };
-
-      launcher_window.opacity = 0.7;
-
-      theme.dark = {
-        name = "matugen";
-        icon_theme = "Papirus-Dark";
-      };
-
-      providers."@sovereign/vicinae-extension-awww-switcher-0".preferences = {
-        wallpaperPath = "${homeDirectory}/Pictures/Wallpapers";
-        colorGenTool = "none";
-        postCommand = "${homeDirectory}/dotfiles/config/matugen/run.sh \"\${wallpaper}\"";
-      };
-    };
-  };
-
-  # Vicinae needs the live Hyprland/Wayland environment. If it starts before
-  # graphical-session.target has the compositor env, it exits with a broken
-  # Wayland connection and stays dead at login.
-  systemd.user.services.vicinae = {
-    Unit = {
-      After = lib.mkForce [ "default.target" ];
-      PartOf = lib.mkForce [ ];
-    };
-
-    Service = {
-      Environment = [
-        "QT_QPA_PLATFORM=wayland"
-        "XDG_CURRENT_DESKTOP=Hyprland"
-        "XDG_SESSION_TYPE=wayland"
-      ];
-      Restart = lib.mkForce "always";
-      RestartSec = lib.mkForce 5;
-    };
-
-    Install.WantedBy = lib.mkForce [ "default.target" ];
-  };
-
-  # ───────────────────────────────────────────────
-  # ▶ GNOME / dconf
-  # ───────────────────────────────────────────────
-  dconf.settings = {
-    "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
-
-      gtk-theme = theme.gtk;
-      icon-theme = theme.icons;
-
-      cursor-theme = cursor.name;
-      cursor-size = cursor.size;
-
-      font-name = theme.font;
-      document-font-name = theme.font;
-      monospace-font-name = theme.monospaceFont;
-    };
-
-    "org/gnome/mutter" = {
-      experimental-features = [
-        "scale-monitor-framebuffer"
-        "xwayland-native-scaling"
-      ];
-    };
-
-    "org/gnome/desktop/default-applications/terminal" = {
-      exec = "wezterm";
-      exec-arg = "-e";
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys" = {
-      custom-keybindings = gnomeKeybindingPaths;
-    };
-  }
-  // gnomeKeybindingSettings;
+  # Libadwaita and GTK applications use this preference for dark mode.
+  dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
   # ───────────────────────────────────────────────
   # ▶ GTK

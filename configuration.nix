@@ -30,26 +30,42 @@ let
       mkdir -p $out/share/sddm/themes/sword
       cp -r $src/themes/sword/. $out/share/sddm/themes/sword/
 
-      # Default to Hyprland in the greeter UI (GNOME is first alphabetically).
+      # The session delegate is briefly null while SDDM populates the model.
       substituteInPlace $out/share/sddm/themes/sword/Main.qml \
-        --replace 'Component.onCompleted: { fadeAnim.start(); keyboard.numLock = true }' \
-        'Component.onCompleted: {\
-            fadeAnim.start();\
-            keyboard.numLock = true;\
-            if (typeof sessionModel !== "undefined") {\
-                for (var i = 0; i < sessionModel.rowCount(); i++) {\
-                    var label = sessionModel.data(sessionModel.index(i, 0), 0x101).toString().toLowerCase();\
-                    if (label.indexOf("hyprland") !== -1 && label.indexOf("uwsm") === -1) {\
-                        root.sessionIndex = i;\
-                        break;\
-                    }\
-                }\
-            }\
-        }'
+        --replace-fail \
+          'sessionHelper.currentItem.sName' \
+          '(sessionHelper.currentItem ? sessionHelper.currentItem.sName : "Session")'
     '';
   };
 
   bananaCursor = import ./modules/banana-cursor.nix { inherit pkgs; };
+
+  nautilusMyComputerSrc = pkgs.fetchFromGitHub {
+    owner = "yannmasoch";
+    repo = "nautilus-my-computer";
+    rev = "2bd87ec737798152de9ec5263f5a569f51d6092c";
+    hash = "sha256-vzT2zZrexBJJj5fIvZ+Hm0DsYP6p4N3GsqvbFHJ77h8=";
+  };
+
+  nautilusMyComputer =
+    (pkgs.callPackage "${nautilusMyComputerSrc}/packaging/nix/package.nix" {
+      src = nautilusMyComputerSrc;
+    }).overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        substituteInPlace nautilus-my-computer.py \
+          --replace-fail \
+            'sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))' \
+            'sys.path.insert(0, "${pkgs.python3Packages.pycairo}/${pkgs.python3.sitePackages}")
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))'
+
+        substituteInPlace nautilus_my_computer/main.py \
+          --replace-fail \
+            '        wrapper.append(native_listbox)' \
+            '        if native_listbox.get_parent() is not None:
+                    native_listbox.unparent()
+                wrapper.append(native_listbox)'
+      '';
+    });
 
 in
 
@@ -60,9 +76,6 @@ in
   ];
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = [
-    "libsoup-2.74.3"
-  ];
   programs = {
     # configuration.nix
     localsend = {
@@ -101,7 +114,7 @@ in
 
       enable = true;
 
-      # i3 (X11 session) — disabled in favor of GNOME
+      # i3 (X11 session) — disabled in favor of Hyprland
       # windowManager.i3 = {
       #   enable = true;
       #   extraPackages = with pkgs; [
@@ -123,9 +136,6 @@ in
       #   ];
       # };
     };
-    # GNOME desktop environment
-    desktopManager.gnome.enable = true;
-
     openssh.enable = true;
     tailscale.enable = true;
 
@@ -153,7 +163,6 @@ in
 
     tumbler.enable = true;
     gvfs.enable = true;
-    gnome.gnome-online-accounts.enable = true;
     blueman.enable = true;
     power-profiles-daemon.enable = true;
     pulseaudio.enable = false;
@@ -434,6 +443,8 @@ in
     mangohud
     sddmQylockSword
     bananaCursor
+    nautilus-python
+    nautilusMyComputer
 
     # 32-bit Windows runtime libs required by wine/Proton (vulkan, opengl, gnutls, alsa).
     # Without these lutris fails with "libGL.so.1 missing" / "libvulkan.so.1 missing"
@@ -443,8 +454,8 @@ in
     pkgsi686Linux.gnutls
     pkgsi686Linux.alsa-lib
     pkgsi686Linux.freetype
-    pkgsi686Linux.glib
-    pkgsi686Linux.dbus
+    pkgsi686Linux.glib.out
+    pkgsi686Linux.dbus.lib
 
     # Bubblewrap is invoked by pressure-vessel/umu under GE-Proton.
     bubblewrap
@@ -534,6 +545,8 @@ in
     ];
   };
 
+  # Freedesktop Secret Service backend used by Doppler and other CLI tools.
+  # This enables only the keyring daemon, not the GNOME desktop environment.
   services.gnome.gnome-keyring.enable = true;
 
   security = {
@@ -560,8 +573,6 @@ in
         "nix-command"
         "flakes"
       ];
-      extra-substituters = [ "https://vicinae.cachix.org" ];
-      extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
     };
   };
 

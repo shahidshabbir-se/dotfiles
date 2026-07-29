@@ -57,9 +57,9 @@ with pkgs;
   moreutils
   ncdu
   pandoc
-  (texlive.combine {
-    inherit (texlive) scheme-medium collection-latexextra;
-  })
+  (texliveMedium.withPackages (
+    ps: with ps; [ collection-latexextra ]
+  ))
   onefetch
   fastfetch
   ripgrep

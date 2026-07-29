@@ -13,7 +13,6 @@ Scope {
 
     signal toggleMusicPlayer()
     signal toggleNotifications()
-    signal toggleLauncher()
     signal toggleDateTime()
     signal togglePowerProfile()
 
@@ -87,10 +86,6 @@ Scope {
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 12
 
-                        Widgets.LauncherButton {
-                            onTogglePopup: root.toggleLauncher()
-                        }
-                        Widgets.BarSeparator {}
                         Widgets.ActiveWindow {}
                     }
 

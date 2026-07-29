@@ -27,13 +27,6 @@
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
-    vicinae.url = "github:vicinaehq/vicinae";
-
-    vicinae-extensions = {
-      url = "github:vicinaehq/extensions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # macOS
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
@@ -55,7 +48,6 @@
       nix-darwin,
       nix-homebrew,
       zen-browser,
-      vicinae,
       ...
     }:
     let
@@ -225,13 +217,11 @@
             hardwareConfig
             ./configuration.nix
 
-            vicinae.nixosModules.default
             home-manager.nixosModules.home-manager
 
             (mkHomeManagerConfig {
               inherit device;
               homeFile = ./hosts/nix/home.nix;
-              extraSharedModules = [ vicinae.homeManagerModules.default ];
             })
           ];
         };

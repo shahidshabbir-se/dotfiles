@@ -11,9 +11,6 @@ if pgrep -x rofi >/dev/null 2>&1; then
 	exit 0
 fi
 
-# shellcheck source=./_x11-wrapper.sh
-. "${0%/*}/_x11-wrapper.sh"
-
 copy_to_clipboard() {
 	if [ -n "${WAYLAND_DISPLAY:-}" ]; then
 		wl-copy
