@@ -62,12 +62,6 @@ Scope {
         dateTimeOpen = true
     }
 
-    function toggleLauncher() {
-        closeAllPopups()
-        vicinaeLauncherProcess.running = false
-        vicinaeLauncherProcess.running = true
-    }
-
     function toggleVolumePopup() {
         if (volumePopupOpen) {
             volumePopupOpen = false
@@ -175,19 +169,12 @@ Scope {
         }
     }
 
-    Process {
-        id: vicinaeLauncherProcess
-        running: false
-        command: ["vicinae", "toggle"]
-    }
-
     Bar {
         id: bar
         barVisible: root.barVisible
         notificationUnreadCount: notificationCenter.unreadCount
         onToggleMusicPlayer: root.toggleMusicPlayer()
         onToggleNotifications: root.toggleNotifications()
-        onToggleLauncher: root.toggleLauncher()
         onToggleDateTime: root.toggleDateTime()
         onTogglePowerProfile: root.togglePowerProfile()
     }

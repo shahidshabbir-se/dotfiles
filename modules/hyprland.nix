@@ -37,7 +37,6 @@ let
   layerRuleNamespaces = [
     "logout_dialog"
     "wlogout"
-    "vicinae"
     "quickshell"
     "quickshell_island"
   ];
@@ -46,7 +45,6 @@ let
   layerRuleNoAnimNamespaces = [
     "logout_dialog"
     "wlogout"
-    "vicinae"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
@@ -127,6 +125,19 @@ let
   # Hyprland 0.55 HDR screencopy regression: grim returns empty frames.
   # https://github.com/hyprwm/Hyprland/discussions/14931
   fixHdrScreensharePlugin = pkgs.callPackage ./pkgs/hyprland-fix-hdr-screenshare.nix { };
+
+  nautilusDesktopWithExtensions = pkgs.runCommand "nautilus-desktop-with-extensions" { } ''
+    mkdir -p "$out/share/applications"
+    substitute ${pkgs.nautilus}/share/applications/org.gnome.Nautilus.desktop \
+      "$out/share/applications/org.gnome.Nautilus.desktop" \
+      --replace-fail 'DBusActivatable=true' 'DBusActivatable=false' \
+      --replace-fail \
+        'Exec=nautilus --new-window %U' \
+        'Exec=env NAUTILUS_4_EXTENSION_DIR=/run/current-system/sw/lib/nautilus/extensions-4 nautilus --new-window %U' \
+      --replace-fail \
+        'Exec=nautilus --new-window' \
+        'Exec=env NAUTILUS_4_EXTENSION_DIR=/run/current-system/sw/lib/nautilus/extensions-4 nautilus --new-window'
+  '';
 in
 {
   # ───────────────────────────────────────────────
@@ -168,6 +179,9 @@ in
     kdePackages.qt5compat
     kdePackages.qtmultimedia
   ];
+
+  xdg.dataFile."applications/org.gnome.Nautilus.desktop".source =
+    "${nautilusDesktopWithExtensions}/share/applications/org.gnome.Nautilus.desktop";
 
   xdg.configFile = {
     "quickshell/island".source =
@@ -224,7 +238,7 @@ in
       ];
 
       exec-once = [
-        "${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM && ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM && ${pkgs.systemd}/bin/systemctl --user restart vicinae.service"
+        "${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM NAUTILUS_4_EXTENSION_DIR && ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM NAUTILUS_4_EXTENSION_DIR"
         "pkill -x dunst 2>/dev/null || true"
         "pkill -x swaync 2>/dev/null || true"
         "pkill -x glava 2>/dev/null || true"
@@ -261,6 +275,7 @@ in
         "TERMINAL,wezterm"
         "BROWSER,${browser}"
         "EDITOR,nvim"
+        "NAUTILUS_4_EXTENSION_DIR,/run/current-system/sw/lib/nautilus/extensions-4"
         # HDR + cm: force sRGB in apps; WaylandLinuxDrmSyncobj stops NVIDIA Electron flicker.
         "CHROMIUM_FLAGS,${chromiumHdrFlags}"
         "CHROMIUM_USER_FLAGS,${chromiumHdrFlags}"
@@ -383,12 +398,12 @@ in
         "$mod, Return, exec, hyprctl dispatch workspace 1 && $terminal"
         "$mod, Q, killactive,"
         "$mod, E, exec, $fileManager"
-        "$mod SHIFT, E, exec, nautilus"
+        "$mod SHIFT, E, exec, env NAUTILUS_4_EXTENSION_DIR=/run/current-system/sw/lib/nautilus/extensions-4 nautilus"
         "CTRL_SHIFT, ESCAPE, exec, ghostty --title=btop -e btop"
         "$mod, B, exec, hyprctl dispatch workspace 2 && $browser"
         "$mod CTRL, B, exec, hyprctl dispatch workspace 5 && brave ${chromiumHdrFlags}"
         "$mod SHIFT, B, exec, hyprctl dispatch workspace 5 && $browser --private-window"
-        "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
+        # "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
         # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
         "$mod, O, exec, obsidian"
         "$mod + alt, p, exec, shutdown -h 0"
@@ -409,7 +424,7 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "ALT SHIFT, B, exec, quickshell -p ${homeDirectory}/dotfiles/config/quickshell/island ipc call bluetooth toggle"
+        "ALT SHIFT, B, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call bluetooth toggle"
         "ALT SHIFT, N, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call wifi toggle"
         "ALT SHIFT, W, exec, quickshell --no-duplicate -p ${homeDirectory}/.config/quickshell/wallpaper"
         "ALT SHIFT, P, exec, $powerMenu"
