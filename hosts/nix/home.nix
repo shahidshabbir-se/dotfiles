@@ -111,6 +111,10 @@ let
     inherit pkgs;
   };
 
+  # t3codePackage = import ../../modules/pkgs/t3code.nix {
+  #   inherit pkgs lib;
+  # };
+
   # zedPackage = import ../../modules/pkgs/zed.nix {
   #   inherit pkgs lib;
   # };
@@ -177,6 +181,7 @@ let
     qbittorrent
     # zedPackage
     rustdesk-flutter
+    # t3codePackage
     zenBrowserPackage
     zenity
   ];

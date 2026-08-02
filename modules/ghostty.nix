@@ -57,7 +57,7 @@ in
     # Window
     window-inherit-working-directory = true;
     window-inherit-font-size = false;
-    background-opacity = 0.95;
+    background-opacity = 0.98;
     # background-opacity = 1.0;
     window-decoration = false;
     window-padding-x = 6;
