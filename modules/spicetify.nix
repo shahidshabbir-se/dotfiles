@@ -24,27 +24,6 @@ let
   #   else
   #     pkgs.spotify;
 
-  # Hyprland HDR/color management makes Electron applications render dim
-  # unless these flags are passed.
-  spotifyWrapped =
-    (pkgs.symlinkJoin {
-      name = "spotify-hdr-workaround";
-
-      paths = [ pkgs.spotify ];
-
-      buildInputs = [ pkgs.makeWrapper ];
-
-      postBuild = ''
-        wrapProgram $out/bin/spotify \
-          --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-          --add-flags "--force-color-profile=srgb" \
-          --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-      '';
-    })
-    // {
-      inherit (pkgs.spotify) pname version;
-    };
-
   # Lucid ships its prebuilt theme in `remote/user.css` as a stub
   # that `@import`s the bundled CSS from a jsdelivr URL. The CDN URL
   # is stale, so we fetch the actual built artifacts straight from
@@ -74,7 +53,16 @@ in
   # ▶ Enable Spicetify with Customizations
   # ───────────────────────────────────────────────
   enable = true;
-  spotifyPackage = spotifyWrapped;
+  spotifyPackage = pkgs.spotify;
+
+  # Hyprland HDR/color management makes Electron applications render dim.
+  # Use spicetify-nix's launch flag option so the flags are applied to the
+  # final spiced Spotify package without replacing its derivation.
+  spotifyLaunchFlags = pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+    --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
+    --force-color-profile=srgb
+    --enable-features=WaylandLinuxDrmSyncobj
+  '';
 
   # ───────────────────────────────────────────────
   # ▶ Extensions
@@ -90,6 +78,7 @@ in
   # ▶ Custom Apps
   # ───────────────────────────────────────────────
   enabledCustomApps = with spicePkgs.apps; [
+    marketplace
     newReleases
     ncsVisualizer
   ];
