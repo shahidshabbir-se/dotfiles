@@ -24,13 +24,26 @@ let
   #   else
   #     pkgs.spotify;
 
-  # spotifyWrapped = pkgs.spotify.overrideAttrs (old: {
-  #   buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.makeWrapper ];
-  #   postInstall = (old.postInstall or "") + ''
-  #     wrapProgram $out/bin/spotify \
-  #       --add-flags "--force-device-scale-factor=1.4"
-  #   '';
-  # });
+  # Hyprland HDR/color management makes Electron applications render dim
+  # unless these flags are passed.
+  spotifyWrapped =
+    (pkgs.symlinkJoin {
+      name = "spotify-hdr-workaround";
+
+      paths = [ pkgs.spotify ];
+
+      buildInputs = [ pkgs.makeWrapper ];
+
+      postBuild = ''
+        wrapProgram $out/bin/spotify \
+          --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+          --add-flags "--force-color-profile=srgb" \
+          --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+      '';
+    })
+    // {
+      inherit (pkgs.spotify) pname version;
+    };
 
   # Lucid ships its prebuilt theme in `remote/user.css` as a stub
   # that `@import`s the bundled CSS from a jsdelivr URL. The CDN URL
@@ -61,7 +74,7 @@ in
   # ▶ Enable Spicetify with Customizations
   # ───────────────────────────────────────────────
   enable = true;
-  spotifyPackage = pkgs.spotify;
+  spotifyPackage = spotifyWrapped;
 
   # ───────────────────────────────────────────────
   # ▶ Extensions

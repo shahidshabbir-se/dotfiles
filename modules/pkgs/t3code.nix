@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.0.21";
+  version = "0.0.31";
   pname = "t3code";
 
   desktopEntry = pkgs.writeText "t3code.desktop" ''
@@ -28,7 +28,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
-    sha256 = "sha256-eQCfskpl+JJOyaYY7ogYCi0ZCuWNRcEpseWMniS/LCQ=";
+    sha256 = "sha256-AqTkoSKeQwmql3L9F5SbD1XyqeFyqe11ciq9Tp04Zyw=";
     name = "t3code-${version}.AppImage";
   };
 
@@ -65,20 +65,20 @@ pkgs.stdenv.mkDerivation {
     nss
     pango
     systemd
-    xorg.libX11
-    xorg.libxcb
-    xorg.libXcomposite
-    xorg.libXcursor
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXi
-    xorg.libXrandr
-    xorg.libXrender
-    xorg.libXScrnSaver
-    xorg.libxshmfence
-    xorg.libXtst
-    xorg.libxkbfile
+    libx11
+    libxcb
+    libxcomposite
+    libxcursor
+    libxdamage
+    libxext
+    libxfixes
+    libxi
+    libxrandr
+    libxrender
+    libxscrnsaver
+    libxshmfence
+    libxtst
+    libxkbfile
     zlib
   ];
 
@@ -115,7 +115,10 @@ pkgs.stdenv.mkDerivation {
 
     # Icon
     mkdir -p $out/share/pixmaps
-    cp $out/opt/t3code/usr/share/icons/hicolor/1024x1024/apps/t3code.png $out/share/pixmaps/t3code.png
+    icon=$(find $out/opt/t3code -type f -name t3code.png -print -quit)
+    if [ -n "$icon" ]; then
+      cp "$icon" $out/share/pixmaps/t3code.png
+    fi
 
     runHook postInstall
   '';
