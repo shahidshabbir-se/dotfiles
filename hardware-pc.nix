@@ -48,7 +48,7 @@
 
   fileSystems."/home/shahid/Storage" = {
     device = "/dev/disk/by-id/nvme-eui.e8238fa6bf530001001b448b423c59f6-part3";
-    fsType = "ntfs-3g";
+    fsType = "ntfs3";
     options = [
       "uid=1000"
       "gid=100"
