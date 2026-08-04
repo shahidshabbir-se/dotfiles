@@ -177,7 +177,7 @@ FocusScope {
             }
             width: 38
             height: 38
-            radius: 12
+            radius: Config.Radius.lg
             color: root.source?.enabled
                 ? root.palette.primaryContainer
                 : root.palette.surfaceContainerHigh
@@ -239,7 +239,7 @@ FocusScope {
             }
             width: 36
             height: 36
-            radius: 11
+            radius: Config.Radius.lg
             color: refreshMouse.containsMouse
                 ? root.palette.surfaceContainerHighest
                 : root.palette.surfaceContainerHigh
@@ -271,7 +271,7 @@ FocusScope {
             }
             width: 44
             height: 24
-            radius: height / 2
+            radius: Config.Radius.capsule(height)
             color: root.source?.enabled
                 ? root.palette.primary
                 : root.palette.surfaceContainerHighest
@@ -280,7 +280,7 @@ FocusScope {
             Rectangle {
                 width: 18
                 height: 18
-                radius: width / 2
+                radius: Config.Radius.circle(width)
                 x: root.source?.enabled ? parent.width - width - 3 : 3
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.source?.enabled
@@ -317,7 +317,7 @@ FocusScope {
         keyNavigationWraps: false
 
         highlight: Rectangle {
-            radius: 12
+            radius: Config.Radius.lg
             color: root.palette.primaryContainer
         }
         highlightMoveDuration: 100
@@ -348,7 +348,7 @@ FocusScope {
                 }
                 width: 34
                 height: 34
-                radius: 10
+                radius: Config.Radius.lg
                 color: root.palette.surfaceContainerHigh
 
                 IconImage {

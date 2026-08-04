@@ -293,22 +293,26 @@ in
       general = {
         gaps_in = 5;
         gaps_out = 10;
-        border_size = 0;
+        border_size = 1;
+
+        "col.active_border" = "rgba(ffffff35)";
+        "col.inactive_border" = "rgba(ffffff10)";
         resize_on_border = true;
         allow_tearing = false;
         layout = "dwindle";
       };
 
       decoration = {
-        rounding = 28;
-        active_opacity = 0.96;
-        inactive_opacity = 0.92;
+        rounding = 12;
+
+        active_opacity = 1.0;
+        inactive_opacity = 1.00;
 
         shadow = {
           enabled = true;
-          range = 4;
+          range = 8;
           render_power = 3;
-          color = "rgba(1a1a1aee)";
+          color = "rgba(1a1a1acc)";
         };
 
         blur = {

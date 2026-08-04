@@ -150,7 +150,7 @@ Item {
                 maskSource: Rectangle {
                     width: roundedImagePreview.width
                     height: roundedImagePreview.height
-                    radius: 12
+                    radius: Config.Radius.lg
                 }
             }
 
@@ -188,7 +188,7 @@ Item {
                     anchors.centerIn: parent
                     width: Math.min(104, parent.height - 4)
                     height: width
-                    radius: width / 2
+                    radius: Config.Radius.circle(width)
                     color: root.swatchColor
                     border.width: 4
                     border.color: root.palette.outline
@@ -231,7 +231,7 @@ Item {
                         maskSource: Rectangle {
                             width: roundedLinkFavicon.width
                             height: roundedLinkFavicon.height
-                            radius: 7
+                            radius: Config.Radius.md
                         }
                     }
 
@@ -305,7 +305,7 @@ Item {
             bottom: parent.bottom
         }
         height: 27
-        radius: 8
+        radius: Config.Radius.md
         color: root.palette.surfaceContainerHigh
 
         Text {

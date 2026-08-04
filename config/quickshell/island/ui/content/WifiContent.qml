@@ -245,7 +245,7 @@ FocusScope {
             }
             width: 38
             height: 38
-            radius: 12
+            radius: Config.Radius.lg
             color: root.source?.enabled
                 ? root.palette.primaryContainer
                 : root.palette.surfaceContainerHigh
@@ -304,7 +304,7 @@ FocusScope {
             }
             width: 36
             height: 36
-            radius: 11
+            radius: Config.Radius.lg
             color: refreshMouse.containsMouse
                 ? root.palette.surfaceContainerHighest
                 : root.palette.surfaceContainerHigh
@@ -336,7 +336,7 @@ FocusScope {
             }
             width: 44
             height: 24
-            radius: height / 2
+            radius: Config.Radius.capsule(height)
             color: root.source?.enabled
                 ? root.palette.primary
                 : root.palette.surfaceContainerHighest
@@ -345,7 +345,7 @@ FocusScope {
             Rectangle {
                 width: 18
                 height: 18
-                radius: width / 2
+                radius: Config.Radius.circle(width)
                 x: root.source?.enabled ? parent.width - width - 3 : 3
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.source?.enabled
@@ -374,7 +374,7 @@ FocusScope {
         }
         visible: root.statusMessage.length > 0
         height: visible ? 28 : 0
-        radius: 9
+        radius: Config.Radius.md
         color: root.palette.errorContainer
 
         Text {
@@ -404,7 +404,7 @@ FocusScope {
         }
         visible: root.passwordNetwork !== null
         height: visible ? 48 : 0
-        radius: 12
+        radius: Config.Radius.lg
         color: root.palette.surfaceContainerHigh
 
         TextInput {
@@ -474,7 +474,7 @@ FocusScope {
             }
             width: 68
             height: 36
-            radius: 10
+            radius: Config.Radius.lg
             color: root.palette.primary
 
             Text {
@@ -513,7 +513,7 @@ FocusScope {
         boundsBehavior: Flickable.StopAtBounds
 
         highlight: Rectangle {
-            radius: 12
+            radius: Config.Radius.lg
             color: root.palette.primaryContainer
         }
         highlightMoveDuration: 100
@@ -554,7 +554,7 @@ FocusScope {
                             width: 3
                             height: 5 + index * 4
                             anchors.bottom: parent.bottom
-                            radius: 2
+                            radius: Config.Radius.xs
                             color: networkRow.modelData.signalStrength >= (index + 1) * 0.2
                                 ? root.palette.surfaceForeground
                                 : root.palette.outlineVariant
