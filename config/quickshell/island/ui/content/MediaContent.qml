@@ -170,7 +170,7 @@ FocusScope {
                 width: 8
                 height: root.contentModel?.playing ? 10 + ((index * 7) % 20) : 5
                 anchors.bottom: parent.bottom
-                radius: 4
+                radius: Config.Radius.sm
                 color: root.palette.primary
 
                 SequentialAnimation on height {
@@ -209,20 +209,20 @@ FocusScope {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width
                 height: Config.IslandConstants.mediaProgressHeight
-                radius: 2
+                radius: Config.Radius.xs
                 color: root.palette.surfaceContainerHighest
             }
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width * root.displayProgress
                 height: Config.IslandConstants.mediaProgressHeight
-                radius: 2
+                radius: Config.Radius.xs
                 color: root.palette.primary
             }
             Rectangle {
                 width: Config.IslandConstants.mediaProgressThumbSize
                 height: width
-                radius: width / 2
+                radius: Config.Radius.circle(width)
                 x: Math.max(0, Math.min(
                     parent.width - width,
                     parent.width * root.displayProgress - width / 2
@@ -301,7 +301,7 @@ FocusScope {
 
         width: prominent ? 34 : 28
         height: width
-        radius: width / 2
+        radius: Config.Radius.circle(width)
         color: prominent ? root.palette.primaryContainer : "transparent"
 
         Text {

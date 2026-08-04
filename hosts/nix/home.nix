@@ -121,6 +121,8 @@ let
 
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
+  codexCliPackage = inputs.codex-cli-nix.packages.${system}.default;
+
   # Hyprland HDR/color management makes Electron apps render dim unless these
   # flags are passed.
   # codeCursorFhs = pkgs.symlinkJoin {
@@ -166,6 +168,7 @@ let
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
     # codeCursorFhs
+    codexCliPackage
     gcc
     git-filter-repo
     gnumake
@@ -461,6 +464,29 @@ in
 
     spicetify = import ../../modules/spicetify.nix {
       inherit inputs lib pkgs;
+    };
+
+    codexDesktopLinux = {
+      enable = true;
+      cliPackage = codexCliPackage;
+
+      linuxFeatures = [
+        "codex-wrapper-updater"
+        "directory-only-working-tree-watch"
+        "frameless-titlebar"
+        "mcp-helper-reaper"
+        "node-repl-reaper"
+        "open-target-discovery"
+        "persistent-status-panel"
+        "remote-control-ui"
+        "remote-mobile-control"
+        "ui-tweaks"
+      ];
+
+      remoteControl = {
+        enable = true;
+        package = codexCliPackage;
+      };
     };
 
     ghostty = import ../../modules/ghostty.nix {

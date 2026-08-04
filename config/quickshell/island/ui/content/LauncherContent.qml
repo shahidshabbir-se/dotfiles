@@ -95,7 +95,7 @@ FocusScope {
             margins: Config.IslandConstants.launcherPadding
         }
         height: Config.IslandConstants.launcherSearchHeight
-        radius: height / 2
+        radius: Config.Radius.capsule(height)
         color: root.palette.surfaceContainerHigh
 
         Text {
@@ -176,7 +176,7 @@ FocusScope {
         keyNavigationWraps: false
 
         highlight: Rectangle {
-            radius: 12
+            radius: Config.Radius.lg
             color: root.palette.primaryContainer
         }
         highlightMoveDuration: 100

@@ -2,8 +2,8 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    readonly property string textFontFamily: "Geist"
-    readonly property string monoFontFamily: "Geist Mono"
+    readonly property string textFontFamily: "Inter"
+    readonly property string monoFontFamily: "JetBrainsMono Nerd Font"
     readonly property string iconFontFamily: "Symbols Nerd Font Mono"
     readonly property string timeFormat: "h:mm AP"
     readonly property string workspaceReserveText: "Workspace 10"
@@ -25,7 +25,6 @@ QtObject {
     readonly property int capsuleMaximumWidth: 520
     readonly property int capsuleMorphDuration: 400
     readonly property int capsuleRevealDuration: 160
-    readonly property int capsuleLargeRadius: 28
     readonly property int capsuleCompactHeightLimit: 68
     readonly property real capsuleBackgroundOpacity: 0.64
 

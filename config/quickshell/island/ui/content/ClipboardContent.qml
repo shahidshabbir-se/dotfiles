@@ -101,7 +101,7 @@ FocusScope {
         Rectangle {
             width: parent.width - typeFilterButton.width - parent.spacing
             height: parent.height
-            radius: height / 2
+            radius: Config.Radius.capsule(height)
             color: root.palette.surfaceContainerHigh
 
             Text {
@@ -193,7 +193,7 @@ FocusScope {
             id: typeFilterButton
             width: 92
             height: parent.height
-            radius: height / 2
+            radius: Config.Radius.capsule(height)
             color: root.palette.surfaceContainerHigh
 
             Text {
@@ -237,7 +237,7 @@ FocusScope {
             keyNavigationWraps: false
 
             highlight: Rectangle {
-                radius: 10
+                radius: Config.Radius.lg
                 color: root.palette.primaryContainer
             }
             highlightMoveDuration: 100
@@ -282,7 +282,7 @@ FocusScope {
                             maskSource: Rectangle {
                                 width: roundedThumbnail.width
                                 height: roundedThumbnail.height
-                                radius: 7
+                                radius: Config.Radius.md
                             }
                         }
 
@@ -301,7 +301,7 @@ FocusScope {
                         visible: resultRow.type === "Color"
                         width: 20
                         height: 20
-                        radius: width / 2
+                        radius: Config.Radius.circle(width)
                         color: previewPane.parseColor(resultRow.modelData.preview)
                         border.width: 3
                         border.color: root.palette.outline
@@ -310,7 +310,7 @@ FocusScope {
                     Rectangle {
                         anchors.fill: parent
                         visible: resultRow.type === "Text"
-                        radius: 7
+                        radius: Config.Radius.md
                         color: root.palette.surfaceContainerHigh
                     }
 
@@ -325,7 +325,7 @@ FocusScope {
                             maskSource: Rectangle {
                                 width: roundedFavicon.width
                                 height: roundedFavicon.height
-                                radius: 6
+                                radius: Config.Radius.md
                             }
                         }
 

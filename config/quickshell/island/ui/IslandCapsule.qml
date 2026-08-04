@@ -27,8 +27,8 @@ Rectangle {
     width: Math.min(maximumWidth, desiredWidth)
     height: desiredHeight
     radius: height <= Config.IslandConstants.capsuleCompactHeightLimit
-        ? height / 2
-        : Config.IslandConstants.capsuleLargeRadius
+        ? Config.Radius.capsule(height)
+        : Config.Radius.lg
     clip: true
     opacity: revealed ? 1 : 0
     color: {
