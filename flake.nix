@@ -25,23 +25,23 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    flake-utils.url = "github:numtide/flake-utils";
-
-    codex-desktop-linux = {
-      url = "github:ilysenko/codex-desktop-linux";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
-
-    codex-cli-nix = {
-      url = "github:sadjow/codex-cli-nix/main";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
+    # flake-utils.url = "github:numtide/flake-utils";
+    #
+    # codex-desktop-linux = {
+    #   url = "github:ilysenko/codex-desktop-linux";
+    #   inputs = {
+    #     nixpkgs.follows = "nixpkgs";
+    #     flake-utils.follows = "flake-utils";
+    #   };
+    # };
+    #
+    # codex-cli-nix = {
+    #   url = "github:sadjow/codex-cli-nix/main";
+    #   inputs = {
+    #     nixpkgs.follows = "nixpkgs";
+    #     flake-utils.follows = "flake-utils";
+    #   };
+    # };
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
@@ -240,9 +240,9 @@
             (mkHomeManagerConfig {
               inherit device;
               homeFile = ./hosts/nix/home.nix;
-              extraSharedModules = [
-                inputs.codex-desktop-linux.homeManagerModules.default
-              ];
+              # extraSharedModules = [
+              #   inputs.codex-desktop-linux.homeManagerModules.default
+              # ];
             })
           ];
         };
