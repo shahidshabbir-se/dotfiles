@@ -50,22 +50,23 @@ let
   nautilusMyComputer =
     (pkgs.callPackage "${nautilusMyComputerSrc}/packaging/nix/package.nix" {
       src = nautilusMyComputerSrc;
-    }).overrideAttrs (old: {
-      postPatch = (old.postPatch or "") + ''
-        substituteInPlace nautilus-my-computer.py \
-          --replace-fail \
-            'sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))' \
-            'sys.path.insert(0, "${pkgs.python3Packages.pycairo}/${pkgs.python3.sitePackages}")
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))'
+    }).overrideAttrs
+      (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace nautilus-my-computer.py \
+            --replace-fail \
+              'sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))' \
+              'sys.path.insert(0, "${pkgs.python3Packages.pycairo}/${pkgs.python3.sitePackages}")
+          sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))'
 
-        substituteInPlace nautilus_my_computer/main.py \
-          --replace-fail \
-            '        wrapper.append(native_listbox)' \
-            '        if native_listbox.get_parent() is not None:
-                    native_listbox.unparent()
-                wrapper.append(native_listbox)'
-      '';
-    });
+          substituteInPlace nautilus_my_computer/main.py \
+            --replace-fail \
+              '        wrapper.append(native_listbox)' \
+              '        if native_listbox.get_parent() is not None:
+                      native_listbox.unparent()
+                  wrapper.append(native_listbox)'
+        '';
+      });
 
 in
 
@@ -327,7 +328,11 @@ in
     wantedBy = [ "bluetooth.service" ];
     after = [ "bluetooth.service" ];
     partOf = [ "bluetooth.service" ];
-    path = with pkgs; [ bluez coreutils gawk ];
+    path = with pkgs; [
+      bluez
+      coreutils
+      gawk
+    ];
     serviceConfig = {
       Type = "exec";
       TimeoutStopSec = "5s";
