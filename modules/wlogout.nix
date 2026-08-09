@@ -160,8 +160,8 @@ let
         export hvr=$((y_mon * 23 / hypr_scale))
         export fntSize=$((y_mon * 2 / 100))
         export BtnCol="white"
-        export active_rad=40
-        export button_rad=64
+        export active_rad=0
+        export button_rad=0
 
         rendered_css="$(${pkgs.python3}/bin/python3 - "$template" <<'PY'
     import os
