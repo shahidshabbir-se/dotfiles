@@ -16,7 +16,6 @@
 }:
 
 let
-  inherit (config.lib.file) mkOutOfStoreSymlink;
   homeDirectory = "/home/shahid";
   browser = "zen-beta";
   exitScript = pkgs.writeShellScript "exit.sh" ''
@@ -37,25 +36,20 @@ let
   layerRuleNamespaces = [
     "logout_dialog"
     "wlogout"
-    "quickshell"
-    "quickshell_island"
   ];
 
-  # Popups unload instantly in Quickshell (LazyLoader); layersOut fade leaves blur behind.
   layerRuleNoAnimNamespaces = [
     "logout_dialog"
     "wlogout"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
-  # ignore_alpha must stay low (0–0.2): higher values skip blur on more pixels;
-  # at 1.0 layer blur is effectively invisible.
   layerRuleBlock = ns: ''
     layerrule {
       name = blur-${lib.replaceStrings [ "_" ] [ "-" ] ns}
       match:namespace = ${ns}
       blur = on
-      ignore_alpha = ${if ns == "quickshell_island" then "0.1" else "0"}
+      ignore_alpha = 0
     }'';
 
   layerRuleNoAnimBlock = ns: ''
@@ -174,24 +168,10 @@ in
     # Image viewer (hyprland mime defaults)
     gthumb
 
-    # Quickshell island / visualizer / wallpaper picker
-    quickshell
-    kdePackages.qt5compat
-    kdePackages.qtmultimedia
   ];
 
   xdg.dataFile."applications/org.gnome.Nautilus.desktop".source =
     "${nautilusDesktopWithExtensions}/share/applications/org.gnome.Nautilus.desktop";
-
-  xdg.configFile = {
-    "quickshell/island".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/island";
-    "quickshell/visualizer".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/visualizer";
-    "quickshell/wallpaper".source =
-      mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/wallpaper";
-    # lock-screen is cloned to ~/.config/lock-screen via post-install.sh (not a nix-managed path)
-  };
 
   # ───────────────────────────────────────────────
   # ▶ Swaync (Notification Center)
@@ -245,8 +225,6 @@ in
         "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"
         "awww-daemon &"
-        "sleep 1 && sh ${homeDirectory}/.config/quickshell/island/launch.sh &"
-        "sleep 1 && sh ${homeDirectory}/dotfiles/config/quickshell/visualizer/launch.sh &"
         "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
         # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
@@ -397,8 +375,6 @@ in
       };
 
       bind = [
-        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility reveal"
-        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility reveal"
         "$mod, Return, exec, hyprctl dispatch workspace 1 && $terminal"
         "$mod, Q, killactive,"
         "$mod, E, exec, $fileManager"
@@ -415,7 +391,6 @@ in
         "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
         "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
-        "ALT SHIFT, M, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call media toggle"
         # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
         "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
         "$mod, R, exec, kooha"
@@ -428,13 +403,8 @@ in
         "$mod, W, exec, ags run"
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
-        "ALT SHIFT, B, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call bluetooth toggle"
-        "ALT SHIFT, N, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call wifi toggle"
-        "ALT SHIFT, W, exec, quickshell --no-duplicate -p ${homeDirectory}/.config/quickshell/wallpaper"
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
-        "ALT, C, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call clipboard toggle"
-        "$mod, SPACE, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call launcher toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
         "ALT SHIFT,Tab,cyclenext, prev"
@@ -477,11 +447,6 @@ in
       bindm = [
         "$mod, mouse:272, movewindow"
         "$mod, mouse:273, resizewindow"
-      ];
-
-      bindr = [
-        "$mod, Super_L, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility conceal"
-        "$mod, Super_R, exec, quickshell -p ${homeDirectory}/.config/quickshell/island ipc call visibility conceal"
       ];
 
       bindel = [
