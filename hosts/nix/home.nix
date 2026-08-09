@@ -201,8 +201,6 @@ let
     glycin-loaders
     libnotify
     matugen
-    nitch
-    ollama
     unzip
     webp-pixbuf-loader
     wmctrl
@@ -403,6 +401,11 @@ in
 
       "gtk-3.0/bookmarks".text = gtkBookmarks;
       "gtk-4.0/bookmarks".text = gtkBookmarks;
+
+      "btop/btop.conf".text = ''
+        color_theme = "tokyo-night"
+        background_update = false
+      '';
 
       nvim.source = dotfileLink "config/nvim";
       yazi.source = dotfileLink "config/yazi";
