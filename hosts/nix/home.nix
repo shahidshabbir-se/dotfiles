@@ -115,9 +115,9 @@ let
   #   inherit pkgs lib;
   # };
 
-  # zedPackage = import ../../modules/pkgs/zed.nix {
-  #   inherit pkgs lib;
-  # };
+  zedPackage = import ../../modules/pkgs/zed.nix {
+    inherit pkgs lib;
+  };
 
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
@@ -144,24 +144,24 @@ let
   #   '';
   # };
 
-  # vscodeFhs = pkgs.symlinkJoin {
-  #   name = "vscode-fhs";
-  #
-  #   paths = [
-  #     pkgs.vscode-fhs
-  #   ];
-  #
-  #   buildInputs = [
-  #     pkgs.makeWrapper
-  #   ];
-  #
-  #   postBuild = ''
-  #     wrapProgram $out/bin/code \
-  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-  #       --add-flags "--force-color-profile=srgb" \
-  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-  #   '';
-  # };
+  vscodeFhs = pkgs.symlinkJoin {
+    name = "vscode-fhs";
+
+    paths = [
+      pkgs.vscode-fhs
+    ];
+
+    buildInputs = [
+      pkgs.makeWrapper
+    ];
+
+    postBuild = ''
+      wrapProgram $out/bin/code \
+        --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+        --add-flags "--force-color-profile=srgb" \
+        --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+    '';
+  };
 
   # ───────────────────────────────────────────────
   # ▶ Package Groups
@@ -173,7 +173,7 @@ let
     git-filter-repo
     gnumake
     python3
-    # vscodeFhs
+    vscodeFhs
   ];
 
   desktopPackages = with pkgs; [
@@ -182,7 +182,7 @@ let
     onlyoffice-desktopeditors
     proton-vpn
     qbittorrent
-    # zedPackage
+    zedPackage
     rustdesk-flutter
     # t3codePackage
     zenBrowserPackage
@@ -408,7 +408,7 @@ in
       yazi.source = dotfileLink "config/yazi";
       eww.source = dotfileLink "config/eww";
       rofi.source = dotfileLink "config/rofi";
-      # zed.source = dotfileLink "config/zed";
+      zed.source = dotfileLink "config/zed";
 
       # "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
     };
