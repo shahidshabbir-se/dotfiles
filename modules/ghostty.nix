@@ -60,8 +60,8 @@ in
     # background-opacity = 0.98;
     background-opacity = 1.0;
     window-decoration = false;
-    window-padding-x = 6;
-    window-padding-y = "6,2";
+    window-padding-x = 0;
+    window-padding-y = "0,0";
     window-padding-balance = true;
 
     # Cursor
