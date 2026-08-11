@@ -125,30 +125,11 @@ let
 
   # Hyprland HDR/color management makes Electron apps render dim unless these
   # flags are passed.
-  # codeCursorFhs = pkgs.symlinkJoin {
-  #   name = "code-cursor-fhs";
-  #
-  #   paths = [
-  #     pkgs.code-cursor-fhs
-  #   ];
-  #
-  #   buildInputs = [
-  #     pkgs.makeWrapper
-  #   ];
-  #
-  #   postBuild = ''
-  #     wrapProgram $out/bin/cursor \
-  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-  #       --add-flags "--force-color-profile=srgb" \
-  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-  #   '';
-  # };
-
-  vscodeFhs = pkgs.symlinkJoin {
-    name = "vscode-fhs";
+  codeCursorFhs = pkgs.symlinkJoin {
+    name = "code-cursor-fhs";
 
     paths = [
-      pkgs.vscode-fhs
+      pkgs.code-cursor-fhs
     ];
 
     buildInputs = [
@@ -156,24 +137,43 @@ let
     ];
 
     postBuild = ''
-      wrapProgram $out/bin/code \
+      wrapProgram $out/bin/cursor \
         --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
         --add-flags "--force-color-profile=srgb" \
         --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
     '';
   };
 
+  # vscodeFhs = pkgs.symlinkJoin {
+  #   name = "vscode-fhs";
+  #
+  #   paths = [
+  #     pkgs.vscode-fhs
+  #   ];
+  #
+  #   buildInputs = [
+  #     pkgs.makeWrapper
+  #   ];
+  #
+  #   postBuild = ''
+  #     wrapProgram $out/bin/code \
+  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+  #       --add-flags "--force-color-profile=srgb" \
+  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+  #   '';
+  # };
+
   # ───────────────────────────────────────────────
   # ▶ Package Groups
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
-    # codeCursorFhs
+    codeCursorFhs
     # codexCliPackage
     gcc
     git-filter-repo
     gnumake
     python3
-    vscodeFhs
+    # vscodeFhs
   ];
 
   desktopPackages = with pkgs; [
@@ -199,6 +199,7 @@ let
   systemUtilityPackages = with pkgs; [
     fastfetch
     glycin-loaders
+    quickshell
     libnotify
     matugen
     unzip

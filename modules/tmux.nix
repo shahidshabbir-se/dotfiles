@@ -135,6 +135,7 @@ in
         #  Terminal Features
         # ─────────────────────────────────────────────────────────
         set -as terminal-features ",xterm-256color:RGB"
+        set -g allow-passthrough on
         set -g extended-keys on
         set -g extended-keys-format csi-u
         set -g focus-events on
