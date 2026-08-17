@@ -119,6 +119,10 @@ let
     inherit pkgs lib;
   };
 
+  # chatgptPackage = import ../../modules/pkgs/chatgpt.nix {
+  #   inherit pkgs lib;
+  # };
+
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
   # codexCliPackage = inputs.codex-cli-nix.packages.${system}.default;
@@ -178,6 +182,7 @@ let
 
   desktopPackages = with pkgs; [
     brave
+    # chatgptPackage
     obsidian
     onlyoffice-desktopeditors
     proton-vpn
@@ -198,6 +203,7 @@ let
 
   systemUtilityPackages = with pkgs; [
     fastfetch
+    pavucontrol
     glycin-loaders
     quickshell
     libnotify
@@ -384,6 +390,7 @@ in
 
       # Lutris 0.5.x still trips over newer protobuf Python bindings on NixOS.
       PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION = "python";
+
     };
   };
 

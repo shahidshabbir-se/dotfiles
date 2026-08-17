@@ -19,6 +19,33 @@ let
       sha256 = "sha256-tmS0MBANSsTg53E2GB0TnjwGcZXboTRFNeDE6Ehn+bM=";
     };
   };
+
+  project-popup = pkgs.writeShellScript "tmux-project-popup" ''
+    current_session="$1"
+    client_tty="$2"
+
+    case "$current_session" in
+      p[0-9a-f][0-9a-f][0-9a-f]-*)
+        ${pkgs.tmux}/bin/tmux detach-client -t "$client_tty"
+        exit 0
+        ;;
+    esac
+
+    path="$3"
+    base="$(${pkgs.coreutils}/bin/basename "$path")"
+    slug="$(printf '%s' "$base" | ${pkgs.coreutils}/bin/tr -cs '[:alnum:]_-' '-' | ${pkgs.coreutils}/bin/cut -c1-8)"
+    hash="$(printf '%s' "$path" | ${pkgs.coreutils}/bin/sha256sum | ${pkgs.coreutils}/bin/cut -c1-3)"
+    session="p$hash-$slug"
+    socket="$(printf '%s' "$TMUX" | ${pkgs.coreutils}/bin/cut -d, -f1)"
+
+    if ! ${pkgs.tmux}/bin/tmux has-session -t "$session" 2>/dev/null; then
+      ${pkgs.tmux}/bin/tmux new-session -d -s "$session" -c "$path"
+    fi
+    ${pkgs.tmux}/bin/tmux set-option -t "$session" detach-on-destroy on
+
+    ${pkgs.tmux}/bin/tmux display-popup -E -b rounded -w 80% -h 80% -d "$path" \
+      "${pkgs.coreutils}/bin/env -u TMUX ${pkgs.tmux}/bin/tmux -S $socket attach-session -t $session"
+  '';
 in
 {
   enable = true;
@@ -67,17 +94,6 @@ in
     vim-tmux-navigator
     tmux-thumbs
     better-mouse-mode
-    {
-      plugin = tmux-floax;
-      extraConfig = ''
-        set -g @floax-width '80%'
-        set -g @floax-height '80%'
-        set -g @floax-border-color 'magenta'
-        set -g @floax-text-color 'blue'
-        set -g @floax-bind 'p'
-        set -g @floax-change-path 'true'
-      '';
-    }
     {
       plugin = mkTmuxPlugin {
         pluginName = "tmux-super-fingers";
@@ -214,6 +230,7 @@ in
         bind v split-window -v -c "#{pane_current_path}"
         bind h split-window -h -c "#{pane_current_path}"
         bind c new-window -c "#{pane_current_path}"
+        bind p run-shell '${project-popup} "#{session_name}" "#{client_tty}" "#{pane_current_path}"'
 
         set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
         set -g @fzf-url-history-limit '2000'

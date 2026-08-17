@@ -36,6 +36,7 @@
     e = "exit";
     cat = "bat";
     bc = "better-commits";
+    nsp = "sudo nixos-rebuild switch --flake ~/dotfiles#pc";
     viconf = "cd ~/.config/nvim && nvim .";
     yz = "yazi";
     cc = "CLAUDE_CODE_NEW_INIT=1 claude";
