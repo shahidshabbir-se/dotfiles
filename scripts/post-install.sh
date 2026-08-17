@@ -13,11 +13,17 @@ echo "→ Setting up lock-screen..."
 
 if [ ! -d "$TARGET" ]; then
   git clone "$REPO" "$TARGET"
-  chmod +x "$TARGET/lock.sh"
+  chmod +x "$TARGET/lock.sh" "$TARGET/fetch-assets.sh"
   echo "  ✓ lock-screen cloned to $TARGET"
 else
   echo "  ✓ lock-screen already exists at $TARGET"
   echo "  → Run 'cd $TARGET && git pull' to update"
+fi
+
+# bg.mp4 is hosted on the GitHub Release (not in git) — keep clones small.
+if [ -x "$TARGET/fetch-assets.sh" ]; then
+  echo "→ Fetching lock-screen media assets..."
+  "$TARGET/fetch-assets.sh" || echo "  ! asset fetch failed; lock will use poster/gradient only"
 fi
 
 echo "→ Done. Lock screen ready at $TARGET/lock.sh"
