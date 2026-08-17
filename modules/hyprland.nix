@@ -411,6 +411,7 @@ in
         # Quickshell bar popups
         "ALT SHIFT, N, exec, qs ipc call bar toggleNetwork"
         "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
+        "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
         # "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
         # "$mod, SPACE, exec, vicinae toggle"
         "$mod, left, workspace, -1"

@@ -3,6 +3,7 @@ import Quickshell
 import qs.features.bar as BarFeature
 import qs.features.notifications as NotificationsFeature
 import qs.features.visualizer as VisualizerFeature
+import qs.features.wallpaper as WallpaperFeature
 
 Scope {
     BarFeature.Bar {
@@ -16,7 +17,10 @@ Scope {
             : Qt.Horizontal
 
         onNotificationsClicked: notifications.toggleCenter()
-        onPopupOpened: notifications.closeCenter()
+        onPopupOpened: {
+            notifications.closeCenter()
+            wallpaper.close()
+        }
     }
 
     VisualizerFeature.Visualizer {
@@ -28,5 +32,9 @@ Scope {
 
         screen: bar.screen
         barVertical: bar.vertical
+    }
+
+    WallpaperFeature.Wallpaper {
+        id: wallpaper
     }
 }
