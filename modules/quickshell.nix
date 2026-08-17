@@ -13,6 +13,14 @@ in
   home.packages = with pkgs; [
     quickshell
     qt6.qtdeclarative # qmllint / qmlformat
+    # qylock session lock (lock-screen) needs these QML modules / codecs
+    qt6.qtmultimedia
+    qt6.qt5compat
+    qt6.qtsvg
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    gst_all_1.gst-plugins-bad
+    gst_all_1.gst-libav
   ];
 
   # Live-editable shell config (same pattern as nvim/rofi/zed).
