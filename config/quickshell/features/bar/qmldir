@@ -1,0 +1,16 @@
+module qs.features.bar
+Bar 1.0 Bar.qml
+internal CalendarPopup 1.0 CalendarPopup.qml
+internal Clock 1.0 Clock.qml
+internal MarqueeText 1.0 MarqueeText.qml
+internal MprisPlaybackSession 1.0 MprisPlaybackSession.qml
+internal MusicBackdrop 1.0 MusicBackdrop.qml
+internal MusicButton 1.0 MusicButton.qml
+internal MusicPopup 1.0 MusicPopup.qml
+internal NotificationButton 1.0 NotificationButton.qml
+internal NowPlayingHero 1.0 NowPlayingHero.qml
+internal PlaybackControls 1.0 PlaybackControls.qml
+internal ThemeIcon 1.0 ThemeIcon.qml
+internal TrackProgress 1.0 TrackProgress.qml
+internal VolumeControl 1.0 VolumeControl.qml
+internal Workspaces 1.0 Workspaces.qml

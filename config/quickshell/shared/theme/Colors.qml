@@ -1,0 +1,49 @@
+pragma Singleton
+
+import QtQuick
+
+QtObject {
+    readonly property color primary: "#b6c4ff"
+    readonly property color primaryForeground: "#1d2d61"
+
+    readonly property color primaryContainer: "#344479"
+    readonly property color primaryContainerForeground: "#dce1ff"
+
+    readonly property color secondary: "#c2c5dd"
+    readonly property color secondaryForeground: "#2b3042"
+
+    readonly property color secondaryContainer: "#414659"
+    readonly property color secondaryContainerForeground: "#dee1f9"
+
+    readonly property color tertiary: "#e3bada"
+    readonly property color tertiaryForeground: "#432740"
+
+    readonly property color tertiaryContainer: "#5b3d57"
+    readonly property color tertiaryContainerForeground: "#ffd7f6"
+
+    readonly property color error: "#ffb4ab"
+    readonly property color errorForeground: "#690005"
+
+    readonly property color errorContainer: "#93000a"
+    readonly property color errorContainerForeground: "#ffdad6"
+
+    readonly property color background: "#121318"
+    readonly property color backgroundForeground: "#e3e1e9"
+
+    readonly property color surface: "#121318"
+    readonly property color surfaceForeground: "#e3e1e9"
+
+    readonly property color surfaceVariant: "#45464f"
+    readonly property color surfaceVariantForeground: "#c6c6d0"
+
+    readonly property color surfaceContainerLowest: "#0d0e13"
+    readonly property color surfaceContainerLow: "#1a1b21"
+    readonly property color surfaceContainer: "#1e1f25"
+    readonly property color surfaceContainerHigh: "#292a2f"
+    readonly property color surfaceContainerHighest: "#34343a"
+
+    readonly property color outline: "#8f909a"
+    readonly property color outlineVariant: "#45464f"
+
+    readonly property color shadow: "#000000"
+}

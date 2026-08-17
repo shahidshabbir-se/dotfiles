@@ -1,0 +1,5 @@
+module qs.features.visualizer
+Visualizer 1.0 Visualizer.qml
+internal CavaSpectrum 1.0 CavaSpectrum.qml
+internal SpectrumBars 1.0 SpectrumBars.qml
+internal VisualizerPanel 1.0 VisualizerPanel.qml
