@@ -71,6 +71,29 @@ let
     esac
   '';
 
+  # Quickshell often survives DPMS/suspend but loses real outputs and sits on a
+  # Qt placeholder screen (bar gone, no crash → Restart=always never fires).
+  # Wait for a real monitor, then bounce the service.
+  restoreShell = pkgs.writeShellScript "hypridle-restore-shell" ''
+    set -eu
+    hypr=${pkgs.hyprland}/bin/hyprctl
+    jq=${pkgs.jq}/bin/jq
+
+    $hypr -i 0 dispatch dpms on || true
+
+    # Poll until Hyprland reports a non-fallback output (up to ~8s).
+    for _ in $(${pkgs.coreutils}/bin/seq 1 16); do
+      if $hypr -i 0 -j monitors 2>/dev/null \
+        | $jq -e '[.[] | select(.name != "FALLBACK" and .name != "")] | length > 0' \
+          >/dev/null 2>&1; then
+        break
+      fi
+      ${pkgs.coreutils}/bin/sleep 0.5
+    done
+
+    ${pkgs.systemd}/bin/systemctl --user try-restart quickshell.service || true
+  '';
+
   afterSleep = pkgs.writeShellScript "hypridle-after-sleep" ''
     ${
       if device.type == "desktop" then
@@ -92,20 +115,21 @@ let
           ${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on || true
         ''
     }
-    # qs keeps running after resume but stuck on placeholder outputs (no crash).
-    ${pkgs.systemd}/bin/systemctl --user try-restart quickshell.service || true
+    # Full suspend path: after_sleep_cmd. Also covers qs placeholder-output trap.
+    ${restoreShell}
   '';
 
   laptopListeners = [
     {
       timeout = power.idle.battery.lockAndDisplayOff;
       on-timeout = "${idleAction} battery display-off";
-      on-resume = "${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on";
+      # DPMS-only resume never runs after_sleep_cmd — restore qs here too.
+      on-resume = "${restoreShell}";
     }
     {
       timeout = power.idle.ac.lockAndDisplayOff;
       on-timeout = "${idleAction} ac display-off";
-      on-resume = "${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on";
+      on-resume = "${restoreShell}";
     }
     {
       timeout = power.idle.battery.sleep;
@@ -125,7 +149,7 @@ let
     {
       timeout = power.idle.displayOff;
       on-timeout = "${idleAction} any display-off";
-      on-resume = "${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on";
+      on-resume = "${restoreShell}";
     }
     {
       timeout = power.idle.sleep;
