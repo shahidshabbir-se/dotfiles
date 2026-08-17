@@ -1,5 +1,10 @@
 {
-	"language_models": {},
+	"agent_servers": {
+  "claude-acp": {
+   "type": "registry"
+  }
+ },
+ "language_models": {},
 	"terminal": {
 		"font_size": 16.0,
 		"font_family": "GeistMono Nerd Font",
@@ -38,7 +43,7 @@
 	"theme": {
 		"mode": "dark",
 		"light": "One Light",
-		"dark": "Tokyo Night",
+		"dark": "GitHub Dark Tritanopia",
 	},
 	"telemetry": {
 		"diagnostics": false,
@@ -51,9 +56,9 @@
 	"hard_tabs": true,
 	"vim_mode": true,
 	"icon_theme": {
-		"mode": "system",
+		"mode": "dark",
 		"light": "Material Icon Theme",
-		"dark": "Material Icon Theme",
+		"dark": "VSCode Icons for Zed (Dark NestJS)",
 	},
 	"buffer_font_family": "GeistMono Nerd Font",
 	"ui_font_size": 15.0,

@@ -271,7 +271,7 @@ in
       general = {
         gaps_in = 5;
         gaps_out = 10;
-        border_size = 1;
+        border_size = 0;
 
         "col.active_border" = "rgba(ffffff35)";
         "col.inactive_border" = "rgba(ffffff10)";
@@ -281,7 +281,7 @@ in
       };
 
       decoration = {
-        rounding = 0;
+        rounding = 8;
 
         active_opacity = 1.0;
         inactive_opacity = 1.00;

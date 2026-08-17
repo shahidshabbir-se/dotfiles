@@ -28,7 +28,7 @@ return {
       if pane_exists() then
         vim.fn.system("tmux join-pane -h -l 35% -s " .. opencode_pane_id)
       else
-        local result = vim.fn.system("tmux split-window -h -p 35 -P -F '#{pane_id}' 'opencode --port'")
+        local result = vim.fn.system("tmux split-window -h -p 35 -P -F '#{pane_id}' 'opencode --serve'")
         opencode_pane_id = vim.trim(result)
       end
       opencode_visible = true
