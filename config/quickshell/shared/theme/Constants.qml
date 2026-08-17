@@ -34,6 +34,13 @@ QtObject {
     readonly property int musicControlSize: 36
     readonly property int musicPrimaryControlSize: 40
 
+    // Network
+    readonly property int networkPopupWidth: 520
+    readonly property int networkPopupMaxHeight: 680
+    readonly property int networkPopupRadius: 16
+    readonly property int networkRowHeight: 44
+    readonly property int networkSignalBars: 4
+
     // Audio visualizer
     readonly property int visualizerHeight: 72
     readonly property real visualizerWidthRatio: 0.60
@@ -62,7 +69,7 @@ QtObject {
     readonly property int buttonRadius: 8
 
     // Typography
-    readonly property string fontFamily: "Space Grotesk"
+    readonly property string fontFamily: "Inter"
     readonly property int fontSizeSm: 12
     readonly property int fontSizeMd: 14
     readonly property int fontSizeLg: 16

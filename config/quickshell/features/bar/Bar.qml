@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import qs.shared.theme
 
 PanelWindow {
@@ -15,19 +16,81 @@ PanelWindow {
     signal notificationsClicked()
     signal popupOpened()
 
-    function closePopups() {
-        calendarWindow.visible = false
-        musicWindow.visible = false
+    // After sleep/DPMS, Qt can leave us on a placeholder output while Hyprland
+    // already has a real monitor again. Notifications may still show; the bar
+    // stays invisible until we rebind `screen`.
+    function pickScreen() {
+        const screens = Quickshell.screens
+        for (let i = 0; i < screens.length; i++) {
+            const s = screens[i]
+            const n = (s && s.name) ? String(s.name) : ""
+            if (n.length > 0 && n !== "FALLBACK" && n.indexOf("placeholder") < 0)
+                return s
+        }
+        return screens.length > 0 ? screens[0] : null
     }
 
-    function togglePopup(popup) {
+    function rebindScreen() {
+        const next = pickScreen()
+        if (!next)
+            return
+        if (bar.screen !== next)
+            bar.screen = next
+    }
+
+    function closePopups() {
+        calendarWindow.visible = false
+        musicWindow.open = false
+        networkWindow.open = false
+    }
+
+    // xdg PopupWindow (calendar) — needs pointer focus on parent sometimes.
+    function toggleAnchoredPopup(popup) {
         const shouldOpen = !popup.visible
-
         closePopups()
-        popup.visible = shouldOpen
-
-        if (shouldOpen)
+        if (shouldOpen) {
+            popup.visible = true
             popupOpened()
+        }
+    }
+
+    // Layer-shell panels (network / music) — work from keyboard/IPC.
+    function toggleLayerPopup(panel) {
+        const shouldOpen = !panel.open
+        closePopups()
+        if (shouldOpen) {
+            panel.open = true
+            popupOpened()
+        }
+    }
+
+    function toggleNetwork() { toggleLayerPopup(networkWindow) }
+    function toggleMusic() { toggleLayerPopup(musicWindow) }
+
+    // Hyprland: qs ipc call bar toggleNetwork / toggleMusic
+    IpcHandler {
+        target: "bar"
+
+        function toggleNetwork(): void { bar.toggleNetwork() }
+        function toggleMusic(): void { bar.toggleMusic() }
+        function closePopups(): void { bar.closePopups() }
+    }
+
+    Component.onCompleted: rebindScreen()
+
+    Connections {
+        target: Quickshell
+        function onScreensChanged() {
+            bar.rebindScreen()
+        }
+    }
+
+    // Catch cases where screensChanged fires before the real output is usable.
+    Timer {
+        interval: 2000
+        running: true
+        repeat: true
+        onTriggered: bar.rebindScreen()
     }
 
     anchors {
@@ -104,7 +167,7 @@ PanelWindow {
                 Layout.column: bar.vertical ? 0 : 4
                 Layout.row: bar.vertical ? 4 : 0
                 Layout.alignment: Qt.AlignCenter
-                columns: bar.vertical ? 1 : 2
+                columns: bar.vertical ? 1 : 3
                 columnSpacing: Constants.spacingXs
                 rowSpacing: Constants.spacingXs
 
@@ -119,10 +182,17 @@ PanelWindow {
                     }
                 }
 
+                NetworkButton {
+                    id: network
+                    active: networkWindow.open
+
+                    onClicked: bar.toggleNetwork()
+                }
+
                 MusicButton {
                     id: music
 
-                    onClicked: bar.togglePopup(musicWindow)
+                    onClicked: bar.toggleMusic()
                 }
             }
 
@@ -134,7 +204,7 @@ PanelWindow {
             anchors.centerIn: parent
             vertical: bar.vertical
 
-            onClicked: bar.togglePopup(calendarWindow)
+            onClicked: bar.toggleAnchoredPopup(calendarWindow)
         }
     }
 
@@ -161,38 +231,88 @@ PanelWindow {
         }
     }
 
-    PopupWindow {
+    // Layer-shell panels — keyboard/IPC friendly (no xdg grab parent required).
+    PanelWindow {
         id: musicWindow
 
-        anchor {
-            item: bar.vertical ? music : barBackground
-            rect.x: bar.vertical
-                ? music.width + Constants.spacingLg
-                : barBackground.width - 1
-            rect.y: bar.vertical
+        property bool open: false
+
+        visible: open
+        color: "transparent"
+        exclusionMode: ExclusionMode.Ignore
+        aboveWindows: true
+        focusable: true
+        surfaceFormat.opaque: false
+
+        anchors {
+            top: !bar.vertical
+            right: !bar.vertical
+            left: bar.vertical
+        }
+
+        margins {
+            top: bar.vertical
                 ? 0
-                : (barBackground.height + clock.height) / 2
-                    + Constants.spacingXl + Constants.spacingXs
-            rect.width: 1
-            rect.height: bar.vertical ? music.height : 1
-            edges: bar.vertical
-                ? Edges.Bottom | Edges.Right
-                : Edges.Bottom | Edges.Right
-            gravity: bar.vertical
-                ? Edges.Top | Edges.Right
-                : Edges.Bottom | Edges.Left
+                : Constants.barTopMargin + Constants.barHeight + Constants.spacingLg
+            right: bar.vertical
+                ? 0
+                : Math.max(
+                    Constants.spacingLg,
+                    Math.round((screen.width - bar.implicitWidth) / 2)
+                )
+            left: bar.vertical
+                ? Constants.barTopMargin + Constants.barVerticalWidth + Constants.spacingLg
+                : 0
         }
 
         implicitWidth: musicPopup.width
         implicitHeight: musicPopup.implicitHeight
-        color: "transparent"
-        visible: false
-        grabFocus: true
 
         MusicPopup {
             id: musicPopup
-            open: musicWindow.visible
+            open: musicWindow.open
         }
     }
 
+    PanelWindow {
+        id: networkWindow
+
+        property bool open: false
+
+        visible: open
+        color: "transparent"
+        exclusionMode: ExclusionMode.Ignore
+        aboveWindows: true
+        focusable: true
+        surfaceFormat.opaque: false
+
+        anchors {
+            top: !bar.vertical
+            right: !bar.vertical
+            left: bar.vertical
+        }
+
+        margins {
+            top: bar.vertical
+                ? 0
+                : Constants.barTopMargin + Constants.barHeight + Constants.spacingLg
+            right: bar.vertical
+                ? 0
+                : Math.max(
+                    Constants.spacingLg,
+                    Math.round((screen.width - bar.implicitWidth) / 2)
+                )
+            left: bar.vertical
+                ? Constants.barTopMargin + Constants.barVerticalWidth + Constants.spacingLg
+                : 0
+        }
+
+        implicitWidth: networkPopup.width
+        implicitHeight: networkPopup.implicitHeight
+
+        NetworkPopup {
+            id: networkPopup
+            open: networkWindow.open
+        }
+    }
 }
