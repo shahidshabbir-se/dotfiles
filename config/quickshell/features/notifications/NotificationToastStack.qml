@@ -14,7 +14,9 @@ PanelWindow {
     required property var notificationModel
     property int defaultTimeoutMs: 6000
     property int maxVisible: 4
-    property int topOffset: 56
+    property int topOffset: Constants.barTopMargin + Constants.barHeight + Constants.spacingMd
+    // Right edge aligns with floating bar (same as network/music LayerPopup).
+    property int rightOffset: Constants.spacingMd
     property bool suppressed: false
     property bool doNotDisturb: false
     property bool expanded: false
@@ -22,7 +24,7 @@ PanelWindow {
 
     readonly property int screenMargin: screen && screen.width < 448 ? 8 : 12
     readonly property int availableWidth: screen
-        ? Math.max(1, screen.width - screenMargin)
+        ? Math.max(1, screen.width - rightOffset - screenMargin)
         : NotificationMetrics.railWidth + NotificationMetrics.windowGutter * 2
     readonly property int cardWidth: Math.min(
         NotificationMetrics.railWidth,
@@ -76,7 +78,7 @@ PanelWindow {
 
     margins {
         top: root.topOffset
-        right: Math.max(0, root.screenMargin - NotificationMetrics.windowGutter)
+        right: root.rightOffset
     }
 
     implicitWidth: windowWidth
