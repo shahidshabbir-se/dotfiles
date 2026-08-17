@@ -174,20 +174,21 @@ in
     "${nautilusDesktopWithExtensions}/share/applications/org.gnome.Nautilus.desktop";
 
   # ───────────────────────────────────────────────
-  # ▶ Swaync (Notification Center)
+  # ▶ Swaync (Notification Center) — disabled; Quickshell owns FDO notifications
+  # Uncomment to restore swaync (and disable modules/quickshell.nix notifications).
   # ───────────────────────────────────────────────
-  services.swaync = import ./swaync.nix {
-    inherit pkgs homeDirectory;
-  };
-
-  # Only auto-start SwayNC for Hyprland sessions. i3 uses Dunst instead.
-  systemd.user.services.swaync = {
-    Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
-    Service = {
-      Type = lib.mkForce "simple";
-      BusName = lib.mkForce "";
-    };
-  };
+  # services.swaync = import ./swaync.nix {
+  #   inherit pkgs homeDirectory;
+  # };
+  #
+  # # Only auto-start SwayNC for Hyprland sessions. i3 uses Dunst instead.
+  # systemd.user.services.swaync = {
+  #   Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  #   Service = {
+  #     Type = lib.mkForce "simple";
+  #     BusName = lib.mkForce "";
+  #   };
+  # };
 
   # ───────────────────────────────────────────────
   # ▶ Hyprland Window Manager
