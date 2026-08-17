@@ -148,7 +148,7 @@
             connector = "DP-4";
             width = 3440;
             height = 1440;
-            scale = 1.3333;
+            scale = 1.33;
             refreshRate = 250;
           };
 
