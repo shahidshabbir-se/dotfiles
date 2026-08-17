@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# preview stub
+if [[ $# -eq 0 ]]; then
+  echo "provider	dhcp"
+  exit 0
+fi
+echo "preview: would set dns to $*" >&2
+exit 0

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "preview: $*" >&2
+exit 0
