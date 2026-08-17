@@ -12,7 +12,9 @@ PanelWindow {
     required property var historyModel
     property bool open: false
     property int historyCount: 0
-    property int topOffset: 56
+    // Defaults match Bar LayerPopup (8px under bar via spacingMd).
+    property int topOffset: Constants.barTopMargin + Constants.barHeight + Constants.spacingMd
+    property int rightOffset: Constants.spacingMd
     property bool doNotDisturb: false
     property bool presented: false
     property double now: Date.now()
@@ -22,50 +24,49 @@ PanelWindow {
     signal doNotDisturbToggled()
 
     readonly property int screenMargin: screen && screen.width < 448 ? 8 : 12
+    // Available width from bar-aligned right edge (same as network/music).
     readonly property int availableWidth: screen
-        ? Math.max(1, screen.width - screenMargin)
+        ? Math.max(1, screen.width - rightOffset - screenMargin)
         : NotificationMetrics.railWidth + NotificationMetrics.windowGutter * 2
+    // Flush right edge like network/music — no side gutter padding.
     readonly property int panelWidth: Math.min(
         NotificationMetrics.railWidth,
-        Math.max(1, availableWidth - NotificationMetrics.windowGutter * 2)
+        Math.max(1, availableWidth)
     )
-    readonly property int windowWidth:
-        panelWidth + NotificationMetrics.windowGutter * 2
 
-    anchors {
-        top: true
-        right: true
-    }
-
-    margins {
-        top: root.topOffset
-        right: Math.max(0, root.screenMargin - NotificationMetrics.windowGutter)
-    }
-
-    implicitWidth: windowWidth
-    implicitHeight: screen
+    // Max height under the bar; actual card is content-sized (not a tall empty shell).
+    readonly property int maxPanelHeight: screen
         ? Math.max(1, Math.min(
             NotificationMetrics.centerMaxHeight,
             screen.height - topOffset - screenMargin
         ))
         : NotificationMetrics.centerMaxHeight
+
+    anchors {
+        top: true
+        bottom: true
+        left: true
+        right: true
+    }
+
     visible: presented
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     aboveWindows: true
-    focusable: false
+    focusable: open
     surfaceFormat.opaque: false
 
     WlrLayershell.namespace: "quickshell-notification-center"
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: open
+        ? WlrKeyboardFocus.Exclusive
+        : WlrKeyboardFocus.None
 
-    // The visual exit is click-through immediately. Applications beneath the
-    // fading panel do not remain blocked for the duration of the animation.
+    // While open: whole screen is hit-testable (outside click closes).
+    // While closing/closed: empty mask so apps under the fade stay usable.
     mask: Region {
-        x: NotificationMetrics.windowGutter
-        y: 0
-        width: root.open ? root.panelWidth : 0
-        height: root.open ? root.implicitHeight : 0
+        width: root.open ? (root.screen ? root.screen.width : 1) : 0
+        height: root.open ? (root.screen ? root.screen.height : 1) : 0
     }
 
     onOpenChanged: {
@@ -80,7 +81,10 @@ PanelWindow {
                 presented = true
             }
 
-            Qt.callLater(() => openAnimation.restart())
+            Qt.callLater(() => {
+                openAnimation.restart()
+                keyCatcher.forceActiveFocus()
+            })
             now = Date.now()
         } else if (presented) {
             openAnimation.stop()
@@ -102,51 +106,62 @@ PanelWindow {
         onTriggered: root.now = Date.now()
     }
 
-    Rectangle {
-        id: panelShadow
+    // Outside click / Escape dismiss.
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+        enabled: root.open
+        onClicked: root.closeRequested()
+    }
 
-        x: NotificationMetrics.windowGutter + 2
-        y: 6
-        width: root.panelWidth - 4
-        height: root.implicitHeight - 6
-        radius: 24
-        color: Qt.rgba(Colors.shadow.r, Colors.shadow.g, Colors.shadow.b, 0.34)
-        opacity: surface.visualOpacity
+    Item {
+        id: keyCatcher
+        anchors.fill: parent
+        focus: root.open
+        Keys.onEscapePressed: root.closeRequested()
+    }
 
-        transform: [
-            Scale {
-                origin.x: panelShadow.width
-                origin.y: 0
-                xScale: surface.visualScale
-                yScale: surface.visualScale
-            },
-            Translate {
-                x: surface.horizontalOffset
-                y: surface.verticalOffset
-            }
-        ]
+    Item {
+        id: panelHost
+
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: root.topOffset
+        // Align right edge with floating bar (same as network/music).
+        anchors.rightMargin: root.rightOffset
+        width: root.panelWidth
+        // Follow content so we don't leave a tall empty rounded shell.
+        height: surface.height
+
+        // Swallow so card clicks don't hit the dismiss MouseArea.
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
+            z: -1
+        }
     }
 
     Rectangle {
         id: surface
+        parent: panelHost
 
         property real visualOpacity: 0
         property real visualScale: 0.965
         property real horizontalOffset: 14
         property real verticalOffset: -8
 
-        x: NotificationMetrics.windowGutter
         width: root.panelWidth
-        height: root.implicitHeight
-        radius: 24
-        color: Qt.rgba(
-            Colors.surfaceContainerLow.r,
-            Colors.surfaceContainerLow.g,
-            Colors.surfaceContainerLow.b,
-            0.975
+        // Header 82 + DND 62 + list area (content-sized, capped).
+        height: Math.min(
+            root.maxPanelHeight,
+            82 + 62 + listArea.preferredHeight
         )
+        radius: NotificationMetrics.surfaceRadius
+        color: Colors.surfaceContainerLow
         opacity: visualOpacity
         clip: true
+        border.width: Constants.borderWidth
+        border.color: Colors.surfaceContainerHighest
 
         transform: [
             Scale {
@@ -160,6 +175,18 @@ PanelWindow {
                 y: surface.verticalOffset
             }
         ]
+
+        // Soft drop under the card only (not a second floating rounded layer).
+        Rectangle {
+            anchors.fill: parent
+            anchors.topMargin: 6
+            anchors.leftMargin: 2
+            anchors.rightMargin: -2
+            radius: parent.radius
+            color: Qt.rgba(Colors.shadow.r, Colors.shadow.g, Colors.shadow.b, 0.28)
+            z: -1
+            opacity: surface.visualOpacity
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -469,8 +496,16 @@ PanelWindow {
             }
 
             Item {
+                id: listArea
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                // Grow with list content; cap so surface.height stays under maxPanelHeight.
+                readonly property int preferredHeight: root.historyCount > 0
+                    ? Math.min(
+                        root.maxPanelHeight - 82 - 62,
+                        Math.max(120, historyList.contentHeight + 10)
+                    )
+                    : 160
+                Layout.preferredHeight: preferredHeight
 
                 ListView {
                     id: historyList

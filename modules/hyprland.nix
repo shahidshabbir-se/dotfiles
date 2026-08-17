@@ -409,6 +409,7 @@ in
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
         # Quickshell bar popups
+        "$mod, N, exec, qs ipc call notifications toggleCenter"
         "ALT SHIFT, N, exec, qs ipc call bar toggleNetwork"
         "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
         "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"

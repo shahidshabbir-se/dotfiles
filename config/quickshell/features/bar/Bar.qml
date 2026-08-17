@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import qs.shared.theme
 
 PanelWindow {
@@ -213,8 +214,16 @@ PanelWindow {
 
         anchor {
             item: clock
-            rect.x: bar.vertical ? clock.width + Constants.spacingLg : 0
-            rect.y: bar.vertical ? 0 : clock.height + Constants.spacingXl + Constants.spacingXs
+            // 8px under the bar (not just under clock text) — same gap as LayerPopup.
+            rect.x: bar.vertical
+                ? clock.width + (barBackground.width - clock.width) / 2
+                    + Constants.spacingMd
+                : 0
+            rect.y: bar.vertical
+                ? 0
+                : clock.height
+                    + (barBackground.height - clock.height) / 2
+                    + Constants.spacingMd
             rect.width: bar.vertical ? 1 : clock.width
             rect.height: bar.vertical ? clock.height : 1
             edges: bar.vertical ? Edges.Bottom | Edges.Right : Edges.Bottom
@@ -231,11 +240,28 @@ PanelWindow {
         }
     }
 
-    // Layer-shell panels — keyboard/IPC friendly (no xdg grab parent required).
-    PanelWindow {
-        id: musicWindow
+    // Full-screen layer panels so outside-click + Escape work (PopupWindow
+    // grab fails for keyboard/IPC open; content-sized PanelWindow has no
+    // outside region and no auto-dismiss).
+    component LayerPopup: PanelWindow {
+        id: layer
 
         property bool open: false
+        default property alias content: host.data
+
+        // Content sits 8px under the floating bar (spacingMd), right-aligned to bar edge.
+        readonly property int contentTop: bar.vertical
+            ? Constants.spacingMd
+            : Constants.barTopMargin + Constants.barHeight + Constants.spacingMd
+        readonly property int contentRight: bar.vertical
+            ? Constants.spacingMd
+            : Math.max(
+                Constants.spacingMd,
+                Math.round(((screen ? screen.width : 0) - bar.implicitWidth) / 2)
+            )
+        readonly property int contentLeft: bar.vertical
+            ? Constants.barTopMargin + Constants.barVerticalWidth + Constants.spacingMd
+            : Constants.spacingMd
 
         visible: open
         color: "transparent"
@@ -245,28 +271,64 @@ PanelWindow {
         surfaceFormat.opaque: false
 
         anchors {
-            top: !bar.vertical
-            right: !bar.vertical
-            left: bar.vertical
+            top: true
+            bottom: true
+            left: true
+            right: true
         }
 
-        margins {
-            top: bar.vertical
-                ? 0
-                : Constants.barTopMargin + Constants.barHeight + Constants.spacingLg
-            right: bar.vertical
-                ? 0
-                : Math.max(
-                    Constants.spacingLg,
-                    Math.round((screen.width - bar.implicitWidth) / 2)
-                )
-            left: bar.vertical
-                ? Constants.barTopMargin + Constants.barVerticalWidth + Constants.spacingLg
-                : 0
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: open
+            ? WlrKeyboardFocus.Exclusive
+            : WlrKeyboardFocus.None
+
+        // Outside click dismisses.
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            onClicked: layer.open = false
         }
 
-        implicitWidth: musicPopup.width
-        implicitHeight: musicPopup.implicitHeight
+        // Escape dismisses (panel holds exclusive keyboard focus while open).
+        Item {
+            id: keyCatcher
+            anchors.fill: parent
+            focus: layer.open
+            Keys.onEscapePressed: layer.open = false
+
+            // Keep focus after map so Escape works without a click first.
+            Connections {
+                target: layer
+                function onOpenChanged() {
+                    if (layer.open)
+                        Qt.callLater(() => keyCatcher.forceActiveFocus())
+                }
+            }
+        }
+
+        // Content host — clicks here must not hit the dismiss MouseArea.
+        Item {
+            id: host
+            anchors.top: parent.top
+            anchors.right: bar.vertical ? undefined : parent.right
+            anchors.left: bar.vertical ? parent.left : undefined
+            anchors.topMargin: layer.contentTop
+            anchors.rightMargin: bar.vertical ? 0 : layer.contentRight
+            anchors.leftMargin: bar.vertical ? layer.contentLeft : 0
+            width: childrenRect.width
+            height: childrenRect.height
+
+            // Swallow so clicks on the card don't close the panel.
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.AllButtons
+                z: -1
+            }
+        }
+    }
+
+    LayerPopup {
+        id: musicWindow
 
         MusicPopup {
             id: musicPopup
@@ -274,41 +336,8 @@ PanelWindow {
         }
     }
 
-    PanelWindow {
+    LayerPopup {
         id: networkWindow
-
-        property bool open: false
-
-        visible: open
-        color: "transparent"
-        exclusionMode: ExclusionMode.Ignore
-        aboveWindows: true
-        focusable: true
-        surfaceFormat.opaque: false
-
-        anchors {
-            top: !bar.vertical
-            right: !bar.vertical
-            left: bar.vertical
-        }
-
-        margins {
-            top: bar.vertical
-                ? 0
-                : Constants.barTopMargin + Constants.barHeight + Constants.spacingLg
-            right: bar.vertical
-                ? 0
-                : Math.max(
-                    Constants.spacingLg,
-                    Math.round((screen.width - bar.implicitWidth) / 2)
-                )
-            left: bar.vertical
-                ? Constants.barTopMargin + Constants.barVerticalWidth + Constants.spacingLg
-                : 0
-        }
-
-        implicitWidth: networkPopup.width
-        implicitHeight: networkPopup.implicitHeight
 
         NetworkPopup {
             id: networkPopup

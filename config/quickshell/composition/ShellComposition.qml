@@ -32,6 +32,7 @@ Scope {
 
         screen: bar.screen
         barVertical: bar.vertical
+        barWidth: bar.implicitWidth
     }
 
     WallpaperFeature.Wallpaper {
