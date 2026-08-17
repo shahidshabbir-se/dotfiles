@@ -1,0 +1,35 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+This directory is the live Quickshell config (`~/.config/quickshell` is an out-of-store symlink here). Git root is the parent dotfiles repo (`~/dotfiles`), not this folder. Host wiring lives in `~/dotfiles/modules/quickshell.nix`.
+
+@docs/ARCHITECTURE.md
+
+## Do not
+
+- Do not add windows or features from `shell.qml` — it only instantiates `ShellComposition`.
+- Do not import with `../../`. Use `qs.*` modules from this directory.
+- Do not copy UI from `~/dotfiles/config/archive/quickshell`. Logic there is fair reference; invent a better UI.
+- Do not put code in `shared/` until a second feature needs it.
+- Do not talk to another feature's child IDs — only its facade properties/signals.
+
+## Runtime
+
+- Trust Quickshell hot-reload after QML edits. Restart only if the UI is stuck: `systemctl --user restart quickshell.service`.
+- `BAR_ORIENTATION=vertical` is a real layout. Composition already maps it onto `Bar.orientation`.
+- Production unit runs `scripts/launch.sh` with no orientation arg (horizontal). Vertical is env/arg, not a second codebase.
+- This shell owns `org.freedesktop.Notifications`. `launch.sh` and Hyprland both kill swaync/dunst — do not re-enable those.
+- Notification history is in-memory; a restart wipes it.
+
+## Theme
+
+`shared/theme/Colors.qml` is hand-edited until matugen writes it. Other matugen templates (hypr/waybar/rofi) already exist under `~/dotfiles/config/matugen/templates/`; there is no Quickshell template yet. When adding one, keep the current `Colors` property names so features do not churn.
+
+## Lint
+
+`qmllint` comes from `qt6.qtdeclarative` (declared in `~/dotfiles/modules/quickshell.nix`). After a home-manager switch: `qmllint shell.qml`. No format-on-edit hook — there is no project formatter.
+
+## Commits
+
+Conventional, scoped: `feat(quickshell): …`, `fix(quickshell): …`.

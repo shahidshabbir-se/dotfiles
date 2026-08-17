@@ -92,6 +92,8 @@ let
           ${pkgs.hyprland}/bin/hyprctl -i 0 dispatch dpms on || true
         ''
     }
+    # qs keeps running after resume but stuck on placeholder outputs (no crash).
+    ${pkgs.systemd}/bin/systemctl --user try-restart quickshell.service || true
   '';
 
   laptopListeners = [

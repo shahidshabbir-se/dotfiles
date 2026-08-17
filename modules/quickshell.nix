@@ -10,12 +10,18 @@ let
   launchScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/launch.sh";
 in
 {
+  home.packages = with pkgs; [
+    quickshell
+    qt6.qtdeclarative # qmllint / qmlformat
+  ];
+
   # Live-editable shell config (same pattern as nvim/rofi/zed).
   xdg.configFile.quickshell.source =
     config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
 
   # Best practice with home-manager Hyprland: session-scoped user unit.
-  # Restart=always recovers the bar after suspend/resume crashes.
+  # Restart=always covers hard crashes; hypridle after_sleep restarts qs when
+  # it survives sleep but loses Wayland outputs (placeholder screen).
   systemd.user.services.quickshell = {
     Unit = {
       Description = "Quickshell desktop shell";

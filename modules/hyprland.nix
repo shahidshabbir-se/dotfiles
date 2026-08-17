@@ -36,11 +36,13 @@ let
   layerRuleNamespaces = [
     "logout_dialog"
     "wlogout"
+    # "vicinae"
   ];
 
   layerRuleNoAnimNamespaces = [
     "logout_dialog"
     "wlogout"
+    # "vicinae"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
@@ -406,6 +408,8 @@ in
         "$mod SHIFT, Q, exec, ${exitScript}"
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
+        # "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
+        # "$mod, SPACE, exec, vicinae toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
         "ALT SHIFT,Tab,cyclenext, prev"

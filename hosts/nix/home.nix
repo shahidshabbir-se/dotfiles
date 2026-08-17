@@ -78,6 +78,25 @@ let
   inherit (config.lib.file) mkOutOfStoreSymlink;
   inherit (pkgs.stdenv.hostPlatform) system;
 
+  # # Store prebuild (source package is blocked upstream: node-gyp/usocket).
+  # # Update hash when https://api.vicinae.com/v1/store/gelei/bluetooth/download changes.
+  # vicinaeBluetoothStore = pkgs.stdenv.mkDerivation {
+  #   pname = "vicinae-extension-bluetooth";
+  #   version = "store";
+  #   src = pkgs.fetchurl {
+  #     url = "https://api.vicinae.com/v1/store/gelei/bluetooth/download";
+  #     hash = "sha256-sTeXs4bYU604wQ/V2vRjvwK/ouaqj+rbq2Bw8C9Yj6Q=";
+  #   };
+  #   nativeBuildInputs = [ pkgs.unzip ];
+  #   unpackPhase = ''
+  #     unzip -q $src
+  #   '';
+  #   installPhase = ''
+  #     mkdir -p $out
+  #     cp -r bluetooth/. $out/
+  #   '';
+  # };
+
   dotfileLink = path: mkOutOfStoreSymlink "${dotfilesDirectory}/${path}";
 
   bin = {
@@ -205,14 +224,12 @@ let
     fastfetch
     pavucontrol
     glycin-loaders
-    quickshell
     libnotify
     matugen
     unzip
     webp-pixbuf-loader
     wmctrl
     zip
-    claude-code
   ];
 
   themePackages = with pkgs; [
@@ -369,6 +386,7 @@ in
         "writeBoundary"
         "createProjectsWorkspace"
       ] setNautilusFolderIconsScript;
+
     };
 
     file = {
@@ -509,6 +527,79 @@ in
       inherit config device pkgs;
     };
   };
+
+  # ───────────────────────────────────────────────
+  # ▶ Vicinae (disabled)
+  # ───────────────────────────────────────────────
+  # programs.vicinae = {
+  #   enable = true;
+  #
+  #   systemd = {
+  #     enable = true;
+  #     autoStart = true;
+  #     environment = {
+  #       USE_LAYER_SHELL = 1;
+  #     };
+  #   };
+  #
+  #   extensions = with inputs.vicinae-extensions.packages.${system}; [
+  #     # awww-switcher
+  #     # wifi-commander
+  #     # bluetooth via store zip: vicinaeBluetoothStore
+  #     nix
+  #     port-killer
+  #     power-profile
+  #     process-manager
+  #   ];
+  #
+  #   settings = {
+  #     close_on_focus_loss = true;
+  #     consider_preedit = true;
+  #     pop_to_root_on_close = true;
+  #     favicon_service = "twenty";
+  #     search_files_in_root = true;
+  #
+  #     font.normal = {
+  #       size = 10.5;
+  #       family = "Outfit";
+  #     };
+  #
+  #     launcher_window.opacity = 0.7;
+  #
+  #     theme.dark = {
+  #       name = "matugen";
+  #       icon_theme = "Papirus-Dark";
+  #     };
+  #
+  #     # providers."@sovereign/vicinae-extension-awww-switcher-0".preferences = {
+  #     #   wallpaperPath = "${homeDirectory}/Pictures/Wallpapers";
+  #     #   colorGenTool = "none";
+  #     #   postCommand = "${homeDirectory}/dotfiles/config/matugen/run.sh \"\${wallpaper}\"";
+  #     # };
+  #   };
+  # };
+  #
+  # # Vicinae needs the live Hyprland/Wayland environment. If it starts before
+  # # graphical-session.target has the compositor env, it exits with a broken
+  # # Wayland connection and stays dead at login.
+  # systemd.user.services.vicinae = {
+  #   Unit = {
+  #     After = lib.mkForce [ "default.target" ];
+  #     PartOf = lib.mkForce [ ];
+  #   };
+  #
+  #   Service = {
+  #     Environment = [
+  #       "QT_QPA_PLATFORM=wayland"
+  #       "XDG_CURRENT_DESKTOP=Hyprland"
+  #       "XDG_SESSION_TYPE=wayland"
+  #     ];
+  #     Restart = lib.mkForce "always";
+  #     RestartSec = lib.mkForce 5;
+  #   };
+  #
+  #   Install.WantedBy = lib.mkForce [ "default.target" ];
+  # };
 
   # Libadwaita and GTK applications use this preference for dark mode.
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
