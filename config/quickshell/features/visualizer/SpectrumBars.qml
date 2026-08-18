@@ -63,10 +63,29 @@ Item {
             gradient: Gradient {
                 orientation: Gradient.Vertical
 
-                GradientStop { position: 0.00; color: "#e6fff8ef" }
-                GradientStop { position: 0.28; color: "#d9b6c4ff" }
-                GradientStop { position: 0.68; color: "#b3344479" }
-                GradientStop { position: 1.00; color: "#66344479" }
+                GradientStop {
+                    position: 0.00
+                    color: Qt.rgba(
+                        Colors.primary.r,
+                        Colors.primary.g,
+                        Colors.primary.b,
+                        0.92
+                    )
+                }
+                GradientStop {
+                    position: 0.45
+                    color: {
+                        const c = Qt.darker(Colors.primary, 1.25)
+                        return Qt.rgba(c.r, c.g, c.b, 0.72)
+                    }
+                }
+                GradientStop {
+                    position: 1.00
+                    color: {
+                        const c = Qt.darker(Colors.primary, 1.55)
+                        return Qt.rgba(c.r, c.g, c.b, 0.42)
+                    }
+                }
             }
         }
     }
