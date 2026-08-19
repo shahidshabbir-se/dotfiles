@@ -1,15 +1,19 @@
 {
 	"agent_servers": {
-  "claude-acp": {
+  "pi-acp": {
    "type": "registry"
   }
  },
  "language_models": {},
 	"terminal": {
 		"font_size": 16.0,
-		"font_family": "GeistMono Nerd Font",
+	},
+
+	"tab_bar": {
+		"show": false,
 	},
 	"project_panel": {
+		"hide_gitignore": true,
 		"dock": "left",
 	},
 	"buffer_line_height": "comfortable",
@@ -58,13 +62,12 @@
 	"icon_theme": {
 		"mode": "dark",
 		"light": "Material Icon Theme",
-		"dark": "VSCode Icons for Zed (Dark NestJS)",
+		"dark": "Material Icon Theme",
 	},
-	"buffer_font_family": "GeistMono Nerd Font",
 	"ui_font_size": 15.0,
 	"agent_buffer_font_size": 14.0,
 	"agent_ui_font_size": 15.0,
-	"buffer_font_size": 15.0,
+	"buffer_font_size": 16.0,
 	"buffer_font_weight": 400,
 	"autosave": "on_focus_change",
 }

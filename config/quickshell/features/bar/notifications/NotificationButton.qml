@@ -17,7 +17,7 @@ Item {
         anchors.fill: parent
         radius: Constants.buttonRadius
         color: root.active
-            ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.14)
+            ? Tokens.withAlpha(Colors.primary, 0.14)
             : pointer.containsMouse
                 ? Colors.surfaceContainerHighest
                 : "transparent"
@@ -44,7 +44,7 @@ Item {
             anchors.centerIn: parent
             width: Constants.iconSizeLg + 2
             height: 1.5
-            radius: 1
+            radius: Constants.panelRadius
             rotation: -45
             color: Colors.primary
             antialiasing: true

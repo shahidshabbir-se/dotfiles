@@ -496,7 +496,7 @@ PanelWindow {
 
                 ClippingRectangle {
                     anchors.fill: parent
-                    radius: Constants.networkPopupRadius
+                    radius: Constants.panelRadius
                     color: Colors.surfaceContainerLowest
                     border.width: Constants.borderWidth
                     border.color: Colors.surfaceContainerHighest
@@ -532,7 +532,7 @@ PanelWindow {
                     Rectangle {
                         anchors.fill: parent
                         radius: parent.radius
-                        color: active ? "transparent" : Qt.rgba(0, 0, 0, 0.62)
+                        color: active ? "transparent" : Tokens.scrim
                     }
 
                     Text {

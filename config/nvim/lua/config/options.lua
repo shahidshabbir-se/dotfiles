@@ -2,6 +2,9 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
+-- Prefer cwd; then git root over LSP workspace (monorepos: apps/web LSP != repo root)
+vim.g.root_spec = { "cwd", ".git", "lsp" }
+
 vim.opt.number = true
 vim.opt.backupcopy = "yes"
 vim.opt.relativenumber = true

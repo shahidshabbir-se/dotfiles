@@ -1,0 +1,537 @@
+#!/usr/bin/env bash
+# NetworkManager backend for the bar wifi panel.
+# JSON on stdout. Secrets never on argv (stdin / nmcli show-secrets only).
+set -euo pipefail
+export LC_ALL=C
+
+die() { printf 'qs-network: %s\n' "$*" >&2; exit 1; }
+need() { command -v "$1" >/dev/null 2>&1 || die "missing dependency: $1"; }
+
+need nmcli
+need jq
+
+nmcli_ok() { nmcli "$@" >/dev/null; }
+nmcli_soft() { nmcli "$@" 2>/dev/null || true; }
+
+wifi_enabled() { [[ "$(nmcli_soft -g WIFI general)" == "enabled" ]]; }
+
+default_iface() {
+  ip -j route get 1.1.1.1 2>/dev/null | jq -r '.[0].dev // empty' 2>/dev/null || true
+}
+
+is_wireless() { [[ -d "/sys/class/net/${1}/wireless" ]]; }
+
+read_sys_u64() {
+  local f="$1"
+  if [[ -r "$f" ]]; then tr -d '[:space:]' <"$f"; else printf '0'; fi
+}
+
+wifi_device() {
+  local device type state
+  while IFS=: read -r device type state; do
+    if [[ "$type" == "wifi" && "$state" == connected* ]]; then
+      printf '%s\n' "$device"; return 0
+    fi
+  done < <(nmcli_soft -t -f DEVICE,TYPE,STATE device status)
+  return 1
+}
+
+wifi_profile() {
+  local device="$1" line key val
+  while IFS= read -r line; do
+    key="${line%%:*}"; val="${line#*:}"
+    if [[ "$key" == "GENERAL.CONNECTION" && -n "$val" && "$val" != "--" ]]; then
+      printf '%s\n' "$val"; return 0
+    fi
+  done < <(nmcli_soft -t -f GENERAL.CONNECTION device show "$device")
+  return 1
+}
+
+ping_ms() {
+  local host="$1" out
+  out="$(ping -n -c 1 -W 1 "$host" 2>/dev/null || true)"
+  if [[ "$out" =~ time=([0-9.]+)[[:space:]]*ms ]]; then
+    printf '%s\n' "${BASH_REMATCH[1]}"
+  else
+    printf '%s\n' '-1'
+  fi
+}
+
+band_for_freq() {
+  local freq="${1%%.*}"
+  [[ -z "$freq" || "$freq" == "--" ]] && return 1
+  if (( freq >= 5925 )); then printf '6\n'
+  elif (( freq >= 5000 )); then printf '5\n'
+  elif (( freq >= 2400 )); then printf '2.4\n'
+  else return 1
+  fi
+}
+
+nm_band_for() {
+  case "$1" in
+    2.4) printf 'bg\n' ;;
+    5|6) printf 'a\n' ;;
+    *) die "usage: band [auto|2.4|5|6]" ;;
+  esac
+}
+
+band_from_nm() {
+  case "$(printf '%s' "$1" | tr -d '[:space:]')" in
+    bg|b|g) printf '2.4\n' ;;
+    a) printf '5\n' ;;
+    *) printf 'auto\n' ;;
+  esac
+}
+
+read_link_freq_ssid() {
+  local device="$1" in_use signal freq ssid
+  SSID_OUT=""; FREQ_OUT=""
+  while IFS=: read -r in_use signal freq ssid; do
+    if [[ "$in_use" == "*" ]]; then
+      SSID_OUT="$ssid"; FREQ_OUT="$freq"; return 0
+    fi
+  done < <(nmcli_soft -t -f IN-USE,SIGNAL,FREQ,SSID dev wifi list ifname "$device" --rescan no)
+  return 1
+}
+
+available_bands() {
+  local device="$1" ssid="$2" current="${3:-}"
+  local -A seen=()
+  local in_use _signal freq row_ssid band
+  while IFS=: read -r in_use _signal freq row_ssid; do
+    [[ "$row_ssid" == "$ssid" ]] || continue
+    band="$(band_for_freq "$freq" || true)"
+    [[ -n "$band" ]] || continue
+    [[ -z "${seen[$band]:-}" ]] || continue
+    seen[$band]=1
+  done < <(nmcli_soft -t -f IN-USE,SIGNAL,FREQ,SSID dev wifi list ifname "$device" --rescan no)
+  [[ -n "$current" ]] && seen[$current]=1
+  local ordered=()
+  for band in 2.4 5 6; do
+    [[ -n "${seen[$band]:-}" ]] && ordered+=("$band")
+  done
+  printf '%s\n' "${ordered[@]}"
+}
+
+active_connection_name() {
+  local iface key val line
+  iface="$(default_iface)"
+  [[ -n "$iface" ]] || return 1
+  while IFS= read -r line; do
+    key="${line%%:*}"; val="${line#*:}"
+    if [[ "$key" == "GENERAL.CONNECTION" && -n "$val" && "$val" != "--" ]]; then
+      printf '%s\n' "$val"; return 0
+    fi
+  done < <(nmcli_soft -t -f GENERAL.CONNECTION device show "$iface")
+  return 1
+}
+
+emit_status() {
+  jq -nc \
+    --arg kind "$1" --arg label "$2" --argjson signal "$3" \
+    --arg frequency "$4" --arg iface "$5" --arg ip "$6" \
+    --arg gateway "$7" --arg prefix "$8" \
+    --argjson rx_bytes "$9" --argjson tx_bytes "${10}" \
+    --argjson wifi_enabled "${11}" \
+    --argjson router_ping_ms "${12}" --argjson internet_ping_ms "${13}" \
+    '{kind:$kind,label:$label,signal:$signal,frequency:$frequency,iface:$iface,ip:$ip,gateway:$gateway,prefix:$prefix,rx_bytes:$rx_bytes,tx_bytes:$tx_bytes,wifi_enabled:$wifi_enabled,router_ping_ms:$router_ping_ms,internet_ping_ms:$internet_ping_ms}'
+}
+
+cmd_status() {
+  local iface kind label signal frequency ip gateway prefix rx tx wifi_on router_ping internet_ping
+  iface="$(default_iface)"
+  kind="disconnected"; label=""; signal=-1; frequency=""; ip=""; gateway=""; prefix=""
+  rx=0; tx=0; wifi_on=false; router_ping=-1; internet_ping=-1
+  wifi_enabled && wifi_on=true
+
+  if [[ -z "$iface" ]]; then
+    emit_status "$kind" "$label" "$signal" "$frequency" "$iface" "$ip" "$gateway" "$prefix" "$rx" "$tx" "$wifi_on" "$router_ping" "$internet_ping"
+    return 0
+  fi
+
+  rx="$(read_sys_u64 "/sys/class/net/${iface}/statistics/rx_bytes")"
+  tx="$(read_sys_u64 "/sys/class/net/${iface}/statistics/tx_bytes")"
+
+  local route_json addr_json
+  route_json="$(ip -j route get 1.1.1.1 2>/dev/null || true)"
+  if [[ -n "$route_json" ]]; then
+    gateway="$(jq -r '.[0].gateway // empty' <<<"$route_json")"
+    ip="$(jq -r '.[0].prefsrc // empty' <<<"$route_json")"
+  fi
+  addr_json="$(ip -j addr show "$iface" 2>/dev/null || true)"
+  if [[ -n "$addr_json" ]]; then
+    [[ -z "$ip" ]] && ip="$(jq -r '[.[0].addr_info[]? | select(.family=="inet") | .local][0] // empty' <<<"$addr_json")"
+    prefix="$(jq -r '[.[0].addr_info[]? | select(.family=="inet") | .prefixlen][0] // empty' <<<"$addr_json")"
+  fi
+
+  if is_wireless "$iface"; then
+    kind="wifi"
+    local state="" conn="" line
+    while IFS= read -r line; do
+      case "${line%%:*}" in
+        GENERAL.STATE) state="${line#*:}" ;;
+        GENERAL.CONNECTION) conn="${line#*:}" ;;
+      esac
+    done < <(nmcli_soft -t -f GENERAL.STATE,GENERAL.CONNECTION device show "$iface")
+    if [[ "$state" != 100* ]]; then
+      kind="disconnected"
+    else
+      label="${conn:-$iface}"
+    fi
+    local in_use sig freq ssid
+    while IFS=: read -r in_use sig freq ssid; do
+      if [[ "$in_use" == "*" ]]; then
+        signal="${sig:--1}"; frequency="$freq"
+        [[ -z "$label" ]] && label="$ssid"
+        break
+      fi
+    done < <(nmcli_soft -t -f IN-USE,SIGNAL,FREQ,SSID dev wifi list ifname "$iface" --rescan no)
+  else
+    kind="ethernet"; label="$iface"
+  fi
+
+  [[ -n "$gateway" ]] && router_ping="$(ping_ms "$gateway")"
+  internet_ping="$(ping_ms 1.1.1.1)"
+  emit_status "$kind" "$label" "$signal" "$frequency" "$iface" "$ip" "$gateway" "$prefix" "$rx" "$tx" "$wifi_on" "$router_ping" "$internet_ping"
+}
+
+cmd_scan() {
+  local rescan="${1:-auto}"
+  case "$rescan" in no|cache) rescan=no ;; *) rescan=auto ;; esac
+
+  local raw known_raw
+  raw="$(nmcli -t -f IN-USE,SSID,SIGNAL,SECURITY,BSSID dev wifi list --rescan "$rescan")"
+  known_raw="$(nmcli_soft -t -f NAME,TYPE connection show)"
+
+  local -A known=() seen=()
+  local name type in_use ssid signal security _bssid
+  while IFS=: read -r name type; do
+    if [[ "$type" == "wifi" || "$type" == *wireless* ]]; then known["$name"]=1; fi
+  done <<<"$known_raw"
+
+  local -a rows=()
+  while IFS=: read -r in_use ssid signal security _bssid; do
+    [[ -n "$ssid" ]] || continue
+    [[ -z "${seen[$ssid]:-}" ]] || continue
+    seen[$ssid]=1
+    local connected=false is_known=false
+    [[ "$in_use" == "*" ]] && connected=true
+    [[ -n "${known[$ssid]:-}" ]] && is_known=true
+    rows+=("$(jq -nc \
+      --arg ssid "$ssid" --argjson signal "${signal:-0}" --arg security "$security" \
+      --argjson connected "$connected" --argjson known "$is_known" --argjson in_use "$connected" \
+      '{ssid:$ssid,signal:$signal,security:$security,connected:$connected,known:$known,in_use:$in_use}')")
+  done <<<"$raw"
+
+  if ((${#rows[@]} == 0)); then printf '[]\n'; return 0; fi
+  printf '%s\n' "${rows[@]}" | jq -cs 'sort_by([(.connected|not), (.known|not), -.signal])'
+}
+
+cmd_connect() {
+  local ssid="${1:-}" secret=""
+  [[ -n "$ssid" ]] || die "usage: connect <ssid>"
+  # One line from stdin (password); empty/EOF = use saved profile.
+  if [[ ! -t 0 ]]; then IFS= read -r secret || true; fi
+
+  # Prefer activating a saved profile — `device wifi connect` rescans and can
+  # sit for ~25s+ while the panel also polls scans (feels frozen).
+  if nmcli -t -f NAME connection show 2>/dev/null | grep -Fxq -- "$ssid"; then
+    if [[ -n "$secret" ]]; then
+      nmcli_ok connection modify id "$ssid" \
+        802-11-wireless-security.psk "$secret" \
+        || die "failed to update password for $ssid"
+    fi
+    nmcli_ok connection up id "$ssid" || die "failed to connect to $ssid"
+  elif [[ -n "$secret" ]]; then
+    nmcli_ok device wifi connect "$ssid" password "$secret" \
+      || die "failed to connect to $ssid"
+  else
+    nmcli_ok device wifi connect "$ssid" || die "failed to connect to $ssid"
+  fi
+  jq -nc --arg ssid "$ssid" '{ok:true,ssid:$ssid}'
+}
+
+cmd_disconnect() {
+  local iface dev
+  iface="$(default_iface)"
+  if [[ -n "$iface" ]] && is_wireless "$iface"; then
+    nmcli_ok device disconnect "$iface" || die "disconnect failed"
+  else
+    dev="$(wifi_device)" || die "no active wifi"
+    nmcli_ok device disconnect "$dev" || die "disconnect failed"
+  fi
+  jq -nc '{ok:true}'
+}
+
+cmd_forget() {
+  local ssid="${1:-}"
+  [[ -n "$ssid" ]] || die "usage: forget <ssid>"
+  nmcli_ok connection delete id "$ssid" || die "forget failed"
+  jq -nc --arg ssid "$ssid" '{ok:true,ssid:$ssid}'
+}
+
+cmd_wifi() {
+  local sub="${1:-status}" on=false
+  case "$sub" in
+    on) nmcli_ok radio wifi on || die "wifi on failed" ;;
+    off) nmcli_ok radio wifi off || die "wifi off failed" ;;
+    toggle)
+      if wifi_enabled; then nmcli_ok radio wifi off || die "wifi off failed"
+      else nmcli_ok radio wifi on || die "wifi on failed"; fi
+      ;;
+    status) ;;
+    *) die "usage: wifi [on|off|toggle|status]" ;;
+  esac
+  wifi_enabled && on=true
+  jq -nc --argjson wifi_enabled "$on" '{wifi_enabled:$wifi_enabled}'
+}
+
+cmd_band() {
+  local target="${1:-}" device ssid freq band selected profile current desired previous
+  local -a avail=()
+
+  if [[ -z "$target" ]]; then
+    device="$(wifi_device || true)"
+    if [[ -z "$device" ]] || ! read_link_freq_ssid "$device"; then
+      jq -nc '{band:"",available:[],selected:"auto"}'; return 0
+    fi
+    ssid="$SSID_OUT"; freq="$FREQ_OUT"
+    band="$(band_for_freq "$freq" || true)"
+    mapfile -t avail < <(available_bands "$device" "$ssid" "$band")
+    profile="$(wifi_profile "$device" || true)"
+    if [[ -z "$profile" ]]; then selected="auto"
+    else selected="$(band_from_nm "$(nmcli_soft -e no -g 802-11-wireless.band connection show "$profile")")"
+    fi
+    jq -nc --arg band "$band" --arg selected "$selected" --args "${avail[@]}" \
+      '{band:$band, available:$ARGS.positional, selected:$selected}'
+    return 0
+  fi
+
+  case "$target" in auto|2.4|5|6) ;; *) die "usage: band [auto|2.4|5|6]" ;; esac
+  device="$(wifi_device)" || die "no connected Wi-Fi device"
+  profile="$(wifi_profile "$device")" || die "no active Wi-Fi connection profile"
+  read_link_freq_ssid "$device" || true
+  ssid="$SSID_OUT"; freq="$FREQ_OUT"
+  current="$(band_for_freq "$freq" || true)"
+  mapfile -t avail < <(available_bands "$device" "$ssid" "$current")
+
+  desired=""
+  if [[ "$target" != "auto" ]]; then
+    local ok=0 b
+    for b in "${avail[@]}"; do [[ "$b" == "$target" ]] && ok=1; done
+    ((ok)) || die "${target}GHz is not available on this network"
+    desired="$(nm_band_for "$target")"
+  fi
+
+  previous="$(nmcli_soft -e no -g 802-11-wireless.band connection show "$profile" | tr -d '[:space:]')"
+  if [[ "$previous" == "$desired" ]]; then
+    jq -nc --arg selected "$target" '{ok:true,selected:$selected}'; return 0
+  fi
+
+  nmcli_ok connection modify "$profile" 802-11-wireless.band "$desired" || die "could not set band"
+  if ! nmcli_ok connection up "$profile"; then
+    nmcli_soft connection modify "$profile" 802-11-wireless.band "$previous"
+    nmcli_soft connection up "$profile"
+    die "could not connect on $target; reverted"
+  fi
+  jq -nc --arg selected "$target" '{ok:true,selected:$selected}'
+}
+
+cmd_dns() {
+  local target="${1:-}" conn provider servers ignore dns
+  if [[ -z "$target" ]]; then
+    conn="$(active_connection_name || true)"
+    provider="dhcp"; servers=""
+    if [[ -n "$conn" ]]; then
+      ignore="$(nmcli_soft -e no -g ipv4.ignore-auto-dns connection show "$conn" | tr -d '[:space:]')"
+      dns="$(nmcli_soft -e no -g ipv4.dns connection show "$conn")"
+      servers="$(printf '%s' "$dns" | tr -d '[:space:]' | tr ',' ' ')"
+      if [[ "$ignore" == "yes" && -n "$servers" ]]; then
+        if [[ "$servers" == *1.1.1.1* ]]; then provider="cloudflare"
+        elif [[ "$servers" == *8.8.8.8* ]]; then provider="google"
+        else provider="custom"; fi
+      fi
+    fi
+    jq -nc --arg provider "$provider" --arg servers "$servers" \
+      '{provider:$provider, servers:$servers, options:["dhcp","cloudflare","google"]}'
+    return 0
+  fi
+
+  target="$(printf '%s' "$target" | tr '[:upper:]' '[:lower:]')"
+  conn="$(active_connection_name)" || die "no active connection"
+  case "$target" in
+    dhcp) nmcli_ok connection modify "$conn" ipv4.ignore-auto-dns no ipv4.dns "" || die "dns dhcp failed" ;;
+    cloudflare) nmcli_ok connection modify "$conn" ipv4.ignore-auto-dns yes ipv4.dns "1.1.1.1 1.0.0.1" || die "dns cloudflare failed" ;;
+    google) nmcli_ok connection modify "$conn" ipv4.ignore-auto-dns yes ipv4.dns "8.8.8.8 8.8.4.4" || die "dns google failed" ;;
+    *) die "unknown dns provider: $target" ;;
+  esac
+  nmcli_soft connection up "$conn"
+  jq -nc --arg provider "$target" '{ok:true,provider:$provider}'
+}
+
+wifi_secrets() {
+  local iface="$1" uuid fields
+  local -a lines=()
+  uuid="$(nmcli --get-values GENERAL.CON-UUID device show "$iface" | head -n1 | tr -d '[:space:]')"
+  [[ -n "$uuid" && "$uuid" != "--" ]] || die "No active Wi-Fi connection"
+  fields="$(nmcli --show-secrets --escape no --get-values \
+    802-11-wireless.ssid,802-11-wireless-security.key-mgmt,802-11-wireless-security.psk,802-11-wireless.hidden,802-11-wireless-security.wep-key0 \
+    connection show uuid "$uuid")"
+  mapfile -t lines <<<"$fields"
+  SECRET_SSID="${lines[0]:-}"
+  local key_mgmt="${lines[1]:-}" password="${lines[2]:-}" hidden="${lines[3]:-no}" wep="${lines[4]:-}"
+  [[ -n "$SECRET_SSID" ]] || die "Could not read the Wi-Fi name"
+  if [[ "$key_mgmt" == *eap* || "$key_mgmt" == *ieee8021x* ]]; then
+    die "Enterprise Wi-Fi cannot be shared with a password QR"
+  fi
+  if [[ -n "$key_mgmt" && "$key_mgmt" != "none" ]]; then
+    [[ -n "$password" ]] || die "Could not read the Wi-Fi password"
+    SECRET_SECURITY="WPA"; SECRET_PASSWORD="$password"
+  elif [[ -n "$wep" ]]; then
+    SECRET_SECURITY="WEP"; SECRET_PASSWORD="$wep"
+  else
+    SECRET_SECURITY="nopass"; SECRET_PASSWORD=""
+  fi
+  SECRET_HIDDEN="$hidden"
+}
+
+escape_wifi_qr() {
+  # WIFI: QR specials: backslash, semicolon, comma, colon
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/;/\\;/g' -e 's/,/\\,/g' -e 's/:/\\:/g'
+}
+
+emit_qr_png() {
+  local payload="$1" png_b64
+  # PNG — square modules. ASCII doubles width and stretched the panel QR.
+  if command -v qrencode >/dev/null 2>&1; then
+    png_b64="$(qrencode -s 8 -m 2 -t PNG -o - "$payload" | base64 -w0)"
+  else
+    need nix-shell
+    png_b64="$(nix-shell -p qrencode --run "qrencode -s 8 -m 2 -t PNG -o - $(printf '%q' "$payload")" | base64 -w0)"
+  fi
+  [[ -n "$png_b64" ]] || die "qrencode produced no image"
+  printf 'png\t%s\n' "$png_b64"
+}
+
+resolve_wifi_iface() {
+  local iface="${1:-}"
+  if [[ -z "$iface" ]]; then
+    iface="$(wifi_device || true)"
+    if [[ -z "$iface" ]]; then
+      local d; d="$(default_iface)"
+      if [[ -n "$d" ]] && is_wireless "$d"; then iface="$d"; fi
+    fi
+  fi
+  [[ -n "$iface" ]] || die "No active Wi-Fi connection"
+  printf '%s\n' "$iface"
+}
+
+cmd_qr() {
+  local emit_meta=0 iface="" a
+  for a in "$@"; do
+    if [[ "$a" == "--meta" ]]; then emit_meta=1; else iface="$a"; fi
+  done
+  iface="$(resolve_wifi_iface "$iface")"
+  wifi_secrets "$iface"
+  local payload
+  payload="WIFI:T:${SECRET_SECURITY};S:$(escape_wifi_qr "$SECRET_SSID");P:$(escape_wifi_qr "$SECRET_PASSWORD");"
+  [[ "$SECRET_HIDDEN" == "yes" ]] && payload+="H:true;"
+  payload+=";"
+  # meta: iface, security, ssid, password (password may be empty for open nets)
+  ((emit_meta)) && printf 'meta\t%s\t%s\t%s\t%s\n' "$iface" "$SECRET_SECURITY" "$SECRET_SSID" "$SECRET_PASSWORD"
+  emit_qr_png "$payload"
+}
+
+cmd_password() {
+  local iface
+  iface="$(resolve_wifi_iface "${1:-}")"
+  wifi_secrets "$iface"
+  [[ "$SECRET_SECURITY" != "nopass" ]] || die "This network has no password"
+  printf '%s\n' "$SECRET_PASSWORD"
+}
+
+cmd_speedtest() {
+  need curl
+  local direction="${1:-}"
+  [[ "$direction" == "down" || "$direction" == "up" ]] || die "usage: speedtest <down|up>"
+  local iface; iface="$(default_iface)"
+  [[ -n "$iface" ]] || die "No active network interface"
+  local rx_path="/sys/class/net/${iface}/statistics/rx_bytes"
+  local tx_path="/sys/class/net/${iface}/statistics/tx_bytes"
+  [[ -r "$rx_path" ]] || die "No active network interface"
+
+  local token="YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm"
+  local api="https://api.fast.com/netflix/speedtest/v2?https=true&token=${token}&urlCount=3"
+  local body; body="$(curl -fsS "$api")" || die "Failed to fetch speed test endpoints"
+  local -a urls=()
+  mapfile -t urls < <(jq -r '.targets[]?.url // empty' <<<"$body")
+  ((${#urls[@]} > 0)) || die "Failed to fetch speed test endpoints"
+
+  local parallel=8 duration=10
+  local -a pids=()
+  local i=0
+  for ((i=0; i<parallel; i++)); do
+    (
+      local idx="$i" deadline=$((SECONDS + duration + 1)) target
+      while (( SECONDS < deadline )); do
+        target="${urls[$((idx % ${#urls[@]}))]}"
+        if [[ "$direction" == "down" ]]; then
+          curl -fsS -o /dev/null --max-time 3 "$target" >/dev/null 2>&1 || true
+        else
+          head -c 16777216 /dev/zero \
+            | curl -fsS -o /dev/null -X POST --data-binary @- --max-time 3 "$target" \
+              >/dev/null 2>&1 || true
+        fi
+        idx=$((idx + 1))
+      done
+    ) &
+    pids+=("$!")
+  done
+
+  local rx_before tx_before rx_after tx_after bytes mbps t
+  rx_before="$(read_sys_u64 "$rx_path")"
+  tx_before="$(read_sys_u64 "$tx_path")"
+  for ((t=0; t<duration; t++)); do
+    sleep 1
+    rx_after="$(read_sys_u64 "$rx_path")"
+    tx_after="$(read_sys_u64 "$tx_path")"
+    if [[ "$direction" == "down" ]]; then bytes=$((rx_after - rx_before))
+    else bytes=$((tx_after - tx_before)); fi
+    ((bytes < 0)) && bytes=0
+    mbps="$(awk -v b="$bytes" 'BEGIN { printf (b*8/1000000 < 10 ? "%.1f" : "%.0f"), b*8/1000000 }')"
+    printf '%s\n' "$mbps"
+    rx_before="$rx_after"; tx_before="$tx_after"
+  done
+  local pid; for pid in "${pids[@]}"; do wait "$pid" 2>/dev/null || true; done
+}
+
+usage() {
+  cat <<'EOF'
+qs-network <command>
+  status | scan [auto|no] | connect <ssid> | disconnect | forget <ssid>
+  wifi [on|off|toggle|status] | band [auto|2.4|5|6]
+  dns [dhcp|cloudflare|google] | qr [--meta] [iface] | password [iface]
+  speedtest <down|up>
+EOF
+}
+
+main() {
+  local cmd="${1:-}"; shift || true
+  case "$cmd" in
+    status) cmd_status "$@" ;;
+    scan) cmd_scan "$@" ;;
+    connect) cmd_connect "$@" ;;
+    disconnect) cmd_disconnect "$@" ;;
+    forget) cmd_forget "$@" ;;
+    wifi) cmd_wifi "$@" ;;
+    band) cmd_band "$@" ;;
+    dns) cmd_dns "$@" ;;
+    qr) cmd_qr "$@" ;;
+    password) cmd_password "$@" ;;
+    speedtest) cmd_speedtest "$@" ;;
+    -h|--help|help|"") usage ;;
+    *) die "unknown command: $cmd" ;;
+  esac
+}
+
+main "$@"

@@ -8,26 +8,46 @@ Item {
 
     property bool active: false
     property bool online: false
+    property string kind: "disconnected"
+    property int signal: -1
+    property bool wifiEnabled: true
 
     signal clicked
 
     implicitWidth: Constants.buttonSize
     implicitHeight: Constants.buttonSize
 
+    readonly property string glyph: {
+        if (kind === "ethernet")
+            return "󰈀"
+        if (kind === "wifi") {
+            const s = Math.max(0, Math.min(100, Number(signal) || 0))
+            const icons = ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
+            const index = Math.max(0, Math.min(4, Math.ceil(s / 20) - 1))
+            return icons[index]
+        }
+        if (!wifiEnabled)
+            return "󰤭"
+        return "󰤮"
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: Constants.buttonRadius
         color: root.active
-            ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.14)
+            ? Tokens.withAlpha(Colors.primary, 0.14)
             : pointer.containsMouse
                 ? Colors.surfaceContainerHighest
                 : "transparent"
         scale: pointer.pressed ? 0.94 : 1
+        opacity: root.online || root.wifiEnabled ? 1 : 0.55
 
-        ThemeIcon {
+        Text {
             anchors.centerIn: parent
-            name: "wifi"
-            iconSize: Constants.iconSizeLg
+            text: root.glyph
+            color: Colors.surfaceForeground
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: Constants.iconSizeLg + 2
         }
 
         MouseArea {
@@ -54,22 +74,28 @@ Item {
     readonly property string backend: {
         const rootDir = Quickshell.shellDir || ""
         if (rootDir.length > 0)
-            return rootDir + "/features/bar/scripts/qs-network-bin"
-        return Qt.resolvedUrl("scripts/qs-network-bin")
+            return rootDir + "/features/bar/network/scripts/qs-network"
+        return Qt.resolvedUrl("scripts/qs-network")
             .toString().replace(/^file:\/\//, "")
     }
 
-    // Lightweight online probe via rust backend
     Process {
-        id: onlineProc
+        id: statusProc
         command: [root.backend, "status"]
         stdout: StdioCollector {
             waitForEnd: true
             onStreamFinished: {
                 try {
                     const s = JSON.parse(text || "{}")
-                    root.online = s.kind === "wifi" || s.kind === "ethernet"
+                    root.kind = s.kind || "disconnected"
+                    root.signal = Number(s.signal)
+                    if (!isFinite(root.signal))
+                        root.signal = -1
+                    root.wifiEnabled = s.wifi_enabled !== false
+                    root.online = root.kind === "wifi" || root.kind === "ethernet"
                 } catch (e) {
+                    root.kind = "disconnected"
+                    root.signal = -1
                     root.online = false
                 }
             }
@@ -77,14 +103,14 @@ Item {
     }
 
     Timer {
-        interval: 5000
+        interval: 3000
         running: true
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            if (onlineProc.running)
-                onlineProc.running = false
-            Qt.callLater(() => { onlineProc.running = true })
+            if (statusProc.running)
+                statusProc.running = false
+            Qt.callLater(() => { statusProc.running = true })
         }
     }
 }

@@ -7,12 +7,92 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
 import qs.shared.theme
-import "NetworkModel.js" as Model
+import "."
 
 // Full Omarchy-shaped network panel: hero, stats, band, DNS, wifi list.
-// Backend: features/bar/scripts/qs-network-bin
+// Backend: features/bar/network/scripts/qs-network
 Item {
     id: root
+
+    function isSecured(security) {
+        if (!security)
+            return false
+        const s = String(security).toUpperCase()
+        return s !== "--" && s.indexOf("OPEN") < 0 && s !== "NOPASS"
+    }
+
+    function signalBars(strength) {
+        const s = Math.max(0, Math.min(100, Number(strength) || 0))
+        if (s <= 0)
+            return 0
+        if (s < 25)
+            return 1
+        if (s < 50)
+            return 2
+        if (s < 75)
+            return 3
+        return 4
+    }
+
+    function formatBytes(bytes) {
+        const n = Number(bytes)
+        if (!isFinite(n) || n < 0)
+            return "—"
+        if (n < 1024)
+            return Math.round(n) + " B"
+        if (n < 1024 * 1024)
+            return (n / 1024).toFixed(n < 10 * 1024 ? 1 : 0) + " KB"
+        if (n < 1024 * 1024 * 1024)
+            return (n / (1024 * 1024)).toFixed(n < 10 * 1024 * 1024 ? 1 : 0) + " MB"
+        return (n / (1024 * 1024 * 1024)).toFixed(2) + " GB"
+    }
+
+    function formatRate(bytesPerSec) {
+        const n = Number(bytesPerSec)
+        if (!isFinite(n) || n < 0)
+            return "—"
+        return formatBytes(n) + "/s"
+    }
+
+    function formatPing(ms) {
+        const value = parseFloat(ms)
+        if (!isFinite(value) || value < 0)
+            return "—"
+        return value.toFixed(value > 0 && value < 10 ? 1 : 0) + " ms"
+    }
+
+    function wifiIconFor(strength) {
+        const icons = ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
+        const index = Math.max(0, Math.min(4, Math.ceil(strength / 20) - 1))
+        return icons[index]
+    }
+
+    function connectionIcon(kind, signalStrength) {
+        if (kind === "wifi")
+            return wifiIconFor(signalStrength)
+        if (kind === "ethernet")
+            return "󰈀"
+        return "󰤮"
+    }
+
+    function bandLabel(band) {
+        if (band === "auto")
+            return "Auto"
+        if (!band)
+            return ""
+        return band + " GHz"
+    }
+
+    function dnsLabel(provider) {
+        if (provider === "dhcp")
+            return "DHCP"
+        if (provider === "cloudflare")
+            return "Cloudflare"
+        if (provider === "google")
+            return "Google"
+        return provider || "DNS"
+    }
+
 
     property bool open: false
 
@@ -21,8 +101,8 @@ Item {
     readonly property string backend: {
         const rootDir = Quickshell.shellDir || ""
         if (rootDir.length > 0)
-            return rootDir + "/features/bar/scripts/qs-network-bin"
-        return Qt.resolvedUrl("scripts/qs-network-bin")
+            return rootDir + "/features/bar/network/scripts/qs-network"
+        return Qt.resolvedUrl("scripts/qs-network")
             .toString().replace(/^file:\/\//, "")
     }
 
@@ -94,7 +174,7 @@ Item {
         && Array.isArray(bandInfo.available)
         && bandInfo.available.length > 1
 
-    readonly property string heroIcon: Model.connectionIcon(
+    readonly property string heroIcon: connectionIcon(
         hasLink ? kind : "disconnected",
         status.signal || 0
     )
@@ -342,6 +422,12 @@ Item {
     function runAction(kind, ssid, stdinText, extraArgs) {
         if (busy)
             return
+        // Stop scan churn while NM is associating — competing nmcli calls
+        // make connect feel hung and freeze the panel.
+        if (scanProc.running)
+            scanProc.running = false
+        scanning = false
+
         actionKind = kind
         actionSsid = ssid || ""
         failureSsid = ""
@@ -360,9 +446,17 @@ Item {
         else if (kind === "dns")
             args = [backend, "dns"].concat(extraArgs || [])
 
-        actionProc.stdinPayload = stdinText || ""
+        if (actionProc.running)
+            actionProc.running = false
+
+        // Connect always gets a stdin line (password or empty) then EOF.
+        actionProc.stdinPayload = kind === "connect" ? (stdinText || "") : (stdinText || "")
+        actionProc.needsStdin = kind === "connect" || (stdinText && stdinText.length > 0)
         actionProc.command = args
-        actionProc.running = true
+        Qt.callLater(() => {
+            if (root.actionKind === kind && root.actionSsid === (ssid || ""))
+                actionProc.running = true
+        })
     }
 
     function activateRow(net) {
@@ -377,7 +471,7 @@ Item {
 
         // New / unknown network: join flow.
         closeMenu()
-        if (Model.isSecured(net.security)) {
+        if (isSecured(net.security)) {
             openPassword(net.ssid)
             return
         }
@@ -560,25 +654,32 @@ Item {
     Process {
         id: actionProc
         property string stdinPayload: ""
-        stdinEnabled: stdinPayload.length > 0
+        property bool needsStdin: false
+        // Keep stdin open only for this spawn; closed after the one write.
+        stdinEnabled: needsStdin
         onStarted: {
-            if (stdinPayload.length > 0) {
+            if (needsStdin) {
                 write(stdinPayload + "\n")
                 stdinPayload = ""
+                // Close stdin so `read` in qs-network gets EOF (otherwise hang).
+                needsStdin = false
             }
         }
         stdout: StdioCollector {
             waitForEnd: true
             onStreamFinished: {
-                root.clearAction()
-                if (root.passwordSsid)
-                    root.cancelPassword()
+                // Success path usually lands here with JSON.
+                if (root.actionKind) {
+                    root.clearAction()
+                    if (root.passwordSsid)
+                        root.cancelPassword()
+                }
             }
         }
         stderr: StdioCollector {
             waitForEnd: true
             onStreamFinished: {
-                if (!text || !text.length)
+                if (!text || !text.length || !root.actionKind)
                     return
                 root.failureSsid = root.actionSsid
                 root.failureReason = text.replace(/^qs-network:\s*/, "").trim() || "Failed"
@@ -586,11 +687,33 @@ Item {
                 root.actionKind = ""
                 root.actionTimeout.stop()
                 if (root.failureReason.toLowerCase().indexOf("failed to connect") >= 0
-                    || root.failureReason.toLowerCase().indexOf("password") >= 0) {
+                    || root.failureReason.toLowerCase().indexOf("password") >= 0
+                    || root.failureReason.toLowerCase().indexOf("secrets") >= 0) {
                     if (root.failureSsid)
                         root.openPassword(root.failureSsid)
                 }
-                root.refreshAll()
+                root.refreshAll(true)
+            }
+        }
+        onExited: function(exitCode, exitStatus) {
+            // Fallback if stdout/stderr collectors didn't clear busy.
+            if (!root.actionKind)
+                return
+            if (exitCode === 0) {
+                root.clearAction()
+                if (root.passwordSsid)
+                    root.cancelPassword()
+            } else if (root.actionKind) {
+                // stderr handler usually already cleared; belt-and-suspenders.
+                root.actionTimeout.stop()
+                if (root.actionKind) {
+                    root.failureSsid = root.actionSsid
+                    if (!root.failureReason)
+                        root.failureReason = "Failed"
+                    root.actionSsid = ""
+                    root.actionKind = ""
+                    root.refreshAll(true)
+                }
             }
         }
     }
@@ -602,10 +725,16 @@ Item {
         onTriggered: {
             if (!root.actionKind)
                 return
+            // Actually kill the hung nmcli — clearing busy alone left it stuck.
+            if (actionProc.running)
+                actionProc.running = false
             root.failureSsid = root.actionSsid
-            root.failureReason = "Timed out"
+            root.failureReason = root.actionKind === "connect"
+                ? "Timed out connecting"
+                : "Timed out"
             root.actionSsid = ""
             root.actionKind = ""
+            root.refreshAll(true)
         }
     }
 
@@ -616,6 +745,8 @@ Item {
         repeat: true
         property int tick: 0
         onTriggered: {
+            if (root.busy)
+                return
             root.refreshStatus()
             // Cached scan every ~3s while open (don't abort in-flight).
             if (tick % 2 === 0)
@@ -682,18 +813,18 @@ Item {
     }
 
     opacity: entrance.revealProgress
-    scale: 0.96 + entrance.revealProgress * 0.04
+    scale: Constants.popupFromScale + entrance.revealProgress * (1 - Constants.popupFromScale)
 
     Behavior on opacity {
         NumberAnimation {
-            duration: Constants.animationNormal
+            duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
             easing.type: Easing.OutCubic
         }
     }
     Behavior on scale {
         NumberAnimation {
-            duration: Constants.animationSlow
-            easing.type: Easing.OutBack
+            duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
+            easing.type: Easing.OutCubic
         }
     }
 
@@ -705,6 +836,7 @@ Item {
         open: root.showQr
         backend: root.backend
         iface: root.status.iface || ""
+        connectionName: root.status.label || root.heroTitle
         visible: root.showQr
         z: 2
         onOpenChanged: {
@@ -733,7 +865,7 @@ Item {
         visible: !root.showQr && !root.showSpeed
         width: parent.width
         implicitHeight: body.implicitHeight + Constants.paddingLg * 2
-        radius: Constants.networkPopupRadius
+        radius: Constants.panelRadius
         color: Colors.surfaceContainerLow
         clip: true
         border.width: Constants.borderWidth
@@ -745,7 +877,7 @@ Item {
             anchors.leftMargin: 2
             anchors.rightMargin: -2
             radius: parent.radius
-            color: Qt.rgba(Colors.shadow.r, Colors.shadow.g, Colors.shadow.b, 0.28)
+            color: Tokens.withAlpha(Colors.shadow, 0.28)
             z: -1
         }
 
@@ -790,7 +922,7 @@ Item {
                         text: root.heroMeta
                         color: Colors.surfaceVariantForeground
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         font.letterSpacing: 1.1
                         textFormat: Text.PlainText
@@ -853,40 +985,11 @@ Item {
                     }
                 }
 
-                // Wi-Fi toggle
-                Rectangle {
-                    Layout.preferredWidth: 44
-                    Layout.preferredHeight: 26
-                    radius: 13
-                    color: root.wifiOn ? Colors.primary : Colors.surfaceContainerHighest
+                // Wi-Fi radio — Omarchy ToggleSwitch proportions / motion
+                ToggleSwitch {
                     Layout.alignment: Qt.AlignVCenter
-
-                    Rectangle {
-                        width: 20
-                        height: 20
-                        radius: 10
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: root.wifiOn ? parent.width - width - 3 : 3
-                        color: root.wifiOn
-                            ? Colors.primaryForeground
-                            : Colors.surfaceVariantForeground
-                        Behavior on x {
-                            NumberAnimation {
-                                duration: Constants.animationNormal
-                                easing.type: Easing.OutCubic
-                            }
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.toggleWifi()
-                    }
-
-                    Behavior on color {
-                        ColorAnimation { duration: Constants.animationFast }
-                    }
+                    checked: root.wifiOn
+                    onToggled: root.toggleWifi()
                 }
             }
 
@@ -942,7 +1045,7 @@ Item {
                                 text: label
                                 color: Colors.outline
                                 font.family: Constants.fontFamily
-                                font.pixelSize: 11
+                                font.pixelSize: Constants.fontSizeXs
                                 font.weight: Font.DemiBold
                                 font.letterSpacing: 0.4
                                 elide: Text.ElideRight
@@ -989,12 +1092,12 @@ Item {
 
                     StatCell {
                         label: "Ping"
-                        value: Model.formatPing(root.status.internet_ping_ms)
+                        value: formatPing(root.status.internet_ping_ms)
                         icon: "activity"
                     }
                     StatCell {
                         label: "Downloaded"
-                        value: Model.formatBytes(root.status.rx_bytes || 0)
+                        value: formatBytes(root.status.rx_bytes || 0)
                         icon: "circle-arrow-down"
                         action: "speed"
                     }
@@ -1009,12 +1112,12 @@ Item {
 
                     StatCell {
                         label: "Router"
-                        value: Model.formatPing(root.status.router_ping_ms)
+                        value: formatPing(root.status.router_ping_ms)
                         icon: "router"
                     }
                     StatCell {
                         label: "Uploaded"
-                        value: Model.formatBytes(root.status.tx_bytes || 0)
+                        value: formatBytes(root.status.tx_bytes || 0)
                         icon: "circle-arrow-up"
                         action: "speed"
                     }
@@ -1029,7 +1132,7 @@ Item {
 
                     StatCell {
                         label: "Receiving"
-                        value: Model.formatRate(root.downloadRate)
+                        value: formatRate(root.downloadRate)
                         icon: "arrow-down-to-line"
                         action: "speed"
                     }
@@ -1049,7 +1152,7 @@ Item {
 
                     StatCell {
                         label: "Sending"
-                        value: Model.formatRate(root.uploadRate)
+                        value: formatRate(root.uploadRate)
                         icon: "arrow-up-to-line"
                         action: "speed"
                     }
@@ -1077,7 +1180,7 @@ Item {
                             : "WI‑FI BAND"
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         font.letterSpacing: 0.8
                         textFormat: Text.PlainText
@@ -1087,7 +1190,7 @@ Item {
                         text: "AUTOMATIC"
                         color: Colors.surfaceVariantForeground
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         textFormat: Text.PlainText
                     }
@@ -1095,7 +1198,7 @@ Item {
                     Rectangle {
                         Layout.preferredWidth: 40
                         Layout.preferredHeight: 22
-                        radius: 11
+                        radius: height / 2
                         color: root.bandInfo.selected === "auto"
                             ? Colors.primary
                             : Colors.surfaceContainerHighest
@@ -1103,7 +1206,7 @@ Item {
                         Rectangle {
                             width: 16
                             height: 16
-                            radius: 8
+                            radius: width / 2
                             anchors.verticalCenter: parent.verticalCenter
                             x: root.bandInfo.selected === "auto"
                                 ? parent.width - width - 3
@@ -1148,20 +1251,18 @@ Item {
                             Layout.preferredHeight: Constants.buttonSize
                             radius: Constants.buttonRadius
                             color: root.bandInfo.selected === modelData
-                                ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.18)
+                                ? Tokens.withAlpha(Colors.primary, 0.18)
                                 : (bandPillArea.containsMouse
                                     ? Colors.surfaceContainer
                                     : Colors.surfaceContainerHigh)
                             border.width: root.bandInfo.selected === modelData
                                 ? Constants.borderWidth
                                 : 0
-                            border.color: Qt.rgba(
-                                Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.4
-                            )
+                            border.color: Tokens.withAlpha(Colors.primary, 0.4)
 
                             Text {
                                 anchors.centerIn: parent
-                                text: Model.bandLabel(modelData)
+                                text: bandLabel(modelData)
                                 color: root.bandInfo.selected === modelData
                                     ? Colors.primary
                                     : Colors.surfaceForeground
@@ -1219,21 +1320,21 @@ Item {
                             readonly property bool active: root.dnsInfo.provider === modelData
                             Layout.fillWidth: true
                             Layout.preferredHeight: Constants.buttonSize + 4
-                            radius: Constants.buttonRadius + 2
+                            radius: Constants.panelRadius
                             color: active
-                                ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.14)
+                                ? Tokens.withAlpha(Colors.primary, 0.14)
                                 : (dnsPillArea.containsMouse
                                     ? Colors.surfaceContainer
                                     : "transparent")
                             border.width: Constants.borderWidth
                             border.color: active
-                                ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.55)
+                                ? Tokens.withAlpha(Colors.primary, 0.55)
                                 : Colors.surfaceContainerHighest
 
                             // Label centered; check on the right (mock layout).
                             Text {
                                 anchors.centerIn: parent
-                                text: Model.dnsLabel(modelData)
+                                text: dnsLabel(modelData)
                                 color: active
                                     ? Colors.primary
                                     : Colors.surfaceForeground
@@ -1294,7 +1395,7 @@ Item {
                         text: sectionWrap.modelData.title
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         font.letterSpacing: 0.9
                         textFormat: Text.PlainText
@@ -1306,7 +1407,7 @@ Item {
                         Layout.fillWidth: true
                         // No extra vertical pad — first/last row hover meets the radius edge.
                         implicitHeight: sectionCol.implicitHeight
-                        radius: 14
+                        radius: Constants.panelRadius
                         color: Colors.surfaceContainer
                         border.width: Constants.borderWidth
                         border.color: Colors.surfaceContainerHighest
@@ -1363,7 +1464,7 @@ Item {
                                             return "Connected"
                                         if (modelData.known)
                                             return "Saved"
-                                        if (Model.isSecured(modelData.security))
+                                        if (isSecured(modelData.security))
                                             return "Secured"
                                         return "Open"
                                     }
@@ -1373,12 +1474,7 @@ Item {
                                         anchors.fill: parent
                                         color: {
                                             if (modelData.connected)
-                                                return Qt.rgba(
-                                                    Colors.primary.r,
-                                                    Colors.primary.g,
-                                                    Colors.primary.b,
-                                                    0.10
-                                                )
+                                                return Tokens.withAlpha(Colors.primary, 0.10)
                                             if (rowHover.containsMouse || passwordOpen || menuOpen)
                                                 return Colors.surfaceContainerHigh
                                             return "transparent"
@@ -1414,7 +1510,7 @@ Item {
                                                 Layout.preferredHeight: 22
                                                 Layout.alignment: Qt.AlignVCenter
                                                 readonly property int filled:
-                                                    Model.signalBars(modelData.signal)
+                                                    signalBars(modelData.signal)
                                                 readonly property int barMaxH: 18
 
                                                 Row {
@@ -1436,18 +1532,13 @@ Item {
                                                                 anchors.horizontalCenter: parent.horizontalCenter
                                                                 width: parent.width
                                                                 height: 6 + index * 4
-                                                                radius: 1
+                                                                radius: Constants.panelRadius
                                                                 color: index < bars.filled
                                                                     ? (modelData.connected
                                                                         ? Colors.primary
                                                                         : Colors.surfaceForeground)
                                                                     : (modelData.connected
-                                                                        ? Qt.rgba(
-                                                                            Colors.primary.r,
-                                                                            Colors.primary.g,
-                                                                            Colors.primary.b,
-                                                                            0.28
-                                                                        )
+                                                                        ? Tokens.withAlpha(Colors.primary, 0.28)
                                                                         : Colors.surfaceContainerHigh)
                                                             }
                                                         }
@@ -1531,7 +1622,7 @@ Item {
                                                         visible: !modelData.connected
                                                         Layout.fillWidth: true
                                                         Layout.preferredHeight: 32
-                                                        radius: 6
+                                                        radius: Constants.panelRadius
                                                         color: connectHover.containsMouse
                                                             ? Colors.surfaceContainerHigh
                                                             : "transparent"
@@ -1562,7 +1653,7 @@ Item {
                                                         visible: modelData.connected
                                                         Layout.fillWidth: true
                                                         Layout.preferredHeight: 32
-                                                        radius: 6
+                                                        radius: Constants.panelRadius
                                                         color: disconnectHover.containsMouse
                                                             ? Colors.surfaceContainerHigh
                                                             : "transparent"
@@ -1593,14 +1684,9 @@ Item {
                                                         visible: modelData.known || modelData.connected
                                                         Layout.fillWidth: true
                                                         Layout.preferredHeight: 32
-                                                        radius: 6
+                                                        radius: Constants.panelRadius
                                                         color: forgetMenuHover.containsMouse
-                                                            ? Qt.rgba(
-                                                                Colors.error.r,
-                                                                Colors.error.g,
-                                                                Colors.error.b,
-                                                                0.12
-                                                            )
+                                                            ? Tokens.withAlpha(Colors.error, 0.12)
                                                             : "transparent"
 
                                                         Text {

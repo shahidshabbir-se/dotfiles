@@ -37,7 +37,7 @@ Item {
         anchors.fill: parent
         radius: NotificationMetrics.historyRadius
         color: hoverHandler.hovered
-            ? Qt.rgba(1, 1, 1, 0.055)
+            ? Tokens.whiteMuted
             : "transparent"
 
         Behavior on color {
@@ -75,7 +75,7 @@ Item {
                 + Constants.paddingMd
         }
         height: 1
-        color: Qt.rgba(1, 1, 1, 0.055)
+        color: Tokens.whiteMuted
     }
 
     HoverHandler {

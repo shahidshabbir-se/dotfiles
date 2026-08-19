@@ -194,6 +194,7 @@ let
     # codexCliPackage
     gcc
     git-filter-repo
+    mpv
     gnumake
     python3
     # vscodeFhs
@@ -228,6 +229,7 @@ let
     matugen
     unzip
     webp-pixbuf-loader
+    time
     wmctrl
     zip
   ];

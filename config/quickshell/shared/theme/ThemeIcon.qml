@@ -33,7 +33,7 @@ Item {
     FileView {
         id: iconFile
 
-        path: Qt.resolvedUrl("assets/icons/" + root.name + ".svg")
+        path: Qt.resolvedUrl("icons/" + root.name + ".svg")
     }
 
     Image {

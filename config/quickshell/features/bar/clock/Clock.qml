@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell.Services.Mpris
 import qs.shared.theme
 
 Item {
@@ -10,12 +11,32 @@ Item {
 
     signal clicked
 
+    // Minimal MPRIS reader — Clock can't import qs.features.bar (circular).
+    readonly property var player: {
+        let fallback = null
+        for (let i = 0; i < Mpris.players.values.length; i++) {
+            const candidate = Mpris.players.values[i]
+            if (candidate.isPlaying)
+                return candidate
+            if (!fallback || candidate.identity.toLowerCase().includes("spotify"))
+                fallback = candidate
+        }
+        return fallback
+    }
+    readonly property bool hasPlayer: player !== null
+    readonly property string trackTitle: hasPlayer
+        ? (player.trackTitle || "Unknown title")
+        : "Nothing playing"
+    readonly property string trackArtist: hasPlayer
+        ? (player.trackArtist || "")
+        : ""
+
     readonly property string musicText: {
-        if (!playback.hasPlayer)
+        if (!clock.hasPlayer)
             return "Nothing playing"
-        if (playback.artist && playback.artist !== "Unknown artist")
-            return playback.title + " · " + playback.artist
-        return playback.title
+        if (clock.trackArtist && clock.trackArtist !== "Unknown artist")
+            return clock.trackTitle + " · " + clock.trackArtist
+        return clock.trackTitle
     }
 
     // Keep width stable when switching date ↔ marquee (date as baseline).
@@ -25,10 +46,6 @@ Item {
     implicitHeight: vertical
         ? (showMusic ? verticalMusic.implicitHeight : dateLabel.implicitHeight)
         : Math.max(dateLabel.implicitHeight, musicMarquee.implicitHeight)
-
-    MprisPlaybackSession {
-        id: playback
-    }
 
     Text {
         id: dateLabel
@@ -46,24 +63,21 @@ Item {
         }
     }
 
-    // Horizontal marquee for now-playing (horizontal bar only).
-    MarqueeText {
+    // Horizontal now-playing (no MarqueeText — that type lives under music/).
+    Text {
         id: musicMarquee
 
         anchors.centerIn: parent
         width: clock.implicitWidth
         visible: clock.showMusic && !clock.vertical
-        active: clock.showMusic && !clock.vertical
         text: clock.musicText
         color: Colors.primary
-        speed: 28
-        gap: 40
-        startDelay: 900
-        font: Qt.font({
-            family: Constants.fontFamily,
-            pixelSize: Constants.fontSizeMd,
-            weight: Font.Medium
-        })
+        elide: Text.ElideRight
+        horizontalAlignment: Text.AlignHCenter
+        textFormat: Text.PlainText
+        font.family: Constants.fontFamily
+        font.pixelSize: Constants.fontSizeMd
+        font.weight: Font.Medium
     }
 
     // Vertical bar: no horizontal marquee room — wrap/elide.

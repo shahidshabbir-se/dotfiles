@@ -155,7 +155,7 @@ PanelWindow {
                     y: depth * NotificationMetrics.stackPeek
                     width: Math.max(1, collapsedPreviews.width - depth * 18)
                     height: Math.max(1, root.retainedFrontHeight - depth * 2)
-                    radius: Math.max(16, NotificationMetrics.surfaceRadius - depth)
+                    radius: Constants.panelRadius
                     color: depth === 1
                         ? Colors.surfaceContainer
                         : Colors.surfaceContainerLow

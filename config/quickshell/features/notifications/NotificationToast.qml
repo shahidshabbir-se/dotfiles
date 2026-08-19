@@ -194,7 +194,7 @@ Item {
                     anchors.fill: parent
                     visible: root.critical
                     radius: parent.radius
-                    color: Qt.rgba(Colors.error.r, Colors.error.g, Colors.error.b, 0.035)
+                    color: Tokens.withAlpha(Colors.error, 0.035)
                 }
 
                 ColumnLayout {
@@ -259,7 +259,7 @@ Item {
                                 topMargin: Constants.spacingMd
                             }
                             height: 1
-                            color: Qt.rgba(1, 1, 1, 0.06)
+                            color: Tokens.whiteHairline
                         }
 
                         NotificationActions {
@@ -282,15 +282,15 @@ Item {
                     }
                     width: 27
                     height: 27
-                    radius: 13.5
+                    radius: Constants.panelRadius
                     opacity: root.hovered
                         && (root.stackExpanded || root.stackIndex === 0)
                         ? 1
                         : 0
                     enabled: opacity > 0.8
                     color: closeArea.containsMouse
-                        ? Qt.rgba(1, 1, 1, 0.12)
-                        : Qt.rgba(1, 1, 1, 0.065)
+                        ? Tokens.whiteIntense
+                        : Tokens.whiteHover
                     scale: closeArea.pressed ? 0.92 : 1
 
                     Behavior on opacity {

@@ -28,9 +28,9 @@ RowLayout {
             radius: NotificationMetrics.controlRadius
             color: actionArea.containsMouse
                 ? index === 0
-                    ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.18)
-                    : Qt.rgba(1, 1, 1, 0.075)
-                : Qt.rgba(1, 1, 1, 0.045)
+                    ? Tokens.withAlpha(Colors.primary, 0.18)
+                    : Tokens.whitePress
+                : Tokens.whiteSubtle
             scale: actionArea.pressed ? 0.975 : 1
 
             Behavior on color {
@@ -52,7 +52,7 @@ RowLayout {
                     ? Colors.primary
                     : Colors.surfaceForeground
                 font.family: Constants.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: Constants.fontSizeSm
                 font.weight: Font.DemiBold
                 textFormat: Text.PlainText
                 maximumLineCount: 1
