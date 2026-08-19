@@ -30,7 +30,8 @@ end, { desc = "Copy LSP diagnostic under cursor" })
 map("n", "<leader>hs", ":split<CR>", { desc = "Horizontal split" })
 map("n", "<leader>vs", ":vsplit<CR>", { desc = "Vertical split" })
 
-map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { noremap = true, silent = true })
+map("n", "<leader>ff", LazyVim.pick("files"), { desc = "Find Files (Root Dir)" })
+map("n", "<leader><leader>", LazyVim.pick("files"), { desc = "Find Files (Root Dir)" })
 vim.keymap.set("n", "<leader>fi", function()
   require("telescope.builtin").find_files({
     prompt_title = "Images",

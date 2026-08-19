@@ -4,13 +4,13 @@ import QtQuick
 
 QtObject {
     // Bar
-    readonly property int barHeight: 40
-    readonly property int barVerticalWidth: 48
-    readonly property int barTopMargin: 8
-    readonly property int barRadius: 12
-    readonly property real barWidthRatio: 0.60
+    readonly property int barHeight: 32
+    readonly property int barVerticalWidth: 32
+    readonly property int barTopMargin: 0
+    readonly property int panelRadius: 0
+    readonly property real barWidthRatio: 1
     readonly property real barHeightRatio: 0.85
-    readonly property int barMaxWidth: 1600
+    readonly property int barMaxWidth: 9999
     readonly property int workspaceRefreshInterval: 500
     readonly property int workspaceRefreshAttempts: 6
 
@@ -29,7 +29,6 @@ QtObject {
     // Music
     readonly property int musicPopupWidth: 300
     readonly property int musicPopupHeight: 500
-    readonly property int musicPopupRadius: 12
     readonly property int musicArtworkSize: 255
     readonly property int musicControlSize: 36
     readonly property int musicPrimaryControlSize: 40
@@ -37,9 +36,12 @@ QtObject {
     // Network
     readonly property int networkPopupWidth: 520
     readonly property int networkPopupMaxHeight: 680
-    readonly property int networkPopupRadius: 16
     readonly property int networkRowHeight: 44
     readonly property int networkSignalBars: 4
+
+    // Bluetooth
+    readonly property int bluetoothPopupWidth: 380
+    readonly property int bluetoothPopupMaxHeight: 560
 
     // Audio visualizer
     readonly property int visualizerHeight: 72
@@ -61,26 +63,30 @@ QtObject {
 
     // Padding
     readonly property int paddingSm: 6
-    readonly property int paddingMd: 10
+    readonly property int paddingMd: 8
     readonly property int paddingLg: 14
 
     // Controls
     readonly property int buttonSize: 28
-    readonly property int buttonRadius: 8
+    readonly property int buttonRadius: panelRadius
 
     // Typography
-    readonly property string fontFamily: "Inter"
+    readonly property string fontFamily: "Space Grotesk"
+    readonly property int fontSizeXs: 11
     readonly property int fontSizeSm: 12
     readonly property int fontSizeMd: 14
     readonly property int fontSizeLg: 16
     readonly property int fontSizeXl: 20
 
     // Icons
-    readonly property int iconSizeMd: 16
-    readonly property int iconSizeLg: 18
+    readonly property int iconSizeMd: 14
+    readonly property int iconSizeLg: 16
 
-    // Animation
+    // Animation — Fluent-ish control motion (Win11 flyout feel)
     readonly property int animationFast: 120
-    readonly property int animationNormal: 180
-    readonly property int animationSlow: 260
+    readonly property int animationNormal: 167
+    readonly property int animationSlow: 250
+    readonly property int popupEnterMs: 167
+    readonly property int popupExitMs: 100
+    readonly property real popupFromScale: 0.95
 }

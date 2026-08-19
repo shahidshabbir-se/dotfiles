@@ -17,10 +17,19 @@ RowLayout {
     property int trailingReserve: 0
 
     readonly property string safeIconName: NotificationText.safeIconName(appIcon)
+    readonly property bool isScreenshot: {
+        const app = String(appName || "").toLowerCase()
+        const sum = String(summary || "").toLowerCase()
+        return app.includes("screenshot")
+            || app.includes("grimblast")
+            || sum.startsWith("screenshot")
+    }
     // absolute paths (notify-send image-path) bypass icon theme lookup
-    readonly property string iconSource: appIcon.startsWith("/") || appIcon.startsWith("file:")
-        ? (appIcon.startsWith("file:") ? appIcon : ("file://" + appIcon))
-        : (safeIconName ? Quickshell.iconPath(safeIconName, true) : "")
+    readonly property string iconSource: root.isScreenshot
+        ? ""
+        : (appIcon.startsWith("/") || appIcon.startsWith("file:")
+            ? (appIcon.startsWith("file:") ? appIcon : ("file://" + appIcon))
+            : (safeIconName ? Quickshell.iconPath(safeIconName, true) : ""))
     readonly property int iconExtent: compact
         ? NotificationMetrics.historyIconSize
         : NotificationMetrics.toastIconSize
@@ -36,25 +45,29 @@ RowLayout {
         Rectangle {
             anchors.fill: parent
             visible: root.iconSource.length === 0
-            radius: root.compact ? 12 : 14
-            color: Qt.rgba(
-                Colors.primary.r,
-                Colors.primary.g,
-                Colors.primary.b,
-                0.13
-            )
+            radius: Constants.panelRadius
+            color: Tokens.withAlpha(Colors.primary, 0.13)
 
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 1
-                radius: parent.radius - 1
+                radius: parent.radius
                 color: "transparent"
                 border.width: 1
-                border.color: Qt.rgba(1, 1, 1, 0.06)
+                border.color: Tokens.whiteHairline
+            }
+
+            ThemeIcon {
+                anchors.centerIn: parent
+                visible: root.isScreenshot
+                name: "crop"
+                iconSize: root.compact ? Constants.iconSizeMd : Constants.iconSizeLg
+                iconColor: Colors.primary
             }
 
             Text {
                 anchors.centerIn: parent
+                visible: !root.isScreenshot
                 text: root.appName.charAt(0).toUpperCase() || "?"
                 color: Colors.primary
                 font.family: Constants.fontFamily
@@ -93,7 +106,7 @@ RowLayout {
                 color: Colors.surfaceVariantForeground
                 opacity: 0.76
                 font.family: Constants.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Constants.fontSizeXs
                 font.weight: Font.Medium
                 font.letterSpacing: 0.15
                 textFormat: Text.PlainText
@@ -105,7 +118,7 @@ RowLayout {
                 visible: root.critical
                 Layout.preferredWidth: 6
                 Layout.preferredHeight: 6
-                radius: 3
+                radius: Constants.panelRadius
                 color: Colors.error
             }
 
@@ -115,7 +128,7 @@ RowLayout {
                 color: Colors.outline
                 opacity: 0.8
                 font.family: Constants.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Constants.fontSizeXs
                 font.weight: Font.Medium
                 textFormat: Text.PlainText
             }

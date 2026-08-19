@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
 import qs.shared.theme
+import "."
 
 ClippingRectangle {
     id: root
@@ -9,14 +10,14 @@ ClippingRectangle {
     width: Constants.musicPopupWidth
     height: Constants.musicPopupHeight
     implicitHeight: height
-    radius: Constants.musicPopupRadius
+    radius: Constants.panelRadius
     color: "transparent"
     contentUnderBorder: true
 
     property bool open: false
 
     opacity: entrance.revealProgress
-    scale: 0.96 + entrance.revealProgress * 0.04
+    scale: Constants.popupFromScale + entrance.revealProgress * (1 - Constants.popupFromScale)
 
     onOpenChanged: {
         if (open)
@@ -32,15 +33,15 @@ ClippingRectangle {
 
     Behavior on opacity {
         NumberAnimation {
-            duration: Constants.animationNormal
+            duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
             easing.type: Easing.OutCubic
         }
     }
 
     Behavior on scale {
         NumberAnimation {
-            duration: Constants.animationSlow
-            easing.type: Easing.OutBack
+            duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
+            easing.type: Easing.OutCubic
         }
     }
 

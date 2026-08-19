@@ -11,8 +11,8 @@ GridLayout {
 
     columns: vertical ? 1 : -1
     rows: vertical ? -1 : 1
-    columnSpacing: Constants.spacingXs
-    rowSpacing: Constants.spacingXs
+    columnSpacing: 2
+    rowSpacing: 2
 
     Component.onCompleted: workspaceRefresh.start()
 
@@ -38,7 +38,7 @@ GridLayout {
     Repeater {
         model: Hyprland.workspaces.values
 
-        delegate: Rectangle {
+        delegate: Item {
             required property var modelData
 
             Layout.preferredWidth: Constants.buttonSize
@@ -48,34 +48,31 @@ GridLayout {
                 : 0
             Layout.rightMargin: Layout.leftMargin
 
-            radius: Constants.buttonRadius
-
-            color: modelData.focused
-                ? Colors.primaryContainer
-                : "transparent"
+            // Active: filled square. Others: number.
+            Rectangle {
+                visible: modelData.focused
+                anchors.centerIn: parent
+                width: Constants.spacingLg
+                height: Constants.spacingLg
+                color: Colors.primary
+                radius: Constants.panelRadius
+            }
 
             Text {
+                visible: !modelData.focused
                 anchors.centerIn: parent
-
                 text: modelData.id
-
-                color: modelData.focused
-                    ? Colors.primaryContainerForeground
-                    : Colors.surfaceForeground
-
+                color: Colors.surfaceForeground
                 font {
                     family: Constants.fontFamily
                     pixelSize: Constants.fontSizeMd
-                    weight: modelData.focused
-                        ? Font.DemiBold
-                        : Font.Medium
+                    weight: Font.Medium
                 }
             }
 
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-
                 onClicked: modelData.activate()
             }
         }

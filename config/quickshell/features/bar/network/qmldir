@@ -1,0 +1,5 @@
+module qs.features.bar.network
+NetworkButton 1.0 NetworkButton.qml
+NetworkPopup 1.0 NetworkPopup.qml
+SpeedTestPopup 1.0 SpeedTestPopup.qml
+WifiQrPopup 1.0 WifiQrPopup.qml

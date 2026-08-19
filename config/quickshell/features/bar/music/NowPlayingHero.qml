@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
 import qs.shared.theme
+import "."
 
 ColumnLayout {
     id: root

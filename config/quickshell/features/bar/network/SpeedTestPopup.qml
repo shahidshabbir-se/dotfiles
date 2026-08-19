@@ -6,7 +6,7 @@ import Quickshell
 import Quickshell.Io
 import qs.shared.theme
 
-// Live download/upload speed dial (fast.com via qs-network).
+// Live download/upload speed dial (fast.com via qs-network script).
 Item {
     id: root
 
@@ -74,7 +74,7 @@ Item {
             return backend
         const rootDir = Quickshell.shellDir || ""
         if (rootDir.length > 0)
-            return rootDir + "/features/bar/scripts/qs-network-bin"
+            return rootDir + "/features/bar/network/scripts/qs-network"
         return ""
     }
 
@@ -171,19 +171,19 @@ Item {
     }
 
     opacity: open ? 1 : 0
-    scale: open ? 1 : 0.96
+    scale: open ? 1 : Constants.popupFromScale
 
     Behavior on opacity {
         NumberAnimation {
-            duration: Constants.animationNormal
+            duration: open ? Constants.popupEnterMs : Constants.popupExitMs
             easing.type: Easing.OutCubic
         }
     }
 
     Behavior on scale {
         NumberAnimation {
-            duration: Constants.animationSlow
-            easing.type: Easing.OutBack
+            duration: open ? Constants.popupEnterMs : Constants.popupExitMs
+            easing.type: Easing.OutCubic
         }
     }
 
@@ -191,7 +191,7 @@ Item {
         id: card
         width: parent.width
         implicitHeight: body.implicitHeight + Constants.paddingLg * 2
-        radius: Constants.networkPopupRadius
+        radius: Constants.panelRadius
         color: Colors.surfaceContainerLow
         border.width: Constants.borderWidth
         border.color: Colors.surfaceContainerHighest
@@ -295,7 +295,7 @@ Item {
                         text: root.phaseLabel
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         font.letterSpacing: 1.2
                         textFormat: Text.PlainText
@@ -339,7 +339,7 @@ Item {
                         text: "DOWNLOAD"
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         textFormat: Text.PlainText
                     }
@@ -364,7 +364,7 @@ Item {
                         text: "UPLOAD"
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Constants.fontSizeXs
                         font.weight: Font.DemiBold
                         textFormat: Text.PlainText
                     }

@@ -56,7 +56,7 @@ Item {
                     )
                 )
                 : 0
-            radius: width / 2
+            radius: 0
             visible: height > 0
             opacity: 0.35 + 0.65 * Math.pow(centerWeight, 0.65)
 

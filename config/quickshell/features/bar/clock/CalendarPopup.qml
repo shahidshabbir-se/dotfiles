@@ -8,6 +8,7 @@ Item {
     width: Constants.calendarWidth
     implicitHeight: content.implicitHeight
 
+    property bool open: false
     property date currentDate: new Date()
     property date selectedDate: new Date()
     property date visibleMonth: new Date(
@@ -17,6 +18,54 @@ Item {
     )
     property int pendingMonthOffset: 0
     property int monthTransitionDirection: 1
+
+    opacity: entrance.revealProgress
+    scale: Constants.popupFromScale + entrance.revealProgress * (1 - Constants.popupFromScale)
+    transformOrigin: Item.Top
+
+    onOpenChanged: {
+        if (open)
+            entrance.play()
+        else
+            entrance.reset()
+    }
+
+    Component.onCompleted: {
+        if (open)
+            entrance.play()
+    }
+
+    Behavior on opacity {
+        NumberAnimation {
+            duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    Behavior on scale {
+        NumberAnimation {
+            duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    QtObject {
+        id: entrance
+
+        property real revealProgress: 0
+
+        function play() {
+            reset()
+            Qt.callLater(() => {
+                if (root.open)
+                    revealProgress = 1
+            })
+        }
+
+        function reset() {
+            revealProgress = 0
+        }
+    }
 
     function changeMonth(offset) {
         if (monthTransition.running)
@@ -42,7 +91,7 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             implicitHeight: Constants.calendarMainHeight
-            radius: Constants.barRadius
+            radius: Constants.panelRadius
             color: Colors.surfaceContainerLow
             clip: true
 

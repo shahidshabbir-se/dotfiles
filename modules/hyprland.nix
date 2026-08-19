@@ -36,6 +36,8 @@ let
   layerRuleNamespaces = [
     "logout_dialog"
     "wlogout"
+    "quickshell-bar"
+    "quickshell-popup"
     # "vicinae"
   ];
 
@@ -51,7 +53,8 @@ let
       name = blur-${lib.replaceStrings [ "_" ] [ "-" ] ns}
       match:namespace = ${ns}
       blur = on
-      ignore_alpha = 0
+      # Skip fully-transparent dismiss overlays; still blur glass panels (~0.74).
+      ignore_alpha = 0.2
     }'';
 
   layerRuleNoAnimBlock = ns: ''
@@ -284,17 +287,17 @@ in
       };
 
       decoration = {
-        rounding = 8;
+        rounding = 0;
 
         active_opacity = 1.0;
         inactive_opacity = 1.00;
 
-        shadow = {
-          enabled = true;
-          range = 8;
-          render_power = 3;
-          color = "rgba(1a1a1acc)";
-        };
+        # shadow = {
+        #   enabled = true;
+        #   range = 8;
+        #   render_power = 3;
+        #   color = "rgba(1a1a1acc)";
+        # };
 
         blur = {
           enabled = true;
@@ -341,6 +344,7 @@ in
       render = {
         cm_enabled = true;
         cm_sdr_eotf = 2;
+        cm_auto_hdr = 0;
         # fix-hdr-screenshare plugin hooks the HDR mirror path; keep_unmodified_copy=1
         # alone still yields empty grim captures on 0.55 (discussion #14931).
         keep_unmodified_copy = 0;

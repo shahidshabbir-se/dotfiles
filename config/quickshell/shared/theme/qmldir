@@ -1,3 +1,6 @@
 module qs.shared.theme
 singleton Colors 1.0 Colors.qml
 singleton Constants 1.0 Constants.qml
+singleton Tokens 1.0 Tokens.qml
+ThemeIcon 1.0 ThemeIcon.qml
+ToggleSwitch 1.0 ToggleSwitch.qml

@@ -71,31 +71,50 @@ PanelWindow {
 
     onOpenChanged: {
         if (open) {
-            closeAnimation.stop()
-
-            if (!presented) {
-                surface.visualOpacity = 0
-                surface.visualScale = 0.965
-                surface.horizontalOffset = 14
-                surface.verticalOffset = -8
+            exitHide.stop()
+            if (!presented)
                 presented = true
-            }
 
-            Qt.callLater(() => {
-                openAnimation.restart()
-                keyCatcher.forceActiveFocus()
-            })
+            entrance.play()
+            Qt.callLater(() => keyCatcher.forceActiveFocus())
             now = Date.now()
         } else if (presented) {
-            openAnimation.stop()
-            closeAnimation.restart()
+            entrance.reset()
+            exitHide.restart()
         }
     }
 
     Component.onCompleted: {
         if (open) {
             presented = true
-            Qt.callLater(() => openAnimation.restart())
+            entrance.play()
+        }
+    }
+
+    Timer {
+        id: exitHide
+        interval: Constants.popupExitMs
+        onTriggered: {
+            if (!root.open)
+                root.presented = false
+        }
+    }
+
+    QtObject {
+        id: entrance
+
+        property real revealProgress: 0
+
+        function play() {
+            reset()
+            Qt.callLater(() => {
+                if (root.open)
+                    revealProgress = 1
+            })
+        }
+
+        function reset() {
+            revealProgress = 0
         }
     }
 
@@ -145,11 +164,6 @@ PanelWindow {
         id: surface
         parent: panelHost
 
-        property real visualOpacity: 0
-        property real visualScale: 0.965
-        property real horizontalOffset: 14
-        property real verticalOffset: -8
-
         width: root.panelWidth
         // Header 82 + DND 62 + list area (content-sized, capped).
         height: Math.min(
@@ -158,23 +172,26 @@ PanelWindow {
         )
         radius: NotificationMetrics.surfaceRadius
         color: Colors.surfaceContainerLow
-        opacity: visualOpacity
+        opacity: entrance.revealProgress
+        scale: Constants.popupFromScale + entrance.revealProgress * (1 - Constants.popupFromScale)
+        transformOrigin: Item.TopRight
         clip: true
         border.width: Constants.borderWidth
         border.color: Colors.surfaceContainerHighest
 
-        transform: [
-            Scale {
-                origin.x: surface.width
-                origin.y: 0
-                xScale: surface.visualScale
-                yScale: surface.visualScale
-            },
-            Translate {
-                x: surface.horizontalOffset
-                y: surface.verticalOffset
+        Behavior on opacity {
+            NumberAnimation {
+                duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
+                easing.type: Easing.OutCubic
             }
-        ]
+        }
+
+        Behavior on scale {
+            NumberAnimation {
+                duration: root.open ? Constants.popupEnterMs : Constants.popupExitMs
+                easing.type: Easing.OutCubic
+            }
+        }
 
         // Soft drop under the card only (not a second floating rounded layer).
         Rectangle {
@@ -183,9 +200,8 @@ PanelWindow {
             anchors.leftMargin: 2
             anchors.rightMargin: -2
             radius: parent.radius
-            color: Qt.rgba(Colors.shadow.r, Colors.shadow.g, Colors.shadow.b, 0.28)
+            color: Tokens.withAlpha(Colors.shadow, 0.28)
             z: -1
-            opacity: surface.visualOpacity
         }
 
         ColumnLayout {
@@ -222,8 +238,8 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             width: Math.max(22, countLabel.implicitWidth + 10)
                             height: 20
-                            radius: 10
-                            color: Qt.rgba(1, 1, 1, 0.06)
+                            radius: Constants.panelRadius
+                            color: Tokens.whiteHairline
 
                             Text {
                                 id: countLabel
@@ -232,7 +248,7 @@ PanelWindow {
                                 text: root.historyCount
                                 color: Colors.surfaceVariantForeground
                                 font.family: Constants.fontFamily
-                                font.pixelSize: 11
+                                font.pixelSize: Constants.fontSizeXs
                                 font.weight: Font.DemiBold
                                 textFormat: Text.PlainText
                             }
@@ -243,7 +259,7 @@ PanelWindow {
                         text: Qt.formatDate(new Date(root.now), "dddd, MMMM d")
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 12
+                        font.pixelSize: Constants.fontSizeSm
                         font.weight: Font.Medium
                         textFormat: Text.PlainText
                     }
@@ -263,7 +279,7 @@ PanelWindow {
                         height: 30
                         radius: NotificationMetrics.controlRadius
                         color: clearArea.containsMouse
-                            ? Qt.rgba(Colors.error.r, Colors.error.g, Colors.error.b, 0.11)
+                            ? Tokens.withAlpha(Colors.error, 0.11)
                             : "transparent"
                         scale: clearArea.pressed ? 0.97 : 1
 
@@ -287,7 +303,7 @@ PanelWindow {
                                 ? Colors.error
                                 : Colors.outline
                             font.family: Constants.fontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: Constants.fontSizeSm
                             font.weight: Font.Medium
                             textFormat: Text.PlainText
 
@@ -309,10 +325,10 @@ PanelWindow {
                     Rectangle {
                         width: 30
                         height: 30
-                        radius: 15
+                        radius: 0
                         color: closeArea.containsMouse
-                            ? Qt.rgba(1, 1, 1, 0.09)
-                            : Qt.rgba(1, 1, 1, 0.045)
+                            ? Tokens.whiteStrong
+                            : Tokens.whiteSubtle
                         scale: closeArea.pressed ? 0.92 : 1
 
                         Behavior on color {
@@ -328,12 +344,13 @@ PanelWindow {
 
                         Text {
                             anchors.centerIn: parent
-                            anchors.verticalCenterOffset: -1
                             text: "×"
                             color: Colors.surfaceVariantForeground
                             font.family: Constants.fontFamily
                             font.pixelSize: 18
                             font.weight: Font.Medium
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
                             textFormat: Text.PlainText
                         }
 
@@ -365,15 +382,10 @@ PanelWindow {
                     }
                     radius: NotificationMetrics.historyRadius
                     color: root.doNotDisturb
-                        ? Qt.rgba(
-                            Colors.primary.r,
-                            Colors.primary.g,
-                            Colors.primary.b,
-                            0.11
-                        )
+                        ? Tokens.withAlpha(Colors.primary, 0.11)
                         : dndArea.containsMouse
-                            ? Qt.rgba(1, 1, 1, 0.055)
-                            : Qt.rgba(1, 1, 1, 0.032)
+                            ? Tokens.whiteMuted
+                            : Tokens.whiteFaint
                     scale: dndArea.pressed ? 0.99 : 1
 
                     Behavior on color {
@@ -395,27 +407,18 @@ PanelWindow {
                         }
                         width: 32
                         height: 32
-                        radius: 11
+                        radius: Constants.panelRadius
                         color: root.doNotDisturb
-                            ? Qt.rgba(
-                                Colors.primary.r,
-                                Colors.primary.g,
-                                Colors.primary.b,
-                                0.16
-                            )
-                            : Qt.rgba(1, 1, 1, 0.05)
+                            ? Tokens.withAlpha(Colors.primary, 0.16)
+                            : Tokens.whiteSoft
 
-                        Text {
+                        ThemeIcon {
                             anchors.centerIn: parent
-                            anchors.verticalCenterOffset: -1
-                            text: "☾"
-                            color: root.doNotDisturb
+                            name: "moon"
+                            iconSize: Constants.iconSizeLg
+                            iconColor: root.doNotDisturb
                                 ? Colors.primary
                                 : Colors.surfaceVariantForeground
-                            font.family: Constants.fontFamily
-                            font.pixelSize: 19
-                            font.weight: Font.Medium
-                            textFormat: Text.PlainText
                         }
                     }
 
@@ -442,46 +445,20 @@ PanelWindow {
                                 : "Silence notification banners"
                             color: Colors.outline
                             font.family: Constants.fontFamily
-                            font.pixelSize: 11
+                            font.pixelSize: Constants.fontSizeXs
                             textFormat: Text.PlainText
                         }
                     }
 
-                    Rectangle {
+                    ToggleSwitch {
                         anchors {
                             right: parent.right
                             verticalCenter: parent.verticalCenter
                             rightMargin: 12
                         }
-                        width: 38
-                        height: 22
-                        radius: 11
-                        color: root.doNotDisturb
-                            ? Colors.primary
-                            : Colors.surfaceContainerHighest
-
-                        Behavior on color {
-                            ColorAnimation { duration: Constants.animationFast }
-                        }
-
-                        Rectangle {
-                            y: 3
-                            x: root.doNotDisturb ? parent.width - width - 3 : 3
-                            width: 16
-                            height: 16
-                            radius: 8
-                            color: root.doNotDisturb
-                                ? Colors.primaryForeground
-                                : Colors.surfaceVariantForeground
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: Constants.animationNormal
-                                    easing.type: Easing.OutBack
-                                    easing.overshoot: 0.12
-                                }
-                            }
-                        }
+                        checked: root.doNotDisturb
+                        // Row MouseArea owns the click; switch is visual only.
+                        interactive: false
                     }
 
                     MouseArea {
@@ -536,7 +513,7 @@ PanelWindow {
                             text: "Recent"
                             color: Colors.outline
                             font.family: Constants.fontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: Constants.fontSizeSm
                             font.weight: Font.DemiBold
                             font.letterSpacing: 0.25
                             textFormat: Text.PlainText
@@ -576,22 +553,17 @@ PanelWindow {
                             anchors.centerIn: parent
                             width: 30
                             height: 30
-                            radius: 15
+                            radius: Constants.panelRadius
                             color: "transparent"
                             border.width: 1
-                            border.color: Qt.rgba(
-                                Colors.primary.r,
-                                Colors.primary.g,
-                                Colors.primary.b,
-                                0.34
-                            )
+                            border.color: Tokens.withAlpha(Colors.primary, 0.34)
                         }
 
                         Rectangle {
                             anchors.centerIn: parent
                             width: 6
                             height: 6
-                            radius: 3
+                            radius: Constants.panelRadius
                             color: Colors.primary
                             opacity: 0.72
                         }
@@ -612,7 +584,7 @@ PanelWindow {
                         text: "You’re all caught up."
                         color: Colors.outline
                         font.family: Constants.fontFamily
-                        font.pixelSize: 12
+                        font.pixelSize: Constants.fontSizeSm
                         textFormat: Text.PlainText
                     }
                 }
@@ -620,80 +592,4 @@ PanelWindow {
         }
     }
 
-    ParallelAnimation {
-        id: openAnimation
-
-        NumberAnimation {
-            target: surface
-            property: "visualOpacity"
-            to: 1
-            duration: 170
-            easing.type: Easing.OutCubic
-        }
-
-        NumberAnimation {
-            target: surface
-            property: "visualScale"
-            to: 1
-            duration: NotificationMetrics.centerEnterDuration
-            easing.type: Easing.OutCubic
-        }
-
-        NumberAnimation {
-            target: surface
-            property: "horizontalOffset"
-            to: 0
-            duration: NotificationMetrics.centerEnterDuration
-            easing.type: Easing.OutExpo
-        }
-
-        NumberAnimation {
-            target: surface
-            property: "verticalOffset"
-            to: 0
-            duration: NotificationMetrics.centerEnterDuration
-            easing.type: Easing.OutCubic
-        }
-    }
-
-    ParallelAnimation {
-        id: closeAnimation
-
-        NumberAnimation {
-            target: surface
-            property: "visualOpacity"
-            to: 0
-            duration: 110
-            easing.type: Easing.OutCubic
-        }
-
-        NumberAnimation {
-            target: surface
-            property: "visualScale"
-            to: 0.98
-            duration: NotificationMetrics.centerExitDuration
-            easing.type: Easing.OutCubic
-        }
-
-        NumberAnimation {
-            target: surface
-            property: "horizontalOffset"
-            to: 10
-            duration: NotificationMetrics.centerExitDuration
-            easing.type: Easing.OutCubic
-        }
-
-        NumberAnimation {
-            target: surface
-            property: "verticalOffset"
-            to: -6
-            duration: NotificationMetrics.centerExitDuration
-            easing.type: Easing.OutCubic
-        }
-
-        onFinished: {
-            if (!root.open)
-                root.presented = false
-        }
-    }
 }
