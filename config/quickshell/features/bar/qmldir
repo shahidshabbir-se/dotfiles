@@ -12,6 +12,7 @@ internal BluetoothPopup 1.0 bluetooth/BluetoothPopup.qml
 internal NetworkButton 1.0 network/NetworkButton.qml
 internal NetworkPopup 1.0 network/NetworkPopup.qml
 internal NotificationButton 1.0 notifications/NotificationButton.qml
+internal RecordingButton 1.0 RecordingButton.qml
 internal SpeedTestPopup 1.0 network/SpeedTestPopup.qml
 internal WifiQrPopup 1.0 network/WifiQrPopup.qml
 internal NowPlayingHero 1.0 music/NowPlayingHero.qml

@@ -15,6 +15,8 @@ png_too_small() {
 
 screenshot_feedback() {
   local out="$1"
+  # qs.features.screenshot sends its own action-bearing notify.
+  [[ "${SCREENSHOT_NO_NOTIFY:-}" == "1" ]] && return 0
   notify-send -a "Screenshot" -t 5000 "Screenshot saved" \
     "Copied to clipboard · $(basename "$out")"
 }

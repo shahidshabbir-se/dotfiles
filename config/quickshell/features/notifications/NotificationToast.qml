@@ -33,17 +33,28 @@ Item {
     readonly property bool critical:
         notification.urgency === NotificationUrgency.Critical
     readonly property bool hovered: hoverHandler.hovered
-    readonly property var visibleActions: notification.actions.filter(
-        action => action.identifier !== "default"
-    )
+    // QList<NotificationAction*> is not a JS array — .filter can silently fail.
+    readonly property var visibleActions: {
+        const raw = notification.actions
+        const out = []
+        if (!raw)
+            return out
+        for (let i = 0; i < raw.length; i++) {
+            const action = raw[i]
+            if (action && action.identifier !== "default")
+                out.push(action)
+        }
+        return out
+    }
     readonly property var defaultAction: {
-        for (let i = 0; i < notification.actions.length; i++) {
-            const action = notification.actions[i]
-
-            if (action.identifier === "default")
+        const raw = notification.actions
+        if (!raw)
+            return null
+        for (let i = 0; i < raw.length; i++) {
+            const action = raw[i]
+            if (action && action.identifier === "default")
                 return action
         }
-
         return null
     }
     readonly property bool hasActions: visibleActions.length > 0

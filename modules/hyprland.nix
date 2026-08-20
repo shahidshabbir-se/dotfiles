@@ -78,6 +78,12 @@ let
     "float on, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
     "size 1200 800, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
     "center on, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
+    "float on, match:class ^(dev\\.lemmy\\.swash)$"
+    "size 1400 900, match:class ^(dev\\.lemmy\\.swash)$"
+    "center on, match:class ^(dev\\.lemmy\\.swash)$"
+    "float on, match:class ^(qs-screenshot-rec)$"
+    "size 1280 720, match:class ^(qs-screenshot-rec)$"
+    "center on, match:class ^(qs-screenshot-rec)$"
     "no_blur on, match:class ^(Brave-browser)$"
     "no_blur on, match:class ^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
     "opacity 1.00 override 1.00 override 1.00 override, match:class ^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify)$"
@@ -124,6 +130,7 @@ let
   # Hyprland 0.55 HDR screencopy regression: grim returns empty frames.
   # https://github.com/hyprwm/Hyprland/discussions/14931
   fixHdrScreensharePlugin = pkgs.callPackage ./pkgs/hyprland-fix-hdr-screenshare.nix { };
+  swash = pkgs.callPackage ./pkgs/swash.nix { };
 
   nautilusDesktopWithExtensions = pkgs.runCommand "nautilus-desktop-with-extensions" { } ''
     mkdir -p "$out/share/applications"
@@ -142,7 +149,7 @@ in
   # ───────────────────────────────────────────────
   # ▶ Hyprland Packages
   # ───────────────────────────────────────────────
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     # Wallpaper
     awww
     mpvpaper
@@ -156,6 +163,8 @@ in
     grim
     grimblast
     slurp
+    wf-recorder
+    tesseract
 
     # Clipboard
     cliphist
@@ -172,7 +181,8 @@ in
 
     # Image viewer (hyprland mime defaults)
     gthumb
-
+  ]) ++ [
+    swash
   ];
 
   xdg.dataFile."applications/org.gnome.Nautilus.desktop".source =
@@ -411,13 +421,12 @@ in
         "$mod SHIFT, W, exec, bash -c \"kill -9 $(pgrep hyprpanel) || hyprpanel\""
         "$mod SHIFT, Q, exec, ${exitScript}"
         "ALT SHIFT, P, exec, $powerMenu"
-        "ALT SHIFT, S, exec, ${homeDirectory}/dotfiles/config/rofi/screenshot-launch.sh"
+        "ALT SHIFT, S, exec, qs ipc call screenshot toggle"
         # Quickshell bar popups
         "$mod, N, exec, qs ipc call notifications toggleCenter"
         "ALT SHIFT, N, exec, qs ipc call bar toggleNetwork"
         "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
         "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
-        # "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
         # "$mod, SPACE, exec, vicinae toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
