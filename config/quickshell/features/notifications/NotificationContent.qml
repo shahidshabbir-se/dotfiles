@@ -24,8 +24,14 @@ RowLayout {
             || app.includes("grimblast")
             || sum.startsWith("screenshot")
     }
+    readonly property bool isRecording: {
+        const app = String(appName || "").toLowerCase()
+        const sum = String(summary || "").toLowerCase()
+        return app.includes("recording")
+            || sum.startsWith("recording")
+    }
     // absolute paths (notify-send image-path) bypass icon theme lookup
-    readonly property string iconSource: root.isScreenshot
+    readonly property string iconSource: (root.isScreenshot || root.isRecording)
         ? ""
         : (appIcon.startsWith("/") || appIcon.startsWith("file:")
             ? (appIcon.startsWith("file:") ? appIcon : ("file://" + appIcon))
@@ -59,15 +65,15 @@ RowLayout {
 
             ThemeIcon {
                 anchors.centerIn: parent
-                visible: root.isScreenshot
-                name: "crop"
+                visible: root.isScreenshot || root.isRecording
+                name: root.isRecording ? "video-camera" : "crop"
                 iconSize: root.compact ? Constants.iconSizeMd : Constants.iconSizeLg
-                iconColor: Colors.primary
+                iconColor: root.isRecording ? Colors.error : Colors.primary
             }
 
             Text {
                 anchors.centerIn: parent
-                visible: !root.isScreenshot
+                visible: !root.isScreenshot && !root.isRecording
                 text: root.appName.charAt(0).toUpperCase() || "?"
                 color: Colors.primary
                 font.family: Constants.fontFamily

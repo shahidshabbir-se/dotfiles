@@ -1,0 +1,3 @@
+module qs.features.screenshot
+Screenshot 1.0 Screenshot.qml
+internal ScreenshotMenu 1.0 ScreenshotMenu.qml

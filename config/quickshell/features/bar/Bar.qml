@@ -16,6 +16,7 @@ Scope {
     property int notificationCount: 0
     property bool notificationCenterOpen: false
     property bool doNotDisturb: false
+    property bool recording: false
     readonly property bool vertical: orientation === Qt.Vertical
 
     property var primaryWindow: null
@@ -26,6 +27,7 @@ Scope {
 
     signal notificationsClicked()
     signal popupOpened()
+    signal recordingStopClicked()
 
     function isUsableScreen(s) {
         if (!s)
@@ -116,6 +118,7 @@ Scope {
             property int notificationCount: root.notificationCount
             property bool notificationCenterOpen: root.notificationCenterOpen
             property bool doNotDisturb: root.doNotDisturb
+            property bool recording: root.recording
             readonly property bool vertical: orientation === Qt.Vertical
 
             screen: modelData
@@ -259,9 +262,14 @@ Scope {
                         Layout.column: bar.vertical ? 0 : 4
                         Layout.row: bar.vertical ? 4 : 0
                         Layout.alignment: Qt.AlignCenter
-                        columns: bar.vertical ? 1 : 4
+                        columns: bar.vertical ? 1 : 5
                         columnSpacing: Constants.spacingXs
                         rowSpacing: Constants.spacingXs
+
+                        RecordingButton {
+                            recording: bar.recording
+                            onClicked: root.recordingStopClicked()
+                        }
 
                         MusicButton {
                             id: music
