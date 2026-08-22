@@ -2,7 +2,7 @@
 # Capture / record / open editor for qs.features.screenshot
 set -euo pipefail
 
-CAPTURE="${HOME}/dotfiles/scripts/screenshot-capture.sh"
+CAPTURE="$(cd -- "$(dirname "$0")" && pwd)/grimblast-copysave.sh"
 SHOT_DIR="${HOME}/Pictures/Screenshots"
 REC_DIR="${HOME}/Videos/Recordings"
 REC_PID_FILE="${XDG_RUNTIME_DIR:-/tmp}/qs-screenshot-record.pid"
@@ -106,7 +106,6 @@ recording_active() {
   [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null
 }
 
-
 start_record() {
   if recording_active; then
     notify_rec "Recording" "Already recording — click REC on the bar to stop"
@@ -134,7 +133,6 @@ start_record() {
   echo $! >"$REC_PID_FILE"
   log "recording pid=$! out=$out geom=$geom"
 }
-
 
 stop_record() {
   if ! recording_active; then
