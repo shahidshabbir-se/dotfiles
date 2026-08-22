@@ -23,7 +23,7 @@ Scope {
     // Deliberately memory-only: history is bounded and cleared on shell reload.
     property var historyEntries: []
 
-    // Match network/music LayerPopup: 8px under the floating bar (spacingMd).
+    // 8px under the bar; center stays bar-aligned, toast is 8px from screen right.
     readonly property int topOffset: barVertical
         ? Constants.spacingMd
         : Constants.barTopMargin + Constants.barHeight + Constants.spacingMd
@@ -211,7 +211,6 @@ Scope {
         defaultTimeoutMs: root.defaultTimeoutMs
         maxVisible: root.maxVisible
         topOffset: root.topOffset
-        rightOffset: root.rightOffset
         suppressed: root.centerOpen
         doNotDisturb: root.doNotDisturb
     }
