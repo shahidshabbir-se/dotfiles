@@ -223,15 +223,12 @@ Scope {
                         columnSpacing: Constants.spacingSm
                         rowSpacing: Constants.spacingSm
 
-                        Image {
-                            source: Qt.resolvedUrl("assets/qalam.svg")
-                            sourceSize.width: Constants.iconSizeLg * 2
-                            sourceSize.height: Constants.iconSizeLg * 2
+                        ThemeIcon {
+                            name: "qalam"
+                            iconSize: Constants.iconSizeLg * 1.5
                             Layout.preferredWidth: Constants.iconSizeLg * 1.5
                             Layout.preferredHeight: Constants.iconSizeLg * 1.5
                             Layout.alignment: Qt.AlignCenter
-                            fillMode: Image.PreserveAspectFit
-                            smooth: true
                         }
 
                         Workspaces {
