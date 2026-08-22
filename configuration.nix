@@ -6,7 +6,6 @@
 {
   lib,
   pkgs,
-  device,
   ...
 }:
 
@@ -76,7 +75,9 @@ in
     ./modules/power-management.nix
   ];
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+  };
   programs = {
     # configuration.nix
     localsend = {
@@ -319,36 +320,121 @@ in
       };
     };
   };
+  systemd = {
+    services.bluetooth-auto-connect = {
 
-  # BlueZ trusts bonded devices but does not initiate Classic Bluetooth
-  # connections after its daemon starts. Retry trusted devices briefly without
-  # blocking Bluetooth startup or NixOS activation.
-  systemd.services.bluetooth-auto-connect = {
-    description = "Reconnect Bluetooth headsets after BlueZ starts";
-    wantedBy = [ "bluetooth.service" ];
-    after = [ "bluetooth.service" ];
-    partOf = [ "bluetooth.service" ];
-    path = with pkgs; [
-      bluez
-      coreutils
-      gawk
-    ];
-    serviceConfig = {
-      Type = "exec";
-      TimeoutStopSec = "5s";
+      # BlueZ trusts bonded devices but does not initiate Classic Bluetooth
+      # connections after its daemon starts. Retry trusted devices briefly without
+      # blocking Bluetooth startup or NixOS activation.
+
+      description = "Reconnect Bluetooth headsets after BlueZ starts";
+      wantedBy = [ "bluetooth.service" ];
+      after = [ "bluetooth.service" ];
+      partOf = [ "bluetooth.service" ];
+      path = with pkgs; [
+        bluez
+        coreutils
+        gawk
+      ];
+      serviceConfig = {
+        Type = "exec";
+        TimeoutStopSec = "5s";
+      };
+      script = ''
+        bluetoothctl power on || true
+
+        for _ in $(seq 1 6); do
+          bluetoothctl devices Trusted |
+            awk '$1 == "Device" && $2 ~ /^([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}$/ { print $2 }' |
+            while read -r device; do
+              bluetoothctl --timeout 5 connect "$device" || true
+            done
+          sleep 5
+        done
+      '';
     };
-    script = ''
-      bluetoothctl power on || true
 
-      for _ in $(seq 1 6); do
-        bluetoothctl devices Trusted |
-          awk '$1 == "Device" && $2 ~ /^([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}$/ { print $2 }' |
-          while read -r device; do
-            bluetoothctl --timeout 5 connect "$device" || true
-          done
-        sleep 5
-      done
+    user.services.wireplumber-usb-reset = {
+      description = "Restart WirePlumber when USB speaker connects";
+      after = [ "wireplumber.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl --user restart wireplumber";
+      };
+    };
+
+    services.sddm.preStart = lib.mkAfter ''
+          install -d -m 755 /var/lib/sddm
+          STATE=/var/lib/sddm/state.conf
+          if [ -f "$STATE" ]; then
+            ${pkgs.gnused}/bin/sed -i 's|^Session=.*|Session=hyprland.desktop|' "$STATE"
+          else
+            cat > "$STATE" <<EOF
+      [Last]
+      Session=hyprland.desktop
+      EOF
+          fi
     '';
+
+    # Configure keymap in X11
+    # services.xserver.xkb.layout = "us";
+    # services.xserver.xkb.options = "eurosign:e,caps:escape";
+
+    # Enable CUPS to print documents.
+    # services.printing.enable = true;
+
+    # Enable sound.
+    # services.pulseaudio.enable = true;
+    # OR
+    # services.pipewire = {
+    #   enable = true;
+    #   pulse.enable = true;
+    # };
+
+    # Enable touchpad support (enabled default in most desktopManager).
+    # services.libinput.enable = true;
+
+    # Define a user account. Don't forget to set a password with ‘passwd’.
+    # users.users.alice = {
+    #   isNormalUser = true;
+    #   extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    #   packages = with pkgs; [
+    #     tree
+    #   ];
+    # };
+
+    # programs.firefox.enable = true;
+
+    # List packages installed in system profile.
+    # You can use https://search.nixos.org/ to find more packages (and options).
+    # environment.systemPackages = with pkgs; [
+    #   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #   wget
+    # ];
+
+    # Some programs need SUID wrappers, can be configured further or are
+    # started in user sessions.
+    # programs.mtr.enable = true;
+    # programs.gnupg.agent = {
+    #   enable = true;
+    #   enableSSHSupport = true;
+    # };
+
+    # List services that you want to enable:
+
+    # Enable the OpenSSH daemon.
+    # services.openssh.enable = true;
+
+    # Open ports in the firewall.
+    # networking.firewall.allowedTCPPorts = [ ... ];
+    # networking.firewall.allowedUDPPorts = [ ... ];
+    # Or disable the firewall altogether.
+    # Ensure FHS symlinks exist for bwrap/pressure-vessel (umu/Proton)
+    tmpfiles.rules = [
+      "L+ /usr/bin/true    - - - - /run/current-system/sw/bin/true"
+      "L+ /usr/bin/false   - - - - /run/current-system/sw/bin/false"
+      "L+ /usr/bin/env     - - - - /run/current-system/sw/bin/env"
+    ];
   };
 
   networking = {
@@ -403,15 +489,6 @@ in
   time.timeZone = "Asia/Karachi";
 
   i18n.defaultLocale = "en_US.UTF-8";
-
-  systemd.user.services.wireplumber-usb-reset = {
-    description = "Restart WirePlumber when USB speaker connects";
-    after = [ "wireplumber.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.systemd}/bin/systemctl --user restart wireplumber";
-    };
-  };
 
   users.users.shahid = {
     isNormalUser = true;
@@ -508,6 +585,7 @@ in
     pkgs.nerd-fonts.symbols-only
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.geist-mono
+    pkgs.nerd-fonts.space-mono
     pkgs.noto-fonts
     pkgs.rubik
     pkgs.icomoon-feather
@@ -560,23 +638,23 @@ in
         cp *.ttf $out/share/fonts/truetype
       '';
     })
+    # (pkgs.stdenvNoCC.mkDerivation {
+    #   pname = "ioskeley-mono-nerd-font";
+    #   version = "2.1.0";
+    #   src = pkgs.fetchzip {
+    #     url = "https://github.com/ahatem/IoskeleyMono/releases/download/v2.1.0/IoskeleyMono-NerdFont.zip";
+    #     hash = "sha256-b0mqhLeDT+uYPYiOKB+cxc5M1TtFkICKAmlcmW3IjDg=";
+    #     stripRoot = false;
+    #   };
+    #   installPhase = ''
+    #     mkdir -p $out/share/fonts/truetype
+    #     find . -name '*.ttf' -exec cp {} $out/share/fonts/truetype/ \;
+    #   '';
+    # })
   ];
 
   programs.hyprland.enable = true;
   programs.hyprland.xwayland.enable = true;
-
-  systemd.services.sddm.preStart = lib.mkAfter ''
-        install -d -m 755 /var/lib/sddm
-        STATE=/var/lib/sddm/state.conf
-        if [ -f "$STATE" ]; then
-          ${pkgs.gnused}/bin/sed -i 's|^Session=.*|Session=hyprland.desktop|' "$STATE"
-        else
-          cat > "$STATE" <<EOF
-    [Last]
-    Session=hyprland.desktop
-    EOF
-        fi
-  '';
 
   xdg.portal = {
     enable = true;
@@ -626,66 +704,6 @@ in
       # extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
     };
   };
-
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
-  # services.pulseaudio.enable = true;
-  # OR
-  # services.pipewire = {
-  #   enable = true;
-  #   pulse.enable = true;
-  # };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  # users.users.alice = {
-  #   isNormalUser = true;
-  #   extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-  #   packages = with pkgs; [
-  #     tree
-  #   ];
-  # };
-
-  # programs.firefox.enable = true;
-
-  # List packages installed in system profile.
-  # You can use https://search.nixos.org/ to find more packages (and options).
-  # environment.systemPackages = with pkgs; [
-  #   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #   wget
-  # ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # Ensure FHS symlinks exist for bwrap/pressure-vessel (umu/Proton)
-  systemd.tmpfiles.rules = [
-    "L+ /usr/bin/true    - - - - /run/current-system/sw/bin/true"
-    "L+ /usr/bin/false   - - - - /run/current-system/sw/bin/false"
-    "L+ /usr/bin/env     - - - - /run/current-system/sw/bin/env"
-  ];
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
