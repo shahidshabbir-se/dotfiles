@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import qs.shared.theme
-import "NotificationText.js" as NotificationText
 
 RowLayout {
     id: root

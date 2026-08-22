@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell.Services.Notifications
 import qs.shared.theme
-import "NotificationText.js" as NotificationText
 
 Item {
     id: root
