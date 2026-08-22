@@ -15,7 +15,6 @@ PanelWindow {
     property int defaultTimeoutMs: 6000
     property int maxVisible: 4
     property int topOffset: Constants.barTopMargin + Constants.barHeight + Constants.spacingMd
-    // Right edge aligns with floating bar (same as network/music LayerPopup).
     property int rightOffset: Constants.spacingMd
     property bool suppressed: false
     property bool doNotDisturb: false
@@ -25,13 +24,12 @@ PanelWindow {
     readonly property int screenMargin: screen && screen.width < 448 ? 8 : 12
     readonly property int availableWidth: screen
         ? Math.max(1, screen.width - rightOffset - screenMargin)
-        : NotificationMetrics.railWidth + NotificationMetrics.windowGutter * 2
+        : NotificationMetrics.railWidth
     readonly property int cardWidth: Math.min(
         NotificationMetrics.railWidth,
-        Math.max(1, availableWidth - NotificationMetrics.windowGutter * 2)
+        Math.max(1, availableWidth)
     )
-    readonly property int windowWidth:
-        cardWidth + NotificationMetrics.windowGutter * 2
+    readonly property int windowWidth: cardWidth
     readonly property int usableHeight: screen
         ? Math.max(1, screen.height - topOffset - screenMargin)
         : NotificationMetrics.centerMaxHeight
@@ -99,7 +97,7 @@ PanelWindow {
     // expanded mode the narrow gaps remain interactive intentionally, so the
     // stack cannot collapse while the pointer travels between cards.
     mask: Region {
-        x: NotificationMetrics.windowGutter
+        x: 0
         y: 0
         width: root.suppressed ? 0 : root.cardWidth
         height: root.suppressed
@@ -135,7 +133,7 @@ PanelWindow {
         Item {
             id: collapsedPreviews
 
-            x: NotificationMetrics.windowGutter
+            x: 0
             width: root.cardWidth
             height: root.collapsedHeight
             z: 0
@@ -177,7 +175,7 @@ PanelWindow {
         Column {
             id: stack
 
-            x: NotificationMetrics.windowGutter
+            x: 0
             width: root.cardWidth
             spacing: NotificationMetrics.stackGap
             z: 1
