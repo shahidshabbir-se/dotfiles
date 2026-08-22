@@ -47,7 +47,7 @@ let
     imageViewerDesktopFile = "org.gnome.gThumb.desktop";
   };
 
-  browser = apps.browser;
+  inherit (apps) browser;
 
   # ───────────────────────────────────────────────
   # ▶ Theme Defaults
@@ -148,24 +148,24 @@ let
 
   # Hyprland HDR/color management makes Electron apps render dim unless these
   # flags are passed.
-  codeCursorFhs = pkgs.symlinkJoin {
-    name = "code-cursor-fhs";
-
-    paths = [
-      pkgs.code-cursor-fhs
-    ];
-
-    buildInputs = [
-      pkgs.makeWrapper
-    ];
-
-    postBuild = ''
-      wrapProgram $out/bin/cursor \
-        --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-        --add-flags "--force-color-profile=srgb" \
-        --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-    '';
-  };
+  # codeCursorFhs = pkgs.symlinkJoin {
+  #   name = "code-cursor-fhs";
+  #
+  #   paths = [
+  #     pkgs.code-cursor-fhs
+  #   ];
+  #
+  #   buildInputs = [
+  #     pkgs.makeWrapper
+  #   ];
+  #
+  #   postBuild = ''
+  #     wrapProgram $out/bin/cursor \
+  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+  #       --add-flags "--force-color-profile=srgb" \
+  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+  #   '';
+  # };
 
   # vscodeFhs = pkgs.symlinkJoin {
   #   name = "vscode-fhs";
@@ -190,9 +190,11 @@ let
   # ▶ Package Groups
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
-    codeCursorFhs
+    # codeCursorFhs
     # codexCliPackage
     gcc
+    moon
+    jetbrains-toolbox
     git-filter-repo
     mpv
     gnumake
@@ -368,9 +370,9 @@ in
       x11.enable = true;
       gtk.enable = true;
 
-      package = cursor.package;
-      name = cursor.name;
-      size = cursor.size;
+      inherit (cursor) package;
+      inherit (cursor) name;
+      inherit (cursor) size;
     };
 
     packages =
