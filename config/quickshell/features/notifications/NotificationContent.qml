@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.shared.theme
-import "NotificationText.js" as NotificationText
 
 RowLayout {
     id: root

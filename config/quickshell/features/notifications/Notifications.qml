@@ -3,7 +3,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.shared.theme
-import "NotificationText.js" as NotificationText
 
 Scope {
     id: root

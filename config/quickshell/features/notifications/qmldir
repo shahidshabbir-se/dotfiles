@@ -5,5 +5,6 @@ internal NotificationCenter 1.0 NotificationCenter.qml
 internal NotificationContent 1.0 NotificationContent.qml
 internal NotificationHistoryItem 1.0 NotificationHistoryItem.qml
 singleton NotificationMetrics 1.0 NotificationMetrics.qml
+singleton NotificationText 1.0 NotificationText.qml
 internal NotificationToast 1.0 NotificationToast.qml
 internal NotificationToastStack 1.0 NotificationToastStack.qml
