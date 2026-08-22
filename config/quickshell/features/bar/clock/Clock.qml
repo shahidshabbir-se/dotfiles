@@ -63,21 +63,103 @@ Item {
         }
     }
 
-    // Horizontal now-playing (no MarqueeText — that type lives under music/).
-    Text {
+    // Inline marquee — music/MarqueeText isn't visible from clock/ (qmldir).
+    Item {
         id: musicMarquee
 
         anchors.centerIn: parent
         width: clock.implicitWidth
+        height: firstText.implicitHeight
         visible: clock.showMusic && !clock.vertical
-        text: clock.musicText
-        color: Colors.primary
-        elide: Text.ElideRight
-        horizontalAlignment: Text.AlignHCenter
-        textFormat: Text.PlainText
-        font.family: Constants.fontFamily
-        font.pixelSize: Constants.fontSizeMd
-        font.weight: Font.Medium
+        clip: true
+
+        readonly property real speed: 28
+        readonly property real gap: 40
+        readonly property bool overflow: firstText.implicitWidth > width
+        readonly property real loopDistance: firstText.implicitWidth + gap
+        readonly property int loopDuration: Math.max(
+            1200,
+            Math.round(loopDistance / speed * 1000)
+        )
+        property bool delayComplete: false
+
+        function restart() {
+            track.x = 0
+            delayComplete = false
+            startDelay.stop()
+            if (visible && overflow)
+                startDelay.start()
+        }
+
+        onVisibleChanged: restart()
+        onWidthChanged: restart()
+        onOverflowChanged: restart()
+
+        Connections {
+            target: clock
+            function onMusicTextChanged() { musicMarquee.restart() }
+        }
+
+        Timer {
+            id: startDelay
+            interval: 900
+            repeat: false
+            onTriggered: musicMarquee.delayComplete = true
+        }
+
+        Item {
+            id: track
+            height: parent.height
+
+            Text {
+                id: firstText
+                text: clock.musicText
+                color: Colors.primary
+                font.family: Constants.fontFamily
+                font.pixelSize: Constants.fontSizeMd
+                font.weight: Font.Medium
+                textFormat: Text.PlainText
+                wrapMode: Text.NoWrap
+                anchors.verticalCenter: parent.verticalCenter
+                width: musicMarquee.overflow ? implicitWidth : musicMarquee.width
+                horizontalAlignment: musicMarquee.overflow
+                    ? Text.AlignLeft
+                    : Text.AlignHCenter
+            }
+
+            Text {
+                visible: musicMarquee.overflow
+                x: firstText.implicitWidth + musicMarquee.gap
+                text: clock.musicText
+                color: Colors.primary
+                font.family: Constants.fontFamily
+                font.pixelSize: Constants.fontSizeMd
+                font.weight: Font.Medium
+                textFormat: Text.PlainText
+                wrapMode: Text.NoWrap
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
+        SequentialAnimation {
+            running: musicMarquee.visible
+                && musicMarquee.overflow
+                && musicMarquee.delayComplete
+            loops: Animation.Infinite
+
+            NumberAnimation {
+                target: track
+                property: "x"
+                from: 0
+                to: -musicMarquee.loopDistance
+                duration: musicMarquee.loopDuration
+                easing.type: Easing.Linear
+            }
+
+            ScriptAction {
+                script: track.x = 0
+            }
+        }
     }
 
     // Vertical bar: no horizontal marquee room — wrap/elide.
