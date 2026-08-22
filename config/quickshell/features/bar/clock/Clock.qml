@@ -1,6 +1,6 @@
 import QtQuick
-import Quickshell.Services.Mpris
 import qs.shared.theme
+import qs.features.bar.music
 
 Item {
     id: clock
@@ -11,32 +11,16 @@ Item {
 
     signal clicked
 
-    // Minimal MPRIS reader — Clock can't import qs.features.bar (circular).
-    readonly property var player: {
-        let fallback = null
-        for (let i = 0; i < Mpris.players.values.length; i++) {
-            const candidate = Mpris.players.values[i]
-            if (candidate.isPlaying)
-                return candidate
-            if (!fallback || candidate.identity.toLowerCase().includes("spotify"))
-                fallback = candidate
-        }
-        return fallback
+    MprisPlaybackSession {
+        id: playback
     }
-    readonly property bool hasPlayer: player !== null
-    readonly property string trackTitle: hasPlayer
-        ? (player.trackTitle || "Unknown title")
-        : "Nothing playing"
-    readonly property string trackArtist: hasPlayer
-        ? (player.trackArtist || "")
-        : ""
 
     readonly property string musicText: {
-        if (!clock.hasPlayer)
+        if (!playback.hasPlayer)
             return "Nothing playing"
-        if (clock.trackArtist && clock.trackArtist !== "Unknown artist")
-            return clock.trackTitle + " · " + clock.trackArtist
-        return clock.trackTitle
+        if (playback.artist && playback.artist !== "Unknown artist")
+            return playback.title + " · " + playback.artist
+        return playback.title
     }
 
     // Keep width stable when switching date ↔ marquee (date as baseline).
@@ -63,103 +47,22 @@ Item {
         }
     }
 
-    // Inline marquee — music/MarqueeText isn't visible from clock/ (qmldir).
-    Item {
+    MarqueeText {
         id: musicMarquee
 
         anchors.centerIn: parent
         width: clock.implicitWidth
-        height: firstText.implicitHeight
         visible: clock.showMusic && !clock.vertical
-        clip: true
-
-        readonly property real speed: 28
-        readonly property real gap: 40
-        readonly property bool overflow: firstText.implicitWidth > width
-        readonly property real loopDistance: firstText.implicitWidth + gap
-        readonly property int loopDuration: Math.max(
-            1200,
-            Math.round(loopDistance / speed * 1000)
-        )
-        property bool delayComplete: false
-
-        function restart() {
-            track.x = 0
-            delayComplete = false
-            startDelay.stop()
-            if (visible && overflow)
-                startDelay.start()
-        }
-
-        onVisibleChanged: restart()
-        onWidthChanged: restart()
-        onOverflowChanged: restart()
-
-        Connections {
-            target: clock
-            function onMusicTextChanged() { musicMarquee.restart() }
-        }
-
-        Timer {
-            id: startDelay
-            interval: 900
-            repeat: false
-            onTriggered: musicMarquee.delayComplete = true
-        }
-
-        Item {
-            id: track
-            height: parent.height
-
-            Text {
-                id: firstText
-                text: clock.musicText
-                color: Colors.primary
-                font.family: Constants.fontFamily
-                font.pixelSize: Constants.fontSizeMd
-                font.weight: Font.Medium
-                textFormat: Text.PlainText
-                wrapMode: Text.NoWrap
-                anchors.verticalCenter: parent.verticalCenter
-                width: musicMarquee.overflow ? implicitWidth : musicMarquee.width
-                horizontalAlignment: musicMarquee.overflow
-                    ? Text.AlignLeft
-                    : Text.AlignHCenter
-            }
-
-            Text {
-                visible: musicMarquee.overflow
-                x: firstText.implicitWidth + musicMarquee.gap
-                text: clock.musicText
-                color: Colors.primary
-                font.family: Constants.fontFamily
-                font.pixelSize: Constants.fontSizeMd
-                font.weight: Font.Medium
-                textFormat: Text.PlainText
-                wrapMode: Text.NoWrap
-                anchors.verticalCenter: parent.verticalCenter
-            }
-        }
-
-        SequentialAnimation {
-            running: musicMarquee.visible
-                && musicMarquee.overflow
-                && musicMarquee.delayComplete
-            loops: Animation.Infinite
-
-            NumberAnimation {
-                target: track
-                property: "x"
-                from: 0
-                to: -musicMarquee.loopDistance
-                duration: musicMarquee.loopDuration
-                easing.type: Easing.Linear
-            }
-
-            ScriptAction {
-                script: track.x = 0
-            }
-        }
+        text: clock.musicText
+        color: Colors.primary
+        speed: 28
+        gap: 40
+        startDelay: 900
+        font: Qt.font({
+            family: Constants.fontFamily,
+            pixelSize: Constants.fontSizeMd,
+            weight: Font.Medium
+        })
     }
 
     // Vertical bar: no horizontal marquee room — wrap/elide.

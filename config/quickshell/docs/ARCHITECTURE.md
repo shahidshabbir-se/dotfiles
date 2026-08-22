@@ -22,6 +22,14 @@ scripts/                  Shell-wide operational entry points
 5. Move code into `shared/` only after a second feature needs the same behavior.
 6. Features communicate through facade properties and signals, never child IDs.
 7. Use `qs.*` project-root imports; avoid directory-depth imports such as `../../`.
+8. Only top-level `features/<name>/` are features wired from composition. Bar
+   subfolders (`network/`, `music/`, …) may keep a nested `qmldir` so siblings
+   can `import "."` — that does **not** make them features. Do not import them
+   from composition; `Bar.qml` still owns them via the parent `qs.features.bar`
+   `internal` registrations.
+9. Bar chrome for another feature's state stays in `bar/` (e.g. `RecordingButton`
+   + `Screenshot.recording` via composition). Do not invent a second top-level
+   feature folder for a single bar button.
 
 ## Adding a feature
 
