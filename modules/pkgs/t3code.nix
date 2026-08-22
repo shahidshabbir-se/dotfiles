@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.0.31";
+  version = "0.0.33";
   pname = "t3code";
 
   desktopEntry = pkgs.writeText "t3code.desktop" ''
@@ -28,7 +28,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
-    sha256 = "sha256-AqTkoSKeQwmql3L9F5SbD1XyqeFyqe11ciq9Tp04Zyw=";
+    sha256 = "sha256-QVyGSPQ8PSLVcvJ/LFD9yMMQ6n/N6VN7kD4eLxyHdaE=";
     name = "t3code-${version}.AppImage";
   };
 
