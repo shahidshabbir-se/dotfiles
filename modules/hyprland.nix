@@ -425,6 +425,7 @@ in
         # Quickshell bar popups
         "$mod, N, exec, qs ipc call notifications toggleCenter"
         "ALT SHIFT, N, exec, qs ipc call bar toggleNetwork"
+        "ALT SHIFT, B, exec, qs ipc call bar toggleBluetooth"
         "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
         "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
         # "$mod, SPACE, exec, vicinae toggle"
