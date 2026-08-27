@@ -75,6 +75,10 @@ let
     "float on, match:class ^(org.gnome.Nautilus|Nautilus|nautilus)$"
     "size 1100 700, match:class ^(org.gnome.Nautilus|Nautilus|nautilus)$"
     "center on, match:class ^(org.gnome.Nautilus|Nautilus|nautilus)$"
+    "float on, match:class ^(com\.system76\.CosmicFiles)$"
+    "size 1100 700, match:class ^(com\.system76\.CosmicFiles)$"
+    "center on, match:class ^(com\.system76\.CosmicFiles)$"
+    "decorate off, match:class ^(com\.system76\.CosmicFiles)$"
     "float on, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
     "size 1200 800, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
     "center on, match:class ^(gthumb|org\\.gnome\\.gThumb)$"
@@ -225,7 +229,7 @@ in
       "$mod" = "SUPER";
       "$terminal" = "ghostty";
       "$browser" = "${browser}";
-      "$fileManager" = "ghostty --title=yazi -e yazi";
+      "$fileManager" = "nautilus";
       "$powerMenu" = "sh ${homeDirectory}/.config/wlogout/launch.sh";
 
       monitor = [

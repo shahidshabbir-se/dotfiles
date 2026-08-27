@@ -42,8 +42,8 @@ let
   nautilusMyComputerSrc = pkgs.fetchFromGitHub {
     owner = "yannmasoch";
     repo = "nautilus-my-computer";
-    rev = "2bd87ec737798152de9ec5263f5a569f51d6092c";
-    hash = "sha256-vzT2zZrexBJJj5fIvZ+Hm0DsYP6p4N3GsqvbFHJ77h8=";
+    rev = "4c6247e8210239ecc8de66fd7a9c793dc9a7e66f";
+    hash = "sha256-+hE39OIp1+uq0TG5E1f4VocK0iMv5xkXLJnmSal5FZM=";
   };
 
   nautilusMyComputer =
@@ -93,12 +93,6 @@ in
 
     dconf.enable = true;
     nix-ld.enable = true;
-    thunar.enable = true;
-    thunar.plugins = with pkgs; [
-      thunar-archive-plugin
-      thunar-volman
-    ];
-    xfconf.enable = true;
     zsh.enable = true;
     gamemode.enable = true;
 
@@ -513,6 +507,8 @@ in
   environment.pathsToLink = [
     "/share/applications"
     "/share/xdg-desktop-portal"
+    "/share/nautilus-python"
+    "/share/glib-2.0"
   ];
 
   environment.systemPackages = with pkgs; [
