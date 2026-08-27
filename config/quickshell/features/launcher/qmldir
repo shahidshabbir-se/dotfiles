@@ -1,0 +1,3 @@
+module qs.features.launcher
+Launcher 1.0 Launcher.qml
+internal LauncherPanel 1.0 LauncherPanel.qml

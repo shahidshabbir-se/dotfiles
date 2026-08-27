@@ -43,6 +43,12 @@ QtObject {
     readonly property int bluetoothPopupWidth: 380
     readonly property int bluetoothPopupMaxHeight: 560
 
+    // Launcher
+    readonly property int launcherWidth: 520
+    readonly property int launcherMaxHeight: 560
+    readonly property int launcherRowHeight: 44
+    readonly property int launcherIconSize: 28
+
     // Audio visualizer
     readonly property int visualizerHeight: 72
     readonly property real visualizerWidthRatio: 0.60

@@ -428,7 +428,7 @@ in
         "ALT SHIFT, B, exec, qs ipc call bar toggleBluetooth"
         "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
         "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
-        # "$mod, SPACE, exec, vicinae toggle"
+        "$mod, SPACE, exec, qs ipc call launcher toggle"
         "$mod, left, workspace, -1"
         "ALT,Tab,cyclenext, next"
         "ALT SHIFT,Tab,cyclenext, prev"
