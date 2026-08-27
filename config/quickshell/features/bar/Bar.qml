@@ -26,6 +26,7 @@ Scope {
         : (vertical ? Constants.barVerticalWidth : Constants.barMaxWidth)
 
     signal notificationsClicked()
+    signal launcherClicked()
     signal popupOpened()
     signal recordingStopClicked()
 
@@ -223,12 +224,25 @@ Scope {
                         columnSpacing: Constants.spacingSm
                         rowSpacing: Constants.spacingSm
 
-                        ThemeIcon {
-                            name: "qalam"
-                            iconSize: Constants.iconSizeLg * 1.5
+                        Item {
                             Layout.preferredWidth: Constants.iconSizeLg * 1.5
                             Layout.preferredHeight: Constants.iconSizeLg * 1.5
                             Layout.alignment: Qt.AlignCenter
+
+                            ThemeIcon {
+                                anchors.centerIn: parent
+                                name: "qalam"
+                                iconSize: Constants.iconSizeLg * 1.5
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    bar.closePopups()
+                                    root.launcherClicked()
+                                }
+                            }
                         }
 
                         Workspaces {

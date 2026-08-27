@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.features.bar as BarFeature
+import qs.features.launcher as LauncherFeature
 import qs.features.notifications as NotificationsFeature
 import qs.features.screenshot as ScreenshotFeature
 import qs.features.visualizer as VisualizerFeature
@@ -19,11 +20,13 @@ Scope {
             : Qt.Horizontal
 
         onNotificationsClicked: notifications.toggleCenter()
+        onLauncherClicked: launcher.toggle()
         onRecordingStopClicked: screenshot.stopRecording()
         onPopupOpened: {
             notifications.closeCenter()
             wallpaper.close()
             screenshot.close()
+            launcher.close()
         }
     }
 
@@ -43,8 +46,10 @@ Scope {
         id: wallpaper
 
         onOpenChanged: {
-            if (open)
+            if (open) {
                 screenshot.close()
+                launcher.close()
+            }
         }
     }
 
@@ -55,6 +60,20 @@ Scope {
             if (open) {
                 notifications.closeCenter()
                 wallpaper.close()
+                launcher.close()
+                bar.closePopups()
+            }
+        }
+    }
+
+    LauncherFeature.Launcher {
+        id: launcher
+
+        onOpenChanged: {
+            if (open) {
+                notifications.closeCenter()
+                wallpaper.close()
+                screenshot.close()
                 bar.closePopups()
             }
         }
