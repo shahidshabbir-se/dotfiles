@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "1.21.9";
+  version = "2.5.2";
   pname = "antigravity";
 
   desktopEntry = pkgs.writeText "antigravity.desktop" ''
