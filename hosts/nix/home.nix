@@ -45,6 +45,7 @@ let
     browser = "zen-beta";
     browserDesktopFile = "${browser}.desktop";
     imageViewerDesktopFile = "org.gnome.gThumb.desktop";
+    fileManagerDesktopFile = "org.gnome.Nautilus.desktop";
   };
 
   inherit (apps) browser;
@@ -113,6 +114,7 @@ let
   # ▶ GTK Bookmarks
   # ───────────────────────────────────────────────
   gtkBookmarks = ''
+    file://${homeDirectory}/Desktop Desktop
     file://${homeDirectory}/Documents Documents
     file://${dotfilesDirectory} Dotfiles
     file://${homeDirectory}/Downloads Downloads
@@ -137,6 +139,11 @@ let
   zedPackage = import ../../modules/pkgs/zed.nix {
     inherit pkgs lib;
   };
+
+  # paseoPackage = import ../../modules/pkgs/paseo.nix {
+  #   inherit pkgs lib;
+  # };
+
 
   # chatgptPackage = import ../../modules/pkgs/chatgpt.nix {
   #   inherit pkgs lib;
@@ -167,6 +174,25 @@ let
   #   '';
   # };
 
+  # antigravityFhs = pkgs.symlinkJoin {
+  #   name = "antigravity-ide-fhs";
+  #
+  #   paths = [
+  #     pkgs.antigravity-ide-fhs
+  #   ];
+  #
+  #   buildInputs = [
+  #     pkgs.makeWrapper
+  #   ];
+  #
+  #   postBuild = ''
+  #     wrapProgram $out/bin/antigravity-ide \
+  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+  #       --add-flags "--force-color-profile=srgb" \
+  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+  #   '';
+  # };
+
   # vscodeFhs = pkgs.symlinkJoin {
   #   name = "vscode-fhs";
   #
@@ -191,6 +217,7 @@ let
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
     # codeCursorFhs
+    # antigravityFhs
     # codexCliPackage
     gcc
     moon
@@ -210,6 +237,8 @@ let
     proton-vpn
     qbittorrent
     zedPackage
+    # paseoPackage
+    nautilus
     rustdesk-flutter
     # t3codePackage
     zenBrowserPackage
@@ -274,9 +303,16 @@ let
     "image/heic"
   ];
 
+  fileManagerMimeTypes = [
+    "inode/directory"
+    "inode/mount-point"
+    "x-directory/normal"
+  ];
+
   mimeDefaultApplications =
     lib.genAttrs browserMimeTypes (_: [ apps.browserDesktopFile ])
-    // lib.genAttrs imageMimeTypes (_: [ apps.imageViewerDesktopFile ]);
+    // lib.genAttrs imageMimeTypes (_: [ apps.imageViewerDesktopFile ])
+    // lib.genAttrs fileManagerMimeTypes (_: [ apps.fileManagerDesktopFile ]);
 
   # ───────────────────────────────────────────────
   # ▶ Activation Scripts
@@ -314,30 +350,53 @@ let
     fi
   '';
 
+  # Nautilus 50 treats file:// SVG custom-icon as a document. Use themed names.
+  folderIconEntries = [
+    { path = "${homeDirectory}/Android"; name = "folder-android"; symbolic = "folder-android"; }
+    { path = "${homeDirectory}/Desktop"; name = "user-desktop"; symbolic = "user-desktop-symbolic"; }
+    { path = "${homeDirectory}/Documents"; name = "folder-documents"; symbolic = "folder-documents"; }
+    { path = "${dotfilesDirectory}"; name = "folder-git"; symbolic = "folder-git"; }
+    { path = "${homeDirectory}/Downloads"; name = "folder-download"; symbolic = "folder-download-symbolic"; }
+    { path = "${homeDirectory}/Extras"; name = "folder-applications"; symbolic = "folder-applications"; }
+    { path = "${homeDirectory}/Games"; name = "folder-games"; symbolic = "folder-games"; }
+    { path = "${homeDirectory}/Music"; name = "folder-music"; symbolic = "folder-music-symbolic"; }
+    { path = "${homeDirectory}/Pictures"; name = "folder-pictures"; symbolic = "folder-pictures-symbolic"; }
+    { path = workspaceDirectory; name = "folder-code"; symbolic = "folder-code"; }
+    { path = "${homeDirectory}/Storage"; name = "folder-sync"; symbolic = "folder-sync"; }
+    { path = "${homeDirectory}/Public"; name = "folder-publicshare"; symbolic = "folder-publicshare-symbolic"; }
+    { path = "${homeDirectory}/Templates"; name = "folder-templates"; symbolic = "folder-templates-symbolic"; }
+    { path = "${homeDirectory}/Videos"; name = "folder-videos"; symbolic = "folder-videos-symbolic"; }
+  ];
+
   setNautilusFolderIconsScript = ''
     set_folder_icon() {
       folder="$1"
-      icon="$2"
+      icon_name="$2"
 
       [ -d "$folder" ] || return 0
-      [ -f "$icon" ] || return 0
 
-      ${bin.gio} set -t string "$folder" metadata::custom-icon "file://$icon" 2>/dev/null || true
+      ${bin.gio} set -t unset "$folder" metadata::custom-icon 2>/dev/null || true
+      ${bin.gio} set -t string "$folder" metadata::custom-icon-name "$icon_name" 2>/dev/null || true
     }
 
-    set_folder_icon "${homeDirectory}/Desktop" "${papirusPlaces}/user-desktop.svg"
-    set_folder_icon "${homeDirectory}/Documents" "${papirusPlaces}/folder-documents.svg"
-    set_folder_icon "${dotfilesDirectory}" "${papirusPlaces}/folder-git.svg"
-    set_folder_icon "${homeDirectory}/Downloads" "${papirusPlaces}/folder-download.svg"
-    set_folder_icon "${homeDirectory}/Extras" "${papirusPlaces}/folder-favorites.svg"
-    set_folder_icon "${homeDirectory}/Music" "${papirusPlaces}/folder-music.svg"
-    set_folder_icon "${homeDirectory}/Pictures" "${papirusPlaces}/folder-pictures.svg"
-    set_folder_icon "${workspaceDirectory}" "${papirusPlaces}/folder-code.svg"
-    set_folder_icon "${homeDirectory}/Storage" "${papirusPlaces}/folder-remote.svg"
-    set_folder_icon "${homeDirectory}/Public" "${papirusPlaces}/folder-publicshare.svg"
-    set_folder_icon "${homeDirectory}/Templates" "${papirusPlaces}/folder-templates.svg"
-    set_folder_icon "${homeDirectory}/Videos" "${papirusPlaces}/folder-videos.svg"
+    ${lib.concatMapStringsSep "\n" (e: ''
+      set_folder_icon "${e.path}" "${e.name}"
+    '') folderIconEntries}
   '';
+
+  nautilusBookmarkIcons =
+    let
+      inherit (lib.hm.gvariant) mkArray mkDictionaryEntry type;
+    in
+    mkArray (type.dictionaryEntryOf [
+      type.string
+      type.string
+    ]) (
+      map (e: mkDictionaryEntry [
+        "file://${e.path}"
+        e.symbolic
+      ]) folderIconEntries
+    );
 
 in
 {
@@ -606,7 +665,30 @@ in
   # };
 
   # Libadwaita and GTK applications use this preference for dark mode.
-  dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+  dconf.settings = {
+    "org/gnome/desktop/interface".color-scheme = "prefer-dark";
+
+    "io/github/yannmasoch/nautilus-my-computer" = {
+      custom-bookmark-icons = nautilusBookmarkIcons;
+      preferred-folders = [
+        "home"
+        "documents"
+        "downloads"
+        "file://~/Extras"
+        "music"
+        "pictures"
+        "file://~/Projects"
+        "starred"
+        "videos"
+      ];
+    };
+  };
+
+  xdg.dataFile."dbus-1/services/org.freedesktop.FileManager1.service".text = ''
+    [D-BUS Service]
+    Name=org.freedesktop.FileManager1
+    Exec=${pkgs.nautilus}/bin/nautilus --new-window
+  '';
 
   # ───────────────────────────────────────────────
   # ▶ GTK
