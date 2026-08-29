@@ -29,7 +29,10 @@
     vimAlias = true;
   };
 
-  # Keep Home Manager's Neovim package/wrapper, but do not let it write
-  # ~/.config/nvim/init.lua over the symlinked LazyVim configuration.
-  xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
+  # Override Home Manager's nvim/init.lua generation with an empty file so HM doesn't attempt
+  # to write provider wrappers outside $HOME or fail on missing source.
+  xdg.configFile."nvim/init.lua" = lib.mkForce {
+    enable = false;
+    text = "";
+  };
 }

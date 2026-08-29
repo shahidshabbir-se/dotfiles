@@ -1,5 +1,6 @@
 {
-	"show_signature_help_after_edits": false,
+	"cli_default_open_behavior": "existing_window",
+ "show_signature_help_after_edits": false,
 	"edit_predictions": {
 		"provider": "copilot",
 	},
