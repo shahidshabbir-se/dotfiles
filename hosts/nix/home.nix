@@ -136,14 +136,13 @@ let
   #   inherit pkgs lib;
   # };
 
-  zedPackage = import ../../modules/pkgs/zed.nix {
-    inherit pkgs lib;
-  };
+  # zedPackage = import ../../modules/pkgs/zed.nix {
+  #   inherit pkgs lib;
+  # };
 
   # paseoPackage = import ../../modules/pkgs/paseo.nix {
   #   inherit pkgs lib;
   # };
-
 
   # chatgptPackage = import ../../modules/pkgs/chatgpt.nix {
   #   inherit pkgs lib;
@@ -174,24 +173,9 @@ let
   #   '';
   # };
 
-  # antigravityFhs = pkgs.symlinkJoin {
-  #   name = "antigravity-ide-fhs";
-  #
-  #   paths = [
-  #     pkgs.antigravity-ide-fhs
-  #   ];
-  #
-  #   buildInputs = [
-  #     pkgs.makeWrapper
-  #   ];
-  #
-  #   postBuild = ''
-  #     wrapProgram $out/bin/antigravity-ide \
-  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-  #       --add-flags "--force-color-profile=srgb" \
-  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-  #   '';
-  # };
+  antigravityPackage = import ../../modules/pkgs/antigravity.nix {
+    inherit pkgs lib;
+  };
 
   # vscodeFhs = pkgs.symlinkJoin {
   #   name = "vscode-fhs";
@@ -217,7 +201,7 @@ let
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
     # codeCursorFhs
-    # antigravityFhs
+    antigravityPackage
     # codexCliPackage
     gcc
     moon
@@ -236,7 +220,7 @@ let
     onlyoffice-desktopeditors
     proton-vpn
     qbittorrent
-    zedPackage
+    # zedPackage
     # paseoPackage
     nautilus
     rustdesk-flutter
@@ -352,20 +336,76 @@ let
 
   # Nautilus 50 treats file:// SVG custom-icon as a document. Use themed names.
   folderIconEntries = [
-    { path = "${homeDirectory}/Android"; name = "folder-android"; symbolic = "folder-android"; }
-    { path = "${homeDirectory}/Desktop"; name = "user-desktop"; symbolic = "user-desktop-symbolic"; }
-    { path = "${homeDirectory}/Documents"; name = "folder-documents"; symbolic = "folder-documents"; }
-    { path = "${dotfilesDirectory}"; name = "folder-git"; symbolic = "folder-git"; }
-    { path = "${homeDirectory}/Downloads"; name = "folder-download"; symbolic = "folder-download-symbolic"; }
-    { path = "${homeDirectory}/Extras"; name = "folder-applications"; symbolic = "folder-applications"; }
-    { path = "${homeDirectory}/Games"; name = "folder-games"; symbolic = "folder-games"; }
-    { path = "${homeDirectory}/Music"; name = "folder-music"; symbolic = "folder-music-symbolic"; }
-    { path = "${homeDirectory}/Pictures"; name = "folder-pictures"; symbolic = "folder-pictures-symbolic"; }
-    { path = workspaceDirectory; name = "folder-code"; symbolic = "folder-code"; }
-    { path = "${homeDirectory}/Storage"; name = "folder-sync"; symbolic = "folder-sync"; }
-    { path = "${homeDirectory}/Public"; name = "folder-publicshare"; symbolic = "folder-publicshare-symbolic"; }
-    { path = "${homeDirectory}/Templates"; name = "folder-templates"; symbolic = "folder-templates-symbolic"; }
-    { path = "${homeDirectory}/Videos"; name = "folder-videos"; symbolic = "folder-videos-symbolic"; }
+    {
+      path = "${homeDirectory}/Android";
+      name = "folder-android";
+      symbolic = "folder-android";
+    }
+    {
+      path = "${homeDirectory}/Desktop";
+      name = "user-desktop";
+      symbolic = "user-desktop-symbolic";
+    }
+    {
+      path = "${homeDirectory}/Documents";
+      name = "folder-documents";
+      symbolic = "folder-documents";
+    }
+    {
+      path = "${dotfilesDirectory}";
+      name = "folder-git";
+      symbolic = "folder-git";
+    }
+    {
+      path = "${homeDirectory}/Downloads";
+      name = "folder-download";
+      symbolic = "folder-download-symbolic";
+    }
+    {
+      path = "${homeDirectory}/Extras";
+      name = "folder-applications";
+      symbolic = "folder-applications";
+    }
+    {
+      path = "${homeDirectory}/Games";
+      name = "folder-games";
+      symbolic = "folder-games";
+    }
+    {
+      path = "${homeDirectory}/Music";
+      name = "folder-music";
+      symbolic = "folder-music-symbolic";
+    }
+    {
+      path = "${homeDirectory}/Pictures";
+      name = "folder-pictures";
+      symbolic = "folder-pictures-symbolic";
+    }
+    {
+      path = workspaceDirectory;
+      name = "folder-code";
+      symbolic = "folder-code";
+    }
+    {
+      path = "${homeDirectory}/Storage";
+      name = "folder-sync";
+      symbolic = "folder-sync";
+    }
+    {
+      path = "${homeDirectory}/Public";
+      name = "folder-publicshare";
+      symbolic = "folder-publicshare-symbolic";
+    }
+    {
+      path = "${homeDirectory}/Templates";
+      name = "folder-templates";
+      symbolic = "folder-templates-symbolic";
+    }
+    {
+      path = "${homeDirectory}/Videos";
+      name = "folder-videos";
+      symbolic = "folder-videos-symbolic";
+    }
   ];
 
   setNautilusFolderIconsScript = ''
@@ -388,15 +428,20 @@ let
     let
       inherit (lib.hm.gvariant) mkArray mkDictionaryEntry type;
     in
-    mkArray (type.dictionaryEntryOf [
-      type.string
-      type.string
-    ]) (
-      map (e: mkDictionaryEntry [
-        "file://${e.path}"
-        e.symbolic
-      ]) folderIconEntries
-    );
+    mkArray
+      (type.dictionaryEntryOf [
+        type.string
+        type.string
+      ])
+      (
+        map (
+          e:
+          mkDictionaryEntry [
+            "file://${e.path}"
+            e.symbolic
+          ]
+        ) folderIconEntries
+      );
 
 in
 {
@@ -501,7 +546,7 @@ in
       yazi.source = dotfileLink "config/yazi";
       eww.source = dotfileLink "config/eww";
       rofi.source = dotfileLink "config/rofi";
-      zed.source = dotfileLink "config/zed";
+      # zed.source = dotfileLink "config/zed";
 
       # "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
     };
@@ -684,10 +729,13 @@ in
     };
   };
 
+  # Must use --gapplication-service so ShowItems/ShowFolders (Firefox "Open
+  # containing folder") actually open the file's directory. --new-window alone
+  # just pops the default view (computer:///) and ignores the URI.
   xdg.dataFile."dbus-1/services/org.freedesktop.FileManager1.service".text = ''
     [D-BUS Service]
     Name=org.freedesktop.FileManager1
-    Exec=${pkgs.nautilus}/bin/nautilus --new-window
+    Exec=${pkgs.nautilus}/bin/nautilus --gapplication-service
   '';
 
   # ───────────────────────────────────────────────

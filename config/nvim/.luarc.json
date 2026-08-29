@@ -1,0 +1,10 @@
+{
+  "diagnostics.globals": [
+    "vim",
+    "Snacks"
+  ],
+  "workspace.checkThirdParty": false,
+  "workspace.library": [
+    "$VIMRUNTIME"
+  ]
+}

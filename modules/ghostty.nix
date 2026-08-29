@@ -30,7 +30,6 @@ in
 
   settings = {
     theme = "TokyoNight";
-    # theme = "TokyoNight";
     # theme = "Catppuccin Mocha";
     # theme = "Rose Pine";
     title = " ";
