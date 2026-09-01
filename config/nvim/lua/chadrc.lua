@@ -1,12 +1,53 @@
 ---@type ChadrcConfig
 local M = {}
 
+-- Right-side pills: same two-shade wedge as mode, but  toward the center.
+local function right_pill(id, color_hl, icon, text, prev_bg)
+  local color = vim.api.nvim_get_hl(0, { name = color_hl, link = false })
+  local grey = vim.api.nvim_get_hl(0, { name = "St_NormalModeSep", link = false })
+  local file = vim.api.nvim_get_hl(0, { name = "St_file", link = false })
+  if not (color.bg and grey.bg) then
+    return icon .. " " .. text
+  end
+
+  vim.api.nvim_set_hl(0, id .. "_sep", { fg = color.bg, bg = prev_bg or "NONE" })
+  vim.api.nvim_set_hl(0, id .. "_icon", { fg = color.fg, bg = color.bg, bold = true })
+  vim.api.nvim_set_hl(0, id .. "_iconSep", { fg = grey.bg, bg = color.bg })
+  vim.api.nvim_set_hl(0, id .. "_empty", { fg = file.bg, bg = grey.bg })
+  vim.api.nvim_set_hl(0, id .. "_text", { fg = color.bg, bg = file.bg })
+
+  local seps = require("nvchad.stl.utils").separators[require("nvconfig").ui.statusline.separator_style]
+  return "%#"
+    .. id
+    .. "_sep#"
+    .. seps.left
+    .. "%#"
+    .. id
+    .. "_icon#"
+    .. icon
+    .. "%#"
+    .. id
+    .. "_iconSep#"
+    .. seps.left
+    .. "%#"
+    .. id
+    .. "_empty#"
+    .. seps.left
+    .. "%#"
+    .. id
+    .. "_text#"
+    .. " "
+    .. text
+    .. " "
+end
+
 M.base46 = {
   theme = "tokyonight",
   transparency = true,
   hl_override = {
     Comment = { italic = true },
     ["@comment"] = { italic = true },
+    NotifyBackground = { bg = "NONE" },
     NvimTreeNormal = { bg = "NONE" },
     NvimTreeNormalNC = { bg = "NONE" },
     NeoTreeNormal = { bg = "NONE" },
@@ -30,10 +71,52 @@ M.ui = {
   },
   statusline = {
     enabled = true,
-    theme = "default",
-    separator_style = "block",
+    theme = "default",         -- default/vscode/vscode_colored/minimal
+    -- default/round/block/arrow separators work only for default statusline theme
+    separator_style = "arrow", -- round and block will work for minimal theme only
     order = { "mode", "file", "git", "%=", "lsp_msg", "%=", "diagnostics", "lsp", "cursor", "cwd" },
-    modules = nil,
+    modules = {
+      lsp = function()
+        local buf = vim.api.nvim_win_get_buf(vim.g.statusline_winid or 0)
+        local clients = vim.lsp.get_clients { bufnr = buf }
+        if #clients == 0 then
+          return ""
+        end
+
+        local skip = {
+          tailwindcss = true,
+          eslint = true,
+          emmet_ls = true,
+          emmet_language_server = true,
+        }
+        local name
+        for _, c in ipairs(clients) do
+          if not skip[c.name] then
+            name = c.name
+            break
+          end
+        end
+        name = name or clients[1].name
+
+        return right_pill("St_lsp", "St_NormalMode", "󰒋 ", name)
+      end,
+      cursor = function()
+        local buf = vim.api.nvim_win_get_buf(vim.g.statusline_winid or 0)
+        local prev = #vim.lsp.get_clients { bufnr = buf } > 0
+            and vim.api.nvim_get_hl(0, { name = "St_file", link = false }).bg
+          or "NONE"
+        return right_pill("St_pos", "St_pos_icon", " ", "%l/%v", prev)
+      end,
+      cwd = function()
+        if vim.o.columns <= 85 then
+          return ""
+        end
+        local name = vim.uv.cwd()
+        name = name and (name:match "([^/\\]+)[/\\]*$" or name) or ""
+        local prev = vim.api.nvim_get_hl(0, { name = "St_file", link = false }).bg
+        return right_pill("St_cwd", "St_cwd_icon", "󰉋 ", name, prev)
+      end,
+    },
   },
   tabufline = {
     enabled = true,
@@ -65,7 +148,9 @@ M.ui = {
         local pad_left = string.rep(" ", left_padding)
         local pad_right = string.rep(" ", right_padding)
 
-        return "%#NvimTreeNormal#" .. pad_left .. "%#NvimTreeTitle#" .. title .. "%#NvimTreeNormal#" .. pad_right .. "%#NvimTreeWinSeparator#" .. "│"
+        return "%#NvimTreeNormal#" ..
+            pad_left ..
+            "%#NvimTreeTitle#" .. title .. "%#NvimTreeNormal#" .. pad_right .. "%#NvimTreeWinSeparator#" .. "│"
       end,
     },
   },

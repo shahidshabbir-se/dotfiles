@@ -78,5 +78,20 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
+-- Automatically reload file if changed outside of Neovim
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  group = vim.api.nvim_create_augroup("AutoReloadFileOnDiskChange", { clear = true }),
+  callback = function()
+    if vim.fn.getcmdwintype() == "" then
+      vim.cmd("checktime")
+    end
+  end,
+})
 
-
+-- Notify when a buffer is reloaded from disk change
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  group = vim.api.nvim_create_augroup("NotifyFileReload", { clear = true }),
+  callback = function(args)
+    vim.notify("File changed on disk. Reloaded buffer!", vim.log.levels.WARN, { title = vim.fn.expand("%:t") })
+  end,
+})

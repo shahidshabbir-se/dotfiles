@@ -6,15 +6,15 @@
 }:
 
 let
-  version = "7.2.61"; # ← update this only
+  version = "7.2.146"; # ← update this only
 
   inherit (pkgs.stdenv.hostPlatform) system;
 
   platformMap = {
     x86_64-linux = "linux_amd64";
-    aarch64-linux = "linux_arm64";
+    aarch64-linux = "linux_aarch64";
     x86_64-darwin = "darwin_amd64";
-    aarch64-darwin = "darwin_arm64";
+    aarch64-darwin = "darwin_aarch64";
   };
 
   platform = platformMap.${system} or (throw "Unsupported platform: ${system}");
@@ -22,7 +22,7 @@ let
   src = pkgs.fetchurl {
     url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_${platform}.tar.gz";
 
-    sha256 = "sha256-/3o7KlFI6LPMOlfJzDbSdJzgC4yWdH+29nJnKxEBqIg=";
+    sha256 = "sha256-Q+ESaGtKW3uBhTEUTNaV7qrN1UxG3O2Hvm+zlnwi4Uk=";
   };
 
   cliproxyapi = pkgs.stdenv.mkDerivation {
