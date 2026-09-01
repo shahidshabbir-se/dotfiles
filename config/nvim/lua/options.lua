@@ -16,7 +16,7 @@ opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.updatetime = 250
 opt.cursorline = true
-opt.mouse = ""
+-- opt.mouse = ""
 opt.scrolloff = 8
 opt.clipboard = "unnamedplus"
 opt.fillchars:append({ eob = " " })
@@ -29,3 +29,4 @@ opt.wildmenu = true
 opt.wildmode = "longest:full,full"
 opt.wildoptions = "pum"
 
+opt.autoread = true

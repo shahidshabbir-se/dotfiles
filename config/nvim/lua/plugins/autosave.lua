@@ -4,11 +4,6 @@ return {
   event = { "InsertLeave", "FocusLost" },
   opts = {
     enabled = true,
-    execution_message = {
-      message = function()
-        return ""
-      end,
-    },
     trigger_events = { "InsertLeave", "FocusLost" },
     condition = function(buf)
       if not buf or not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then

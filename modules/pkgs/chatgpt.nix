@@ -1,10 +1,11 @@
 {
   pkgs,
   lib ? pkgs.lib,
+  scale ? 1.0,
 }:
 
 let
-  version = "26.803.81509";
+  version = "26.825.51511";
   pname = "chatgpt";
 
 in
@@ -13,7 +14,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.requireFile {
     name = "chatgpt_amd64.deb";
-    hash = "sha256-qb+Ro2j598Tuo4CCqfuPtGuNAFtxmm13FdLloZgsOOs=";
+    hash = "sha256-NVSwAixs+1EzJvQ/0R9xiDWncIasTXyi/z67ui1Mf0U=";
     message = "Download ChatGPT ${version} for amd64, then run: nix-store --add-fixed sha256 chatgpt_amd64.deb";
   };
 
@@ -55,13 +56,13 @@ pkgs.stdenv.mkDerivation {
     stdenv.cc.cc.lib
     systemd
     wayland
-    xorg.libX11
-    xorg.libxcb
-    xorg.libXcomposite
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXrandr
+    libx11
+    libxcb
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxrandr
     xdg-utils
     zlib
   ];
@@ -81,10 +82,25 @@ pkgs.stdenv.mkDerivation {
     dpkg-deb -x $src $out
     mv $out/usr/share $out/share
 
+    mv $out/usr/lib/chatgpt/ChatGPT $out/usr/lib/chatgpt/ChatGPT.bin
+    makeWrapper $out/usr/lib/chatgpt/ChatGPT.bin $out/usr/lib/chatgpt/ChatGPT \
+      --set ELECTRON_OZONE_PLATFORM_HINT "wayland" \
+      --add-flags "--ozone-platform=wayland" \
+      --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+      --add-flags "--force-color-profile=srgb" \
+      --add-flags "--enable-features=UseOzonePlatform,WaylandWindowDecorations,WaylandLinuxDrmSyncobj" \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          pkgs.glib
+          pkgs.xdg-utils
+        ]
+      }
+
     mkdir -p $out/bin
-    makeWrapper $out/usr/lib/chatgpt/ChatGPT $out/bin/chatgpt \
-      --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
-      --prefix PATH : ${lib.makeBinPath [ pkgs.glib pkgs.xdg-utils ]}
+    ln -s $out/usr/lib/chatgpt/ChatGPT $out/bin/chatgpt
+
+    substituteInPlace $out/share/applications/chatgpt.desktop \
+      --replace-fail 'Exec=chatgpt %U' "Exec=$out/bin/chatgpt %U"
 
     runHook postInstall
   '';

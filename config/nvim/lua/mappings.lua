@@ -9,6 +9,11 @@ map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>", { desc = "Escape insert mode" })
 map("n", "<Esc>", "<cmd>noh<CR>", { desc = "Clear search highlights" })
 
+-- Select All
+map("n", "<C-a>", "ggVG", { desc = "Select all" })
+map("i", "<C-a>", "<esc>ggVG", { desc = "Select all" })
+map("v", "<C-a>", "<esc>ggVG", { desc = "Select all" })
+
 -- Line movement
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
@@ -21,6 +26,7 @@ map("n", "N", "Nzzzv", { desc = "Previous search match (centered)" })
 
 -- ============================================================================
 -- 2. Buffer Navigation & Management (<leader>b / <leader>x)
+vim.keymap.del("n", "<leader>b")
 -- ============================================================================
 -- Fast buffer switching
 map("n", "<S-l>", function() require("nvchad.tabufline").next() end, { desc = "Next buffer" })
@@ -38,8 +44,8 @@ map("n", "<leader>bd", function() require("nvchad.tabufline").close_buffer() end
 map("n", "<leader>bj", "<cmd>Telescope buffers<cr>", { desc = "Pick buffer" })
 map("n", "<leader>bl", function() require("nvchad.tabufline").closeBufs_at_direction("left") end, { desc = "Close buffers to left" })
 map("n", "<leader>br", function() require("nvchad.tabufline").closeBufs_at_direction("right") end, { desc = "Close buffers to right" })
-map("n", "<leader>bP", function() require("nvchad.tabufline").closeAllBufs(false) end, { desc = "Close other buffers" })
-map("n", "<leader>bp", function()
+map("n", "<leader>bo", function() require("nvchad.tabufline").closeAllBufs(false) end, { desc = "Close other buffers" })
+map("n", "<leader>ba", function()
   vim.bo.buflisted = not vim.bo.buflisted
   vim.notify("Buffer listed: " .. tostring(vim.bo.buflisted), vim.log.levels.INFO)
 end, { desc = "Toggle buffer pin" })
@@ -72,6 +78,10 @@ end, { desc = "Format document" })
 map({ "n", "x" }, "<leader>cf", function()
   require("conform").format({ lsp_fallback = true })
 end, { desc = "Format document" })
+
+map({ "n", "v" }, "<leader>ca", function()
+  require("actions-preview").code_actions()
+end, { desc = "LSP Code Actions (Floating Preview)" })
 
 map("n", "<leader>lc", function()
   local pos = vim.api.nvim_win_get_cursor(0)

@@ -136,17 +136,18 @@ let
   #   inherit pkgs lib;
   # };
 
-  # zedPackage = import ../../modules/pkgs/zed.nix {
-  #   inherit pkgs lib;
-  # };
+  zedPackage = import ../../modules/pkgs/zed.nix {
+    inherit pkgs lib;
+  };
 
   # paseoPackage = import ../../modules/pkgs/paseo.nix {
   #   inherit pkgs lib;
   # };
 
-  # chatgptPackage = import ../../modules/pkgs/chatgpt.nix {
-  #   inherit pkgs lib;
-  # };
+  chatgptPackage = import ../../modules/pkgs/chatgpt.nix {
+    inherit pkgs lib;
+    scale = device.display.scale;
+  };
 
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
@@ -177,32 +178,33 @@ let
     inherit pkgs lib;
   };
 
-  # vscodeFhs = pkgs.symlinkJoin {
-  #   name = "vscode-fhs";
-  #
-  #   paths = [
-  #     pkgs.vscode-fhs
-  #   ];
-  #
-  #   buildInputs = [
-  #     pkgs.makeWrapper
-  #   ];
-  #
-  #   postBuild = ''
-  #     wrapProgram $out/bin/code \
-  #       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-  #       --add-flags "--force-color-profile=srgb" \
-  #       --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-  #   '';
-  # };
+  vscodeFhs = pkgs.symlinkJoin {
+    name = "vscode-fhs";
+
+    paths = [
+      pkgs.vscode-fhs
+    ];
+
+    buildInputs = [
+      pkgs.makeWrapper
+    ];
+
+    postBuild = ''
+      wrapProgram $out/bin/code \
+      --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+      --add-flags "--force-color-profile=srgb" \
+      --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
+    '';
+  };
 
   # ───────────────────────────────────────────────
   # ▶ Package Groups
   # ───────────────────────────────────────────────
   developmentPackages = with pkgs; [
     # codeCursorFhs
-    antigravityPackage
+    # antigravityPackage
     # codexCliPackage
+    vscodeFhs
     gcc
     moon
     jetbrains-toolbox
@@ -210,17 +212,16 @@ let
     mpv
     gnumake
     python3
-    # vscodeFhs
   ];
 
   desktopPackages = with pkgs; [
     brave
-    # chatgptPackage
+    chatgptPackage
     obsidian
     onlyoffice-desktopeditors
     proton-vpn
     qbittorrent
-    # zedPackage
+    zedPackage
     # paseoPackage
     nautilus
     rustdesk-flutter
@@ -546,7 +547,7 @@ in
       yazi.source = dotfileLink "config/yazi";
       eww.source = dotfileLink "config/eww";
       rofi.source = dotfileLink "config/rofi";
-      # zed.source = dotfileLink "config/zed";
+      zed.source = dotfileLink "config/zed";
 
       # "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
     };

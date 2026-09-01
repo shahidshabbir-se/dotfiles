@@ -11,26 +11,32 @@ return {
     },
   },
   keys = {
-    { "<leader>ff", "<cmd>Telescope find_files<cr>",  desc = "Find Files" },
-    { "<leader>fg", "<cmd>Telescope live_grep<cr>",   desc = "Live Grep" },
-    { "<leader>fb", "<cmd>Telescope buffers<cr>",     desc = "Buffers" },
-    { "<leader>fh", "<cmd>Telescope help_tags<cr>",   desc = "Help Tags" },
-    { "<leader>fr", "<cmd>Telescope oldfiles<cr>",    desc = "Recent Files" },
+    { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+    { "<leader>fg", "<cmd>Telescope live_grep<cr>",  desc = "Live Grep" },
+    { "<leader>fb", "<cmd>Telescope buffers<cr>",    desc = "Buffers" },
+    { "<leader>fh", "<cmd>Telescope help_tags<cr>",  desc = "Help Tags" },
+    { "<leader>fr", "<cmd>Telescope oldfiles<cr>",   desc = "Recent Files" },
     -- Compact floating buffer switcher
     {
       "<leader>h",
       function()
         require("telescope.builtin").buffers(
           require("telescope.themes").get_dropdown({
-            previewer     = false,
-            sort_mru      = true,
+            previewer             = false,
+            sort_mru              = true,
             ignore_current_buffer = false,
-            prompt_title  = "  Open Buffers",
-            layout_config = { width = 0.5, height = 0.5 },
-            borderchars = {
-              prompt  = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
-              results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
-              preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+            prompt_title          = "  Open Buffers",
+            layout_config         = { width = 0.5, height = 0.5 },
+            -- Rounded borderchars (commented):
+            -- borderchars           = {
+            --   prompt  = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
+            --   results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
+            --   preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+            -- },
+            borderchars           = {
+              prompt  = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
+              results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+              preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
             },
           })
         )
@@ -77,10 +83,16 @@ return {
             end
           end)
         end,
+        -- Rounded borderchars (commented):
+        -- borderchars = {
+        --   prompt = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+        --   results = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+        --   preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+        -- },
         borderchars = {
-          prompt = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-          results = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-          preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+          prompt = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          results = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
         },
         mappings = {
           i = {
@@ -109,9 +121,9 @@ return {
           only_sort_text = true,
         },
         buffers = {
-          sort_mru             = true,
+          sort_mru              = true,
           ignore_current_buffer = true,
-          show_all_buffers     = true,
+          show_all_buffers      = true,
         },
       },
     })
