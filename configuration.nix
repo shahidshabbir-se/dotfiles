@@ -581,7 +581,6 @@ in
     pkgs.nerd-fonts.symbols-only
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.geist-mono
-    pkgs.nerd-fonts.space-mono
     pkgs.noto-fonts
     pkgs.rubik
     pkgs.icomoon-feather
