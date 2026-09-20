@@ -17,7 +17,7 @@
   # ───────────────────────────────────────────────
   # ▶ Enable FZF prompt in Tmux panes
   # ───────────────────────────────────────────────
-  tmux.enableShellIntegration = true;
+  tmux.enableShellIntegration = false;
 
   # ───────────────────────────────────────────────
   # ▶ Default command (use fd for speed)

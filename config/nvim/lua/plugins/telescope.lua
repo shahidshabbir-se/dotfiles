@@ -1,7 +1,9 @@
 return {
   "nvim-telescope/telescope.nvim",
+
   dependencies = {
     "nvim-lua/plenary.nvim",
+
     {
       "nvim-telescope/telescope-fzf-native.nvim",
       build = "make",
@@ -9,121 +11,264 @@ return {
         return vim.fn.executable("make") == 1
       end,
     },
-  },
-  keys = {
-    { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-    { "<leader>fg", "<cmd>Telescope live_grep<cr>",  desc = "Live Grep" },
-    { "<leader>fb", "<cmd>Telescope buffers<cr>",    desc = "Buffers" },
-    { "<leader>fh", "<cmd>Telescope help_tags<cr>",  desc = "Help Tags" },
-    { "<leader>fr", "<cmd>Telescope oldfiles<cr>",   desc = "Recent Files" },
-    -- Compact floating buffer switcher
+
     {
-      "<leader>h",
-      function()
-        require("telescope.builtin").buffers(
-          require("telescope.themes").get_dropdown({
-            previewer             = false,
-            sort_mru              = true,
-            ignore_current_buffer = false,
-            prompt_title          = "  Open Buffers",
-            layout_config         = { width = 0.5, height = 0.5 },
-            -- Rounded borderchars (commented):
-            -- borderchars           = {
-            --   prompt  = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
-            --   results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
-            --   preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-            -- },
-            borderchars           = {
-              prompt  = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
-              results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
-              preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-            },
-          })
-        )
-      end,
-      desc = "Buffer switcher (dropdown)",
+      "folke/snacks.nvim",
+      opts = {
+        image = {
+          enabled = true,
+        },
+      },
     },
   },
+
+  keys = {
+    {
+      "<leader>ff",
+      function()
+        require("telescope.builtin").find_files()
+      end,
+      desc = "Find Files (Root Dir)",
+    },
+
+    {
+      "<leader><leader>",
+      function()
+        require("telescope.builtin").find_files()
+      end,
+      desc = "Find Files (Root Dir)",
+    },
+
+    {
+      "<leader>fi",
+      function()
+        local previewers = require("telescope.previewers")
+        local pickers = require("telescope.builtin")
+
+        local image_extensions = {
+          png = true,
+          jpg = true,
+          jpeg = true,
+          gif = true,
+          webp = true,
+          bmp = true,
+          svg = true,
+          avif = true,
+          heic = true,
+          tiff = true,
+        }
+
+        local image_previewer = previewers.new_buffer_previewer({
+          title = "Image Preview",
+
+          define_preview = function(self, entry)
+            local path = entry.path or entry.value
+
+            if not path then
+              return
+            end
+
+            path = vim.fn.fnamemodify(path, ":p")
+
+            if vim.fn.filereadable(path) ~= 1 then
+              return
+            end
+
+            vim.schedule(function()
+              if not vim.api.nvim_win_is_valid(self.state.winid) then
+                return
+              end
+
+              local buf = self.state.bufnr
+
+              if not vim.api.nvim_buf_is_valid(buf) then
+                return
+              end
+
+              -- Snacks' image previewer uses the Kitty Graphics
+              -- Protocol directly. Ghostty supports this protocol.
+              Snacks.image.buf.attach(buf, {
+                src = path,
+              })
+            end)
+          end,
+
+          teardown = function(self)
+            pcall(function()
+              Snacks.image.buf.detach(self.state.bufnr)
+            end)
+          end,
+        })
+
+        pickers.find_files({
+          prompt_title = "Images",
+
+          find_command = {
+            "rg",
+            "--files",
+            "--hidden",
+            "--glob",
+            "!.git/*",
+          },
+
+          entry_maker = function(entry)
+            local path = entry
+
+            local extension = vim.fn.fnamemodify(path, ":e"):lower()
+
+            if not image_extensions[extension] then
+              return nil
+            end
+
+            return {
+              value = path,
+              ordinal = path,
+              display = path,
+              path = path,
+            }
+          end,
+
+          previewer = image_previewer,
+        })
+      end,
+      desc = "Find Images",
+    },
+
+    {
+      "<leader>fw",
+      "<cmd>Telescope live_grep<cr>",
+      desc = "Live Grep",
+    },
+
+    {
+      "<leader>fb",
+      "<cmd>Telescope buffers<cr>",
+      desc = "Find Buffers",
+    },
+
+    {
+      "<leader>fh",
+      "<cmd>Telescope help_tags<cr>",
+      desc = "Find Help",
+    },
+
+    {
+      "<leader>fo",
+      "<cmd>Telescope oldfiles<cr>",
+      desc = "Find Recent Files",
+    },
+  },
+
   config = function()
     local telescope = require("telescope")
     local actions = require("telescope.actions")
 
     telescope.setup({
       defaults = {
-        prompt_prefix = "   ",
-        selection_caret = " ❯ ",
-        entry_prefix = "   ",
+        vimgrep_arguments = {
+          "rg",
+          "--color=never",
+          "--no-heading",
+          "--with-filename",
+          "--line-number",
+          "--column",
+          "--smart-case",
+          "--hidden",
+        },
+
+        prompt_prefix = "  ",
+        selection_caret = " ",
+        entry_prefix = "  ",
+
         initial_mode = "insert",
         selection_strategy = "reset",
         sorting_strategy = "ascending",
+
         layout_strategy = "horizontal",
+
         layout_config = {
+          prompt_position = "top",
+          height = 0.8,
+          width = 0.75,
+
           horizontal = {
-            prompt_position = "top",
             preview_width = 0.55,
-            results_width = 0.8,
-          },
-          vertical = {
             mirror = false,
           },
-          width = 0.87,
-          height = 0.80,
-          preview_cutoff = 120,
+
+          vertical = {
+            mirror = true,
+            preview_cutoff = 1,
+            prompt_position = "top",
+            height = 0.95,
+            width = 0.6,
+          },
         },
-        path_display = { "filename_first" },
-        file_ignore_patterns = { "^%.git/", "node_modules/", "target/", "%.lock" },
-        buffer_previewer_maker = function(filepath, bufnr, opts)
-          opts = opts or {}
-          filepath = vim.fn.expand(filepath)
-          vim.loop.fs_stat(filepath, function(_, stat)
-            if stat and stat.size > 100000 then
-              return
-            else
-              require("telescope.previewers").buffer_previewer_maker(filepath, bufnr, opts)
-            end
-          end)
-        end,
-        -- Rounded borderchars (commented):
-        -- borderchars = {
-        --   prompt = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-        --   results = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-        --   preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-        -- },
+
+        file_sorter = require("telescope.sorters").get_fuzzy_file,
+        generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
+
+        file_ignore_patterns = {
+          "^%.git/",
+        },
+
+        path_display = {
+          "truncate",
+        },
+
+        winblend = 0,
+
         borderchars = {
-          prompt = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-          results = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-          preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          "─",
+          "│",
+          "─",
+          "│",
+          "┌",
+          "┐",
+          "┘",
+          "└",
         },
+
+        color_devicons = true,
+        use_less = true,
+
+        set_env = {
+          COLORTERM = "truecolor",
+        },
+
+        file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+        grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+        qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+        buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
+
         mappings = {
           i = {
-            ["<C-j>"] = actions.move_selection_next,
-            ["<C-k>"] = actions.move_selection_previous,
-            ["<C-n>"] = actions.move_selection_next,
-            ["<C-p>"] = actions.move_selection_previous,
             ["<C-h>"] = actions.preview_scrolling_left,
             ["<C-l>"] = actions.preview_scrolling_right,
-            ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-            ["<esc>"] = actions.close,
-          },
-          n = {
             ["<C-j>"] = actions.move_selection_next,
             ["<C-k>"] = actions.move_selection_previous,
-            ["q"] = actions.close,
+          },
+
+          n = {
+            ["<C-h>"] = actions.preview_scrolling_left,
+            ["<C-l>"] = actions.preview_scrolling_right,
+            ["<C-j>"] = actions.move_selection_next,
+            ["<C-k>"] = actions.move_selection_previous,
           },
         },
       },
+
       pickers = {
         find_files = {
           hidden = true,
-          find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
-        },
-        live_grep = {
-          only_sort_text = true,
-        },
-        buffers = {
-          sort_mru              = true,
-          ignore_current_buffer = true,
-          show_all_buffers      = true,
+
+          find_command = {
+            "rg",
+            "--files",
+            "--hidden",
+            "--glob",
+            "!.git/*",
+          },
         },
       },
     })

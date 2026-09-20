@@ -204,7 +204,22 @@ Item {
                     anchors.fill: parent
                     visible: root.critical
                     radius: parent.radius
-                    color: Tokens.withAlpha(Colors.error, 0.035)
+                    color: Tokens.withAlpha(Colors.error, 0.08)
+                }
+
+                // Left accent stripe — same pattern macOS/Windows use
+                // to visually separate critical alerts from standard toasts.
+                Rectangle {
+                    visible: root.critical
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        bottom: parent.bottom
+                        topMargin: parent.radius
+                        bottomMargin: parent.radius
+                    }
+                    width: 3
+                    color: Colors.error
                 }
 
                 ColumnLayout {

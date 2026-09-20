@@ -1,0 +1,41 @@
+{
+  "nextId": 4,
+  "tasks": [
+    {
+      "id": "1",
+      "subject": "Add sound chime for critical notifications",
+      "description": "Add sound alert for critical notifications using pw-play when urgency is Critical in Notifications.qml",
+      "status": "completed",
+      "activeForm": "Playing warning chime on critical alert",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1788571327618,
+      "updatedAt": 1788571521120
+    },
+    {
+      "id": "2",
+      "subject": "Enhance critical notification UI styling",
+      "description": "Update NotificationToast.qml and NotificationContent.qml with distinctive error border/accent, visible close button, CRITICAL badge, and expanded body text for critical notifications",
+      "status": "completed",
+      "activeForm": "Enhancing critical notification UI",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1788571332430,
+      "updatedAt": 1788571647959
+    },
+    {
+      "id": "3",
+      "subject": "Test and verify critical notification behavior",
+      "description": "Verify changes with qmllint and test critical notification dispatch via notify-send -u critical",
+      "status": "completed",
+      "activeForm": "Verifying critical notifications",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1788571335893,
+      "updatedAt": 1788571745949
+    }
+  ]
+}

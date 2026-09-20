@@ -6,7 +6,7 @@
 }:
 
 let
-  version = "7.2.146"; # ← update this only
+  version = "7.2.149"; # ← update this only
 
   inherit (pkgs.stdenv.hostPlatform) system;
 
@@ -22,7 +22,7 @@ let
   src = pkgs.fetchurl {
     url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_${platform}.tar.gz";
 
-    sha256 = "sha256-Q+ESaGtKW3uBhTEUTNaV7qrN1UxG3O2Hvm+zlnwi4Uk=";
+    sha256 = "sha256-ldhl3ReYbafQjLOf+v4H0FBmnFJk1NABFXWKtN51KnI=";
   };
 
   cliproxyapi = pkgs.stdenv.mkDerivation {

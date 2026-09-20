@@ -97,7 +97,11 @@ Scope {
         notification.appIconChanged.connect(update)
         notification.summaryChanged.connect(update)
         notification.bodyChanged.connect(update)
-        notification.urgencyChanged.connect(update)
+        notification.urgencyChanged.connect(() => {
+            if (notification.urgency === NotificationUrgency.Critical)
+                root.playAlertSound()
+            root.refreshHistory(notification)
+        })
     }
 
     function toggleCenter() {
@@ -114,6 +118,17 @@ Scope {
 
         function toggleCenter(): void { root.toggleCenter() }
         function closeCenter(): void { root.closeCenter() }
+    }
+
+    Process {
+        id: alertSound
+
+        command: ["pw-play", "/run/current-system/sw/share/sounds/freedesktop/stereo/dialog-warning.oga"]
+    }
+
+    function playAlertSound() {
+        alertSound.running = false
+        alertSound.running = true
     }
 
     function toggleDoNotDisturb() {
@@ -181,6 +196,9 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true
+
+            if (notification.urgency === NotificationUrgency.Critical)
+                root.playAlertSound()
 
             if (!notification.transient) {
                 root.remember(notification)

@@ -96,7 +96,6 @@ with pkgs;
   # System / Terminal
   playerctl
   sesh
-  tmux
 
   # Fun
   cbonsai
