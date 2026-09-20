@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "2.5.2";
+  version = "2.12.0";
   pname = "antigravity";
 
   antigravityBase = pkgs.stdenv.mkDerivation {
@@ -12,7 +12,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/1.21.9-4905428782546944/linux-x64/Antigravity.tar.gz";
-      sha256 = "85ea4d55f52d32fbbf9d92fddc747f10e8d04c1bd00a07721b571fa7f2ef5226";
+      sha256 = "sha256-hepNVfUtMvu/nZL93HR/EOjQTBvQCgdyG1cfp/LvUiY=";
     };
 
     nativeBuildInputs = with pkgs; [

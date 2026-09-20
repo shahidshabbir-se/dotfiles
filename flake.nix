@@ -258,7 +258,7 @@
       # ▶ macOS Application Aliases
       # ───────────────────────────────────────────────
       darwinAliasPackages = with pkgsDarwin; [
-        wezterm
+        # wezterm
         mkalias
       ];
 
@@ -328,8 +328,8 @@
 
                       "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
 
-                      # "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
-                      "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
+                      "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
+                      # "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                     ];
                   };
 

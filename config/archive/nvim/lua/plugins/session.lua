@@ -1,56 +1,54 @@
 return {
-  -- Disable persistence.nvim (LazyVim default)
-  { "folke/persistence.nvim", enabled = false },
+  "rmagatti/auto-session",
+  lazy = false,
+  opts = {
+    suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+    auto_restore = false, -- Disabled so plain `nvim` shows NvChad dashboard
+    auto_save = true,
+    auto_create = true,
+    bypass_save_filetypes = { "alpha", "dashboard", "nvdash", "neo-tree", "NvimTree" },
+    close_unsupported_winnrs = true,
+    pre_save_cmds = {
+      function()
+        local ok, neotree = pcall(require, "neo-tree.command")
+        if ok then
+          neotree.execute({ action = "close" })
+        end
+      end,
+    },
+    post_restore_cmds = {
+      function()
+        vim.schedule(function()
+          -- Reload active restored buffer to trigger full filetype, treesitter & LSP initialization
+          vim.cmd("silent! e")
+        end)
+      end,
+    },
+  },
+  config = function(_, opts)
+    -- Optimal sessionoptions recommended by auto-session docs
+    vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 
-  -- Auto-session: auto save and restore sessions
-  {
-    "rmagatti/auto-session",
-    lazy = false,
-    opts = {
-      suppressed_dirs = { "~/", "~/Downloads", "/tmp", "/" },
-      root_dir = vim.fn.stdpath("data") .. "/sessions/",
-      auto_save = true,
-      auto_restore = true,
-      auto_create = true,
-      allowed_dirs = nil,
-      auto_restore_last_session = false,
-      git_use_branch_name = false,
-      git_auto_restore_on_branch_change = false,
-      lazy_support = true,
-      close_unsupported_windows = true,
-      args_allow_single_directory = true,
-      args_allow_files_auto_save = false,
-      continue_restore_on_error = true,
-      show_auto_restore_notif = false,
-      post_restore_cmds = {
-        function()
-          -- Re-trigger filetype detection so treesitter/syntax highlights attach
-          -- on the first buffer after session restore
-          vim.schedule(function()
-            vim.cmd("filetype detect")
-            local buf = vim.api.nvim_get_current_buf()
-            local ft = vim.bo[buf].filetype
-            if ft and ft ~= "" then
-              vim.bo[buf].filetype = ft
-            end
-          end)
-        end,
-      },
-      cwd_change_handling = false,
-      lsp_stop_on_restore = false,
-      restore_error_handler = nil,
-      purge_after_minutes = nil,
-      log_level = "error",
-      bypass_save_filetypes = { "alpha", "neo-tree" },
-      pre_save_cmds = {
-        "Neotree close",
-      },
-    },
-    keys = {
-      { "<leader>qs", "<cmd>SessionSearch<cr>", desc = "Search Sessions" },
-      { "<leader>qS", "<cmd>SessionSave<cr>", desc = "Save Session" },
-      { "<leader>qd", "<cmd>SessionDelete<cr>", desc = "Delete Session" },
-      { "<leader>qr", "<cmd>SessionRestore<cr>", desc = "Restore Session" },
-    },
+    local auto_session = require("auto-session")
+    auto_session.setup(opts)
+
+    -- Auto-restore session ONLY when launched with a directory argument like `nvim .`
+    vim.api.nvim_create_autocmd("VimEnter", {
+      group = vim.api.nvim_create_augroup("AutoRestoreOnDir", { clear = true }),
+      nested = true,
+      callback = function()
+        if vim.fn.argc() == 1 then
+          local arg = vim.fn.argv(0)
+          if vim.fn.isdirectory(arg) == 1 then
+            auto_session.restore_session()
+          end
+        end
+      end,
+    })
+  end,
+  keys = {
+    { "<leader>sr", "<cmd>AutoSession restore<cr>", desc = "Restore Session" },
+    { "<leader>ss", "<cmd>AutoSession search<cr>", desc = "Search Sessions" },
+    { "<leader>sa", "<cmd>AutoSession save<cr>", desc = "Save Session" },
   },
 }

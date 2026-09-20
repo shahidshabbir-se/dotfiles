@@ -9,6 +9,7 @@
 {
   pkgs,
   device,
+  herdr ? import ./pkgs/herdr.nix { inherit pkgs; },
   ...
 }:
 let
@@ -36,6 +37,7 @@ in
 
     # Font
     font-family = "JetBrainsMono Nerd Font";
+    font-codepoint-map = "U+2722,U+2733,U+2736,U+273B,U+273D=Noto Sans Symbols 2";
     font-size = fontSize;
     font-feature = [
       "+calt"
@@ -51,7 +53,7 @@ in
     command = [
       "${pkgs.zsh}/bin/zsh"
       "-c"
-      "${pkgs.tmux}/bin/tmux attach -t main || ${pkgs.tmux}/bin/tmux new -s main"
+      "${herdr}/bin/herdr"
     ];
 
     # Window

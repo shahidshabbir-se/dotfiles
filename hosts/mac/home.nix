@@ -19,6 +19,7 @@ in
   imports = [
     # ../../modules/cliproxyapi.nix
     ../../modules/karabiner.nix
+    ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/nvim.nix
   ];
@@ -64,15 +65,15 @@ in
     };
     delta = import ../../modules/delta.nix { inherit pkgs; };
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
-    tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
+    # tmux = import ../../modules/tmux.nix { inherit config pkgs lib; };
     bat = import ../../modules/bat.nix { inherit pkgs lib; };
     fzf = import ../../modules/fzf.nix { inherit pkgs; };
     zoxide = import ../../modules/zoxide.nix { inherit pkgs; };
     atuin = import ../../modules/atuin.nix { inherit pkgs; };
     aerospace = import ../../modules/aerospace.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
-    wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
-    # ghostty = import ../../modules/ghostty.nix { inherit config pkgs device; };
+    # wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
+    ghostty = import ../../modules/ghostty.nix { inherit config pkgs device; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

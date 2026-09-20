@@ -205,6 +205,7 @@ let
     # antigravityPackage
     # codexCliPackage
     vscodeFhs
+    # wezterm
     gcc
     moon
     jetbrains-toolbox
@@ -450,6 +451,7 @@ in
   # ▶ Imports
   # ───────────────────────────────────────────────
   imports = [
+    ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/nvim.nix
 
@@ -585,9 +587,9 @@ in
         ;
     };
 
-    tmux = import ../../modules/tmux.nix {
-      inherit config pkgs lib;
-    };
+    # tmux = import ../../modules/tmux.nix {
+    #   inherit config pkgs lib;
+    # };
 
     bat = import ../../modules/bat.nix {
       inherit pkgs lib;
@@ -632,9 +634,9 @@ in
       inherit config device pkgs;
     };
 
-    wezterm = import ../../modules/wezterm.nix {
-      inherit config device pkgs;
-    };
+    # wezterm = import ../../modules/wezterm.nix {
+    # inherit config device pkgs;
+    # };
   };
 
   # ───────────────────────────────────────────────

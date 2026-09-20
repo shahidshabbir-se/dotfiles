@@ -270,7 +270,7 @@ in
 
       env = [
         "XDG_MIME_APPS,$HOME/.config/mimeapps.list"
-        "TERMINAL,wezterm"
+        "TERMINAL,ghostty"
         "BROWSER,${browser}"
         "EDITOR,nvim"
         "NAUTILUS_4_EXTENSION_DIR,/run/current-system/sw/lib/nautilus/extensions-4"

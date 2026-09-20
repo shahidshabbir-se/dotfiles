@@ -20,14 +20,14 @@ mouse_events   = [ "click", "scroll", "drag" ]
 [preview]
 wrap            = "no"
 tab_size        = 2
-max_width       = 600
-max_height      = 900
 cache_dir       = ""
 image_delay     = 30
 image_filter    = "triangle"
 image_quality   = 75
 ueberzug_scale  = 1
 ueberzug_offset = [ 0, 0, 0, 0 ]
+max_width = 2800
+max_height = 2800
 
 [opener]
 edit = [

@@ -8,6 +8,7 @@
 
 { pkgs
 , device
+, herdr
 , ...
 }:
 let
@@ -41,11 +42,10 @@ in
         bottom = 0,
       },
 
-      -- Attach to tmux session on startup
       default_prog = {
         "${pkgs.zsh}/bin/zsh",
         "-c",
-        "tmux attach -t main || tmux new -s main"
+        "${herdr}/bin/herdr"
       },
 
       keys = {
