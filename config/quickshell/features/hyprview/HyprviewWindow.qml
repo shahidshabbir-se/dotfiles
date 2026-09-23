@@ -1,0 +1,407 @@
+import QtQuick
+import QtQuick.Effects
+import Quickshell
+import Quickshell.Io
+import Quickshell.Widgets
+import Quickshell.Wayland
+import "./layouts"
+import "./services"
+import "./modules"
+import "./common"
+
+PanelWindow {
+    id: root
+    Appearance { id: m3 }
+
+    // --- SETTINGS ---
+    property string layoutAlgorithm: ""
+    property string lastLayoutAlgorithm: ""
+    property bool liveCapture: true
+    property bool moveCursorToActiveWindow: false
+
+    // Screen dim behind the thumbnails, 0 to 1. Defaults to 0 where the
+    // compositor already dims the overlay's layer itself, which on Hyprland
+    // means the dim_around layerrule from the README. Set it explicitly if you
+    // run Hyprland without that rule.
+    property real dimStrength: WindowSource.dimsOverlay ? 0 : 0.8
+
+    // --- INTERNAL STATE ---
+    property bool isActive: false
+    property bool animateWindows: false
+    property var lastPositions: {}
+
+    anchors { top: true; bottom: true; left: true; right: true }
+    color: "transparent"
+    visible: isActive
+
+    // LayerShell Configs
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.exclusiveZone: -1
+    WlrLayershell.keyboardFocus: isActive ? 1 : 0
+    WlrLayershell.namespace: "quickshell:expose"
+
+    // --- IPC & EVENTS ---
+    IpcHandler {
+        target: "expose"
+
+        function toggle(): void {
+            root.toggleExpose()
+        }
+
+        function toggleLayout(layout: string): void {
+            if (layout && layout.length > 0) root.layoutAlgorithm = layout
+            root.toggleExpose()
+        }
+
+        function open(): void {
+            if (root.isActive) return
+            root.toggleExpose()
+        }
+
+        function openLayout(layout: string): void {
+            if (layout && layout.length > 0) root.layoutAlgorithm = layout
+            if (root.isActive) return
+            root.toggleExpose()
+        }
+
+        function close(): void {
+            if (!root.isActive) return
+            root.toggleExpose()
+        }
+    }
+
+    IpcHandler {
+        target: "hyprview"
+
+        function toggle(): void {
+            root.toggleExpose()
+        }
+
+        function toggleLayout(layout: string): void {
+            if (layout && layout.length > 0) root.layoutAlgorithm = layout
+            root.toggleExpose()
+        }
+
+        function open(): void {
+            if (root.isActive) return
+            root.toggleExpose()
+        }
+
+        function openLayout(layout: string): void {
+            if (layout && layout.length > 0) root.layoutAlgorithm = layout
+            if (root.isActive) return
+            root.toggleExpose()
+        }
+
+        function close(): void {
+            if (!root.isActive) return
+            root.toggleExpose()
+        }
+    }
+
+    Connections {
+        target: WindowSource
+        function onThumbsInvalidated() {
+            root.refreshThumbs()
+        }
+    }
+
+    // Update thumbs every 125ms if liveCapture = false
+    Timer {
+        id: screencopyTimer
+        interval: 125
+        repeat: true
+        running: !root.liveCapture && root.isActive
+        onTriggered: root.refreshThumbs()
+    }
+
+
+    function toggleExpose() {
+        root.isActive = !root.isActive
+        WindowSource.active = root.isActive
+        if (root.isActive) {
+            var algo = (root.layoutAlgorithm && root.layoutAlgorithm.length > 0) ? root.layoutAlgorithm : "smartgrid"
+            if (algo === 'random') {
+                var layouts = [
+                    'smartgrid',
+                    'justified',
+                    'bands',
+                    'masonry',
+                    'hero',
+                    'spiral',
+                    'satellite',
+                    'staggered',
+                    'windows11',
+                    'columnar',
+                    'vortex',
+                ].filter((l) => l !== root.lastLayoutAlgorithm)
+                var randomLayout = layouts[Math.floor(Math.random() * layouts.length)]
+                root.lastLayoutAlgorithm = randomLayout
+            } else {
+                root.lastLayoutAlgorithm = algo
+            }
+
+            exposeArea.currentIndex = -1
+            searchBox.reset()
+            WindowSource.refresh()
+            refreshThumbs()
+        } else {
+            root.animateWindows = false
+            root.lastPositions = {}
+        }
+    }
+
+    function refreshThumbs() {
+        if (!root.isActive) return
+        for (var i = 0; i < winRepeater.count; ++i) {
+            var it = winRepeater.itemAt(i)
+            if (it && it.visible && it.refreshThumb) {
+                it.refreshThumb()
+            }
+        }
+    }
+
+    // --- USER INTERFACE ---
+    FocusScope {
+        id: mainScope
+        anchors.fill: parent
+        focus: true
+
+        Keys.onPressed: (event) => {
+            if (!root.isActive) return
+
+            if (event.key === Qt.Key_Escape) {
+                root.toggleExpose()
+                event.accepted = true
+                return
+            }
+
+            const total = winRepeater.count
+            if (total <= 0) return
+
+            // Helper for horizontal navigation
+            function moveSelectionHorizontal(delta) {
+                var start = exposeArea.currentIndex
+                for (var step = 1; step <= total; ++step) {
+                    var candidate = (start + delta * step + total) % total
+                    var it = winRepeater.itemAt(candidate)
+                    if (it && it.visible) {
+                        exposeArea.currentIndex = candidate
+                        return
+                    }
+                }
+            }
+
+            // Helper for vertical navigation
+            function moveSelectionVertical(dir) {
+                var startIndex = exposeArea.currentIndex
+                var currentItem = winRepeater.itemAt(startIndex)
+
+                if (!currentItem || !currentItem.visible) {
+                    moveSelectionHorizontal(dir > 0 ? 1 : -1)
+                    return
+                }
+
+                var curCx = currentItem.x + currentItem.width  / 2
+                var curCy = currentItem.y + currentItem.height / 2
+
+                var bestIndex = -1
+                var bestDy = 99999999
+                var bestDx = 99999999
+
+                for (var i = 0; i < total; ++i) {
+                    var it = winRepeater.itemAt(i)
+                    if (!it || !it.visible || i === startIndex) continue
+
+                    var cx = it.x + it.width  / 2
+                    var cy = it.y + it.height / 2
+                    var dy = cy - curCy
+
+                    // Direction filtering
+                    if (dir > 0 && dy <= 0) continue
+                    if (dir < 0 && dy >= 0) continue
+
+                    var absDy = Math.abs(dy)
+                    var absDx = Math.abs(cx - curCx)
+
+                    // Search for nearest thumb (first in vertical, then horizontal distance)
+                    if (absDy < bestDy || (absDy === bestDy && absDx < bestDx)) {
+                        bestDy = absDy
+                        bestDx = absDx
+                        bestIndex = i
+                    }
+                }
+
+                if (bestIndex >= 0) {
+                    exposeArea.currentIndex = bestIndex
+                }
+            }
+
+            // --- NVIM-style navigation with Ctrl ---
+            const ctrl = event.modifiers & Qt.ControlModifier
+
+            if (ctrl) {
+                if (event.key === Qt.Key_L) {
+                    moveSelectionHorizontal(1)
+                    event.accepted = true
+                } else if (event.key === Qt.Key_H) {
+                    moveSelectionHorizontal(-1)
+                    event.accepted = true
+                } else if (event.key === Qt.Key_J) {
+                    moveSelectionVertical(1)
+                    event.accepted = true
+                } else if (event.key === Qt.Key_K) {
+                    moveSelectionVertical(-1)
+                    event.accepted = true
+                }
+                return
+            }
+
+            if (event.key === Qt.Key_Right || event.key === Qt.Key_Tab) {
+                moveSelectionHorizontal(1)
+                event.accepted = true
+            } else if (event.key === Qt.Key_Left || event.key === Qt.Key_Backtab) {
+                moveSelectionHorizontal(-1)
+                event.accepted = true
+            } else if (event.key === Qt.Key_Down) {
+                moveSelectionVertical(1)
+                event.accepted = true
+            } else if (event.key === Qt.Key_Up) {
+                moveSelectionVertical(-1)
+                event.accepted = true
+            } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                var item = winRepeater.itemAt(exposeArea.currentIndex)
+                if (item && item.activateWindow) {
+                    item.activateWindow()
+                    event.accepted = true
+                }
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            z: -2
+            color: Qt.rgba(0, 0, 0, root.dimStrength)
+            visible: root.dimStrength > 0
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: false
+            z: -1
+            onClicked: root.toggleExpose()
+        }
+
+        Item {
+            id: layoutContainer
+            anchors.fill: parent
+            anchors.margins: 32
+
+            Column {
+                id: layoutRoot
+                anchors.fill: parent
+                anchors.margins: 48
+                spacing: 20
+
+                // thumbs area
+                Item {
+                    id: exposeArea
+                    width: layoutRoot.width
+                    height: layoutRoot.height - searchBox.implicitHeight - layoutRoot.spacing
+
+                    property int currentIndex: 0
+                    property string searchText: ""
+
+                    // Reset active thumb on searchText change
+                    onSearchTextChanged: {
+                        currentIndex = (windowLayoutModel.count > 0) ? 0 : -1
+                    }
+
+                    ScriptModel {
+                        id: windowLayoutModel
+
+                        property int areaW: exposeArea.width
+                        property int areaH: exposeArea.height
+                        property string query: exposeArea.searchText
+                        property string algo: root.lastLayoutAlgorithm
+                        property var rawWindows: WindowSource.windows
+
+                        values: {
+                            // Bailout on wrong screen size
+                            if (areaW <= 0 || areaH <= 0) return []
+
+                            var q = (query || "").toLowerCase()
+                            var windowList = []
+                            var idx = 0
+
+                            if (!rawWindows) return []
+
+                            for (var w of rawWindows) {
+                                // Windows the compositor is keeping off screen
+                                if (!w.onscreen) continue
+
+                                // Text filtering
+                                if (q.length > 0) {
+                                    var match = w.title.toLowerCase().indexOf(q) !== -1 ||
+                                    w.appId.toLowerCase().indexOf(q) !== -1 ||
+                                    w.className.toLowerCase().indexOf(q) !== -1
+                                    if (!match) continue
+                                }
+
+                                windowList.push({
+                                    win: w,
+                                    key: w.key,
+                                    workspaceId: w.workspaceId,
+                                    workspaceOrder: w.workspaceOrder,
+                                    width: w.width,
+                                    height: w.height,
+                                    originalIndex: idx++
+                                })
+                            }
+
+                            // Sort by workspace order, then originalIndex
+                            windowList.sort(function(a, b) {
+                                if (a.workspaceOrder < b.workspaceOrder) return -1
+                                if (a.workspaceOrder > b.workspaceOrder) return 1
+                                if (a.originalIndex < b.originalIndex) return -1
+                                if (a.originalIndex > b.originalIndex) return 1
+                                return 0
+                            })
+
+                            return LayoutsManager.doLayout(algo, windowList, areaW, areaH)
+                        }
+                    }
+
+                    Repeater {
+                        id: winRepeater
+                        model: windowLayoutModel
+
+                        delegate: WindowThumbnail {
+                            // Model data
+                            win: modelData.win
+                            thumbW: modelData.width
+                            thumbH: modelData.height
+
+                            // Layout-generated coordinates
+                            targetX: modelData.x
+                            targetY: modelData.y
+                            targetZ: (visible && (exposeArea.currentIndex === index)) ? 1000: modelData.zIndex || 0
+                            targetRotation: modelData.rotation || 0
+
+                            hovered: visible && (exposeArea.currentIndex === index)
+                            moveCursorToActiveWindow: root.moveCursorToActiveWindow
+                        }
+                    }
+                }
+
+                SearchBox {
+                    id: searchBox
+                    onTextChanged: function(text) {
+                        root.animateWindows = true
+                        exposeArea.searchText = text
+                    }
+                }
+            }
+        }
+    }
+}

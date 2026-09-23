@@ -18,6 +18,7 @@ Scope {
 
     property bool centerOpen: false
     property bool doNotDisturb: false
+    property bool dndApplyingStore: false
     property int unreadCount: 0
     // Deliberately memory-only: history is bounded and cleared on shell reload.
     property var historyEntries: []
@@ -52,7 +53,8 @@ Scope {
             key: String(notification.id),
             notificationId: notification.id,
             appName: cleanSingleLine(notification.appName, 128) || "Notification",
-            appIcon: cleanSingleLine(notification.appIcon, 128),
+            appIcon: cleanSingleLine(notification.appIcon, 512),
+            image: cleanSingleLine(notification.image, 512),
             summary: cleanSingleLine(notification.summary, 512) || "Notification",
             body: cleanBody(notification.body),
             urgency: Number(notification.urgency),
@@ -81,7 +83,8 @@ Scope {
             key: previous.key,
             notificationId: previous.notificationId,
             appName: cleanSingleLine(notification.appName, 128) || "Notification",
-            appIcon: cleanSingleLine(notification.appIcon, 128),
+            appIcon: cleanSingleLine(notification.appIcon, 512),
+            image: cleanSingleLine(notification.image, 512),
             summary: cleanSingleLine(notification.summary, 512) || "Notification",
             body: cleanBody(notification.body),
             urgency: Number(notification.urgency),
@@ -95,6 +98,7 @@ Scope {
 
         notification.appNameChanged.connect(update)
         notification.appIconChanged.connect(update)
+        notification.imageChanged.connect(update)
         notification.summaryChanged.connect(update)
         notification.bodyChanged.connect(update)
         notification.urgencyChanged.connect(() => {
@@ -129,6 +133,13 @@ Scope {
     function playAlertSound() {
         alertSound.running = false
         alertSound.running = true
+    }
+
+    function persistDoNotDisturb() {
+        if (dndApplyingStore)
+            return
+        dndAdapter.doNotDisturb = doNotDisturb
+        dndStore.writeAdapter()
     }
 
     function toggleDoNotDisturb() {
@@ -170,6 +181,7 @@ Scope {
         }
     }
 
+    onDoNotDisturbChanged: root.persistDoNotDisturb()
     onMaxVisibleChanged: Qt.callLater(trimOverflow)
     onHistoryLimitChanged: {
         historyEntries = historyEntries.slice(0, Math.max(1, historyLimit))
@@ -178,6 +190,25 @@ Scope {
     onCenterOpenChanged: {
         if (centerOpen)
             unreadCount = 0
+    }
+
+    FileView {
+        id: dndStore
+
+        path: Quickshell.dataPath("notifications-state.json")
+        watchChanges: false
+        atomicWrites: true
+        onLoaded: {
+            root.dndApplyingStore = true
+            root.doNotDisturb = dndAdapter.doNotDisturb
+            root.dndApplyingStore = false
+        }
+
+        JsonAdapter {
+            id: dndAdapter
+
+            property bool doNotDisturb: false
+        }
     }
 
     NotificationServer {

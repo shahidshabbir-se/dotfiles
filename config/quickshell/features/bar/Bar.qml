@@ -1,8 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import QtQuick.Shapes
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import qs.shared.theme
 
 // v2/v3 pattern: one PanelWindow per Quickshell.screens entry.
@@ -26,7 +28,6 @@ Scope {
         : (vertical ? Constants.barVerticalWidth : Constants.barMaxWidth)
 
     signal notificationsClicked()
-    signal launcherClicked()
     signal popupOpened()
     signal recordingStopClicked()
 
@@ -122,12 +123,35 @@ Scope {
             property bool recording: root.recording
             readonly property bool vertical: orientation === Qt.Vertical
 
+            // macOS-style: hide over fullscreen, show when the cursor hits the edge.
+            // hyprctl activeworkspace is the visible workspace; QML hasFullscreen
+            // and monitor.activeWorkspace stay stale across switches.
+            property bool fullscreen: false
+            property bool fullscreenRevealed: false
+            readonly property bool popupsOpen: calendarWindow.visible
+                || musicWindow.open
+                || networkWindow.open
+                || bluetoothWindow.open
+                || notificationCenterOpen
+            readonly property bool showBar: !fullscreen || fullscreenRevealed || popupsOpen
+            readonly property int edgeTrigger: 6
+            readonly property int shownWidth: vertical
+                ? Constants.barVerticalWidth
+                : Math.min(screen.width * Constants.barWidthRatio, Constants.barMaxWidth)
+            readonly property int shownHeight: vertical
+                ? screen.height * Constants.barHeightRatio
+                : Constants.barHeight
+            // 0 = shown, 1 = slid off-edge. Never resize the layer surface:
+            // Hyprland was leaving it stuck at 6px (xywh 2580x6, alpha 0).
+            property real hideProgress: 0
+
             screen: modelData
             visible: root.isUsableScreen(modelData)
 
             Component.onCompleted: {
                 if (visible)
                     root.registerWindow(bar)
+
             }
 
             Component.onDestruction: root.unregisterWindow(bar)
@@ -178,17 +202,12 @@ Scope {
                 left: bar.vertical
             }
 
-            implicitWidth: bar.vertical
-                ? Constants.barVerticalWidth
-                : Math.min(screen.width * Constants.barWidthRatio, Constants.barMaxWidth)
+            implicitWidth: shownWidth
+            implicitHeight: shownHeight
 
-            implicitHeight: bar.vertical
-                ? screen.height * Constants.barHeightRatio
-                : Constants.barHeight
-
-            exclusiveZone: bar.vertical
-                ? Constants.barVerticalWidth
-                : Constants.barHeight
+            exclusiveZone: fullscreen
+                ? 0
+                : (bar.vertical ? Constants.barVerticalWidth : Constants.barHeight)
 
             margins {
                 top: bar.vertical ? 0 : Constants.barTopMargin
@@ -196,14 +215,159 @@ Scope {
             }
 
             color: "transparent"
+            surfaceFormat.opaque: false
+            aboveWindows: true
+
+            WlrLayershell.namespace: "quickshell-bar"
+            // Top layer sits under Hyprland fullscreen (mode 2). Overlay stays
+            // hittable so the edge strip can reveal the bar.
+            WlrLayershell.layer: WlrLayer.Overlay
+
+            // Hidden: only the edge strip takes input so the fullscreen app
+            // stays clickable. Shown: full bar. Do not shrink the surface.
+            mask: Region {
+                width: bar.vertical
+                    ? (bar.showBar ? bar.shownWidth : bar.edgeTrigger)
+                    : bar.width
+                height: bar.vertical
+                    ? bar.height
+                    : (bar.showBar ? bar.shownHeight : bar.edgeTrigger)
+            }
+
+            onFullscreenChanged: {
+                if (!fullscreen)
+                    fullscreenRevealed = false
+            }
+
+            Process {
+                id: fsProc
+
+                command: ["hyprctl", "-j", "activeworkspace"]
+                stdout: StdioCollector {
+                    waitForEnd: true
+                    onStreamFinished: {
+                        try {
+                            const ws = JSON.parse(text || "{}")
+                            const hidden = ws.hasfullscreen === true
+                            if (bar.fullscreen !== hidden)
+                                bar.fullscreen = hidden
+                            if (!hidden)
+                                bar.fullscreenRevealed = false
+                        } catch (e) {
+                        }
+                    }
+                }
+            }
+
+            Timer {
+                interval: 150
+                running: true
+                repeat: true
+                triggeredOnStart: true
+                onTriggered: {
+                    if (!fsProc.running)
+                        fsProc.running = true
+                }
+            }
+
+            onShowBarChanged: {
+                hideAnim.stop()
+                hideAnim.from = hideProgress
+                hideAnim.to = showBar ? 0 : 1
+                hideAnim.start()
+            }
+
+            NumberAnimation {
+                id: hideAnim
+
+                target: bar
+                property: "hideProgress"
+                duration: 260
+                easing.type: Easing.OutCubic
+            }
+
+            onPopupsOpenChanged: {
+                if (!popupsOpen && fullscreen && !barHover.hovered)
+                    hideBarTimer.restart()
+            }
+
+            // Stays in place when the chrome slides off. HoverHandler on the
+            // translated bar never sees the cursor.
+            Item {
+                id: edgeHit
+
+                anchors.top: parent.top
+                anchors.left: parent.left
+                z: 100
+                width: bar.vertical ? bar.edgeTrigger : parent.width
+                height: bar.vertical ? parent.height : bar.edgeTrigger
+                visible: bar.fullscreen
+
+                HoverHandler {
+                    id: edgeHover
+
+                    onHoveredChanged: {
+                        if (hovered) {
+                            hideBarTimer.stop()
+                            bar.fullscreenRevealed = true
+                        } else if (!bar.popupsOpen && !barHover.hovered) {
+                            hideBarTimer.restart()
+                        }
+                    }
+                }
+            }
+
+            HoverHandler {
+                id: barHover
+
+                enabled: bar.fullscreen && bar.showBar
+                onHoveredChanged: {
+                    if (hovered) {
+                        hideBarTimer.stop()
+                        bar.fullscreenRevealed = true
+                    } else if (!bar.popupsOpen && !edgeHover.hovered) {
+                        hideBarTimer.restart()
+                    }
+                }
+            }
+
+            Timer {
+                id: hideBarTimer
+
+                interval: 500
+                repeat: false
+                onTriggered: {
+                    if (bar.fullscreen && !barHover.hovered && !edgeHover.hovered && !bar.popupsOpen)
+                        bar.fullscreenRevealed = false
+                }
+            }
 
             Rectangle {
                 id: barBackground
 
                 anchors.fill: parent
+                clip: true
 
                 radius: Constants.panelRadius
                 color: Colors.surfaceContainerLow
+
+                transform: Translate {
+                    x: bar.vertical ? -bar.shownWidth * bar.hideProgress : 0
+                    y: bar.vertical ? 0 : -bar.shownHeight * bar.hideProgress
+                }
+
+                ShapePath {
+          fillColor: Colors.surfaceContainerLow
+          strokeColor: "transparent"
+
+          startX: 0
+          startY: 0
+
+          PathLine { x: barBackground.width; y: 0 }
+          PathLine { x: barBackground.width - slopeWidth; y: barBackground.height }
+          PathLine { x: slopeWidth; y: barBackground.height }
+          PathLine { x: 0; y: 0 }
+      }
 
                 GridLayout {
                     anchors.fill: parent
@@ -215,39 +379,12 @@ Scope {
                     columnSpacing: Constants.spacingMd
                     rowSpacing: Constants.spacingMd
 
-                    GridLayout {
+                    Workspaces {
                         Layout.column: 0
                         Layout.row: 0
                         Layout.fillWidth: bar.vertical
                         Layout.alignment: Qt.AlignHCenter
-                        columns: bar.vertical ? 1 : 2
-                        columnSpacing: Constants.spacingSm
-                        rowSpacing: Constants.spacingSm
-
-                        Item {
-                            Layout.preferredWidth: Constants.iconSizeLg * 1.5
-                            Layout.preferredHeight: Constants.iconSizeLg * 1.5
-                            Layout.alignment: Qt.AlignCenter
-
-                            ThemeIcon {
-                                anchors.centerIn: parent
-                                name: "qalam"
-                                iconSize: Constants.iconSizeLg * 1.5
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    bar.closePopups()
-                                    root.launcherClicked()
-                                }
-                            }
-                        }
-
-                        Workspaces {
-                            vertical: bar.vertical
-                        }
+                        vertical: bar.vertical
                     }
 
                     Item {

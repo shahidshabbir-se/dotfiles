@@ -9,13 +9,32 @@ RowLayout {
     required property string appName
     required property string summary
     property string appIcon: ""
+    property string image: ""
     property string body: ""
     property string timeLabel: ""
     property bool critical: false
     property bool compact: false
     property int trailingReserve: 0
 
-    readonly property string safeIconName: NotificationText.safeIconName(appIcon)
+    function toIconSource(value) {
+        const raw = String(value || "").trim()
+        if (!raw.length)
+            return ""
+        // Quickshell rewrites non-file image-path hints through the icon
+        // provider. An https art URL becomes image://icon/https://... which
+        // paints the missing-texture box instead of loading the jpeg.
+        if (raw.includes("https://") || raw.includes("http://"))
+            return (raw.startsWith("http://") || raw.startsWith("https://"))
+                ? raw
+                : ""
+        if (raw.startsWith("file:") || raw.startsWith("image:"))
+            return raw
+        if (raw.startsWith("/"))
+            return "file://" + raw
+
+        const name = NotificationText.safeIconName(raw)
+        return name ? Quickshell.iconPath(name, true) : ""
+    }
     readonly property bool isScreenshot: {
         const app = String(appName || "").toLowerCase()
         const sum = String(summary || "").toLowerCase()
@@ -29,12 +48,10 @@ RowLayout {
         return app.includes("recording")
             || sum.startsWith("recording")
     }
-    // absolute paths (notify-send image-path) bypass icon theme lookup
+    // Album art / notify-send image-path first, then app icon / theme name.
     readonly property string iconSource: (root.isScreenshot || root.isRecording)
         ? ""
-        : (appIcon.startsWith("/") || appIcon.startsWith("file:")
-            ? (appIcon.startsWith("file:") ? appIcon : ("file://" + appIcon))
-            : (safeIconName ? Quickshell.iconPath(safeIconName, true) : ""))
+        : (root.toIconSource(root.image) || root.toIconSource(root.appIcon))
     readonly property int iconExtent: compact
         ? NotificationMetrics.historyIconSize
         : NotificationMetrics.toastIconSize
@@ -49,7 +66,7 @@ RowLayout {
 
         Rectangle {
             anchors.fill: parent
-            visible: root.iconSource.length === 0
+            visible: iconImage.status !== Image.Ready
             radius: Constants.panelRadius
             color: Tokens.withAlpha(Colors.primary, 0.13)
 
@@ -83,9 +100,11 @@ RowLayout {
         }
 
         Image {
+            id: iconImage
+
             anchors.fill: parent
             anchors.margins: 2
-            visible: root.iconSource.length > 0
+            visible: status === Image.Ready
             source: root.iconSource
             sourceSize.width: root.iconExtent * 2
             sourceSize.height: root.iconExtent * 2

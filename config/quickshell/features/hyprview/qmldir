@@ -1,0 +1,3 @@
+module qs.features.hyprview
+Hyprview 1.0 Hyprview.qml
+internal HyprviewWindow 1.0 HyprviewWindow.qml

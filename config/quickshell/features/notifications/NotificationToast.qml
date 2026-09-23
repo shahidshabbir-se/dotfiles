@@ -252,6 +252,7 @@ Item {
                             anchors.fill: parent
                             appName: root.cleanAppName
                             appIcon: root.notification.appIcon
+                            image: root.notification.image
                             summary: root.cleanSummary
                             body: root.cleanNotificationBody
                             timeLabel: "now"

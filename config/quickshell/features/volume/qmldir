@@ -1,0 +1,3 @@
+module qs.features.volume
+Volume 1.0 Volume.qml
+internal VolumeFlyer 1.0 VolumeFlyer.qml

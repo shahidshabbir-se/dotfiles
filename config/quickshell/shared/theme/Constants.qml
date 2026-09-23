@@ -4,7 +4,7 @@ import QtQuick
 
 QtObject {
     // Bar
-    readonly property int barHeight: 32
+    readonly property int barHeight: 36
     readonly property int barVerticalWidth: 32
     readonly property int barTopMargin: 0
     readonly property int panelRadius: 0
@@ -43,12 +43,6 @@ QtObject {
     readonly property int bluetoothPopupWidth: 380
     readonly property int bluetoothPopupMaxHeight: 560
 
-    // Launcher
-    readonly property int launcherWidth: 520
-    readonly property int launcherMaxHeight: 560
-    readonly property int launcherRowHeight: 44
-    readonly property int launcherIconSize: 28
-
     // Audio visualizer
     readonly property int visualizerHeight: 72
     readonly property real visualizerWidthRatio: 0.60
@@ -59,6 +53,7 @@ QtObject {
     readonly property int visualizerBarSpacing: 4
     readonly property int visualizerMinBarHeight: 3
     readonly property int visualizerMaxBarHeight: 54
+    readonly property int visualizerBarRadius: 1
 
     // Spacing
     readonly property int spacingXs: 4
