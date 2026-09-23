@@ -8,8 +8,8 @@
 
 {
   pkgs,
+  lib ? pkgs.lib,
   device,
-  herdr ? import ./pkgs/herdr.nix { inherit pkgs; },
   ...
 }:
 let
@@ -36,8 +36,14 @@ in
     title = " ";
 
     # Font
-    font-family = "JetBrainsMono Nerd Font";
-    font-codepoint-map = "U+2722,U+2733,U+2736,U+273B,U+273D=Noto Sans Symbols 2";
+    font-family = [
+      "SpaceMono Nerd Font"
+      "Herdr Agent Icons Max"
+    ];
+    font-codepoint-map = [
+      "U+2722,U+2733,U+2736,U+273B,U+273D=Noto Sans Symbols 2"
+      "U+E1A0-U+E1B0=Herdr Agent Icons Max"
+    ];
     font-size = fontSize;
     font-feature = [
       "+calt"
@@ -53,14 +59,18 @@ in
     command = [
       "${pkgs.zsh}/bin/zsh"
       "-c"
-      "${herdr}/bin/herdr"
+      "herdr"
     ];
+
+    # Background
+    background-opacity = 1.0;
+    background-image = "${../assets/starfield_3440x1440.png}";
+    background-image-opacity = 0.1;
+    background-image-fit = "cover";
 
     # Window
     window-inherit-working-directory = true;
     window-inherit-font-size = false;
-    # background-opacity = 0.98;
-    background-opacity = 1.0;
     window-decoration = false;
     window-padding-x = 6;
     window-padding-y = "6,0";
@@ -83,6 +93,62 @@ in
       # Forward Shift+Enter as a Kitty/CSI-u modified Enter so pi can use it for new lines.
       "shift+enter=text:\\x1b[13;2u"
       "ctrl+shift+r=reload_config"
-    ];
+    ]
+    # Ghostty eats alt/ctrl+1..9 for its own tabs. Pass them through to herdr.
+    ++
+      lib.concatMap
+        (
+          n:
+          let
+            names = [
+              n.num
+              n.word
+              "digit_${n.num}"
+            ];
+          in
+          lib.concatMap (key: [
+            "alt+${key}=unbind"
+            "ctrl+${key}=unbind"
+            "super+${key}=unbind"
+          ]) names
+        )
+        [
+          {
+            num = "1";
+            word = "one";
+          }
+          {
+            num = "2";
+            word = "two";
+          }
+          {
+            num = "3";
+            word = "three";
+          }
+          {
+            num = "4";
+            word = "four";
+          }
+          {
+            num = "5";
+            word = "five";
+          }
+          {
+            num = "6";
+            word = "six";
+          }
+          {
+            num = "7";
+            word = "seven";
+          }
+          {
+            num = "8";
+            word = "eight";
+          }
+          {
+            num = "9";
+            word = "nine";
+          }
+        ];
   };
 }

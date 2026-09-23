@@ -8,7 +8,6 @@
 
 { pkgs
 , device
-, herdr
 , ...
 }:
 let
@@ -45,7 +44,7 @@ in
       default_prog = {
         "${pkgs.zsh}/bin/zsh",
         "-c",
-        "${herdr}/bin/herdr"
+        "herdr"
       },
 
       keys = {
