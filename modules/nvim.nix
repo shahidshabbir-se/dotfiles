@@ -9,6 +9,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  # tree-sitter CLI (≥0.26.1) is required by the nvim-treesitter `main` branch
+  # to compile parsers at runtime (ensure_installed / :TSInstall / :TSUpdate).
+  home.packages = [ pkgs.tree-sitter ];
+
   programs.neovim = {
     enable = true;
 

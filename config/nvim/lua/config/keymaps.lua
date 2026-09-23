@@ -69,3 +69,31 @@ end
 
 map({ "o", "x" }, "iq", smart_quote(true), { expr = true })
 map({ "o", "x" }, "aq", smart_quote(false), { expr = true })
+
+-- Herdr & Tmux pane / window navigation
+local function herdr_navigate(dir, wincmd)
+  return function()
+    local cur_win = vim.api.nvim_get_current_win()
+    vim.cmd("wincmd " .. wincmd)
+
+    -- If window didn't change, we are at an edge: forward to Herdr / tmux
+    if vim.api.nvim_get_current_win() == cur_win then
+      if vim.env.HERDR_PANE_ID and vim.env.HERDR_PANE_ID ~= "" then
+        local herdr = vim.env.HERDR_BIN_PATH
+        if not herdr or herdr == "" then
+          herdr = "herdr"
+        end
+        vim.fn.system({ herdr, "pane", "focus", "--direction", dir, "--pane", vim.env.HERDR_PANE_ID })
+      elseif vim.env.TMUX and vim.env.TMUX ~= "" then
+        local tmux_dir = { left = "Left", down = "Down", up = "Up", right = "Right" }
+        pcall(vim.cmd, "TmuxNavigate" .. tmux_dir[dir])
+      end
+    end
+  end
+end
+
+map({ "n", "t" }, "<C-h>", herdr_navigate("left", "h"), { desc = "Navigate Left (Vim/Herdr)" })
+map({ "n", "t" }, "<C-j>", herdr_navigate("down", "j"), { desc = "Navigate Down (Vim/Herdr)" })
+map({ "n", "t" }, "<C-k>", herdr_navigate("up", "k"), { desc = "Navigate Up (Vim/Herdr)" })
+map({ "n", "t" }, "<C-l>", herdr_navigate("right", "l"), { desc = "Navigate Right (Vim/Herdr)" })
+
