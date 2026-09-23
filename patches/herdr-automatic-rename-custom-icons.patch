@@ -1,0 +1,135 @@
+diff --git i/automatic-rename.sh w/automatic-rename.sh
+index 0263a94..ca0351d 100755
+--- i/automatic-rename.sh
++++ w/automatic-rename.sh
+@@ -147,6 +147,7 @@ def debrand($b): ($b | length) as $n
+        and (.[$n:] | test("^([^[:alnum:]]|$)")) then .[$n:] else . end;
+ def task($b): clean | lead
+   | (if ($b | length) > 0 then debrand($b) | lead else . end)
++  | sub(" - [^ -]+$"; "")
+   | sub("[[:space:]]+$"; "") | gsub("[[:space:]]+"; " ");
+ def taskof($brands; $agent): task($brands[$agent | lc] // "");'
+ 
+@@ -1013,7 +1014,13 @@ ar_pane_program() {
+     | if ($p == null) then
+         "", ""
+       else
+-        (($p.argv0 // (($p.argv // [])[0]) // $p.name // "") | clean | sub("^-"; "") | split("/") | last),
++        (
++          def unwrap_sudo:
++            if .[0] == "sudo" or .[0] == "doas" or .[0] == "run0" or .[0] == "pkexec" then
++              .[1:] | while(.[0] != null and (.[0] | startswith("-")); .[1:])
++            else . end;
++          (($p.argv // []) | unwrap_sudo | .[0] // $p.argv0 // $p.name // "") | clean | sub("^-"; "") | split("/") | last
++        ),
+         (($p.cmdline // (($p.argv // []) | join(" "))) | clean)
+       end
+   ' 2>/dev/null
+diff --git i/icons.sh w/icons.sh
+index c58ba77..69fce15 100644
+--- i/icons.sh
++++ w/icons.sh
+@@ -54,10 +54,25 @@ ar_icon() {
+   case "$n" in
+   Python | ipython | ipython3 | pip | pip3 | python | python3) printf '\356\234\274' ;; # U+E73C
+   R) printf '\357\263\222' ;;                                                           # U+FCD2
+-  aider | claude | codex | pi | gemini | cursor | cursor-agent | devin | cline | \
+-    agy | antigravity | omp | mastracode | opencode | copilot | kimi | droid | amp | \
+-    kiro | kiro-cli | grok | hermes | kilo | qodercli | qwen | maki | \
+-    muse | muse-cli | muse-code) \
++  claude) printf '\356\206\240' ;;                                                      # U+E1A0
++  codex) printf '\356\206\241' ;;                                                       # U+E1A1
++  opencode | opencode2 | opencode-ai | opencode2.exe) printf '\356\206\242' ;;                                                    # U+E1A2
++  omp) printf '\356\206\243' ;;                                                         # U+E1A3
++  cline) printf '\356\206\244' ;;                                                       # U+E1A4
++  mastracode) printf '\356\206\245' ;;                                                  # U+E1A5
++  kimi) printf '\356\206\246' ;;                                                        # U+E1A6
++  kilo) printf '\356\206\247' ;;                                                        # U+E1A7
++  maki) printf '\356\206\250' ;;                                                        # U+E1A8
++  pi) printf '\356\206\251' ;;                                                          # U+E1A9
++  hermes) printf '\356\206\252' ;;                                                      # U+E1AA
++  cursor | cursor-agent) printf '\356\206\253' ;;                                       # U+E1AB
++  copilot) printf '\356\206\254' ;;                                                     # U+E1AC
++  deepseek) printf '\356\206\255' ;;                                                    # U+E1AD
++  gemini) printf '\356\206\256' ;;                                                      # U+E1AE
++  gpt) printf '\356\206\257' ;;                                                         # U+E1AF
++  qwen) printf '\356\206\260' ;;                                                        # U+E1B0
++  aider | devin | agy | antigravity | droid | amp | kiro | kiro-cli | grok | \
++    qodercli | muse | muse-cli | muse-code) \
+     printf '\363\260\232\251' ;;                                                        # U+F06A9
+   alacritty | gnome-terminal | iterm2) printf '\357\204\240' ;;                         # U+F120
+   ansible) printf '\357\227\247' ;;                                                     # U+F5E7
+@@ -102,6 +117,7 @@ ar_icon() {
+   gh | gitlab | wordpress) printf '\356\234\211' ;;                                     # U+E709
+   ghc | stack) printf '\356\235\267' ;;                                                 # U+E777
+   ghostty) printf '\356\273\276' ;;                                                     # U+EEFE
++  tsk) printf '\357\205\212' ;;
+   git | gitui | lazygit | tig) printf '\356\234\202' ;;                                 # U+E702
+   go) printf '\356\230\247' ;;                                                          # U+E627
+   gpg) printf '\357\202\204' ;;                                                         # U+F084
+diff --git i/naming.sh w/naming.sh
+index 8755fd3..96b9460 100644
+--- i/naming.sh
++++ w/naming.sh
+@@ -1,3 +1,9 @@
++# Known coding agents
++declare -p AGENT_PROGRAMS >/dev/null 2>&1 || AGENT_PROGRAMS=(
++  claude codex aider pi gemini cursor cursor-agent devin agy antigravity cline omp mastracode opencode opencode2 opencode-ai
++  copilot kimi kiro kiro-cli droid amp grok hermes kilo qodercli qwen maki muse muse-cli muse-code
++)
++
+ # naming.sh - pure, herdr-free name computation for herdr-automatic-rename.
+ #
+ # Sourced by automatic-rename.sh. Every function is string-in / string-out (no herdr
+@@ -154,8 +160,8 @@ declare -p SHELLS >/dev/null 2>&1 || SHELLS=(zsh bash sh fish dash ksh)
+ # "kiro"), and muse-cli / muse-code (kind "muse", whose fourth spelling is the
+ # versioned binary ar_format folds -- see there). aider is not a herdr agent kind
+ # but is a real agent, so it stays.
+-declare -p NAME_ONLY_PROGRAMS >/dev/null 2>&1 || NAME_ONLY_PROGRAMS=(nvim vim vi view gvim git lazygit gitui lazydocker
+-  claude codex aider pi gemini cursor cursor-agent devin agy antigravity cline omp mastracode opencode
++declare -p NAME_ONLY_PROGRAMS >/dev/null 2>&1 || NAME_ONLY_PROGRAMS=(nvim vim vi view gvim git lazygit gitui lazydocker tsk
++  claude codex aider pi gemini cursor cursor-agent devin agy antigravity cline omp mastracode opencode opencode2 opencode-ai
+   copilot kimi kiro kiro-cli droid amp grok hermes kilo qodercli qwen maki muse muse-cli muse-code)
+ 
+ # Quick tools that should not take over the tab name: while one runs the tab
+@@ -172,7 +178,7 @@ declare -p IGNORED_PROGRAMS >/dev/null 2>&1 || IGNORED_PROGRAMS=(ls eza ll la cd
+ # Where herdr has detected an agent in that pane, its answer is used instead (see
+ # ar_tab_name). Everywhere else these are named as any other program, so a plain
+ # `node server.js` tab is untouched.
+-declare -p WRAPPER_PROGRAMS >/dev/null 2>&1 || WRAPPER_PROGRAMS=(node bun deno npx bunx npm pnpm yarn
++declare -p WRAPPER_PROGRAMS >/dev/null 2>&1 || WRAPPER_PROGRAMS=(sudo doas run0 pkexec env command nohup time xargs node bun deno npx bunx npm pnpm yarn
+   python python3 uv uvx pipx ruby)
+ 
+ # Ordered, complete `sed -E` programs applied to the final display string.
+@@ -1130,25 +1136,20 @@ ar_branch_new() {
+ # why the raw directory comes in rather than a context computed outside.
+ ar_label() {
+   local ctx
+-  # A pane running ssh is named after the machine it reached, and after nothing
+-  # local: the branch is read from the directory ssh was launched in, and printed
+-  # beside prod-01 it would read as that machine's, while the directory itself is
+-  # only where the user was standing when they left. The `ssh` mark stays in the
+-  # activity, which is where the program rules would have put it anyway. The test
+-  # is the program name, so nothing but an ssh pane pays for the parse.
+   if [ "$4" = "ssh" ] && [ "${TAB_CONTEXT:-1}" = "1" ]; then
+     ar_ssh_host "$5" >/dev/null
+     ar_format ssh ssh "${6:-}" >/dev/null
+     ar_compose "$AR_SSH_HOST" "" "$AR_ACTIVITY"
+     return 0
+   fi
+-  # Each part is read back off the global its function publishes rather than out
+-  # of a command substitution. Four parts, four subshells, once per named tab on
+-  # every herdr event: on a session of a dozen tabs that was most of the cost of
+-  # a reconcile, and a fork is a whole shell on macOS.
++  ar_format "$4" "$5" "${6:-}" >/dev/null
++  # If an agent is running (with or without a task title), user wants Icon + Title only (no directory/branch)
++  if [ -n "$4" ] && ar_in_list "$4" "${AGENT_PROGRAMS[@]}"; then
++    ar_compose "" "" "$AR_ACTIVITY"
++    return 0
++  fi
+   ar_context_dir "$1" "$2" >/dev/null
+   ctx=$AR_CONTEXT
+-  ar_format "$4" "$5" "${6:-}" >/dev/null
+   ar_branch_new "$3" "$ctx $2" >/dev/null
+   ar_compose "$ctx" "$AR_BRANCH_NEW" "$AR_ACTIVITY"
+ }
