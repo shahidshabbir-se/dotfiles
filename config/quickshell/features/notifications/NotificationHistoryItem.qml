@@ -56,6 +56,7 @@ Item {
         }
         appName: root.entry.appName
         appIcon: root.entry.appIcon
+        image: root.entry.image || ""
         summary: root.entry.summary
         body: root.entry.body
         timeLabel: NotificationText.friendlyTime(root.entry.timestamp, root.now)

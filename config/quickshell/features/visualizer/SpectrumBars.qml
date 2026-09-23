@@ -56,9 +56,9 @@ Item {
                     )
                 )
                 : 0
-            radius: 0
+            radius: Constants.visualizerBarRadius
             visible: height > 0
-            opacity: 0.35 + 0.65 * Math.pow(centerWeight, 0.65)
+            opacity: 0.86 + 0.14 * Math.pow(centerWeight, 0.65)
 
             gradient: Gradient {
                 orientation: Gradient.Vertical
@@ -69,21 +69,21 @@ Item {
                         Colors.primary.r,
                         Colors.primary.g,
                         Colors.primary.b,
-                        0.92
+                        1
                     )
                 }
                 GradientStop {
-                    position: 0.45
+                    position: 0.55
                     color: {
-                        const c = Qt.darker(Colors.primary, 1.25)
-                        return Qt.rgba(c.r, c.g, c.b, 0.72)
+                        const c = Qt.darker(Colors.primary, 1.1)
+                        return Qt.rgba(c.r, c.g, c.b, 0.88)
                     }
                 }
                 GradientStop {
                     position: 1.00
                     color: {
-                        const c = Qt.darker(Colors.primary, 1.55)
-                        return Qt.rgba(c.r, c.g, c.b, 0.42)
+                        const c = Qt.darker(Colors.primary, 1.22)
+                        return Qt.rgba(c.r, c.g, c.b, 0.62)
                     }
                 }
             }

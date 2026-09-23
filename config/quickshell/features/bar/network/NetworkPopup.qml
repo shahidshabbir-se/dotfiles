@@ -929,6 +929,34 @@ Item {
                     }
                 }
 
+                // Reload / rescan
+                Rectangle {
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                    radius: Constants.buttonRadius
+                    color: reloadArea.containsMouse
+                        ? Colors.surfaceContainerHighest
+                        : Colors.surfaceContainerHigh
+                    Layout.alignment: Qt.AlignVCenter
+                    opacity: root.scanning ? 0.65 : 1
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "󰑓"
+                        color: Colors.surfaceForeground
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: Constants.fontSizeLg
+                    }
+
+                    MouseArea {
+                        id: reloadArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.refreshAll(true)
+                    }
+                }
+
                 // QR
                 Rectangle {
                     visible: root.canShareWifi

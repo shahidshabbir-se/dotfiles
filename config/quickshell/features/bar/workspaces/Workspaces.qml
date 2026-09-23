@@ -55,7 +55,7 @@ GridLayout {
                 width: Constants.spacingLg
                 height: Constants.spacingLg
                 color: Colors.primary
-                radius: Constants.panelRadius
+                radius: 4
             }
 
             Text {

@@ -1,10 +1,11 @@
 import QtQuick
 import Quickshell
 import qs.features.bar as BarFeature
-import qs.features.launcher as LauncherFeature
+import qs.features.hyprview as HyprviewFeature
 import qs.features.notifications as NotificationsFeature
 import qs.features.screenshot as ScreenshotFeature
 import qs.features.visualizer as VisualizerFeature
+import qs.features.volume as VolumeFeature
 import qs.features.wallpaper as WallpaperFeature
 
 Scope {
@@ -20,19 +21,20 @@ Scope {
             : Qt.Horizontal
 
         onNotificationsClicked: notifications.toggleCenter()
-        onLauncherClicked: launcher.toggle()
         onRecordingStopClicked: screenshot.stopRecording()
         onPopupOpened: {
             notifications.closeCenter()
             wallpaper.close()
             screenshot.close()
-            launcher.close()
+            hyprview.close()
         }
     }
 
     VisualizerFeature.Visualizer {
         screen: bar.screen
     }
+
+    VolumeFeature.Volume {}
 
     NotificationsFeature.Notifications {
         id: notifications
@@ -48,7 +50,7 @@ Scope {
         onOpenChanged: {
             if (open) {
                 screenshot.close()
-                launcher.close()
+                hyprview.close()
             }
         }
     }
@@ -60,14 +62,14 @@ Scope {
             if (open) {
                 notifications.closeCenter()
                 wallpaper.close()
-                launcher.close()
                 bar.closePopups()
+                hyprview.close()
             }
         }
     }
 
-    LauncherFeature.Launcher {
-        id: launcher
+    HyprviewFeature.Hyprview {
+        id: hyprview
 
         onOpenChanged: {
             if (open) {
@@ -78,4 +80,5 @@ Scope {
             }
         }
     }
+
 }

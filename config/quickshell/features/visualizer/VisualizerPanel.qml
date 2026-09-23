@@ -52,7 +52,7 @@ PanelWindow {
             )
         )
         height: root.responsiveBarHeight
-        opacity: root.mediaPlaying ? 0.86 : 0
+        opacity: root.mediaPlaying ? 1 : 0
 
         transform: Translate {
             y: root.mediaPlaying ? 0 : 3
