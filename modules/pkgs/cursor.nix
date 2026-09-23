@@ -139,6 +139,9 @@ pkgs.stdenv.mkDerivation {
           --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
           --set GSETTINGS_SCHEMA_DIR "${schemaPath}" \
           --prefix LD_LIBRARY_PATH : ${runtimeLibraryPath} \
+          --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+          --add-flags "--force-color-profile=srgb" \
+          --add-flags "--enable-features=WaylandLinuxDrmSyncobj" \
           --add-flags "--no-sandbox"
 
         # Desktop entry

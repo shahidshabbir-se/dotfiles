@@ -20,6 +20,7 @@ with pkgs;
   uv
   k6
   nixfmt
+  deadnix
   go
   lazygit
   lazysql
@@ -57,9 +58,7 @@ with pkgs;
   moreutils
   ncdu
   pandoc
-  (texliveMedium.withPackages (
-    ps: with ps; [ collection-latexextra ]
-  ))
+  (texliveMedium.withPackages (ps: with ps; [ collection-latexextra ]))
   onefetch
   fastfetch
   ripgrep
