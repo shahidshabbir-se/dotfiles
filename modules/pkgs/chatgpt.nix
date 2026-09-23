@@ -5,17 +5,16 @@
 }:
 
 let
-  version = "26.825.51511";
+  version = "26.901.51231";
   pname = "chatgpt";
 
 in
 pkgs.stdenv.mkDerivation {
   inherit pname version;
 
-  src = pkgs.requireFile {
-    name = "chatgpt_amd64.deb";
-    hash = "sha256-NVSwAixs+1EzJvQ/0R9xiDWncIasTXyi/z67ui1Mf0U=";
-    message = "Download ChatGPT ${version} for amd64, then run: nix-store --add-fixed sha256 chatgpt_amd64.deb";
+  src = pkgs.fetchurl {
+    url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/pool/main/c/chatgpt/chatgpt_${version}_amd64.deb";
+    hash = "sha256-YlgBiNh8PTqTadq3xztCqKMlGNTfii1brmRm3erFwF4=";
   };
 
   nativeBuildInputs = with pkgs; [

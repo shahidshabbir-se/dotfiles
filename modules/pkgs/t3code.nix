@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.0.33";
+  version = "0.0.40";
   pname = "t3code";
 
   desktopEntry = pkgs.writeText "t3code.desktop" ''
@@ -28,7 +28,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
-    sha256 = "sha256-QVyGSPQ8PSLVcvJ/LFD9yMMQ6n/N6VN7kD4eLxyHdaE=";
+    sha256 = "sha256-i/X9RMt/rQxDGR1U/v35dKgifVBQXsuKvPdjJiCfJko=";
     name = "t3code-${version}.AppImage";
   };
 
@@ -58,6 +58,7 @@ pkgs.stdenv.mkDerivation {
     libdrm
     libGL
     libnotify
+    libsecret
     libuuid
     libxkbcommon
     mesa
@@ -107,6 +108,9 @@ pkgs.stdenv.mkDerivation {
     makeWrapper $out/opt/t3code/t3code $out/bin/t3code \
       --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
       --run 'export PATH="$HOME/.local/bin:$PATH"' \
+      --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
+      --add-flags "--force-color-profile=srgb" \
+      --add-flags "--enable-features=WaylandLinuxDrmSyncobj" \
       --add-flags "--no-sandbox"
 
     # Desktop entry
