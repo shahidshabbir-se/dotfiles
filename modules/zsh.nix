@@ -143,6 +143,7 @@
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
         if [[ -d $HOME/.zsh/aliases ]]; then
           for file in $HOME/.zsh/aliases/*.zsh; do
+            [[ "$(basename "$file")" == tmux.zsh ]] && continue
             [[ -f "$file" ]] && source "$file"
           done
         fi
@@ -408,5 +409,11 @@
         export GOPATH="$HOME/go"
         export PATH="$HOME/.cargo/bin:$HOME/.npm-global/bin:$HOME/go/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.cache/.bun/bin:$PATH"
         export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+        # Herdr Automatic Rename zsh hook
+        for _f in ''${HOME}/.config/herdr/plugins/github/herdr-automatic-rename-*/shell/hook.zsh(N); do
+          source "$_f"
+          break
+        done
   '';
 }
