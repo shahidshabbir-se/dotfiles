@@ -24,6 +24,41 @@ let
     fi
   '';
 
+  # Alt-Tab: cycle windows on the current workspace; when that workspace holds a
+  # single window there is nothing to cycle there, so jump to the most recently
+  # used window on another workspace instead.
+  # Hyprland 0.56's legacy cyclenext only maps prev/next/tile/float and drops
+  # `hist`/`visible`, and CWindowQuery::cycle() is workspace-scoped, so the
+  # cross-workspace hop has to be done by hand.
+  altTab = pkgs.writeShellScript "hypr-alt-tab" ''
+    set -eu
+
+    dir="''${1:-next}"
+    jq="${pkgs.jq}/bin/jq"
+
+    ws="$(hyprctl -j activeworkspace)" || exit 0
+    count="$(printf '%s' "$ws" | $jq -r '.windows')"
+    wsid="$(printf '%s' "$ws" | $jq -r '.id')"
+
+    # More than one window here: ordinary workspace-local cycling.
+    if [ "$count" -gt 1 ]; then
+      hyprctl dispatch cyclenext "$dir"
+      exit 0
+    fi
+
+    # Windows elsewhere, most recently focused first. Special workspaces
+    # (negative ids) and history-less windows (focusHistoryID -1) are skipped.
+    target="$(hyprctl -j clients | $jq -r --argjson cur "$wsid" --arg dir "$dir" '
+      [ .[] | select(.workspace.id >= 0 and .workspace.id != $cur and .focusHistoryID >= 0) ]
+      | sort_by(.focusHistoryID)
+      | if length == 0 then "" elif $dir == "prev" then .[-1].address else .[0].address end
+    ')"
+
+    [ -n "$target" ] && hyprctl dispatch focuswindow "address:$target"
+
+    exit 0
+  '';
+
   d = device.display;
   hdr = device.hdr or { };
   hdrDesktop = device.type == "desktop" && hdr != { };
@@ -38,19 +73,20 @@ let
     "wlogout"
     "quickshell-bar"
     "quickshell-popup"
-    # "vicinae"
+    "quickshell:expose"
+    "vicinae"
   ];
 
   layerRuleNoAnimNamespaces = [
     "logout_dialog"
     "wlogout"
-    # "vicinae"
+    "vicinae"
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
   layerRuleBlock = ns: ''
     layerrule {
-      name = blur-${lib.replaceStrings [ "_" ] [ "-" ] ns}
+      name = blur-${lib.replaceStrings [ "_" ":" ] [ "-" "-" ] ns}
       match:namespace = ${ns}
       blur = on
       # Skip fully-transparent dismiss overlays; still blur glass panels (~0.74).
@@ -88,7 +124,11 @@ let
     "float on, match:class ^(qs-screenshot-rec)$"
     "size 1280 720, match:class ^(qs-screenshot-rec)$"
     "center on, match:class ^(qs-screenshot-rec)$"
+    "workspace special:magic silent, match:class ^(waysend|WaySend)$"
+    "workspace special:magic silent, match:title ^(WaySend)$"
     "no_blur on, match:class ^(Brave-browser)$"
+    "float on, match:class ^(Emulator)$"
+    "no_blur on, match:class ^(Emulator)$"
     "no_blur on, match:class ^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify|ChatGPT|chatgpt)$"
     "opacity 1.00 override 1.00 override 1.00 override, match:class ^(zen|google-chrome|Chrome|chromium|Chromium|Cursor|code|Code|obsidian|discord|slack|Spotify|ChatGPT|chatgpt)$"
     "float on, match:title ^(btop)$"
@@ -153,41 +193,43 @@ in
   # ───────────────────────────────────────────────
   # ▶ Hyprland Packages
   # ───────────────────────────────────────────────
-  home.packages = (with pkgs; [
-    # Wallpaper
-    awww
-    mpvpaper
+  home.packages =
+    (with pkgs; [
+      # Wallpaper
+      awww
+      mpvpaper
 
-    # Launcher / Menus
-    wofi
-    rofi
-    rofi-bluetooth
+      # Launcher / Menus
+      wofi
+      rofi
+      rofi-bluetooth
 
-    # Screenshot (grim is pulled in by grimblast but keep it on PATH for scripts)
-    grim
-    grimblast
-    slurp
-    wf-recorder
-    tesseract
+      # Screenshot (grim is pulled in by grimblast but keep it on PATH for scripts)
+      grim
+      grimblast
+      slurp
+      wf-recorder
+      tesseract
 
-    # Clipboard
-    cliphist
-    wl-clipboard
+      # Clipboard
+      cliphist
+      wl-clipboard
 
-    # Notifications
-    swaynotificationcenter
-    libnotify
+      # Notifications
+      swaynotificationcenter
+      libnotify
 
-    # Media / Audio / Brightness
-    playerctl
-    brightnessctl
-    alsa-utils
+      # Media / Audio / Brightness
+      playerctl
+      brightnessctl
+      alsa-utils
 
-    # Image viewer (hyprland mime defaults)
-    gthumb
-  ]) ++ [
-    swash
-  ];
+      # Image viewer (hyprland mime defaults)
+      gthumb
+    ])
+    ++ [
+      swash
+    ];
 
   xdg.dataFile."applications/org.gnome.Nautilus.desktop".source =
     "${nautilusDesktopWithExtensions}/share/applications/org.gnome.Nautilus.desktop";
@@ -301,7 +343,7 @@ in
       };
 
       decoration = {
-        rounding = 0;
+        rounding = 8;
 
         active_opacity = 1.0;
         inactive_opacity = 1.00;
@@ -432,10 +474,12 @@ in
         "ALT SHIFT, B, exec, qs ipc call bar toggleBluetooth"
         "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
         "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
-        "$mod, SPACE, exec, qs ipc call launcher toggle"
+        "$mod, SPACE, exec, vicinae toggle"
+        "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
+        "$mod, Tab, exec, qs ipc call expose toggle"
         "$mod, left, workspace, -1"
-        "ALT,Tab,cyclenext, next"
-        "ALT SHIFT,Tab,cyclenext, prev"
+        "ALT,Tab,exec, ${altTab} next"
+        "ALT SHIFT,Tab,exec, ${altTab} prev"
         "$mod, right, workspace, +1"
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
