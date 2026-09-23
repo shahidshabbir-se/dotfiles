@@ -77,6 +77,55 @@ in
 
   nixpkgs.config = {
     allowUnfree = true;
+    # android_sdk.accept_license = true;
+  };
+
+  nixpkgs.overlays = [
+    (
+      final: prev:
+      let
+        flags = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+        addFlagsToElectron =
+          drv:
+          if !(drv ? overrideAttrs) then
+            drv
+          else
+            drv.overrideAttrs (
+              old:
+              (prev.lib.optionalAttrs (old ? buildCommand && old ? passthru && old.passthru ? unwrapped) {
+                buildCommand =
+                  builtins.replaceStrings
+                    [ "makeWrapper \"${old.passthru.unwrapped}/libexec/electron/electron\" \"$out/bin/electron\"" ]
+                    [
+                      "makeWrapper \"${old.passthru.unwrapped}/libexec/electron/electron\" \"$out/bin/electron\" --add-flags \"${flags}\""
+                    ]
+                    old.buildCommand;
+              })
+              // (prev.lib.optionalAttrs (old ? preFixup) {
+                preFixup =
+                  builtins.replaceStrings
+                    [ "makeWrapper \"$out/libexec/electron/electron\" $out/bin/electron" ]
+                    [ "makeWrapper \"$out/libexec/electron/electron\" $out/bin/electron --add-flags \"${flags}\"" ]
+                    old.preFixup;
+              })
+            );
+      in
+      {
+        electron_39 = addFlagsToElectron prev.electron_39;
+        electron_40 = addFlagsToElectron prev.electron_40;
+        electron_41 = addFlagsToElectron prev.electron_41;
+        electron_42 = addFlagsToElectron prev.electron_42;
+        electron_43 = addFlagsToElectron prev.electron_43;
+        electron = final.electron_41;
+      }
+    )
+  ];
+
+  environment.sessionVariables = {
+    CHROME_EXTRA_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+    CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+    CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+    ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
   };
   programs = {
     # configuration.nix
@@ -104,8 +153,6 @@ in
   };
   services = {
     xserver = {
-      # programs.nix-ld.libraries = with pkgs; [
-      # ];
       videoDrivers = lib.mkDefault [ "amdgpu" ];
 
       enable = true;
@@ -491,6 +538,7 @@ in
       "docker"
       "audio"
       "kvm"
+      "adbusers"
       "input"
       "networkmanager"
     ];
@@ -539,6 +587,7 @@ in
     bubblewrap
     steam-run
     vulkan-tools
+    # android-tools
   ];
   virtualisation.docker.enable = true;
   virtualisation.docker.package = pkgs.docker_29;
@@ -577,11 +626,8 @@ in
         runHook postInstall
       '';
     })
-    pkgs.geist-font
     pkgs.nerd-fonts.symbols-only
     pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.geist-mono
-    pkgs.nerd-fonts.blex-mono
     pkgs.nerd-fonts.space-mono
     pkgs.noto-fonts
     pkgs.rubik
@@ -697,8 +743,8 @@ in
         "nix-command"
         "flakes"
       ];
-      # extra-substituters = [ "https://vicinae.cachix.org" ];
-      # extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
+      extra-substituters = [ "https://vicinae.cachix.org" ];
+      extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
     };
   };
 

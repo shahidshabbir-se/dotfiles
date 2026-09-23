@@ -6,13 +6,12 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  device,
-  ...
+{ config
+, pkgs
+, lib
+, inputs
+, device
+, ...
 }:
 
 let
@@ -136,9 +135,9 @@ let
   #   inherit pkgs lib;
   # };
 
-  zedPackage = import ../../modules/pkgs/zed.nix {
-    inherit pkgs lib;
-  };
+  #zedPackage = import ../../modules/pkgs/zed.nix {
+  #inherit pkgs lib;
+  #};
 
   # paseoPackage = import ../../modules/pkgs/paseo.nix {
   #   inherit pkgs lib;
@@ -148,6 +147,10 @@ let
     inherit pkgs lib;
     scale = device.display.scale;
   };
+
+  # limusicPackage = import ../../modules/pkgs/limusic.nix {
+  #   inherit pkgs lib;
+  # };
 
   zenBrowserPackage = inputs.zen-browser.packages.${system}.default;
 
@@ -178,24 +181,27 @@ let
     inherit pkgs lib;
   };
 
-  vscodeFhs = pkgs.symlinkJoin {
-    name = "vscode-fhs";
-
-    paths = [
-      pkgs.vscode-fhs
-    ];
-
-    buildInputs = [
-      pkgs.makeWrapper
-    ];
-
-    postBuild = ''
-      wrapProgram $out/bin/code \
-      --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
-      --add-flags "--force-color-profile=srgb" \
-      --add-flags "--enable-features=WaylandLinuxDrmSyncobj"
-    '';
-  };
+  # 2026.1 defaults to WLToolkit. On Hyprland, closing the last frame starts
+  # shutdown then deadlocks (idea.log: "IDE is being shut down" / "wait our
+  # own completion"). Force X11. QT xcb is for the emulator, not the IDE.
+  # androidStudioPackage =
+  #   let
+  #     studio = pkgs.android-studio.override {
+  #       forceWayland = false;
+  #       tiling_wm = true;
+  #     };
+  #   in
+  #   pkgs.symlinkJoin {
+  #     name = "android-studio";
+  #     paths = [ studio ];
+  #     nativeBuildInputs = [ pkgs.makeWrapper ];
+  #     postBuild = ''
+  #       wrapProgram $out/bin/android-studio \
+  #         --set QT_QPA_PLATFORM xcb \
+  #         --set QT_X11_NO_MITSHM 1 \
+  #         --add-flags "-Dawt.toolkit.name=XToolkit"
+  #     '';
+  #   };
 
   # ───────────────────────────────────────────────
   # ▶ Package Groups
@@ -204,11 +210,10 @@ let
     # codeCursorFhs
     # antigravityPackage
     # codexCliPackage
-    vscodeFhs
+    # limusicPackage
+
     # wezterm
     gcc
-    moon
-    jetbrains-toolbox
     git-filter-repo
     mpv
     gnumake
@@ -222,7 +227,8 @@ let
     onlyoffice-desktopeditors
     proton-vpn
     qbittorrent
-    zedPackage
+    # androidStudioPackage
+    # zedPackage
     # paseoPackage
     nautilus
     rustdesk-flutter
@@ -436,13 +442,15 @@ let
         type.string
       ])
       (
-        map (
-          e:
-          mkDictionaryEntry [
-            "file://${e.path}"
-            e.symbolic
-          ]
-        ) folderIconEntries
+        map
+          (
+            e:
+            mkDictionaryEntry [
+              "file://${e.path}"
+              e.symbolic
+            ]
+          )
+          folderIconEntries
       );
 
 in
@@ -496,7 +504,8 @@ in
       setNautilusFolderIcons = lib.hm.dag.entryAfter [
         "writeBoundary"
         "createProjectsWorkspace"
-      ] setNautilusFolderIconsScript;
+      ]
+        setNautilusFolderIconsScript;
 
     };
 
@@ -514,12 +523,21 @@ in
     sessionVariables = {
       AGENT_BROWSER_EXECUTABLE_PATH = "/etc/profiles/per-user/${username}/bin/brave";
 
+      CHROME_EXTRA_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+
       CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
 
       CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
 
+      ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+
       # Lutris 0.5.x still trips over newer protobuf Python bindings on NixOS.
       PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION = "python";
+
+      # ANDROID_HOME = "${homeDirectory}/Android/Sdk";
+      # ANDROID_SDK_ROOT = "${homeDirectory}/Android/Sdk";
+      # ANDROID_AVD_HOME = "${homeDirectory}/.android/avd";
+      # JAVA_HOME = pkgs.jdk21.home;
 
     };
   };
@@ -532,6 +550,11 @@ in
 
     configFile = {
       "chromium-flags.conf".text = ''
+        --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
+        --force-color-profile=srgb
+        --enable-features=WaylandLinuxDrmSyncobj
+      '';
+      "electron-flags.conf".text = ''
         --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
         --force-color-profile=srgb
         --enable-features=WaylandLinuxDrmSyncobj
@@ -549,7 +572,7 @@ in
       yazi.source = dotfileLink "config/yazi";
       eww.source = dotfileLink "config/eww";
       rofi.source = dotfileLink "config/rofi";
-      zed.source = dotfileLink "config/zed";
+      # zed.source = dotfileLink "config/zed";
 
       # "Cursor/User/settings.json".source = dotfileLink "config/cursor/settings.json";
     };
@@ -640,77 +663,70 @@ in
   };
 
   # ───────────────────────────────────────────────
-  # ▶ Vicinae (disabled)
+  # ▶ Vicinae
   # ───────────────────────────────────────────────
-  # programs.vicinae = {
-  #   enable = true;
-  #
-  #   systemd = {
-  #     enable = true;
-  #     autoStart = true;
-  #     environment = {
-  #       USE_LAYER_SHELL = 1;
-  #     };
-  #   };
-  #
-  #   extensions = with inputs.vicinae-extensions.packages.${system}; [
-  #     # awww-switcher
-  #     # wifi-commander
-  #     # bluetooth via store zip: vicinaeBluetoothStore
-  #     nix
-  #     port-killer
-  #     power-profile
-  #     process-manager
-  #   ];
-  #
-  #   settings = {
-  #     close_on_focus_loss = true;
-  #     consider_preedit = true;
-  #     pop_to_root_on_close = true;
-  #     favicon_service = "twenty";
-  #     search_files_in_root = true;
-  #
-  #     font.normal = {
-  #       size = 10.5;
-  #       family = "Outfit";
-  #     };
-  #
-  #     launcher_window.opacity = 0.7;
-  #
-  #     theme.dark = {
-  #       name = "matugen";
-  #       icon_theme = "Papirus-Dark";
-  #     };
-  #
-  #     # providers."@sovereign/vicinae-extension-awww-switcher-0".preferences = {
-  #     #   wallpaperPath = "${homeDirectory}/Pictures/Wallpapers";
-  #     #   colorGenTool = "none";
-  #     #   postCommand = "${homeDirectory}/dotfiles/config/matugen/run.sh \"\${wallpaper}\"";
-  #     # };
-  #   };
-  # };
-  #
-  # # Vicinae needs the live Hyprland/Wayland environment. If it starts before
-  # # graphical-session.target has the compositor env, it exits with a broken
-  # # Wayland connection and stays dead at login.
-  # systemd.user.services.vicinae = {
-  #   Unit = {
-  #     After = lib.mkForce [ "default.target" ];
-  #     PartOf = lib.mkForce [ ];
-  #   };
-  #
-  #   Service = {
-  #     Environment = [
-  #       "QT_QPA_PLATFORM=wayland"
-  #       "XDG_CURRENT_DESKTOP=Hyprland"
-  #       "XDG_SESSION_TYPE=wayland"
-  #     ];
-  #     Restart = lib.mkForce "always";
-  #     RestartSec = lib.mkForce 5;
-  #   };
-  #
-  #   Install.WantedBy = lib.mkForce [ "default.target" ];
-  # };
+  programs.vicinae = {
+    enable = true;
+
+    systemd = {
+      enable = true;
+      autoStart = true;
+      environment = {
+        USE_LAYER_SHELL = 1;
+      };
+    };
+
+    extensions = with inputs.vicinae-extensions.packages.${system}; [
+      # wifi-commander
+      # bluetooth via store zip: vicinaeBluetoothStore
+      nix
+      port-killer
+      power-profile
+      process-manager
+    ];
+
+    settings = {
+      close_on_focus_loss = true;
+      consider_preedit = true;
+      pop_to_root_on_close = true;
+      favicon_service = "twenty";
+      search_files_in_root = true;
+
+      font.normal = {
+        size = 10.5;
+        family = "SF Pro Display";
+      };
+
+      launcher_window.opacity = 0.7;
+
+      theme.dark = {
+        name = "matugen";
+        icon_theme = "Papirus-Dark";
+      };
+    };
+  };
+
+  # Vicinae needs the live Hyprland/Wayland environment. If it starts before
+  # graphical-session.target has the compositor env, it exits with a broken
+  # Wayland connection and stays dead at login.
+  systemd.user.services.vicinae = {
+    Unit = {
+      After = lib.mkForce [ "default.target" ];
+      PartOf = lib.mkForce [ ];
+    };
+
+    Service = {
+      Environment = [
+        "QT_QPA_PLATFORM=wayland"
+        "XDG_CURRENT_DESKTOP=Hyprland"
+        "XDG_SESSION_TYPE=wayland"
+      ];
+      Restart = lib.mkForce "always";
+      RestartSec = lib.mkForce 5;
+    };
+
+    Install.WantedBy = lib.mkForce [ "default.target" ];
+  };
 
   # Libadwaita and GTK applications use this preference for dark mode.
   dconf.settings = {
