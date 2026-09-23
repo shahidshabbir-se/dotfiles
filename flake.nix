@@ -45,12 +45,12 @@
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
-    # vicinae.url = "github:vicinaehq/vicinae";
-    #
-    # vicinae-extensions = {
-    #   url = "github:vicinaehq/extensions";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    vicinae.url = "github:vicinaehq/vicinae";
+
+    vicinae-extensions = {
+      url = "github:vicinaehq/extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # macOS
     nix-darwin = {
@@ -65,16 +65,15 @@
   # ▶ Outputs
   # ───────────────────────────────────────────────
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      home-manager,
-      spicetify-nix,
-      nix-darwin,
-      nix-homebrew,
-      zen-browser,
-      # vicinae,
-      ...
+    inputs@{ self
+    , nixpkgs
+    , home-manager
+    , spicetify-nix
+    , nix-darwin
+    , nix-homebrew
+    , zen-browser
+    , vicinae
+    , ...
     }:
     let
       inherit (nixpkgs) lib;
@@ -201,10 +200,10 @@
       # ▶ Shared Home Manager Config
       # ───────────────────────────────────────────────
       mkHomeManagerConfig =
-        {
-          device,
-          homeFile,
-          extraSharedModules ? [ ],
+        { device
+        , homeFile
+        , extraSharedModules ? [ ]
+        ,
         }:
         {
           home-manager = {
@@ -228,9 +227,9 @@
       # ▶ NixOS Helper
       # ───────────────────────────────────────────────
       mkNixos =
-        {
-          device,
-          hardwareConfig,
+        { device
+        , hardwareConfig
+        ,
         }:
         lib.nixosSystem {
           system = systems.linux;
@@ -243,13 +242,13 @@
             hardwareConfig
             ./configuration.nix
 
-            # vicinae.nixosModules.default
+            vicinae.nixosModules.default
             home-manager.nixosModules.home-manager
 
             (mkHomeManagerConfig {
               inherit device;
               homeFile = ./hosts/nix/home.nix;
-              # extraSharedModules = [ vicinae.homeManagerModules.default ];
+              extraSharedModules = [ vicinae.homeManagerModules.default ];
             })
           ];
         };
@@ -286,9 +285,9 @@
       # ▶ macOS Helper
       # ───────────────────────────────────────────────
       mkDarwin =
-        {
-          hostName,
-          device,
+        { hostName
+        , device
+        ,
         }:
         nix-darwin.lib.darwinSystem {
           system = systems.darwin;
