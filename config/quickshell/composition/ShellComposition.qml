@@ -1,11 +1,13 @@
 import QtQuick
 import Quickshell
+import qs.features.audio as AudioFeature
 import qs.features.bar as BarFeature
 import qs.features.hyprview as HyprviewFeature
 import qs.features.notifications as NotificationsFeature
 import qs.features.screenshot as ScreenshotFeature
 import qs.features.visualizer as VisualizerFeature
 import qs.features.volume as VolumeFeature
+import qs.features.weather as WeatherFeature
 import qs.features.wallpaper as WallpaperFeature
 
 Scope {
@@ -16,18 +18,43 @@ Scope {
         notificationCenterOpen: notifications.centerOpen
         notificationCount: notifications.unreadCount
         recording: screenshot.recording
+        audioOpen: audio.open
+        audioIcon: audio.outputIcon()
+        audioMuted: audio.outputMuted
+        weatherOpen: weather.open
+        weatherGlyph: weather.label
         orientation: Quickshell.env("BAR_ORIENTATION") === "vertical"
             ? Qt.Vertical
             : Qt.Horizontal
 
         onNotificationsClicked: notifications.toggleCenter()
         onRecordingStopClicked: screenshot.stopRecording()
+        onAudioToggleRequested: audio.toggle()
+        onAudioCloseRequested: audio.close()
+        onWeatherToggleRequested: weather.toggle()
+        onWeatherCloseRequested: weather.close()
         onPopupOpened: {
             notifications.closeCenter()
             wallpaper.close()
             screenshot.close()
             hyprview.close()
+            audio.close()
+            weather.close()
         }
+    }
+
+    AudioFeature.Audio {
+        id: audio
+
+        screen: bar.screen
+        barVertical: bar.vertical
+        barWidth: bar.implicitWidth
+    }
+
+    WeatherFeature.Weather {
+        id: weather
+
+        screen: bar.screen
     }
 
     VisualizerFeature.Visualizer {

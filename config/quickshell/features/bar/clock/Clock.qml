@@ -15,6 +15,11 @@ Item {
         id: playback
     }
 
+    // Left edge of the date text, which is centred in an item that is at least
+    // 160 wide. A popup that should sit under the *text* rather than the item
+    // needs this: the item's own left edge is further left than the text is.
+    readonly property real textLeft: (width - dateLabel.implicitWidth) / 2
+
     readonly property string musicText: {
         if (!playback.hasPlayer)
             return "Nothing playing"
@@ -88,10 +93,18 @@ Item {
     }
 
     function updateTime() {
-        dateLabel.text = Qt.formatDateTime(
-            new Date(),
-            vertical ? "MMM\nd\nh:mm\nap" : "ddd, MMM d · h:mm ap"
-        )
+        // Qt hands back the day name in the locale's own casing, which comes
+        // out lowercase here; the bar reads better capitalised.
+        const now = new Date()
+        const day = Qt.formatDateTime(now, "dddd")
+        const time = Qt.formatDateTime(now, vertical ? "MMM\nd\nh:mm\nap" : "h:mm ap")
+        if (vertical) {
+            dateLabel.text = time
+            return
+        }
+        // One centred read-out: day name, then the time. No separator glyph and
+        // a single space, so the two read as one value.
+        dateLabel.text = (day.charAt(0).toUpperCase() + day.slice(1)) + " " + time
     }
 
     onVerticalChanged: updateTime()

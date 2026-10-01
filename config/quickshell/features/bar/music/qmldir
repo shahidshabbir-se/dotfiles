@@ -8,3 +8,4 @@ NowPlayingHero 1.0 NowPlayingHero.qml
 PlaybackControls 1.0 PlaybackControls.qml
 TrackProgress 1.0 TrackProgress.qml
 VolumeControl 1.0 VolumeControl.qml
+VinylDisc 1.0 VinylDisc.qml

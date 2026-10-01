@@ -95,9 +95,10 @@ Item {
             color: Colors.surfaceContainerLow
             clip: true
 
+            // Same primary outline as the other popups.
             border {
-                width: Constants.borderWidth
-                color: Colors.surfaceContainerHighest
+                width: Constants.popupBorderWidth
+                color: Constants.popupBorderColor
             }
 
             ColumnLayout {

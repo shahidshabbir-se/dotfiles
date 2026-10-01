@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+# PipeWire backend for the bar audio panel.
+# JSON/plain text on stdout. Secrets never on argv.
+#
+#   output-sink           node.name of the *physical* sink behind the current
+#                         default output (resolves through a DSP sink such as a
+#                         speaker tuning or EasyEffects)
+#   set-default-output ID wpctl set-default for a node id
+#   set-default-input ID  wpctl set-default for a node id
+#   set-volume ID VALUE   wpctl set-volume for a node id (0..1 linear)
+#   set-mute ID 1|0       wpctl set-mute for a node id
+#
+# Volume and mute writes go through wpctl rather than being done in QML: writing
+# PwNodeAudio.volume from Quickshell is silently dropped on some nodes (a
+# bluetooth microphone here), while wpctl lands on the same node every time.
+# Reading stays in QML so the sliders still track live.
+set -euo pipefail
+export LC_ALL=C
+
+die() { printf 'qs-audio: %s\n' "$*" >&2; exit 1; }
+need() { command -v "$1" >/dev/null 2>&1 || die "missing dependency: $1"; }
+
+need wpctl
+
+usage() {
+    printf 'usage: qs-audio <output-sink|set-default-output|set-default-input|set-volume|set-mute> [args]\n' >&2
+    exit 2
+}
+
+# A real speaker/headset sink is backed by a device (ALSA card, bluetooth audio).
+# A DSP sink (tuning, EasyEffects) is not: it only reshapes another sink's input,
+# so the level we want is the one on the device behind it.
+is_physical_sink() {
+    jq -e --argjson id "$1" '
+        .[]
+        | select(.type == "PipeWire:Interface:Node" and .id == $id)
+        | .info.props
+        | (."media.class" == "Audio/Sink" and (."device.api" != null))
+    ' "$DUMP" >/dev/null
+}
+
+node_name() {
+    jq -r --argjson id "$1" '
+        .[]
+        | select(.type == "PipeWire:Interface:Node" and .id == $id)
+        | .info.props."node.name" // empty
+    ' "$DUMP" | head -n 1
+}
+
+# First node this node feeds (a DSP sink forwards into the sink behind it).
+downstream_node() {
+    jq -r --argjson id "$1" '
+        [ .[]
+          | select(.type == "PipeWire:Interface:Link")
+          | select(.info."output-node-id" == $id)
+          | .info."input-node-id" ]
+        | unique
+        | .[0] // empty
+    ' "$DUMP"
+}
+
+# `*` in the Sinks block marks the WirePlumber default. The tree drawing is
+# stripped first so the marker is field 1, and the section is recognised by its
+# trailing text rather than its box-drawing indent.
+default_sink_id() {
+    wpctl status | sed 's/[^ -~]//g' | awk '
+        /Sinks:$/ { section = 1; next }
+        /^[^ ]/ { section = 0 }
+        section && $1 == "*" { gsub(/\./, "", $2); print $2; exit }
+    '
+}
+
+resolve_physical_sink() {
+    local id="$1" hops=0
+    while [[ -n "$id" && $hops -lt 4 ]]; do
+        if is_physical_sink "$id"; then
+            node_name "$id"
+            return 0
+        fi
+        id="$(downstream_node "$id")"
+        hops=$((hops + 1))
+    done
+    return 1
+}
+
+cmd_output_sink() {
+    local id
+    id="$(default_sink_id)"
+    [[ -n "$id" ]] || exit 0
+    resolve_physical_sink "$id" || exit 0
+}
+
+cmd_set_default() {
+    local id="$1"
+    [[ "$id" =~ ^[0-9]+$ ]] || die "node id expected, got: ${id:-<empty>}"
+    wpctl set-default "$id" >/dev/null
+}
+
+cmd_set_volume() {
+    local id="$1" value="$2"
+    [[ "$id" =~ ^[0-9]+$ ]] || die "node id expected, got: ${id:-<empty>}"
+    # wpctl takes a percentage; the panel speaks linear 0..1.
+    [[ "$value" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "volume must be a number, got: ${value:-<empty>}"
+    wpctl set-volume "$id" "$(awk -v v="$value" 'BEGIN { printf "%d", v * 100 + 0.5 }')%" >/dev/null
+}
+
+cmd_set_mute() {
+    local id="$1" state="$2"
+    [[ "$id" =~ ^[0-9]+$ ]] || die "node id expected, got: ${id:-<empty>}"
+    case "$state" in
+        1|0) ;;
+        *) die "mute must be 1 or 0, got: ${state:-<empty>}" ;;
+    esac
+    wpctl set-mute "$id" "$state" >/dev/null
+}
+
+main() {
+    local sub="${1:-}"
+    case "$sub" in
+        output-sink)
+            need pw-dump
+            need jq
+            DUMP="$(mktemp)"
+            trap 'rm -f "$DUMP"' EXIT
+            pw-dump >"$DUMP" 2>/dev/null || die "pw-dump failed"
+            cmd_output_sink
+            ;;
+        set-default-output)
+            cmd_set_default "${2:-}"
+            ;;
+        set-default-input)
+            cmd_set_default "${2:-}"
+            ;;
+        set-volume)
+            cmd_set_volume "${2:-}" "${3:-}"
+            ;;
+        set-mute)
+            cmd_set_mute "${2:-}" "${3:-}"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+}
+
+main "$@"

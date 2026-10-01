@@ -43,6 +43,20 @@ QtObject {
     readonly property int bluetoothPopupWidth: 380
     readonly property int bluetoothPopupMaxHeight: 560
 
+    // Audio panel
+    readonly property int audioPopupWidth: 360
+    readonly property int audioPopupMaxHeight: 560
+
+    // Weather panel
+    readonly property int weatherPopupWidth: 420
+    readonly property int weatherPopupMaxHeight: 520
+
+    // Popup chrome — the outline every panel draws around its card. Kept here
+    // so the weight and the colour can be tuned in one place instead of in each
+    // panel's shell.
+    readonly property int popupBorderWidth: 2
+    readonly property color popupBorderColor: Colors.primary
+
     // Audio visualizer
     readonly property int visualizerHeight: 72
     readonly property real visualizerWidthRatio: 0.60

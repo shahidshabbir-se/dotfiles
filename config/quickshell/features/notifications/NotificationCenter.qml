@@ -176,8 +176,8 @@ PanelWindow {
         scale: Constants.popupFromScale + entrance.revealProgress * (1 - Constants.popupFromScale)
         transformOrigin: Item.TopRight
         clip: true
-        border.width: Constants.borderWidth
-        border.color: Colors.surfaceContainerHighest
+        border.width: Constants.popupBorderWidth
+        border.color: Constants.popupBorderColor
 
         Behavior on opacity {
             NumberAnimation {

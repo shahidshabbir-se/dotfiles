@@ -629,10 +629,9 @@ in
     pkgs.nerd-fonts.symbols-only
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.space-mono
+    pkgs.nerd-fonts.geist-mono
     pkgs.noto-fonts
-    pkgs.rubik
-    pkgs.icomoon-feather
-    pkgs.inter
+    pkgs.geist-font
     (pkgs.stdenvNoCC.mkDerivation {
       pname = "doto";
       version = "unstable";

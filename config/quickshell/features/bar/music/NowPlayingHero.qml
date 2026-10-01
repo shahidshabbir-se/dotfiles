@@ -11,6 +11,12 @@ ColumnLayout {
     required property bool entranceReady
     required property bool popupOpen
 
+    readonly property bool hasRealArtwork: root.playback.hasCurrentPlayback
+        && root.playback.hasPlayer
+        && !!root.playback.player
+        && !!root.playback.player.trackArtUrl
+        && String(root.playback.player.trackArtUrl).length > 0
+
     spacing: 0
 
     Text {
@@ -56,7 +62,7 @@ ColumnLayout {
         Layout.preferredHeight: Constants.musicArtworkSize
         Layout.alignment: Qt.AlignHCenter
         radius: width / 2
-        color: Colors.surfaceContainerHigh
+        color: "transparent"
         opacity: root.entranceReady ? 1 : 0
         scale: root.entranceReady ? 1 : 0.88
 
@@ -75,8 +81,15 @@ ColumnLayout {
             }
         }
 
+        VinylDisc {
+            visible: !root.hasRealArtwork
+            isPlaying: root.playback.isPlaying
+            hovered: discMouse.containsMouse
+        }
+
         Image {
             anchors.fill: parent
+            visible: root.hasRealArtwork
             source: root.playback.artworkSource
             sourceSize: Qt.size(
                 Constants.musicArtworkSize,
@@ -86,15 +99,23 @@ ColumnLayout {
             smooth: true
             mipmap: true
         }
+
+        MouseArea {
+            id: discMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.playback.togglePlaying()
+        }
     }
 
     RotationAnimator {
         target: artworkContainer
         from: 0
         to: 360
-        duration: 18000
+        duration: root.playback.isPlaying ? 18000 : 45000
         loops: Animation.Infinite
-        running: root.popupOpen && root.playback.isPlaying
+        running: root.popupOpen
     }
 
     Item {

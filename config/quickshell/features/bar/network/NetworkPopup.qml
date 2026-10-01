@@ -868,8 +868,10 @@ Item {
         radius: Constants.panelRadius
         color: Colors.surfaceContainerLow
         clip: true
-        border.width: Constants.borderWidth
-        border.color: Colors.surfaceContainerHighest
+        // The popup's own outline: primary, and tuned from Constants so the
+        // weight and colour live in one place.
+        border.width: Constants.popupBorderWidth
+        border.color: Constants.popupBorderColor
 
         Rectangle {
             anchors.fill: parent

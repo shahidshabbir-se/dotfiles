@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# BlueZ backend for the bar bluetooth panel.
+#
+#   connect    ADDR   org.bluez.Device1.Connect
+#   disconnect ADDR   org.bluez.Device1.Disconnect
+#   pair       ADDR   org.bluez.Device1.Pair
+#   forget     ADDR   org.bluez.Adapter1.RemoveDevice
+#   adapter            prints the adapter object path
+#
+# Actions go straight to the device's D-Bus object rather than through
+# Quickshell's Bluetooth.devices model. That model only tracks the *discovery*
+# set: BlueZ drops a device from it when the device goes out of range or when a
+# discovery run ends, and the shell's own keepalive restarts discovery on a
+# timer. The D-Bus object for a known device is created on demand and outlives
+# both, so an action issued while the row is still on screen still lands — and a
+# device that is invisible to `Bluetooth.devices` can still be connected, which
+# is what blueman does and what the panel could not do.
+#
+# Pairing still needs a bluetooth-agent to answer the PIN/passkey prompt; this
+# only issues the request.
+set -euo pipefail
+export LC_ALL=C
+
+die() { printf 'qs-bluetooth: %s\n' "$*" >&2; exit 1; }
+need() { command -v "$1" >/dev/null 2>&1 || die "missing dependency: $1"; }
+
+need busctl
+
+usage() {
+    printf 'usage: qs-bluetooth <connect|disconnect|pair|forget> <ADDRESS>\n' >&2
+    printf '       qs-bluetooth adapter\n' >&2
+    exit 2
+}
+
+# BlueZ names a device object after its address, with the separators turned
+# into underscores: DD:CD:23:0F:03:BB -> /org/bluez/hci0/dev_DD_CD_23_0F_03_BB.
+device_path() {
+    local address="${1:-}" adapter suffix
+    [[ "$address" =~ ^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$ ]] \
+        || die "address expected, got: ${address:-<empty>}"
+    adapter="$(adapter_path)"
+    suffix="${address//:/_}"
+    suffix="${suffix^^}"
+    printf '%s/dev_%s' "$adapter" "$suffix"
+}
+
+adapter_path() {
+    busctl --system tree org.bluez 2>/dev/null \
+        | tr ' ' '\n' \
+        | grep -o '^/org/bluez/hci[0-9]\+$' \
+        | head -n 1
+}
+
+cmd_adapter() {
+    adapter_path
+}
+
+cmd_device_method() {
+    local method="$1" address="$2" path
+    [[ -n "$address" ]] || usage
+    path="$(device_path "$address")"
+    busctl --system call org.bluez "$path" org.bluez.Device1 "$method" >/dev/null
+}
+
+cmd_forget() {
+    local address="${1:-}" path adapter
+    [[ -n "$address" ]] || usage
+    path="$(device_path "$address")"
+    adapter="$(adapter_path)"
+    [[ -n "$adapter" ]] || die "no bluetooth adapter found"
+    # Removing is an adapter operation, not a device one: BlueZ refuses the
+    # call while the device is connected, so disconnect first or let the panel
+    # sequence it the way it already does.
+    busctl --system call org.bluez "$adapter" \
+        org.bluez.Adapter1 RemoveDevice s "$path" >/dev/null
+}
+
+main() {
+    local sub="${1:-}"
+    case "$sub" in
+        connect)    cmd_device_method Connect    "${2:-}" ;;
+        disconnect) cmd_device_method Disconnect "${2:-}" ;;
+        pair)       cmd_device_method Pair       "${2:-}" ;;
+        forget)     cmd_forget                  "${2:-}" ;;
+        adapter)    cmd_adapter ;;
+        *)          usage ;;
+    esac
+}
+
+main "$@"

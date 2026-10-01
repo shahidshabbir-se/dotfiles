@@ -5,6 +5,7 @@ import QtQuick.Shapes
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import qs.features.weather as WeatherFeature
 import qs.shared.theme
 
 // v2/v3 pattern: one PanelWindow per Quickshell.screens entry.
@@ -19,6 +20,15 @@ Scope {
     property bool notificationCenterOpen: false
     property bool doNotDisturb: false
     property bool recording: false
+    // The audio panel is its own feature-owned window; the bar only tracks
+    // whether it is up (for the popup/hide logic) and owns its button.
+    property bool audioOpen: false
+    // Button glyph state, owned by the audio feature.
+    property string audioIcon: "󰕾"
+    property bool audioMuted: false
+    // Same for the weather feature, which owns its own window too.
+    property bool weatherOpen: false
+    property string weatherGlyph: ""
     readonly property bool vertical: orientation === Qt.Vertical
 
     property var primaryWindow: null
@@ -30,6 +40,12 @@ Scope {
     signal notificationsClicked()
     signal popupOpened()
     signal recordingStopClicked()
+    // The audio feature owns its own window, so the bar can only ask for it to
+    // open or close. audioOpen is wired back from the feature.
+    signal audioToggleRequested()
+    signal audioCloseRequested()
+    signal weatherToggleRequested()
+    signal weatherCloseRequested()
 
     function isUsableScreen(s) {
         if (!s)
@@ -61,6 +77,8 @@ Scope {
     function closePopups() {
         if (primaryWindow)
             primaryWindow.closePopups()
+        root.audioCloseRequested()
+        root.weatherCloseRequested()
     }
 
     function toggleNetwork() {
@@ -78,12 +96,20 @@ Scope {
             primaryWindow.toggleMusic()
     }
 
+    function toggleCalendar() {
+        if (primaryWindow)
+            primaryWindow.toggleCalendar()
+    }
+
     IpcHandler {
         target: "bar"
 
         function toggleNetwork(): void { root.toggleNetwork() }
         function toggleBluetooth(): void { root.toggleBluetooth() }
         function toggleMusic(): void { root.toggleMusic() }
+        function toggleAudio(): void { root.audioToggleRequested() }
+        function toggleCalendar(): void { root.toggleCalendar() }
+        function toggleWeather(): void { root.weatherToggleRequested() }
         function closePopups(): void { root.closePopups() }
     }
 
@@ -121,6 +147,8 @@ Scope {
             property bool notificationCenterOpen: root.notificationCenterOpen
             property bool doNotDisturb: root.doNotDisturb
             property bool recording: root.recording
+            property bool audioOpen: root.audioOpen
+            property bool weatherOpen: root.weatherOpen
             readonly property bool vertical: orientation === Qt.Vertical
 
             // macOS-style: hide over fullscreen, show when the cursor hits the edge.
@@ -128,11 +156,22 @@ Scope {
             // and monitor.activeWorkspace stay stale across switches.
             property bool fullscreen: false
             property bool fullscreenRevealed: false
-            readonly property bool popupsOpen: calendarWindow.visible
+
+            // Middle of the visible centre cluster — the date and time text
+            // through to the weather button — in window coordinates. Centring on
+            // the bar, or on the clock item (which is wider than its text), both
+            // put the popup left of the middle of what the user actually sees.
+            readonly property real centerClusterCenterX: bar.vertical
+                ? width / 2
+                : (clock.x + clock.textLeft + weatherButton.x + weatherButton.width) / 2
+
+            readonly property bool popupsOpen: calendarWindow.open
                 || musicWindow.open
                 || networkWindow.open
                 || bluetoothWindow.open
                 || notificationCenterOpen
+                || audioOpen
+                || weatherOpen
             readonly property bool showBar: !fullscreen || fullscreenRevealed || popupsOpen
             readonly property int edgeTrigger: 6
             readonly property int shownWidth: vertical
@@ -169,19 +208,36 @@ Scope {
             }
 
             function closePopups() {
-                calendarWindow.visible = false
+                calendarWindow.open = false
                 musicWindow.open = false
                 networkWindow.open = false
                 bluetoothWindow.open = false
+                root.audioCloseRequested()
+                root.weatherCloseRequested()
             }
 
-            function toggleAnchoredPopup(popup) {
-                const shouldOpen = !popup.visible
-                closePopups()
-                if (shouldOpen) {
-                    popup.visible = true
-                    root.popupOpened()
+            function toggleAudio() {
+                if (bar.audioOpen) {
+                    root.audioCloseRequested()
+                    return
                 }
+                closePopups()
+                // Announce before opening: popupOpened closes the other
+                // features, and the audio panel is what is opening here.
+                root.popupOpened()
+                root.audioToggleRequested()
+            }
+
+            function toggleCalendar() { toggleLayerPopup(calendarWindow) }
+
+            function toggleWeather() {
+                if (bar.weatherOpen) {
+                    root.weatherCloseRequested()
+                    return
+                }
+                closePopups()
+                root.popupOpened()
+                root.weatherToggleRequested()
             }
 
             function toggleLayerPopup(panel) {
@@ -410,9 +466,17 @@ Scope {
                         Layout.column: bar.vertical ? 0 : 4
                         Layout.row: bar.vertical ? 4 : 0
                         Layout.alignment: Qt.AlignCenter
-                        columns: bar.vertical ? 1 : 5
+                        columns: bar.vertical ? 1 : 6
                         columnSpacing: Constants.spacingXs
                         rowSpacing: Constants.spacingXs
+
+                        AudioButton {
+                            active: bar.audioOpen
+                            glyph: audioIcon
+                            muted: audioMuted
+
+                            onClicked: bar.toggleAudio()
+                        }
 
                         RecordingButton {
                             recording: bar.recording
@@ -455,41 +519,58 @@ Scope {
                 Clock {
                     id: clock
 
-                    anchors.centerIn: parent
+                    // Weather rides to the right of the clock rather than in
+                    // the right cluster: it is a read-out that belongs next to
+                    // the other ambient one, not another chrome button.
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
                     vertical: bar.vertical
 
-                    onClicked: bar.toggleAnchoredPopup(calendarWindow)
+                    onClicked: bar.toggleLayerPopup(calendarWindow)
+                }
+
+                WeatherButton {
+                    id: weatherButton
+
+                    active: bar.weatherOpen
+                    glyph: weatherGlyph
+
+                    // Horizontal bar: to the right of the clock. Vertical bar:
+                    // under it, which is the same edge in that orientation.
+                    //
+                    // The clock item is wider than its text (it holds a 160px
+                    // minimum for the marquee), so anchoring to the item's edge
+                    // left a gap several times the margin. Pull the button back
+                    // by that slack so the gap is the margin and nothing else —
+                    // except while the marquee is showing, which fills the item.
+                    anchors.left: bar.vertical ? undefined : clock.right
+                    anchors.top: bar.vertical ? clock.bottom : undefined
+                    anchors.leftMargin: bar.vertical
+                        ? 0
+                        : (clock.showMusic ? Constants.spacingMd : 8 - clock.textLeft)
+                    anchors.topMargin: bar.vertical ? Constants.spacingXs : 0
+                    anchors.verticalCenter: bar.vertical ? undefined : clock.verticalCenter
+
+                    onClicked: bar.toggleWeather()
                 }
             }
 
-            PopupWindow {
+            // The calendar is hosted the same way as the weather panel so both
+            // popups land in exactly the same place. Anchoring a PopupWindow to
+            // the clock item put the calendar off to one side: the anchor rect
+            // and its gravity do not place a popup the way "centre on item"
+            // reads, and the drift changed with the clock's width.
+            LayerPopup {
                 id: calendarWindow
 
-                anchor {
-                    item: clock
-                    rect.x: bar.vertical
-                        ? clock.width + (barBackground.width - clock.width) / 2
-                            + Constants.spacingMd
-                        : 0
-                    rect.y: bar.vertical
-                        ? 0
-                        : clock.height
-                            + (barBackground.height - clock.height) / 2
-                            + Constants.spacingMd
-                    rect.width: bar.vertical ? 1 : clock.width
-                    rect.height: bar.vertical ? clock.height : 1
-                    edges: bar.vertical ? Edges.Bottom | Edges.Right : Edges.Bottom
-                    gravity: bar.vertical ? Edges.Top | Edges.Right : Edges.Bottom
-                }
-
-                implicitWidth: calendar.width
-                implicitHeight: calendar.implicitHeight
-                color: "transparent"
-                grabFocus: true
+                centerContent: true
+                // Centre of the clock + weather button, not the middle of the bar.
+                hostCenterOffset: bar.centerClusterCenterX - barBackground.width / 2
 
                 CalendarPopup {
                     id: calendar
-                    open: calendarWindow.visible
+
+                    open: calendarWindow.open
                 }
             }
 
@@ -497,7 +578,19 @@ Scope {
                 id: layer
 
                 property bool open: false
+                // When true the popup does not own `open`: something else (a
+                // feature facade) does, and the popup asks it to close instead
+                // of writing to a bound property.
+                property bool externallyOpen: false
+                // Centre the content on the bar rather than aligning it to the
+                // bar's right edge.
+                property bool centerContent: false
+                // Shift of the centred host, for popups that should sit on the
+                // middle of the centre cluster rather than the middle of the bar.
+                property real hostCenterOffset: 0
                 default property alias content: host.data
+
+                signal closeRequested()
 
                 readonly property int contentTop: bar.vertical
                     ? Constants.spacingMd
@@ -535,14 +628,24 @@ Scope {
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-                    onClicked: layer.open = false
+                    onClicked: {
+                        if (layer.externallyOpen)
+                            layer.closeRequested()
+                        else
+                            layer.open = false
+                    }
                 }
 
                 Item {
                     id: keyCatcher
                     anchors.fill: parent
                     focus: layer.open
-                    Keys.onEscapePressed: layer.open = false
+                    Keys.onEscapePressed: {
+                        if (layer.externallyOpen)
+                            layer.closeRequested()
+                        else
+                            layer.open = false
+                    }
 
                     Connections {
                         target: layer
@@ -556,10 +659,12 @@ Scope {
                 Item {
                     id: host
                     anchors.top: parent.top
-                    anchors.right: bar.vertical ? undefined : parent.right
+                    anchors.horizontalCenter: layer.centerContent ? parent.horizontalCenter : undefined
+                    anchors.horizontalCenterOffset: layer.centerContent ? layer.hostCenterOffset : 0
+                    anchors.right: bar.vertical || layer.centerContent ? undefined : parent.right
                     anchors.left: bar.vertical ? parent.left : undefined
                     anchors.topMargin: layer.contentTop
-                    anchors.rightMargin: bar.vertical ? 0 : layer.contentRight
+                    anchors.rightMargin: bar.vertical || layer.centerContent ? 0 : layer.contentRight
                     anchors.leftMargin: bar.vertical ? layer.contentLeft : 0
                     width: childrenRect.width
                     height: childrenRect.height
@@ -593,6 +698,34 @@ Scope {
 
                 BluetoothPopup {
                     open: bluetoothWindow.open
+                }
+            }
+
+            // Weather centres on the clock, the same anchor the calendar popup
+            // uses, so the panel cannot drift away from the button that opened
+            // it. `open` is owned by the weather feature.
+            LayerPopup {
+                id: weatherWindow
+
+                open: bar.weatherOpen
+                externallyOpen: true
+                centerContent: true
+
+                onCloseRequested: root.weatherCloseRequested()
+
+                // Loaded, not declared: the panel reads the weather facade from
+                // its module, and the facade registers itself after this window
+                // is built. Loading it only once the facade exists keeps the
+                // panel's bindings from evaluating against a null facade.
+                Loader {
+                    active: !!WeatherFeature.WeatherRuntime.facade
+                    visible: weatherWindow.open
+
+                    sourceComponent: Component {
+                        WeatherFeature.WeatherPanel {
+                            open: weatherWindow.open
+                        }
+                    }
                 }
             }
         }

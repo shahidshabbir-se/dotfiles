@@ -1,0 +1,6 @@
+module qs.features.weather
+Weather 1.0 Weather.qml
+# Public: the bar hosts the panel so PopupWindow can anchor it to the clock.
+WeatherPanel 1.0 WeatherPanel.qml
+singleton WeatherLabels 1.0 WeatherLabels.qml
+singleton WeatherRuntime 1.0 WeatherRuntime.qml
