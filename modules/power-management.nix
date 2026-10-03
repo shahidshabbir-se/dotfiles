@@ -95,7 +95,9 @@ in
     description = "Apply the device power profile policy";
     after = [ "power-profiles-daemon.service" ];
     requires = [ "power-profiles-daemon.service" ];
-    wantedBy = [ "multi-user.target" ];
+    # Not wantedBy multi-user.target: power-profiles-daemon.service is ordered
+    # after multi-user.target, so wanting it from there is an ordering cycle.
+    # The udev rule below pulls this unit in instead.
     serviceConfig = {
       Type = "oneshot";
       ExecStart = applyPowerProfile;

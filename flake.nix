@@ -59,6 +59,11 @@
     };
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    # Tracks upstream master, so `nix flake update herdr` always lands the
+    # newest commit. Upstream's own docs recommend release tags for normal
+    # installs; master is their preview channel and can regress.
+    herdr.url = "github:herdrdev/herdr";
   };
 
   # ───────────────────────────────────────────────
@@ -73,6 +78,7 @@
     , nix-homebrew
     , zen-browser
     , vicinae
+    , herdr
     , ...
     }:
     let

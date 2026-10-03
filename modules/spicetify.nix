@@ -31,11 +31,11 @@ let
   # spicetify-nix can copy into Themes/Lucid/.
   lucidUserCss = pkgs.fetchurl {
     url = "https://spicetify-lucid.sanooj.uk/spice/user.css";
-    sha256 = "sha256-wO0L0O1tdcBfEXeBuZN6vG9wviDLucaYY71mYw/0eHI";
+    sha256 = "sha256-70N9VgIrroy+wDzmY2i5hgddOOVBtP4zyVT3mAB1qbo=";
   };
   lucidThemeJs = pkgs.fetchurl {
     url = "https://spicetify-lucid.sanooj.uk/spice/theme.js";
-    sha256 = "sha256-fnsCi48U7BO9XqxhTNi5KUHJC8FUQQKjnp3KdFJQdvk";
+    sha256 = "sha256-+GZJ+dqCG6wbKo0WMrZrDSplBNpH7r3LhMMa4JSYxRE=";
   };
   lucidColorIni = pkgs.fetchurl {
     url = "https://spicetify-lucid.sanooj.uk/spice/color.ini";

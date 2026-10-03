@@ -6,12 +6,13 @@
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config
-, pkgs
-, lib
-, inputs
-, device
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  device,
+  ...
 }:
 
 let
@@ -215,7 +216,6 @@ let
     # wezterm
     gcc
     git-filter-repo
-    mpv
     gnumake
     python3
   ];
@@ -259,7 +259,6 @@ let
 
   themePackages = with pkgs; [
     catppuccin-papirus-folders
-    corefonts
     gtkThemePackage
   ];
 
@@ -442,15 +441,13 @@ let
         type.string
       ])
       (
-        map
-          (
-            e:
-            mkDictionaryEntry [
-              "file://${e.path}"
-              e.symbolic
-            ]
-          )
-          folderIconEntries
+        map (
+          e:
+          mkDictionaryEntry [
+            "file://${e.path}"
+            e.symbolic
+          ]
+        ) folderIconEntries
       );
 
 in
@@ -504,8 +501,7 @@ in
       setNautilusFolderIcons = lib.hm.dag.entryAfter [
         "writeBoundary"
         "createProjectsWorkspace"
-      ]
-        setNautilusFolderIconsScript;
+      ] setNautilusFolderIconsScript;
 
     };
 

@@ -4,6 +4,7 @@
 
 # { pkgs, inputs, ... }:
 {
+  config,
   lib,
   pkgs,
   ...
@@ -111,12 +112,9 @@ in
             );
       in
       {
-        electron_39 = addFlagsToElectron prev.electron_39;
-        electron_40 = addFlagsToElectron prev.electron_40;
-        electron_41 = addFlagsToElectron prev.electron_41;
-        electron_42 = addFlagsToElectron prev.electron_42;
+        # nixpkgs' default `electron` is electron_43, so wrapping that one
+        # attribute is enough to give every electron-based app the HDR flags.
         electron_43 = addFlagsToElectron prev.electron_43;
-        electron = final.electron_41;
       }
     )
   ];
@@ -501,6 +499,15 @@ in
       enable = true;
       theme = "bgrt";
     };
+    # Keep ESP:/EFI/BOOT/BOOTX64.EFI in sync with the GRUB core that NixOS
+    # actually writes to ESP:/EFI/NixOS-boot/grubx64.efi.
+    #
+    # The firmware may boot the "UEFI OS" fallback entry, which points at
+    # \EFI\BOOT\BOOTX64.EFI, while both binaries share the module prefix
+    # (,gpt1)/grub. If the fallback core is older than the modules in that
+    # directory, GRUB dies with "error: symbol memcpy not found". This hits
+    # on every grub major bump (e.g. 2.12 -> 2.14) via `nix flake update`,
+    # because install-grub.pl only refreshes the loader-id path.
     loader = {
       # Use GRUB for dual-boot with Windows
       systemd-boot.enable = false;
@@ -770,5 +777,32 @@ in
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.05"; # Did you read the comment?
+
+  # Keep ESP:/EFI/BOOT/BOOTX64.EFI in sync with the GRUB core that NixOS writes
+  # to ESP:/EFI/NixOS-boot/grubx64.efi.
+  #
+  # The firmware may boot the "UEFI OS" fallback entry, which points at
+  # \EFI\BOOT\BOOTX64.EFI, while both binaries share the module prefix
+  # (,gpt1)/grub. If the fallback core is older than the modules in that
+  # directory, GRUB dies with "error: symbol memcpy not found". This hits on
+  # every grub major bump (e.g. 2.12 -> 2.14) via `nix flake update`, because
+  # install-grub.pl only refreshes the loader-id path.
+  system.activationScripts.syncGrubFallbackEfi = lib.mkIf config.boot.loader.grub.enable {
+    text = ''
+      grub_efi_dir=${config.boot.loader.efi.efiSysMountPoint}/EFI
+      if [ -d "$grub_efi_dir" ]; then
+        for src in "$grub_efi_dir"/NixOS-boot/grubx64.efi \
+                   "$grub_efi_dir"/nixos/grubx64.efi; do
+          if [ -f "$src" ]; then
+            dst="$grub_efi_dir/BOOT/BOOTX64.EFI"
+            if ! ${pkgs.coreutils}/bin/cmp -s "$src" "$dst"; then
+              echo "syncing GRUB fallback EFI: $src -> $dst"
+              ${pkgs.coreutils}/bin/cp -f "$src" "$dst" || echo "warning: failed to update $dst" >&2
+            fi
+          fi
+        done
+      fi
+    '';
+  };
 
 }

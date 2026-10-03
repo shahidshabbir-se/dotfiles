@@ -4,48 +4,16 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
 let
   inherit (pkgs.stdenv.hostPlatform) system;
 
-  herdrAssets = {
-    x86_64-linux = {
-      name = "herdr-linux-x86_64";
-      hash = "sha256-GKjcZfHC+khYhDRDVt6hz9kRxvBs9G+njhk/QIf026c=";
-    };
-    aarch64-linux = {
-      name = "herdr-linux-aarch64";
-      hash = "sha256-nI2yD7fnQnsTjVNnET8WIf/TGfL2XW8AniWUApEV8NI=";
-    };
-    x86_64-darwin = {
-      name = "herdr-macos-x86_64";
-      hash = "sha256-0MkgsqEmp0gJ+hSRQRyaCXpEeGysnCylG4GKmVWBzxY=";
-    };
-    aarch64-darwin = {
-      name = "herdr-macos-aarch64";
-      hash = "sha256-MrU98JhyYoBZx4mmnwKmuOKeFN3yZxFCHzRj9wwa7xc=";
-    };
-  };
-
-  herdrAsset = herdrAssets.${system} or (throw "herdr: no release asset for system ${system}");
-
-  herdr = pkgs.stdenvNoCC.mkDerivation rec {
-    pname = "herdr";
-    version = "0.9.3";
-    src = pkgs.fetchurl {
-      url = "https://github.com/herdrdev/herdr/releases/download/v${version}/${herdrAsset.name}";
-      inherit (herdrAsset) hash;
-    };
-    dontUnpack = true;
-    nativeBuildInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.autoPatchelfHook ];
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 "$src" "$out/bin/herdr"
-      runHook postInstall
-    '';
-  };
+  # Built from upstream master via the herdr flake input; bump with
+  # `nix flake update herdr`.
+  herdr = inputs.herdr.packages.${system}.default;
 
   fetchPlugin =
     {

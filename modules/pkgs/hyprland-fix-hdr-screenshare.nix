@@ -15,6 +15,19 @@ hyprlandPlugins.mkHyprlandPlugin (_: {
     hash = "sha256-t6Oe1vyegvE/4Un2QfXYC1Okb5v2X9W5IdKGz5slIDI=";
   };
 
+  # main.cpp pulls Hyprland internals in through `#define private public`, which
+  # stays active while aquamarine's headers pull in <chrono>/<sstream> and makes
+  # libstdc++'s basic_stringbuf::__xfer_bufptrs "redeclared with different
+  # access" — an error under GCC >= 15. Include those first so libstdc++ is
+  # parsed before the macro applies.
+  postPatch = ''
+    substituteInPlace main.cpp \
+      --replace-fail '#define private public' \
+        '#include <chrono>
+        #include <sstream>
+        #define private public'
+  '';
+
   nativeBuildInputs = [ pkg-config ];
 
   buildPhase = "make";

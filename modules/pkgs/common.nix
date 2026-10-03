@@ -78,7 +78,7 @@ with pkgs;
   # # Media
   # mpd
   # mpv
-  # yt-dlp
+  yt-dlp
 
   # Night Light
   redshift
