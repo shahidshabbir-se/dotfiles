@@ -36,7 +36,7 @@
       launcher_window.opacity = 0.7;
 
       theme.dark = {
-        name = "matugen";
+        name = "catppuccin-mocha";
         icon_theme = "Papirus-Dark";
       };
     };

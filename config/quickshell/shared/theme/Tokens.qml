@@ -2,7 +2,7 @@ pragma Singleton
 
 import QtQuick
 
-// Non-palette chrome. Colors.qml stays matugen-generated.
+// Non-palette chrome.
 QtObject {
     readonly property color whiteFaint: Qt.rgba(1, 1, 1, 0.032)
     readonly property color whiteSubtle: Qt.rgba(1, 1, 1, 0.045)

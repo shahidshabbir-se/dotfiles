@@ -36,7 +36,6 @@ let
     pavucontrol
     glycin-loaders
     libnotify
-    matugen
     unzip
     webp-pixbuf-loader
     time

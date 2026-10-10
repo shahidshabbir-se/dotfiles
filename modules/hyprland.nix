@@ -277,7 +277,6 @@ in
         "${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM NAUTILUS_4_EXTENSION_DIR && ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM NAUTILUS_4_EXTENSION_DIR"
         "pkill -x eww 2>/dev/null || true"
         "awww-daemon &"
-        "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "xdg-mime default vlc.desktop video/mp4"
@@ -540,8 +539,6 @@ in
     };
 
     extraConfig = ''
-      source = ${homeDirectory}/dotfiles/config/hypr/matugen-borders.conf
-
       gesture = 3, horizontal, workspace
 
       ${hdrMonitorBlock}

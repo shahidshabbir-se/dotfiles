@@ -1,3 +1,0 @@
-module IslandConfig
-singleton IslandConstants 1.0 IslandConstants.qml
-singleton Radius 1.0 Radius.qml
