@@ -11,35 +11,6 @@
 }:
 
 let
-  # Qylock "sword" SDDM theme — sparse fetch (~42 MiB), not the full ~1 GiB repo.
-  qylockSwordSrc = pkgs.fetchFromGitHub {
-    owner = "Darkkal44";
-    repo = "qylock";
-    rev = "db61a972b4b23728d9944a906e70029ca8a5899d";
-    hash = "sha256-pkodIJQPKaaFwsj/TbFuWIDm8RbvQPmB9tsS3fFMZCA=";
-    sparseCheckout = [ "themes/sword" ];
-  };
-
-  sddmQylockSword = pkgs.stdenvNoCC.mkDerivation {
-    pname = "sddm-qylock-sword";
-    version = qylockSwordSrc.rev;
-    src = qylockSwordSrc;
-    dontBuild = true;
-    nativeBuildInputs = [ pkgs.gnused ];
-    installPhase = ''
-      mkdir -p $out/share/sddm/themes/sword
-      cp -r $src/themes/sword/. $out/share/sddm/themes/sword/
-
-      # The session delegate is briefly null while SDDM populates the model.
-      substituteInPlace $out/share/sddm/themes/sword/Main.qml \
-        --replace-fail \
-          'sessionHelper.currentItem.sName' \
-          '(sessionHelper.currentItem ? sessionHelper.currentItem.sName : "Session")'
-    '';
-  };
-
-  bananaCursor = import ./modules/banana-cursor.nix { inherit pkgs; };
-
   nautilusMyComputerSrc = pkgs.fetchFromGitHub {
     owner = "yannmasoch";
     repo = "nautilus-my-computer";
@@ -68,9 +39,52 @@ let
         '';
       });
 
+  grubTheme = pkgs.catppuccin-grub.overrideAttrs (old: {
+    postInstall = (old.postInstall or "") + ''
+      rm "$out/background.png"
+      ${pkgs.gnused}/bin/sed -i \
+        '/^desktop-image:/d; /^desktop-image-scale-method:/d' "$out/theme.txt"
+    '';
+  });
+
 in
 
 {
+  programs = {
+    qylock = {
+      enable = true;
+      theme = "sword";
+      # Home Manager installs qylock-lock into the user's profile.
+      quickshell.enable = false;
+    };
+
+    # configuration.nix
+    localsend = {
+      enable = true;
+      openFirewall = true;
+      package = pkgs.localsend.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace lib/config/theme.dart \
+            --replace-fail "    fontFamily = null;" "    fontFamily = checkPlatform([TargetPlatform.linux]) ? 'SF Pro Display' : null;"
+        '';
+      });
+    };
+
+    dconf.enable = true;
+    nix-ld.enable = true;
+    zsh.enable = true;
+    gamemode.enable = true;
+
+    # Provides Steam's FHS runtime for Proton/umu pressure-vessel.
+    # Lutris can then run GE-Proton without the NixOS `bwrap: execvp true`
+    # failure caused by missing /usr/bin runtime tools.
+    steam.enable = true;
+    steam.extraCompatPackages = with pkgs; [ steam-run ];
+
+    hyprland.enable = true;
+    hyprland.xwayland.enable = true;
+  };
+
   imports = [
     # Hardware config is imported per-device from flake.nix
     ./modules/power-management.nix
@@ -118,36 +132,55 @@ in
       }
     )
   ];
+  environment = {
 
-  environment.sessionVariables = {
-    CHROME_EXTRA_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
-    CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
-    CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
-    ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
-  };
-  programs = {
-    # configuration.nix
-    localsend = {
-      enable = true;
-      openFirewall = true;
-      package = pkgs.localsend.overrideAttrs (old: {
-        postPatch = (old.postPatch or "") + ''
-          substituteInPlace lib/config/theme.dart \
-            --replace-fail "    fontFamily = null;" "    fontFamily = checkPlatform([TargetPlatform.linux]) ? 'SF Pro Display' : null;"
-        '';
-      });
+    sessionVariables = {
+      CHROME_EXTRA_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+      CHROMIUM_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+      CHROMIUM_USER_FLAGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
+      ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement --force-color-profile=srgb --enable-features=WaylandLinuxDrmSyncobj";
     };
 
-    dconf.enable = true;
-    nix-ld.enable = true;
-    zsh.enable = true;
-    gamemode.enable = true;
+    pathsToLink = [
+      "/share/applications"
+      "/share/xdg-desktop-portal"
+      "/share/nautilus-python"
+      "/share/glib-2.0"
+    ];
 
-    # Provides Steam's FHS runtime for Proton/umu pressure-vessel.
-    # Lutris can then run GE-Proton without the NixOS `bwrap: execvp true`
-    # failure caused by missing /usr/bin runtime tools.
-    steam.enable = true;
-    steam.extraCompatPackages = with pkgs; [ steam-run ];
+    systemPackages = with pkgs; [
+      openvpn
+      gamescope
+      lutris-unwrapped
+      winetricks
+      wineWow64Packages.staging
+      protonup-qt
+      mangohud
+      gst_all_1.gstreamer
+      gst_all_1.gst-plugins-base
+      gst_all_1.gst-plugins-good
+      gst_all_1.gst-plugins-bad
+      gst_all_1.gst-plugins-ugly
+      nautilus-python
+      nautilusMyComputer
+
+      # 32-bit Windows runtime libs required by wine/Proton (vulkan, opengl, gnutls, alsa).
+      # Without these lutris fails with "libGL.so.1 missing" / "libvulkan.so.1 missing"
+      # and pressure-vessel (umu) can't execvp coreutils like `true`.
+      pkgsi686Linux.libGL
+      pkgsi686Linux.vulkan-loader
+      pkgsi686Linux.gnutls
+      pkgsi686Linux.alsa-lib
+      pkgsi686Linux.freetype
+      pkgsi686Linux.glib.out
+      pkgsi686Linux.dbus.lib
+
+      # Bubblewrap is invoked by pressure-vessel/umu under GE-Proton.
+      bubblewrap
+      steam-run
+      vulkan-tools
+      # android-tools
+    ];
   };
   services = {
     xserver = {
@@ -155,27 +188,6 @@ in
 
       enable = true;
 
-      # i3 (X11 session) — disabled in favor of Hyprland
-      # windowManager.i3 = {
-      #   enable = true;
-      #   extraPackages = with pkgs; [
-      #     i3lock-color
-      #     i3status
-      #     numlockx
-      #     xclip
-      #     xsel
-      #     maim
-      #     xdotool
-      #     xorg.xrandr
-      #     arandr
-      #     autorandr
-      #     picom
-      #     feh
-      #     dunst
-      #     polybar
-      #     haskellPackages.greenclip
-      #   ];
-      # };
     };
     openssh.enable = true;
     tailscale.enable = true;
@@ -309,7 +321,6 @@ in
         autoNumlock = true;
         # X11 greeter: setupScript/xrdb actually run (Wayland SDDM ignores them).
         wayland.enable = false;
-        theme = "sword";
         setupScript = ''
           ${pkgs.xrdb}/bin/xrdb -merge - <<EOF
           Xcursor.theme: Banana
@@ -329,11 +340,6 @@ in
           };
         };
         extraPackages = [
-          sddmQylockSword
-          bananaCursor
-          pkgs.qt6.qt5compat
-          pkgs.qt6.qtmultimedia
-          pkgs.qt6.qtsvg
           pkgs.gst_all_1.gst-plugins-base
           pkgs.gst_all_1.gst-plugins-good
           pkgs.gst_all_1.gst-plugins-bad
@@ -499,38 +505,26 @@ in
       enable = true;
       theme = "bgrt";
     };
-    # Keep ESP:/EFI/BOOT/BOOTX64.EFI in sync with the GRUB core that NixOS
-    # actually writes to ESP:/EFI/NixOS-boot/grubx64.efi.
-    #
-    # The firmware may boot the "UEFI OS" fallback entry, which points at
-    # \EFI\BOOT\BOOTX64.EFI, while both binaries share the module prefix
-    # (,gpt1)/grub. If the fallback core is older than the modules in that
-    # directory, GRUB dies with "error: symbol memcpy not found". This hits
-    # on every grub major bump (e.g. 2.12 -> 2.14) via `nix flake update`,
-    # because install-grub.pl only refreshes the loader-id path.
     loader = {
-      # Use GRUB for dual-boot with Windows
       systemd-boot.enable = false;
       grub = {
         enable = true;
-        device = "nodev"; # For EFI systems
+        device = "nodev";
         efiSupport = true;
-        useOSProber = true; # Detect Windows automatically
-        theme = pkgs.catppuccin-grub.overrideAttrs (old: {
-          nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.imagemagick ];
-          installPhase = old.installPhase + ''
-            ${pkgs.imagemagick}/bin/magick ${./assets/grub.jpg} $out/background.png
-            ${pkgs.gnused}/bin/sed -i '/# Logo image/,/^}/d' $out/theme.txt
-          '';
-          # cp ${./assets/logo.png} $out/logo.png
-          # ${pkgs.imagemagick}/bin/magick ${./assets/profile.png} $out/logo.png
-        });
+        useOSProber = true;
+        theme = grubTheme;
         gfxmodeEfi = "auto";
         gfxpayloadEfi = "keep";
         splashImage = null;
       };
-      efi.canTouchEfiVariables = true;
-      efi.efiSysMountPoint = "/boot";
+
+      timeout = 10;
+
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+
     };
   };
 
@@ -558,44 +552,6 @@ in
     shell = pkgs.zsh;
   };
   home-manager.backupFileExtension = "bak";
-
-  environment.pathsToLink = [
-    "/share/applications"
-    "/share/xdg-desktop-portal"
-    "/share/nautilus-python"
-    "/share/glib-2.0"
-  ];
-
-  environment.systemPackages = with pkgs; [
-    openvpn
-    gamescope
-    lutris-unwrapped
-    winetricks
-    wineWow64Packages.staging
-    protonup-qt
-    mangohud
-    sddmQylockSword
-    bananaCursor
-    nautilus-python
-    nautilusMyComputer
-
-    # 32-bit Windows runtime libs required by wine/Proton (vulkan, opengl, gnutls, alsa).
-    # Without these lutris fails with "libGL.so.1 missing" / "libvulkan.so.1 missing"
-    # and pressure-vessel (umu) can't execvp coreutils like `true`.
-    pkgsi686Linux.libGL
-    pkgsi686Linux.vulkan-loader
-    pkgsi686Linux.gnutls
-    pkgsi686Linux.alsa-lib
-    pkgsi686Linux.freetype
-    pkgsi686Linux.glib.out
-    pkgsi686Linux.dbus.lib
-
-    # Bubblewrap is invoked by pressure-vessel/umu under GE-Proton.
-    bubblewrap
-    steam-run
-    vulkan-tools
-    # android-tools
-  ];
   virtualisation.docker.enable = true;
   virtualisation.docker.package = pkgs.docker_29;
   fonts = {
@@ -638,7 +594,6 @@ in
     pkgs.nerd-fonts.space-mono
     pkgs.nerd-fonts.geist-mono
     pkgs.noto-fonts
-    pkgs.geist-font
     (pkgs.stdenvNoCC.mkDerivation {
       pname = "doto";
       version = "unstable";
@@ -660,17 +615,6 @@ in
         runHook postInstall
       '';
     })
-    (pkgs.stdenvNoCC.mkDerivation {
-      name = "outfit";
-      src = pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/google/fonts/5174b3333331c966c38f4355d50b03ca1c1df2f9/ofl/outfit/Outfit%5Bwght%5D.ttf";
-        hash = "sha256-/HKHJz5mkpd24rpU8UT+aZCAvsKfYb9knXDYcUaK6t4=";
-      };
-      dontUnpack = true;
-      installPhase = ''
-        install -m 444 -Dt $out/share/fonts/truetype $src
-      '';
-    })
     (pkgs.stdenv.mkDerivation {
       name = "sf-pro-display";
       src = ./config/fonts/sf-pro-display;
@@ -679,31 +623,7 @@ in
         cp *.OTF $out/share/fonts/opentype
       '';
     })
-    (pkgs.stdenv.mkDerivation {
-      name = "cartograph-cf";
-      src = ./config/fonts/cartograph-cf;
-      installPhase = ''
-        mkdir -p $out/share/fonts/truetype
-        cp *.ttf $out/share/fonts/truetype
-      '';
-    })
-    # (pkgs.stdenvNoCC.mkDerivation {
-    #   pname = "ioskeley-mono-nerd-font";
-    #   version = "2.1.0";
-    #   src = pkgs.fetchzip {
-    #     url = "https://github.com/ahatem/IoskeleyMono/releases/download/v2.1.0/IoskeleyMono-NerdFont.zip";
-    #     hash = "sha256-b0mqhLeDT+uYPYiOKB+cxc5M1TtFkICKAmlcmW3IjDg=";
-    #     stripRoot = false;
-    #   };
-    #   installPhase = ''
-    #     mkdir -p $out/share/fonts/truetype
-    #     find . -name '*.ttf' -exec cp {} $out/share/fonts/truetype/ \;
-    #   '';
-    # })
   ];
-
-  programs.hyprland.enable = true;
-  programs.hyprland.xwayland.enable = true;
 
   xdg.portal = {
     enable = true;
@@ -791,16 +711,14 @@ in
     text = ''
       grub_efi_dir=${config.boot.loader.efi.efiSysMountPoint}/EFI
       if [ -d "$grub_efi_dir" ]; then
-        for src in "$grub_efi_dir"/NixOS-boot/grubx64.efi \
-                   "$grub_efi_dir"/nixos/grubx64.efi; do
-          if [ -f "$src" ]; then
-            dst="$grub_efi_dir/BOOT/BOOTX64.EFI"
-            if ! ${pkgs.coreutils}/bin/cmp -s "$src" "$dst"; then
-              echo "syncing GRUB fallback EFI: $src -> $dst"
-              ${pkgs.coreutils}/bin/cp -f "$src" "$dst" || echo "warning: failed to update $dst" >&2
-            fi
+        src="$grub_efi_dir/NixOS-boot/grubx64.efi"
+        if [ -f "$src" ]; then
+          dst="$grub_efi_dir/BOOT/BOOTX64.EFI"
+          if ! ${pkgs.diffutils}/bin/cmp -s "$src" "$dst"; then
+            echo "syncing GRUB fallback EFI: $src -> $dst"
+            ${pkgs.coreutils}/bin/cp -f "$src" "$dst" || echo "warning: failed to update $dst" >&2
           fi
-        done
+        fi
       fi
     '';
   };

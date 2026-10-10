@@ -47,6 +47,11 @@
 
     vicinae.url = "github:vicinaehq/vicinae";
 
+    qylock = {
+      url = "github:Darkkal44/qylock";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     vicinae-extensions = {
       url = "github:vicinaehq/extensions";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -78,6 +83,7 @@
     , nix-homebrew
     , zen-browser
     , vicinae
+    , qylock
     , herdr
     , ...
     }:
@@ -249,6 +255,7 @@
             ./configuration.nix
 
             vicinae.nixosModules.default
+            qylock.nixosModules.default
             home-manager.nixosModules.home-manager
 
             (mkHomeManagerConfig {
@@ -263,7 +270,6 @@
       # ▶ macOS Application Aliases
       # ───────────────────────────────────────────────
       darwinAliasPackages = with pkgsDarwin; [
-        # wezterm
         mkalias
       ];
 
@@ -299,9 +305,6 @@
           system = systems.darwin;
 
           modules = [
-            # ./modules/yabai.nix
-            # ./modules/skhd.nix
-
             {
               nixpkgs.hostPlatform = systems.darwin;
               nixpkgs.config.allowUnfree = true;
@@ -334,7 +337,6 @@
                       "/Users/${user}/Applications/Home Manager Apps/Spotify.app"
 
                       "${pkgsDarwin.ghostty-bin}/Applications/Ghostty.app"
-                      # "${pkgsDarwin.wezterm}/Applications/Wezterm.app"
                     ];
                   };
 
@@ -387,7 +389,6 @@
 
                 casks = [
                   "qbittorrent"
-                  # "droid"
                   "notunes"
                   "tailscale-app"
                   "betterdisplay"
