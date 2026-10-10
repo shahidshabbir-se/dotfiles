@@ -215,8 +215,7 @@ Scope {
     }
 
     function outputIcon() {
-        // Waybar's pulseaudio glyph set: the Material speaker icons render
-        // visually smaller in JetBrainsMono Nerd Font.
+        // Material speaker icons render visually smaller in JetBrainsMono Nerd Font.
         if (!hasOutput)
             return "󰝟"
         if (AudioLabels.isHeadphones(volumeSink))

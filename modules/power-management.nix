@@ -6,7 +6,7 @@
 }:
 
 let
-  power = device.power;
+  inherit (device) power;
   isLaptop = device.type == "laptop";
 
   applyPowerProfile = pkgs.writeShellScript "apply-power-profile" ''
@@ -67,56 +67,60 @@ let
 in
 {
   boot.resumeDevice = power.resumeDevice;
+  systemd = {
 
-  systemd.sleep.settings.Sleep = {
-    AllowSuspend = true;
-    AllowHibernation = true;
-    AllowSuspendThenHibernate = true;
-    HibernateDelaySec = power.hibernateDelay;
-    MemorySleepMode = "deep s2idle";
-  };
+    sleep.settings.Sleep = {
+      AllowSuspend = true;
+      AllowHibernation = true;
+      AllowSuspendThenHibernate = true;
+      HibernateDelaySec = power.hibernateDelay;
+      MemorySleepMode = "deep s2idle";
+    };
 
-  services.logind.settings.Login = {
-    HandlePowerKey = if isLaptop then "suspend-then-hibernate" else "poweroff";
-    HandleLidSwitch = if isLaptop then "suspend-then-hibernate" else "ignore";
-    HandleLidSwitchExternalPower = if isLaptop then "suspend-then-hibernate" else "ignore";
-    HandleLidSwitchDocked = "ignore";
-  };
+    services.power-profile-auto = {
+      description = "Apply the device power profile policy";
+      after = [ "power-profiles-daemon.service" ];
+      requires = [ "power-profiles-daemon.service" ];
+      # Not wantedBy multi-user.target: power-profiles-daemon.service is ordered
+      # after multi-user.target, so wanting it from there is an ordering cycle.
+      # The udev rule below pulls this unit in instead.
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = applyPowerProfile;
+      };
+    };
 
-  services.upower = lib.mkIf isLaptop {
-    usePercentageForPolicy = true;
-    percentageLow = 20;
-    percentageCritical = 10;
-    percentageAction = 5;
-    criticalPowerAction = "Hibernate";
-  };
-
-  systemd.services.power-profile-auto = {
-    description = "Apply the device power profile policy";
-    after = [ "power-profiles-daemon.service" ];
-    requires = [ "power-profiles-daemon.service" ];
-    # Not wantedBy multi-user.target: power-profiles-daemon.service is ordered
-    # after multi-user.target, so wanting it from there is an ordering cycle.
-    # The udev rule below pulls this unit in instead.
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = applyPowerProfile;
+    services.battery-charge-threshold = lib.mkIf isLaptop {
+      description = "Limit the ThinkPad battery charge level";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = applyChargeThreshold;
+      };
     };
   };
+  services = {
 
-  systemd.services.battery-charge-threshold = lib.mkIf isLaptop {
-    description = "Limit the ThinkPad battery charge level";
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = applyChargeThreshold;
+    logind.settings.Login = {
+      HandlePowerKey = if isLaptop then "suspend-then-hibernate" else "poweroff";
+      HandleLidSwitch = if isLaptop then "suspend-then-hibernate" else "ignore";
+      HandleLidSwitchExternalPower = if isLaptop then "suspend-then-hibernate" else "ignore";
+      HandleLidSwitchDocked = "ignore";
     };
-  };
 
-  services.udev.extraRules = ''
-    SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="?*", TAG+="systemd", ENV{SYSTEMD_WANTS}+="power-profile-auto.service"
-    ${lib.optionalString isLaptop ''SUBSYSTEM=="power_supply", KERNEL=="BAT*", ACTION=="add", TAG+="systemd", ENV{SYSTEMD_WANTS}+="battery-charge-threshold.service"''}
-  '';
+    upower = lib.mkIf isLaptop {
+      usePercentageForPolicy = true;
+      percentageLow = 20;
+      percentageCritical = 10;
+      percentageAction = 5;
+      criticalPowerAction = "Hibernate";
+    };
+
+    udev.extraRules = ''
+      SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="?*", TAG+="systemd", ENV{SYSTEMD_WANTS}+="power-profile-auto.service"
+      ${lib.optionalString isLaptop ''SUBSYSTEM=="power_supply", KERNEL=="BAT*", ACTION=="add", TAG+="systemd", ENV{SYSTEMD_WANTS}+="battery-charge-threshold.service"''}
+    '';
+  };
 
   environment.etc."systemd/system-sleep/power-policy" = {
     source = resumePowerPolicy;

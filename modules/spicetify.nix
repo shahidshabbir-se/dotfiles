@@ -13,7 +13,7 @@ let
 
   # Override Spotify package with correct hash for macOS only
   # spotifyOverride =
-  #   if pkgs.stdenv.isDarwin then
+  #   if pkgs.stdenv.hostPlatform.isDarwin then
   #     pkgs.spotify.overrideAttrs
   #       (oldAttrs: {
   #         src = pkgs.fetchurl {
@@ -58,7 +58,7 @@ in
   # Hyprland HDR/color management makes Electron applications render dim.
   # Use spicetify-nix's launch flag option so the flags are applied to the
   # final spiced Spotify package without replacing its derivation.
-  spotifyLaunchFlags = pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+  spotifyLaunchFlags = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
     --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
     --force-color-profile=srgb
     --enable-features=WaylandLinuxDrmSyncobj

@@ -69,11 +69,11 @@ in
       extraConfig = ''
         set -g @tokyo-night-tmux_window_id_style dsquare
         set -g @tokyo-night-tmux_show_datetime 0
-        ${lib.optionalString pkgs.stdenv.isDarwin ''
+        ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
           set -g @tokyo-night-tmux_show_hostname 0
 
         ''}
-        ${lib.optionalString (!pkgs.stdenv.isDarwin) ''
+        ${lib.optionalString (!pkgs.stdenv.hostPlatform.isDarwin) ''
           set -g @tokyo-night-tmux_show_hostname 0
         ''}
         set -g @tokyo-night-tmux_path_format relative
@@ -115,17 +115,17 @@ in
         set -g @resurrect-strategy-vim 'session'
         set -g @resurrect-strategy-nvim 'session'
         set -g @resurrect-capture-pane-contents 'on'
-        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~droid->droid" "~kilo->kilo" "~pi->pi" "~claude->claude"'
+        set -g @resurrect-processes 'nvim vim vi ~Vim "~nvim->nvim" "~opencode->opencode"  "~kilo->kilo" "~pi->pi" "~claude->claude"'
       ''
       + ''
         # Taken from: https://github.com/p3t33/nixos_flake/blob/5a989e5af403b4efe296be6f39ffe6d5d440d6d6/home/modules/tmux.nix
         resurrect_dir="$HOME/.cache/.tmux/resurrect"
         set -g @resurrect-dir $resurrect_dir
       ''
-      + lib.optionalString pkgs.stdenv.isDarwin ''
+      + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
         set -g @resurrect-hook-post-save-all 'sed -i "" "s|\tnvim\t:.*|\tnvim\t:nvim .|g; s|/etc/profiles/per-user/\$USER/bin/||g; s|/home/\$USER/.nix-profile/bin/||g; s|/nix/store/.*/bin/||g" $resurrect_dir/$(readlink $resurrect_dir/last)'
       ''
-      + lib.optionalString (!pkgs.stdenv.isDarwin) ''
+      + lib.optionalString (!pkgs.stdenv.hostPlatform.isDarwin) ''
         set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed "s| --cmd lua vim\\.g\\.[^ ]*||g; s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g; s|/nix/store/.*/bin/||g" $target | ${pkgs.moreutils}/bin/sponge $target'
       '';
     }

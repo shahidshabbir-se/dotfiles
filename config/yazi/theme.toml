@@ -402,8 +402,6 @@ files = [
 	{ name = "hyprsunset.conf", text = "", fg = "#008082" },
 	{ name = "i18n.config.js", text = "󰗊", fg = "#515987" },
 	{ name = "i18n.config.ts", text = "󰗊", fg = "#515987" },
-	{ name = "i3blocks.conf", text = "", fg = "#2e2f30" },
-	{ name = "i3status.conf", text = "", fg = "#2e2f30" },
 	{ name = "index.theme", text = "", fg = "#1e7b4a" },
 	{ name = "ionic.config.json", text = "", fg = "#355fa5" },
 	{ name = "Jenkinsfile", text = "", fg = "#9e2a26" },

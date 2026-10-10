@@ -7,7 +7,7 @@ Item {
     id: root
 
     property bool active: false
-    // One of the speaker glyphs from Waybar's pulseaudio set.
+    // Material Design speaker glyph.
     property string glyph: "󰕾"
     property bool muted: false
 

@@ -1,8 +1,3 @@
-#  ███████╗████████╗ █████╗ ██████╗ ███████╗██╗  ██╗██╗██████╗
-#  https://github.com/shahidshabbir-se/dotfiles
-
-{ ... }:
-
 {
   enable = true;
   enableZshIntegration = true;

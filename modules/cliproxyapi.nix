@@ -41,8 +41,8 @@ let
     '';
   };
 
-  inherit (pkgs.stdenv) isLinux;
-  inherit (pkgs.stdenv) isDarwin;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
 
 in
 {

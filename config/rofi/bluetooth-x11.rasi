@@ -1,5 +1,0 @@
-@import "bluetooth.rasi"
-
-* {
-    font: "JetBrainsMono NF Bold 12";
-}

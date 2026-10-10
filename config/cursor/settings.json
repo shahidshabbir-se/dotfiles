@@ -12,11 +12,11 @@
   "editor.formatOnSave": true,
   "terminal.integrated.fontSize": 16,
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "workbench.colorTheme": "7. NVIMㅤㅤ(Lynx Theme)",
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cursor.composer.conversationDensity": "detailed",
   "cursor.general.emailPrivacyEnabled": true,
@@ -24,7 +24,7 @@
   "cursor.cpp.enablePartialAccepts": true,
   "terminal.integrated.commandsToSkipShell": [
     "kilo-code.new.agentManagerOpen",
-    "kilo-code.new.agentManager.showTerminal",
+    "kilo-code.new.agentManager.showTerminal"
   ],
-  "kilo-code.new.agentWorkStyle": "skipped",
+  "kilo-code.new.agentWorkStyle": "skipped"
 }

@@ -41,5 +41,3 @@ awww img "$selected_path" \
             "$HOME/.cache/amadeus-bar/menu-banner.png"
     fi
 ) &
-
-pkill -x glava 2>/dev/null || true

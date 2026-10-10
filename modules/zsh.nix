@@ -220,12 +220,12 @@
         alias -s ts=$EDITOR
         alias -s rs=$EDITOR
         alias -s go=$EDITOR
-        alias -s html=${if pkgs.stdenv.isDarwin then "open" else "xdg-open"}  # open in default browser
+        alias -s html=${if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"}  # open in default browser
 
         # Clipboard helper — works on macOS, Wayland, and X11
         _clip() {
           ${
-            if pkgs.stdenv.isDarwin then
+            if pkgs.stdenv.hostPlatform.isDarwin then
               "pbcopy"
             else
               ''

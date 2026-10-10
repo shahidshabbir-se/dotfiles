@@ -205,7 +205,7 @@ in
     "wlogout/layout".text = ''
       {
           "label": "lock",
-          "action": "sh $HOME/.config/lock-screen/lock.sh",
+          "action": "qylock-lock sword",
           "text": "Lock",
           "keybind": "l"
       }

@@ -1199,7 +1199,6 @@ in
     herdrSpaceIcons
     herdrIconsFont
     pkgs.dtach
-    pkgs.python3
     pkgs.jq
   ];
 

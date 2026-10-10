@@ -1,5 +1,0 @@
-@import "shared.rasi"
-
-* {
-    font: "JetBrainsMono NF Bold 12";
-}

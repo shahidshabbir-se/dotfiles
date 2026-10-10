@@ -8,6 +8,8 @@
 let
   homeDirectory = config.home.homeDirectory;
   launchScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/launch.sh";
+  # Initial edge; the Quickshell bar persists subsequent drag-to-edge changes.
+  barEdge = "left";
 in
 {
   home.packages = with pkgs; [
@@ -23,7 +25,7 @@ in
     gst_all_1.gst-libav
   ];
 
-  # Live-editable shell config (same pattern as nvim/rofi/zed).
+  # Live-editable shell config (same pattern as nvim/zed).
   xdg.configFile.quickshell.source =
     config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
 
@@ -36,13 +38,12 @@ in
       Documentation = [ "https://quickshell.outfoxxed.me/" ];
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
-      Conflicts = [ "swaync.service" ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
     };
 
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.bash}/bin/bash ${launchScript}";
+      ExecStart = "${pkgs.bash}/bin/bash ${launchScript} ${barEdge}";
       Restart = "always";
       RestartSec = 2;
       TimeoutStopSec = 5;

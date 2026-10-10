@@ -53,20 +53,14 @@ let
     ;
 in
 {
-  # ───────────────────────────────────────────────
-  # ▶ Imports
-  # ───────────────────────────────────────────────
   imports = [
     ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/nvim.nix
-
-    # ../../modules/i3.nix
     ../../modules/hyprland.nix
     ../../modules/hypridle.nix
     ../../modules/wlogout.nix
     ../../modules/quickshell.nix
-
     ../../modules/cliproxyapi.nix
 
     (import ./mime.nix {
@@ -87,9 +81,6 @@ in
     (import ./theme.nix { inherit theme gtkThemePackage; })
   ];
 
-  # ───────────────────────────────────────────────
-  # ▶ Home Manager
-  # ───────────────────────────────────────────────
   home = {
     inherit username homeDirectory;
 
@@ -132,9 +123,6 @@ in
     };
   };
 
-  # ───────────────────────────────────────────────
-  # ▶ XDG
-  # ───────────────────────────────────────────────
   xdg = {
     enable = true;
 
@@ -161,9 +149,6 @@ in
 
   };
 
-  # ───────────────────────────────────────────────
-  # ▶ Programs
-  # ───────────────────────────────────────────────
   programs = {
     git = import ../../modules/git.nix {
       inherit
@@ -188,9 +173,7 @@ in
     bat = import ../../modules/bat.nix {
       inherit pkgs lib;
     };
-    zoxide = import ../../modules/zoxide.nix {
-      inherit pkgs;
-    };
+    zoxide = import ../../modules/zoxide.nix;
     atuin = import ../../modules/atuin.nix {
       inherit pkgs;
     };

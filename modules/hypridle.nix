@@ -1,6 +1,6 @@
 {
-  config,
   device,
+  inputs,
   lib,
   pkgs,
   ...
@@ -9,23 +9,15 @@
 let
   power = device.power;
   isLaptop = device.type == "laptop";
-  homeDirectory = config.home.homeDirectory;
   display = device.display;
   desktopRefreshRate = if device.type == "desktop" then 240 else display.refreshRate;
   desktopSdrRecoveryRule =
     "${display.connector},${toString display.width}x${toString display.height}@${toString desktopRefreshRate},auto,${toString display.scale},bitdepth,10,cm,srgb,vrr,0";
 
-  lockScreen = pkgs.writeShellScript "lock-screen" ''
+  qylockLock = inputs.qylock.packages.${pkgs.stdenv.hostPlatform.system}.qylock-quickshell;
+  lockScreen = pkgs.writeShellScript "qylock-lock" ''
     set -eu
-    locker=${lib.escapeShellArg "${homeDirectory}/.config/lock-screen/lock.sh"}
-
-    if [ ! -r "$locker" ]; then
-      ${pkgs.libnotify}/bin/notify-send --urgency=critical \
-        "Unable to lock" "Missing $locker; automatic sleep has been cancelled"
-      exit 1
-    fi
-
-    exec ${pkgs.bash}/bin/bash "$locker"
+    exec ${qylockLock}/bin/qylock-lock sword
   '';
 
   idleAction = pkgs.writeShellScript "hypridle-power-action" ''

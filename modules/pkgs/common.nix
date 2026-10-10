@@ -75,6 +75,10 @@ with pkgs;
   gitleaks
   openssl
 
+  gcc
+  git-filter-repo
+  gnumake
+
   # # Media
   # mpd
   # mpv
@@ -102,6 +106,31 @@ with pkgs;
 
   # Fonts / UI
   font-awesome_6
+
+  # Documents / PDF
+  # poppler-utils provides pdftoppm, pdftotext, pdfinfo, pdffonts, pdfimages
+  poppler-utils
+  qpdf
+  pdftk
+  tesseract
+  (python3.withPackages (
+    ps: with ps; [
+      pypdf
+      pdfplumber
+      reportlab
+      pdf2image
+      pypdfium2
+      pymupdf
+      pytesseract
+      python-docx
+      openpyxl
+      python-pptx
+      pandas
+      numpy
+      pillow
+      defusedxml
+    ]
+  ))
 
   # Benchmarking
   hyperfine

@@ -7,18 +7,9 @@
   # Home Manager links icon themes but not GTK themes, so publish the GTK theme
   # explicitly. Without this symlink GTK silently falls back to a default theme,
   # which ignores the accent colour set above.
-  xdg.dataFile."themes/${theme.gtk}" = {
-    source = "${gtkThemePackage}/share/themes/${theme.gtk}";
-    recursive = true;
-  };
-  xdg.dataFile."themes/${theme.gtk}-hdpi" = {
-    source = "${gtkThemePackage}/share/themes/${theme.gtk}-hdpi";
-    recursive = true;
-  };
-  xdg.dataFile."themes/${theme.gtk}-xhdpi" = {
-    source = "${gtkThemePackage}/share/themes/${theme.gtk}-xhdpi";
-    recursive = true;
-  };
+  xdg.dataFile."themes/${theme.gtk}".source = "${gtkThemePackage}/share/themes/${theme.gtk}";
+  xdg.dataFile."themes/${theme.gtk}-hdpi".source = "${gtkThemePackage}/share/themes/${theme.gtk}-hdpi";
+  xdg.dataFile."themes/${theme.gtk}-xhdpi".source = "${gtkThemePackage}/share/themes/${theme.gtk}-xhdpi";
 
   gtk = {
     enable = true;

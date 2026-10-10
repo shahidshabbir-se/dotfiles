@@ -71,9 +71,21 @@ let
   layerRuleNamespaces = [
     "logout_dialog"
     "wlogout"
+    "quickshell"
     "quickshell-bar"
     "quickshell-popup"
     "quickshell:expose"
+    "qs-bar"
+    "qs-launcher"
+    "qs-lockfade"
+    "qs-notify"
+    "qs-nowplaying"
+    "qs-osd"
+    "qs-passprompt"
+    "qs-pet"
+    "qs-theme"
+    "qs-toasts"
+    "qs-wifi"
     "vicinae"
   ];
 
@@ -84,13 +96,15 @@ let
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
-  layerRuleBlock = ns: ''
+  layerRuleBlock = ns: let
+    ignoreAlpha = if ns == "qs-bar" then "0.5" else "0.2";
+  in ''
     layerrule {
       name = blur-${lib.replaceStrings [ "_" ":" ] [ "-" "-" ] ns}
       match:namespace = ${ns}
       blur = on
       # Skip fully-transparent dismiss overlays; still blur glass panels (~0.74).
-      ignore_alpha = 0.2
+      ignore_alpha = ${ignoreAlpha}
     }'';
 
   layerRuleNoAnimBlock = ns: ''
@@ -137,7 +151,6 @@ let
     "float on, match:class ^(podman-tui)$"
     "size 1000 600, match:class ^(podman-tui)$"
     "center on, match:class ^(podman-tui)$"
-    "float on, match:class ^(Rofi)$"
     "opacity 1.00 override 1.00 override 1.00 override, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
     "force_rgbx on, match:class ^(com.mitchellh.ghostty)$, match:fullscreen 1"
     "suppress_event maximize on, match:class .*"
@@ -201,8 +214,6 @@ in
 
       # Launcher / Menus
       wofi
-      rofi
-      rofi-bluetooth
 
       # Screenshot (grim is pulled in by grimblast but keep it on PATH for scripts)
       grim
@@ -235,23 +246,6 @@ in
     "${nautilusDesktopWithExtensions}/share/applications/org.gnome.Nautilus.desktop";
 
   # ───────────────────────────────────────────────
-  # ▶ Swaync (Notification Center) — disabled; Quickshell owns FDO notifications
-  # Uncomment to restore swaync (and disable modules/quickshell.nix notifications).
-  # ───────────────────────────────────────────────
-  # services.swaync = import ./swaync.nix {
-  #   inherit pkgs homeDirectory;
-  # };
-  #
-  # # Only auto-start SwayNC for Hyprland sessions. i3 uses Dunst instead.
-  # systemd.user.services.swaync = {
-  #   Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
-  #   Service = {
-  #     Type = lib.mkForce "simple";
-  #     BusName = lib.mkForce "";
-  #   };
-  # };
-
-  # ───────────────────────────────────────────────
   # ▶ Hyprland Window Manager
   # ───────────────────────────────────────────────
   wayland.windowManager.hyprland = {
@@ -281,14 +275,9 @@ in
 
       exec-once = [
         "${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM NAUTILUS_4_EXTENSION_DIR && ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_QPA_PLATFORM NAUTILUS_4_EXTENSION_DIR"
-        "pkill -x dunst 2>/dev/null || true"
-        "pkill -x swaync 2>/dev/null || true"
-        "pkill -x glava 2>/dev/null || true"
-        "pkill -x waybar 2>/dev/null || true"
         "pkill -x eww 2>/dev/null || true"
         "awww-daemon &"
         "sleep 4 && sh ${homeDirectory}/dotfiles/config/matugen/from-cache.sh 2>/dev/null || true"
-        # "mpvpaper -o \'no-audio --loop-playlist hwdec=auto profile=low-latency vo=gpu\' \'*\' ${homeDirectory}/dotfiles/assets/login-background.mp4"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "xdg-mime default vlc.desktop video/mp4"
@@ -444,21 +433,18 @@ in
         "$mod SHIFT, E, exec, env NAUTILUS_4_EXTENSION_DIR=/run/current-system/sw/lib/nautilus/extensions-4 nautilus"
         ", F10, exec, ghostty --title=btop -e btop"
         "$mod, B, exec, hyprctl dispatch workspace 2 && $browser"
-        "$mod CTRL, B, exec, hyprctl dispatch workspace 5 && brave ${chromiumHdrFlags}"
+        "$mod CTRL, B, exec, hyprctl dispatch workspace 5 && chromium ${chromiumHdrFlags}"
         "$mod SHIFT, B, exec, hyprctl dispatch workspace 5 && $browser --private-window"
         # "$mod, X, exec, code --enable-features=UseOzonePlatform --ozone-platform=wayland"
-        # "$mod, D, exec, kitty --class=podman-tui -e podman-tui"
         "$mod, O, exec, obsidian"
         "$mod + alt, p, exec, shutdown -h 0"
         "$mod + alt, r, exec, reboot"
         "$mod + alt, q, exec, hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString desktopRefreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service"
-        "$mod SHIFT, L, exec, sh ${homeDirectory}/.config/lock-screen/lock.sh"
+        "$mod SHIFT, L, exec, qylock-lock sword"
         "$mod, M, exec, hyprctl dispatch workspace 6 && spotify"
-        # "$mod, C, exec, kitty -e tmux new-session -A -s nvim nvim"
         "$mod CTRL, S, exec, sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"
         "$mod, R, exec, kooha"
         "$mod SHIFT, R, exec, killall kooha"
-        # "$mod SHIFT, F, exec, kitty -e bash -c 'nitch -f; read -p \"\"'"
         "$mod, T, togglefloating,"
         "$mod, F, fullscreen, 0"
         "$mod, P, pseudo,"
