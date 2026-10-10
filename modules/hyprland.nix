@@ -65,8 +65,8 @@ let
   nvidiaDesktop = device.type == "desktop";
   desktopRefreshRate = if device.type == "desktop" then 240 else d.refreshRate;
   chromiumHdrFlags = "--enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime --enable-hdr";
-  cursorTheme = "Banana";
-  cursorSize = if device.type == "laptop" then 48 else 36;
+  cursorTheme = config.home.pointerCursor.name;
+  cursorSize = config.home.pointerCursor.size;
 
   layerRuleNamespaces = [
     "logout_dialog"
