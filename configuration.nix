@@ -190,7 +190,10 @@ in
 
     };
     openssh.enable = true;
-    tailscale.enable = true;
+    tailscale = {
+      enable = true;
+      extraSetFlags = [ "--operator=shahid" ];
+    };
 
     # networking.hostName = "nixos"; # Define your hostname.
     # Pick only one of the below networking options.
@@ -649,7 +652,19 @@ in
     sudo = {
       enable = true;
       wheelNeedsPassword = false;
+      extraRules = [
+        {
+          users = [ "shahid" ];
+          commands = [
+            {
+              command = "/run/current-system/sw/bin/tailscale";
+              options = [ "NOPASSWD" ];
+            }
+          ];
+        }
+      ];
     };
+    polkit.enable = true;
     rtkit.enable = true;
     pam.services.sddm.enableGnomeKeyring = true;
   };
