@@ -247,7 +247,7 @@
           system = systems.linux;
 
           specialArgs = {
-            inherit inputs device;
+            inherit inputs device user;
           };
 
           modules = [
