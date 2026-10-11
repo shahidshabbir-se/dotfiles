@@ -60,7 +60,7 @@ in
     ../../modules/hyprland.nix
     ../../modules/hypridle.nix
     ../../modules/wlogout.nix
-    ../../modules/quickshell.nix
+    # ../../modules/quickshell.nix
     ../../modules/cliproxyapi.nix
 
     (import ./mime.nix {

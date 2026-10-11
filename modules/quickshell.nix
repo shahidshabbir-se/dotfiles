@@ -8,8 +8,6 @@
 let
   homeDirectory = config.home.homeDirectory;
   launchScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/launch.sh";
-  # Initial edge; the Quickshell bar persists subsequent drag-to-edge changes.
-  barEdge = "left";
 in
 {
   home.packages = with pkgs; [
@@ -43,7 +41,7 @@ in
 
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.bash}/bin/bash ${launchScript} ${barEdge}";
+      ExecStart = "${pkgs.bash}/bin/bash ${launchScript}";
       Restart = "always";
       RestartSec = 2;
       TimeoutStopSec = 5;

@@ -1,3 +1,0 @@
-module qs.features.bar.bluetooth
-BluetoothButton 1.0 BluetoothButton.qml
-BluetoothPopup 1.0 BluetoothPopup.qml

@@ -1,9 +1,0 @@
-module qs.features.audio
-Audio 1.0 Audio.qml
-singleton AudioLabels 1.0 AudioLabels.qml
-internal AudioPanel 1.0 AudioPanel.qml
-internal AudioSlider 1.0 AudioSlider.qml
-internal AudioWindow 1.0 AudioWindow.qml
-internal SinkRow 1.0 SinkRow.qml
-internal SourceRow 1.0 SourceRow.qml
-internal StreamRow 1.0 StreamRow.qml

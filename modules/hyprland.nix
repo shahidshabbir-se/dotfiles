@@ -71,10 +71,10 @@ let
   layerRuleNamespaces = [
     "logout_dialog"
     "wlogout"
-    "quickshell"
-    "quickshell-bar"
-    "quickshell-popup"
-    "quickshell:expose"
+    # "quickshell"
+    # "quickshell-bar"
+    # "quickshell-popup"
+    # "quickshell:expose"
     "qs-bar"
     "qs-launcher"
     "qs-lockfade"
@@ -96,16 +96,19 @@ let
   ];
 
   # Hyprland 0.55+ layerrules need named blocks in extraConfig.
-  layerRuleBlock = ns: let
-    ignoreAlpha = if ns == "qs-bar" then "0.5" else "0.2";
-  in ''
-    layerrule {
-      name = blur-${lib.replaceStrings [ "_" ":" ] [ "-" "-" ] ns}
-      match:namespace = ${ns}
-      blur = on
-      # Skip fully-transparent dismiss overlays; still blur glass panels (~0.74).
-      ignore_alpha = ${ignoreAlpha}
-    }'';
+  layerRuleBlock =
+    ns:
+    let
+      ignoreAlpha = if ns == "qs-bar" then "0.5" else "0.2";
+    in
+    ''
+      layerrule {
+        name = blur-${lib.replaceStrings [ "_" ":" ] [ "-" "-" ] ns}
+        match:namespace = ${ns}
+        blur = on
+        # Skip fully-transparent dismiss overlays; still blur glass panels (~0.74).
+        ignore_alpha = ${ignoreAlpha}
+      }'';
 
   layerRuleNoAnimBlock = ns: ''
     layerrule {
@@ -454,11 +457,11 @@ in
         "ALT SHIFT, P, exec, $powerMenu"
         "ALT SHIFT, S, exec, qs ipc call screenshot toggle"
         # Quickshell bar popups
-        "$mod, N, exec, qs ipc call notifications toggleCenter"
-        "ALT SHIFT, N, exec, qs ipc call bar toggleNetwork"
-        "ALT SHIFT, B, exec, qs ipc call bar toggleBluetooth"
-        "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
-        "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
+        # "$mod, N, exec, qs ipc call notifications toggleCenter"
+        # "ALT SHIFT, N, exec, qs ipc call bar toggleNetwork"
+        # "ALT SHIFT, B, exec, qs ipc call bar toggleBluetooth"
+        # "ALT SHIFT, M, exec, qs ipc call bar toggleMusic"
+        # "ALT SHIFT, W, exec, qs ipc call wallpaper toggle"
         "$mod, SPACE, exec, vicinae toggle"
         "ALT, C, exec, vicinae 'vicinae://launch/clipboard/history?toggle=true'"
         "$mod, Tab, exec, qs ipc call expose toggle"
