@@ -33,10 +33,10 @@
         family = "SF Pro Display";
       };
 
-      launcher_window.opacity = 0.7;
+      launcher_window.opacity = 0.9;
 
       theme.dark = {
-        name = "catppuccin-mocha";
+        name = "tokyo-night";
         icon_theme = "Papirus-Dark";
       };
     };
