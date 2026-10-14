@@ -38,6 +38,13 @@ let
     hash = "sha256-3plrwzhZPD1jCsw2j/Mkjz80AMkSNzb+PUuf5+6CFaI=";
   };
 
+  clockSrc = fetchPlugin {
+    owner = "Tyru5";
+    repo = "herdr-clock";
+    rev = "2d5e45f0983ac73fcdbc242a7b1601f2be05c622";
+    hash = "sha256-pOhmBUYRAyAEZpGB4d9p1jf6eb4RNiGK4S3ZDEd/Uqw=";
+  };
+
   automaticRenameSrc = fetchPlugin {
     owner = "qu8n";
     repo = "herdr-automatic-rename";
@@ -117,6 +124,14 @@ let
     doCheck = false;
   };
 
+  clockBin = pkgs.rustPlatform.buildRustPackage {
+    pname = "herdr-clock";
+    version = "0.1.0";
+    src = clockSrc;
+    cargoHash = "sha256-FlLGUw1fBjOW5g0YHbCzEPluEim7iZwZGoCfSJkUdC0=";
+    doCheck = false;
+  };
+
   lastWorkspaceBin = pkgs.rustPlatform.buildRustPackage {
     pname = "herdr-last-workspace";
     version = "0.1.0";
@@ -142,6 +157,20 @@ let
     extraInstall = ''
       mkdir -p $out/target/release
       cp ${floaxBin}/bin/herdr-floax $out/target/release/herdr-floax
+    '';
+  };
+
+  clockRoot = mkPluginRoot {
+    src = clockSrc;
+    extraInstall = ''
+      mkdir -p $out/target/release
+      cp ${clockBin}/bin/herdr-clock $out/target/release/herdr-clock
+      substituteInPlace $out/herdr-plugin.toml \
+        --replace-fail 'placement = "popup"' 'placement = "overlay"' \
+        --replace-fail 'width = "60%"' "" \
+        --replace-fail 'height = "40%"' ""
+      substituteInPlace $out/scripts/show-clock.sh \
+        --replace-fail '--entrypoint clock' '--entrypoint clock --placement overlay'
     '';
   };
 
@@ -281,6 +310,47 @@ let
           owner = "Tyru5";
           repo = "herdr-floax";
           resolved_commit = "d6b283110c2e455fb3782595549895a840585e2b";
+        };
+      };
+    }
+    {
+      dir = "herdr-clock-b348ca23523e";
+      root = clockRoot;
+      json = {
+        plugin_id = "herdr-clock";
+        name = "herdr-clock";
+        version = "0.1.0";
+        min_herdr_version = "0.7.5";
+        description = "Pop up a big tmux-style clock showing the current local time; any key dismisses.";
+        enabled = true;
+        platforms = [
+          "linux"
+          "macos"
+        ];
+        actions = [
+          {
+            id = "show";
+            title = "Show clock";
+            description = "Pop up the current time (tmux clock-mode); press any key to dismiss.";
+            command = [
+              "bash"
+              "scripts/show-clock.sh"
+            ];
+          }
+        ];
+        panes = [
+          {
+            id = "clock";
+            title = "clock";
+            placement = "overlay";
+            command = [ "./target/release/herdr-clock" ];
+          }
+        ];
+        source = {
+          kind = "github";
+          owner = "Tyru5";
+          repo = "herdr-clock";
+          resolved_commit = "2d5e45f0983ac73fcdbc242a7b1601f2be05c622";
         };
       };
     }
@@ -1115,6 +1185,12 @@ let
     type = "plugin_action"
     command = "herdr-floax.toggle"
     description = "Toggle floating pane"
+
+    [[keys.command]]
+    key = "prefix+t"
+    type = "plugin_action"
+    command = "herdr-clock.show"
+    description = "Show clock"
 
     [[keys.command]]
     key = "ctrl+y"
