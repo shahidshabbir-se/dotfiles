@@ -177,9 +177,9 @@ in
     atuin = import ../../modules/atuin.nix {
       inherit pkgs;
     };
-    spicetify = import ../../modules/spicetify.nix {
-      inherit inputs lib pkgs;
-    };
+    # spicetify = import ../../modules/spicetify.nix {
+    #   inherit inputs lib pkgs;
+    # };
     ghostty = import ../../modules/ghostty.nix {
       inherit config device pkgs;
     };
