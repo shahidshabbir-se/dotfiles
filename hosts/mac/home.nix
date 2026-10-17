@@ -73,7 +73,7 @@ in
     aerospace = import ../../modules/aerospace.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
-    ghostty = import ../../modules/ghostty.nix { inherit config pkgs device; };
+    ghostty = import ../../modules/ghostty.nix { inherit config pkgs device inputs; };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

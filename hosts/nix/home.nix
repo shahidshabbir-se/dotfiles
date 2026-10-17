@@ -214,7 +214,7 @@ in
     #   inherit inputs lib pkgs;
     # };
     ghostty = import ../../modules/ghostty.nix {
-      inherit config device pkgs;
+      inherit config device pkgs inputs;
     };
   };
 

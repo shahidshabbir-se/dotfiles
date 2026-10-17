@@ -1,43 +1,27 @@
-#  ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗████████╗██╗   ██╗
-# ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝
-# ██║  ███╗███████║██║   ██║███████╗   ██║      ██║    ╚████╔╝
-# ██║   ██║██╔══██║██║   ██║╚════██║   ██║      ██║     ╚██╔╝
-# ╚██████╔╝██║  ██║╚██████╔╝███████║   ██║      ██║      ██║
-#  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝      ╚═╝
-# https://github.com/shahidshabbir-se/dotfiles
-
 {
   pkgs,
   lib ? pkgs.lib,
   device,
+  inputs,
   ...
 }:
 let
-  # Use device-specific font size, or fall back to scale-based calculation
-  fontSize =
-    if device ? fontSize then
-      device.fontSize
-    else if device.display.scale >= 2.0 then
-      17.0
-    else
-      14.0;
+  inherit (pkgs.stdenv.hostPlatform) system;
+  herdr = inputs.herdr.packages.${system}.default;
+  fontSize = device.fontSize or 14.0;
 in
 {
   enable = true;
   enableZshIntegration = true;
-
-  # pkg
   package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
 
   settings = {
     theme = "TokyoNight";
-    # theme = "Catppuccin Mocha";
-    # theme = "Rose Pine";
     title = " ";
 
     # Font
     font-family = [
-      "SpaceMono Nerd Font"
+      "JetBrainsMono Nerd Font"
       "Herdr Agent Icons Max"
     ];
     font-codepoint-map = [
@@ -57,16 +41,11 @@ in
     # Shell + command
     shell-integration-features = "no-cursor,sudo,title";
     command = [
-      "${pkgs.zsh}/bin/zsh"
-      "-c"
-      "herdr"
+      "${herdr}/bin/herdr"
     ];
 
     # Background
     background-opacity = 1.0;
-    background-image = "${../assets/starfield_3440x1440.png}";
-    background-image-opacity = 0.1;
-    background-image-fit = "cover";
 
     # Window
     window-inherit-working-directory = true;
@@ -90,10 +69,10 @@ in
 
     # Keybinds
     keybind = [
-      # Forward Shift+Enter as a Kitty/CSI-u modified Enter so pi can use it for new lines.
       "shift+enter=text:\\x1b[13;2u"
       "ctrl+shift+r=reload_config"
     ]
+
     # Ghostty eats alt/ctrl+1..9 for its own tabs. Pass them through to herdr.
     ++
       lib.concatMap
