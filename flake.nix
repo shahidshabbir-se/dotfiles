@@ -142,6 +142,7 @@
         pc = {
           name = "workstation";
           type = "desktop";
+          gpu.vendor = "nvidia";
 
           power = {
             acProfile = "performance";

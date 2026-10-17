@@ -57,8 +57,15 @@ in
     ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/nvim.nix
-    ../../modules/hyprland.nix
+
+    # Hyprland session
+    ../../modules/hyprland/core.nix
+    ../../modules/hyprland/display.nix
+    ../../modules/hyprland/bindings.nix
+    ../../modules/hyprland/rules.nix
+    ../../modules/hyprland/desktop.nix
     ../../modules/hypridle.nix
+
     ../../modules/wlogout.nix
     # ../../modules/quickshell.nix
     ../../modules/cliproxyapi.nix
