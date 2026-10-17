@@ -13,7 +13,7 @@ let
   desktopPackages = with pkgs; [
     chromium
     obsidian
-    vscode
+    anydesk
     # Headless office engine for the docx/xlsx/pptx agent skills (conversion,
     # formula recalc, tracked-change accept). "libreoffice-qt" is the smaller
     # build (Qt VCL only, no GTK plugins). The skills only need headless
