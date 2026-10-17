@@ -1,27 +1,17 @@
-#   ██████╗ ██╗████████╗
-#  ██╔════╝ ██║╚══██╔══╝
-#  ██║  ███╗██║   ██║   
-#  ██║   ██║██║   ██║   
-#  ╚██████╔╝██║   ██║   
-#   ╚═════╝ ╚═╝   ╚═╝   
-#  https://github.com/shahidshabbir-se/dotfiles
-
-{ userGmail
-, userGithub
-, homeDirectory
-, ...
-}: {
+{
+  userGmail,
+  userGithub,
+  homeDirectory,
+  ...
+}:
+{
   enable = true;
 
-  # ───────────────────────────────────────────────
-  # ▶ Extensions
-  # ───────────────────────────────────────────────
+  # Extensions
   lfs.enable = true;
   signing.format = "openpgp";
 
-  # ───────────────────────────────────────────────
-  # ▶ Git Identity & Configuration
-  # ───────────────────────────────────────────────
+  # Git Identity & Configuration
   settings = {
     user = {
       name = userGithub;
@@ -50,9 +40,7 @@
     rerere.enabled = true;
   };
 
-  # ───────────────────────────────────────────────
-  # ▶ Additional Git Includes
-  # ───────────────────────────────────────────────
+  # Additional Git Includes
   includes = [
     { path = "${homeDirectory}/.config/themes.gitconfig"; }
   ];
