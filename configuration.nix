@@ -569,55 +569,10 @@ in
     };
   };
   fonts.packages = [
-    (pkgs.stdenvNoCC.mkDerivation {
-      pname = "space-grotesk";
-      version = "2.0.0";
-
-      src = pkgs.fetchFromGitHub {
-        owner = "floriankarsten";
-        repo = "space-grotesk";
-        rev = "2.0.0";
-
-        # Replace this after the first rebuild gives you the correct hash.
-        hash = "sha256-frHmgB3CU+YACIMj0kdeAwrUoVAOZL2xj80fmoHdMao=";
-      };
-
-      installPhase = ''
-        runHook preInstall
-
-        mkdir -p $out/share/fonts/truetype
-        find . -type f \( -name "*.ttf" -o -name "*.otf" \) \
-          -exec cp {} $out/share/fonts/truetype/ \;
-
-        runHook postInstall
-      '';
-    })
     pkgs.nerd-fonts.symbols-only
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.space-mono
-    pkgs.geist-font
     pkgs.noto-fonts
-    (pkgs.stdenvNoCC.mkDerivation {
-      pname = "doto";
-      version = "unstable";
-
-      src = pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/google/fonts/main/ofl/doto/Doto%5BROND%2Cwght%5D.ttf";
-
-        hash = "sha256-b0/n03hTuR3zaY2qhM3i2+HJaV2IyYbmUQE0kQM31CY=";
-      };
-
-      dontUnpack = true;
-
-      installPhase = ''
-        runHook preInstall
-
-        install -Dm444 "$src" \
-          "$out/share/fonts/truetype/Doto.ttf"
-
-        runHook postInstall
-      '';
-    })
     (pkgs.stdenv.mkDerivation {
       name = "sf-pro-display";
       src = ./config/fonts/sf-pro-display;
