@@ -133,6 +133,32 @@ in
   xdg = {
     enable = true;
 
+    desktopEntries = {
+      microsoft-word = {
+        name = "Microsoft Word";
+        icon = "solstice-microsoft-365-word";
+        exec = "chromium --app=https://word.cloud.microsoft/";
+        terminal = false;
+        categories = [ "Office" "WordProcessor" ];
+      };
+
+      microsoft-excel = {
+        name = "Microsoft Excel";
+        icon = "solstice-microsoft-365-excel";
+        exec = "chromium --app=https://excel.cloud.microsoft/";
+        terminal = false;
+        categories = [ "Office" "Spreadsheet" ];
+      };
+
+      microsoft-powerpoint = {
+        name = "Microsoft PowerPoint";
+        icon = "solstice-microsoft-365-powerpoint";
+        exec = "chromium --app=https://powerpoint.cloud.microsoft/";
+        terminal = false;
+        categories = [ "Office" "Presentation" ];
+      };
+    };
+
     configFile = {
       "chromium-flags.conf".text = ''
         --disable-features=WaylandWpColorManagerV1,WaylandColorManagement
