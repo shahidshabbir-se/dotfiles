@@ -118,7 +118,6 @@ in
         tmp
       '';
       ".p10k.zsh".source = ../../config/p10k.zsh;
-      ".zsh/aliases".source = dotfileLink "config/zsh/aliases";
     };
 
     sessionVariables = {

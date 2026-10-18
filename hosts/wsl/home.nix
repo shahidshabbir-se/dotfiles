@@ -27,7 +27,9 @@ let
   npmGlobal = "${homeDirectory}/.npm-global";
 in
 {
-  imports = [ ../../modules/shell-paths.nix ];
+  imports = [
+    ../../modules/shell-paths.nix
+  ];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -69,7 +71,7 @@ in
     ];
 
     activation.linkDotfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "${homeDirectory}/.config" "${homeDirectory}/.zsh"
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "${homeDirectory}/.config"
 
       backup_if_real_path() {
         target="$1"
@@ -80,11 +82,9 @@ in
 
       backup_if_real_path "${homeDirectory}/.config/nvim"
       # backup_if_real_path "${homeDirectory}/.config/yazi"
-      backup_if_real_path "${homeDirectory}/.zsh/aliases"
 
       $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/nvim" "${homeDirectory}/.config/nvim"
       # $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/yazi" "${homeDirectory}/.config/yazi"
-      $DRY_RUN_CMD ${pkgs.coreutils}/bin/ln -sfnT "${dotfilesDirectory}/config/zsh/aliases" "${homeDirectory}/.zsh/aliases"
 
     '';
   };

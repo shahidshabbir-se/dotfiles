@@ -8,14 +8,7 @@
 
 {
   enable = true;
-
-  # ───────────────────────────────────────────────
-  # ▶ Enable integration with Zsh shell
-  # ───────────────────────────────────────────────
   enableZshIntegration = true;
-
-  # ───────────────────────────────────────────────
-  # ▶ Extra Zoxide options (e.g., run a command after jump)
-  # ───────────────────────────────────────────────
+  # Extra Zoxide options (e.g., run a command after jump)
   options = [ "--cmd cd" ];
 }
