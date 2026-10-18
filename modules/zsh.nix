@@ -203,7 +203,7 @@ in
 
     # File-extension aliases
     alias -s json=jless
-    alias -s md=bat
+    alias -s md=leaf
     alias -s txt=bat
     alias -s log=bat
     alias -s py=$EDITOR
@@ -214,6 +214,13 @@ in
     alias -s sh=$EDITOR
     alias -s nix=$EDITOR
     alias -s html=${if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"}
+
+    # Pick a Markdown file and replace fzf with Leaf.
+    fmd() {
+      setopt localoptions pipefail
+      fd --type f --extension md --print0 . "$@" |
+        fzf --read0 --no-multi --bind 'enter:become(leaf -- {})'
+    }
 
     # Clipboard: macOS, X11, Wayland
     _clip() {

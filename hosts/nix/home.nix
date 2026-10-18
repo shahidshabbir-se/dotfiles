@@ -57,6 +57,7 @@ in
     ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/shell-paths.nix
+    ../../modules/leaf.nix
     ../../modules/nvim.nix
 
     # Hyprland session

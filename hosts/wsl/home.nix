@@ -29,6 +29,7 @@ in
 {
   imports = [
     ../../modules/shell-paths.nix
+    ../../modules/leaf.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
