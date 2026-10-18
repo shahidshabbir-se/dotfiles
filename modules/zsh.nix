@@ -354,35 +354,40 @@ in
     bindkey '^[o' execute-named-cmd
     bindkey '^F' autosuggest-accept
 
-    # Ctrl+X Ctrl+E edits the command in $EDITOR
+    # Ctrl+G edits the command in $EDITOR
     autoload -Uz edit-command-line
     zle -N edit-command-line
-    bindkey '^X^E' edit-command-line
-    bindkey '^_' undo
+    bindkey '^G' edit-command-line
+    bindkey '^Ou' undo
     bindkey ' ' magic-space
+
+    # Ctrl+O is a prefix, not a standalone history action.
+    bindkey -r '^O'
 
     # Custom widgets
     function clear-screen-and-scrollback() {
-      echoti civis >"$TTY"
-      printf '%b' '\e[H\e[2J\e[3J' >"$TTY"
-      echoti cnorm >"$TTY"
-      zle redisplay
+      zle clear-screen
+      printf '%b' '\e[3J' >"$TTY"
     }
     zle -N clear-screen-and-scrollback
-    bindkey '^X^L' clear-screen-and-scrollback
+    bindkey '^Ol' clear-screen-and-scrollback
 
     function copy-buffer-to-clipboard() {
-      echo -n "$BUFFER" | _clip
-      zle -M "Copied to clipboard"
+      if printf '%s' "$BUFFER" | _clip; then
+        zle -M "Copied to clipboard"
+      else
+        zle -M "Clipboard copy failed"
+        return 1
+      fi
     }
     zle -N copy-buffer-to-clipboard
-    bindkey '^X^C' copy-buffer-to-clipboard
+    bindkey '^Oc' copy-buffer-to-clipboard
 
-    # Git snippets (Ctrl+X prefix)
-    bindkey -s '^Xgc' 'git commit -m ""\C-b'
-    bindkey -s '^Xgp' 'git push origin '
-    bindkey -s '^Xgs' 'git status\n'
-    bindkey -s '^Xgl' 'git log --oneline -n 10\n'
+    # Git snippets (Ctrl+O prefix)
+    bindkey -s '^Ogc' 'git commit -m ""\C-b'
+    bindkey -s '^Ogp' 'git push origin '
+    bindkey -s '^Ogs' 'git status\n'
+    bindkey -s '^Ogl' 'git log --oneline -n 10\n'
 
     # History search
     if (( $+commands[atuin] )); then
