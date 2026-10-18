@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -13,12 +14,10 @@ in
       pkgs.nodejs_24
       pkgs.bun
     ];
-    file.".npmrc".text = ''
-      prefix=${npmGlobal}
-    '';
-    sessionVariables = {
-      PATH = "${npmGlobal}/bin:$PATH";
-    };
-    file."${npmGlobal}/.keep".text = "";
+    sessionVariables.PATH = "${npmGlobal}/bin:$PATH";
   };
+
+  home.activation.setNpmGlobalPrefix = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ${pkgs.nodejs_24}/bin/npm config set "prefix=${npmGlobal}"
+  '';
 }
