@@ -292,24 +292,32 @@ in
       python3 -c 'import secrets, string; print("".join(secrets.choice(string.ascii_letters + string.digits + "!@#$%^&*()_+-=") for _ in range(32)))' | _clip
     }
 
+    # Keep fzf in foreground pipelines; capture via $(...) breaks terminal input in Herdr.
     fkill() {
+      setopt localoptions pipefail
       local pid
-      pid=$(ps -ef | command sed 1d | fzf -m --header='[kill:process]' --preview-window=hidden | awk '{print $2}')
-      if [ "x$pid" != "x" ]; then
-        echo $pid | xargs kill -''${1:-9}
-      fi
+      ps -ef | command sed 1d |
+        fzf -m --header='[kill:process]' --preview-window=hidden |
+        awk '{print $2}' |
+        while IFS= read -r pid; do
+          kill -"''${1:-9}" -- "$pid"
+        done
     }
 
     fdock() {
-      local container
-      container=$(docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}' | fzf --header-lines=1 --header='[docker:container]' --preview-window=hidden) &&
-      echo $container | awk '{print $1}'
+      setopt localoptions pipefail
+      docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}' |
+        fzf --header-lines=1 --header='[docker:container]' --preview-window=hidden |
+        awk '{print $1}'
     }
 
     fdlog() {
+      setopt localoptions pipefail
       local container
-      container=$(docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}' | fzf --header-lines=1 --header='[docker:logs]' --preview-window=hidden | awk '{print $1}') &&
-      [ -n "$container" ] && docker logs -f "$container"
+      docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}' |
+        fzf --header-lines=1 --header='[docker:logs]' --preview-window=hidden |
+        awk '{print $1}' |
+        IFS= read -r container && docker logs -f "$container"
     }
 
     fenv() {
@@ -321,9 +329,11 @@ in
     }
 
     fz() {
+      setopt localoptions pipefail
       local dir
-      dir=$(zoxide query -l | fzf --preview 'eza --color=always --icons=always {}' --header='[zoxide:jump]') &&
-      cd "$dir"
+      zoxide query -l |
+        fzf --preview 'eza --color=always --icons=always {}' --header='[zoxide:jump]' |
+        IFS= read -r dir && cd "$dir"
     }
 
     # Keybindings
