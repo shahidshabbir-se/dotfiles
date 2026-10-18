@@ -25,24 +25,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # flake-utils.url = "github:numtide/flake-utils";
-    #
-    # codex-desktop-linux = {
-    #   url = "github:ilysenko/codex-desktop-linux";
-    #   inputs = {
-    #     nixpkgs.follows = "nixpkgs";
-    #     flake-utils.follows = "flake-utils";
-    #   };
-    # };
-    #
-    # codex-cli-nix = {
-    #   url = "github:sadjow/codex-cli-nix/main";
-    #   inputs = {
-    #     nixpkgs.follows = "nixpkgs";
-    #     flake-utils.follows = "flake-utils";
-    #   };
-    # };
-
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
     vicinae.url = "github:vicinaehq/vicinae";
@@ -65,9 +47,6 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
-    # Tracks upstream master, so `nix flake update herdr` always lands the
-    # newest commit. Upstream's own docs recommend release tags for normal
-    # installs; master is their preview channel and can regress.
     herdr.url = "github:herdrdev/herdr";
   };
 
@@ -75,17 +54,18 @@
   # ▶ Outputs
   # ───────────────────────────────────────────────
   outputs =
-    inputs@{ self
-    , nixpkgs
-    , home-manager
-    , spicetify-nix
-    , nix-darwin
-    , nix-homebrew
-    , zen-browser
-    , vicinae
-    , qylock
-    , herdr
-    , ...
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      spicetify-nix,
+      nix-darwin,
+      nix-homebrew,
+      zen-browser,
+      vicinae,
+      qylock,
+      herdr,
+      ...
     }:
     let
       inherit (nixpkgs) lib;
@@ -213,10 +193,10 @@
       # ▶ Shared Home Manager Config
       # ───────────────────────────────────────────────
       mkHomeManagerConfig =
-        { device
-        , homeFile
-        , extraSharedModules ? [ ]
-        ,
+        {
+          device,
+          homeFile,
+          extraSharedModules ? [ ],
         }:
         {
           home-manager = {
@@ -240,9 +220,9 @@
       # ▶ NixOS Helper
       # ───────────────────────────────────────────────
       mkNixos =
-        { device
-        , hardwareConfig
-        ,
+        {
+          device,
+          hardwareConfig,
         }:
         lib.nixosSystem {
           system = systems.linux;
@@ -298,9 +278,9 @@
       # ▶ macOS Helper
       # ───────────────────────────────────────────────
       mkDarwin =
-        { hostName
-        , device
-        ,
+        {
+          hostName,
+          device,
         }:
         nix-darwin.lib.darwinSystem {
           system = systems.darwin;
