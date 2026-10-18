@@ -46,7 +46,6 @@ in
       terminal._var = "ghostty";
       browser._var = browser;
       fileManager._var = "nautilus";
-      powerMenu._var = "sh ${config.home.homeDirectory}/.config/wlogout/launch.sh";
 
       env = [
         { _args = [ "XDG_MIME_APPS" (lua ''os.getenv("HOME") .. "/.config/mimeapps.list"'') ]; }

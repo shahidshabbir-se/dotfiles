@@ -89,7 +89,6 @@ let
     (modShell "R" "kooha")
     (modShell "SHIFT + R" "killall kooha")
     (modShell "SHIFT + Q" "${exitScript}")
-    (plain (key "ALT + SHIFT + P") (modExec "powerMenu"))
 
     # Window management and layout
     (modBind "T" (lua ''hl.dsp.window.float({ action = "toggle" })''))

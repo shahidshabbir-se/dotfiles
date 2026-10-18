@@ -3,7 +3,6 @@
 let
   layerRuleNamespaces = [
     "logout_dialog"
-    "wlogout"
     "qs-bar"
     "qs-launcher"
     "qs-lockfade"
@@ -18,7 +17,7 @@ let
     "vicinae"
   ];
 
-  layerRuleNoAnimNamespaces = [ "logout_dialog" "wlogout" "vicinae" ];
+  layerRuleNoAnimNamespaces = [ "logout_dialog" "vicinae" ];
 
   blurLayerRule = namespace: {
     name = "blur-${lib.replaceStrings [ "_" ":" ] [ "-" "-" ] namespace}";

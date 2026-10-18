@@ -68,7 +68,6 @@ in
     ../../modules/hyprland/desktop.nix
     ../../modules/hypridle.nix
 
-    ../../modules/wlogout.nix
     # ../../modules/quickshell.nix
     ../../modules/cliproxyapi.nix
 
