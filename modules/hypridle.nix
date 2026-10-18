@@ -14,11 +14,8 @@ let
   desktopSdrRecoveryRule =
     "${display.connector},${toString display.width}x${toString display.height}@${toString desktopRefreshRate},auto,${toString display.scale},bitdepth,10,cm,srgb,vrr,0";
 
-  qylockLock = inputs.qylock.packages.${pkgs.stdenv.hostPlatform.system}.qylock-quickshell;
-  lockScreen = pkgs.writeShellScript "qylock-lock" ''
-    set -eu
-    exec ${qylockLock}/bin/qylock-lock sword
-  '';
+  qylock = import ./qylock-lock.nix { inherit inputs pkgs; };
+  lockScreen = "${qylock}/bin/qylock-lock sword";
 
   idleAction = pkgs.writeShellScript "hypridle-power-action" ''
     set -eu

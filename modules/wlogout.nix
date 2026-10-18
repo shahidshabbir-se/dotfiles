@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   pkgs,
   ...
 }:
@@ -7,6 +8,7 @@
 let
   inherit (config.lib.file) mkOutOfStoreSymlink;
   homeDirectory = config.home.homeDirectory;
+  qylock = import ./qylock-lock.nix { inherit inputs pkgs; };
 
   wlogoutPointer = pkgs.wlogout.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
@@ -205,7 +207,7 @@ in
     "wlogout/layout".text = ''
       {
           "label": "lock",
-          "action": "qylock-lock sword",
+          "action": "${qylock}/bin/qylock-lock sword",
           "text": "Lock",
           "keybind": "l"
       }

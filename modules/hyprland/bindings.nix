@@ -1,6 +1,7 @@
-{ config, lib, pkgs, device, ... }:
+{ config, inputs, lib, pkgs, device, ... }:
 
 let
+  qylock = import ../qylock-lock.nix { inherit inputs pkgs; };
   lua = lib.generators.mkLuaInline;
   homeDirectory = config.home.homeDirectory;
   d = device.display;
@@ -72,7 +73,7 @@ let
     (modShell "ALT + P" "shutdown -h 0")
     (modShell "ALT + R" "reboot")
     (modShell "ALT + Q" "hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service")
-    (modShell "SHIFT + L" "qylock-lock sword")
+    (modShell "SHIFT + L" "${qylock}/bin/qylock-lock sword")
     (modShell "CTRL + S" "sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png")
     (modShell "R" "kooha")
     (modShell "SHIFT + R" "killall kooha")
