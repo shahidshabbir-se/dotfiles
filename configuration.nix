@@ -554,7 +554,8 @@ in
     ];
     shell = pkgs.zsh;
   };
-  home-manager.backupFileExtension = "bak";
+  # Avoid collisions with existing user-managed *.bak files during activation.
+  home-manager.backupFileExtension = "hm-backup";
   virtualisation.docker.enable = true;
   virtualisation.docker.package = pkgs.docker_29;
   fonts = {
