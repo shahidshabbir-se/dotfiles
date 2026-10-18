@@ -1,7 +1,14 @@
-{ config, inputs, lib, pkgs, device, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  device,
+  ...
+}:
 
 let
-  qylock = import ../qylock-lock.nix { inherit inputs pkgs; };
+  qylock = import ../qylock.nix { inherit inputs pkgs; };
   lua = lib.generators.mkLuaInline;
   homeDirectory = config.home.homeDirectory;
   d = device.display;
@@ -14,7 +21,11 @@ let
   moveToWorkspace = workspace: lua "hl.dsp.window.move({ workspace = ${workspace} })";
 
   bind = keys: dispatcher: flags: {
-    _args = [ keys dispatcher ] ++ lib.optional (flags != { }) flags;
+    _args = [
+      keys
+      dispatcher
+    ]
+    ++ lib.optional (flags != { }) flags;
   };
 
   plain = keys: dispatcher: bind keys dispatcher { };
@@ -121,28 +132,64 @@ let
     (shell (key "F8") "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
     (shell (key "F9") "playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
   ]
-  ++ builtins.concatLists (builtins.genList (index:
-    let
-      workspace = index + 1;
-      keyName = toString workspace;
-    in
-    [
-      (modBind keyName (focus (toString workspace)))
-      (modBind "SHIFT + ${keyName}" (moveToWorkspace (toString workspace)))
-    ]
-  ) 6)
+  ++ builtins.concatLists (
+    builtins.genList (
+      index:
+      let
+        workspace = index + 1;
+        keyName = toString workspace;
+      in
+      [
+        (modBind keyName (focus (toString workspace)))
+        (modBind "SHIFT + ${keyName}" (moveToWorkspace (toString workspace)))
+      ]
+    ) 6
+  )
   ++ [
     (bind (modKey "mouse:272") (lua "hl.dsp.window.drag()") { mouse = true; })
     (bind (modKey "mouse:273") (lua "hl.dsp.window.resize()") { mouse = true; })
-    (bind (key "XF86AudioRaiseVolume") (exec "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+") { locked = true; repeating = true; })
-    (bind (key "XF86AudioLowerVolume") (exec "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-") { locked = true; repeating = true; })
-    (bind (key "XF86MonBrightnessUp") (exec "brightnessctl s 10%+ && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh") { locked = true; repeating = true; })
-    (bind (key "XF86MonBrightnessDown") (exec "brightnessctl s 10%- && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh") { locked = true; repeating = true; })
-    (bind (key "XF86AudioMute") (exec "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ${homeDirectory}/dotfiles/scripts/volume-notify.sh") { locked = true; })
-    (bind (key "XF86AudioNext") (exec "playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh") { locked = true; })
-    (bind (key "XF86AudioPause") (exec "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh") { locked = true; })
-    (bind (key "XF86AudioPlay") (exec "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh") { locked = true; })
-    (bind (key "XF86AudioPrev") (exec "playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh") { locked = true; })
+    (bind (key "XF86AudioRaiseVolume") (exec "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+") {
+      locked = true;
+      repeating = true;
+    })
+    (bind (key "XF86AudioLowerVolume") (exec "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-") {
+      locked = true;
+      repeating = true;
+    })
+    (bind (key "XF86MonBrightnessUp")
+      (exec "brightnessctl s 10%+ && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh")
+      {
+        locked = true;
+        repeating = true;
+      }
+    )
+    (bind (key "XF86MonBrightnessDown")
+      (exec "brightnessctl s 10%- && ${homeDirectory}/dotfiles/scripts/brightness-notify.sh")
+      {
+        locked = true;
+        repeating = true;
+      }
+    )
+    (bind (key "XF86AudioMute")
+      (exec "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ${homeDirectory}/dotfiles/scripts/volume-notify.sh")
+      { locked = true; }
+    )
+    (bind (key "XF86AudioNext")
+      (exec "playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
+      { locked = true; }
+    )
+    (bind (key "XF86AudioPause")
+      (exec "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
+      { locked = true; }
+    )
+    (bind (key "XF86AudioPlay")
+      (exec "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
+      { locked = true; }
+    )
+    (bind (key "XF86AudioPrev")
+      (exec "playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
+      { locked = true; }
+    )
   ]
   ++ lib.optionals (device.type == "laptop") [
     (shell (key "switch:on:Lid Switch") ''hyprctl keyword monitor "eDP-1,disable"'')

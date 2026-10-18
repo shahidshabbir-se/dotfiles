@@ -8,7 +8,7 @@
 let
   inherit (config.lib.file) mkOutOfStoreSymlink;
   homeDirectory = config.home.homeDirectory;
-  qylock = import ./qylock-lock.nix { inherit inputs pkgs; };
+  qylock = import ./qylock.nix { inherit inputs pkgs; };
 
   wlogoutPointer = pkgs.wlogout.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''

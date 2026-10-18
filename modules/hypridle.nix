@@ -11,10 +11,9 @@ let
   isLaptop = device.type == "laptop";
   display = device.display;
   desktopRefreshRate = if device.type == "desktop" then 240 else display.refreshRate;
-  desktopSdrRecoveryRule =
-    "${display.connector},${toString display.width}x${toString display.height}@${toString desktopRefreshRate},auto,${toString display.scale},bitdepth,10,cm,srgb,vrr,0";
+  desktopSdrRecoveryRule = "${display.connector},${toString display.width}x${toString display.height}@${toString desktopRefreshRate},auto,${toString display.scale},bitdepth,10,cm,srgb,vrr,0";
 
-  qylock = import ./qylock-lock.nix { inherit inputs pkgs; };
+  qylock = import ./qylock.nix { inherit inputs pkgs; };
   lockScreen = "${qylock}/bin/qylock-lock sword";
 
   idleAction = pkgs.writeShellScript "hypridle-power-action" ''
@@ -152,8 +151,7 @@ in
     settings = {
       general = {
         after_sleep_cmd = "${afterSleep}";
-        before_sleep_cmd =
-          "${pkgs.systemd}/bin/loginctl lock-session && ${pkgs.coreutils}/bin/sleep 1";
+        before_sleep_cmd = "${pkgs.systemd}/bin/loginctl lock-session && ${pkgs.coreutils}/bin/sleep 1";
         ignore_dbus_inhibit = false;
         lock_cmd = "${lockScreen}";
       };
