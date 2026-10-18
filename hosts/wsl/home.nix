@@ -28,7 +28,7 @@ let
 in
 {
   imports = [
-    ../../modules/shell-paths.nix
+    ../../modules/session-paths.nix
     ../../modules/leaf.nix
   ];
 
@@ -64,12 +64,6 @@ in
       '';
       "${npmGlobal}/.keep".text = "";
     };
-
-    sessionPath = [
-      "${homeDirectory}/.nix-profile/bin"
-      "${npmGlobal}/bin"
-      "${homeDirectory}/.bun/bin"
-    ];
 
     activation.linkDotfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "${homeDirectory}/.config"

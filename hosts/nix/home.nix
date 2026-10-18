@@ -56,7 +56,7 @@ in
   imports = [
     ../../modules/herdr.nix
     ../../modules/node.nix
-    ../../modules/shell-paths.nix
+    ../../modules/session-paths.nix
     ../../modules/leaf.nix
     ../../modules/nvim.nix
 
