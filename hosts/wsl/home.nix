@@ -27,6 +27,8 @@ let
   npmGlobal = "${homeDirectory}/.npm-global";
 in
 {
+  imports = [ ../../modules/shell-paths.nix ];
+
   nixpkgs.config.allowUnfree = true;
 
   home = {
@@ -60,9 +62,11 @@ in
       "${npmGlobal}/.keep".text = "";
     };
 
-    sessionVariables = {
-      PATH = "${homeDirectory}/.nix-profile/bin:${npmGlobal}/bin:$PATH";
-    };
+    sessionPath = [
+      "${homeDirectory}/.nix-profile/bin"
+      "${npmGlobal}/bin"
+      "${homeDirectory}/.bun/bin"
+    ];
 
     activation.linkDotfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "${homeDirectory}/.config" "${homeDirectory}/.zsh"

@@ -21,6 +21,7 @@ in
     ../../modules/karabiner.nix
     ../../modules/herdr.nix
     ../../modules/node.nix
+    ../../modules/shell-paths.nix
     ../../modules/nvim.nix
   ];
 
@@ -31,6 +32,8 @@ in
     username = "shahid";
     homeDirectory = homeDirectory;
     stateVersion = "24.05";
+
+    sessionPath = lib.mkBefore [ "/opt/homebrew/opt/libpq/bin" ];
 
     packages = (import ../../modules/pkgs/common.nix { inherit pkgs; }) ++ ([
       inputs.home-manager.packages.${pkgs.system}.home-manager

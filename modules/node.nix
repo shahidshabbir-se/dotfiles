@@ -14,7 +14,10 @@ in
       pkgs.nodejs_24
       pkgs.bun
     ];
-    sessionVariables.PATH = "${npmGlobal}/bin:$PATH";
+    sessionPath = [
+      "${npmGlobal}/bin"
+      "${config.home.homeDirectory}/.bun/bin"
+    ];
   };
 
   home.activation.setNpmGlobalPrefix = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
