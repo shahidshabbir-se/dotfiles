@@ -21,7 +21,7 @@ in
 
     # Font
     font-family = [
-      "JetBrainsMono Nerd Font"
+      "SpaceMono Nerd Font"
       "Herdr Agent Icons Max"
     ];
     font-codepoint-map = [
