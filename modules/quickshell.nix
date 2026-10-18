@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -23,7 +24,8 @@ in
   ];
 
   # Live-editable shell config (same pattern as nvim/zed).
-  xdg.configFile.quickshell.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
+  xdg.configFile.quickshell.source =
+    config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
 
   # Best practice with home-manager Hyprland: session-scoped user unit.
   # Restart=always covers hard crashes; hypridle after_sleep restarts qs when
