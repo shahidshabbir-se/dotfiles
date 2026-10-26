@@ -184,175 +184,6 @@ in
       # android-tools
     ];
   };
-  services = {
-    xserver = {
-      videoDrivers = lib.mkDefault [ "amdgpu" ];
-
-      enable = true;
-
-    };
-    openssh.enable = true;
-    tailscale = {
-      enable = true;
-      extraSetFlags = [ "--operator=shahid" ];
-    };
-
-    # networking.hostName = "nixos"; # Define your hostname.
-    # Pick only one of the below networking options.
-    # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-    # Set your time zone.
-    # time.timeZone = "Europe/Amsterdam";
-
-    # Configure network proxy if necessary
-    # networking.proxy.default = "http://user:password@proxy:port/";
-    # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-    # Select internationalisation properties.
-    # i18n.defaultLocale = "en_US.UTF-8";
-    # console = {
-    #   font = "Lat2-Terminus16";
-    #   keyMap = "us";
-    #   useXkbConfig = true; # use xkb.options in tty.
-    # };
-
-    # Enable the X11 windowing system.
-    # services.xserver.enable = true;
-
-    tumbler.enable = true;
-    gvfs.enable = true;
-    blueman.enable = true;
-    power-profiles-daemon.enable = true;
-    pulseaudio.enable = false;
-
-    pipewire = {
-      enable = true;
-      pulse.enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      jack.enable = true;
-      wireplumber.extraConfig = {
-        "10-bluez" = {
-          "monitor.bluez.properties" = {
-            "bluez5.enable-sbc-xq" = true;
-            "bluez5.enable-msbc" = true;
-            # Keep the PipeWire volume across Bluetooth reconnects instead of
-            # accepting the headset's often-maxed hardware volume.
-            "bluez5.enable-hw-volume" = false;
-            "bluez5.roles" = [
-              "a2dp_sink"
-              "a2dp_source"
-              "bap_sink"
-              "bap_source"
-              "hsp_hs"
-              "hsp_ag"
-              "hfp_hf"
-              "hfp_ag"
-            ];
-          };
-        };
-        "20-jieli-usb-speaker" = {
-          "monitor.alsa.rules" = [
-            {
-              matches = [
-                { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; }
-              ];
-              actions = {
-                update-props = {
-                  "api.alsa.soft-mixer" = true;
-                  "device.profile" = "output:analog-stereo";
-                  "priority.session" = 1500; # Lower than BT so BT takes over when connected
-                };
-              };
-            }
-          ];
-        };
-        "30-bluetooth-priority" = {
-          "monitor.bluez.rules" = [
-            {
-              matches = [ { "device.name" = "~bluez_card.*"; } ];
-              actions = {
-                update-props = {
-                  "priority.session" = 2000; # Highest — auto-switches to BT when connected
-                };
-              };
-            }
-          ];
-        };
-      };
-    };
-
-    # Restart WirePlumber when USB speaker is plugged in so it initializes on boot
-    udev.extraRules = ''
-      SUBSYSTEM=="sound", ACTION=="add", ATTRS{idVendor}=="3654", ATTRS{idProduct}=="4755", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="wireplumber-usb-reset.service"
-    '';
-
-    libinput.enable = true;
-    libinput.touchpad.accelSpeed = "1.0";
-    upower.enable = true;
-    keyd = {
-      enable = true;
-      keyboards = {
-        default = {
-          ids = [ "*" ];
-          settings = {
-            main = { };
-            otherlayer = { };
-          };
-          extraConfig = ''
-            [ids]
-            *
-
-            [main]
-            capslock = overload(control, esc)
-            esc = capslock
-            ctrl+equal = page_up
-          '';
-        };
-      };
-    };
-
-    displayManager = {
-      defaultSession = "hyprland";
-
-      generic.environment = {
-        XCURSOR_THEME = "Banana";
-        XCURSOR_SIZE = "48";
-      };
-
-      sddm = {
-        enable = true;
-        package = pkgs.kdePackages.sddm;
-        autoNumlock = true;
-        # X11 greeter: setupScript/xrdb actually run (Wayland SDDM ignores them).
-        wayland.enable = false;
-        setupScript = ''
-          ${pkgs.xrdb}/bin/xrdb -merge - <<EOF
-          Xcursor.theme: Banana
-          Xcursor.size: 48
-          EOF
-          ${pkgs.xset}/bin/xsetroot -cursor_name left_ptr
-        '';
-        settings = {
-          General = {
-            DefaultSession = "hyprland.desktop";
-            RememberLastSession = false;
-            GreeterEnvironment = "XCURSOR_THEME=Banana,XCURSOR_SIZE=48";
-          };
-          Theme = {
-            CursorTheme = "Banana";
-            CursorSize = 48;
-          };
-        };
-        extraPackages = [
-          pkgs.gst_all_1.gst-plugins-base
-          pkgs.gst_all_1.gst-plugins-good
-          pkgs.gst_all_1.gst-plugins-bad
-          pkgs.gst_all_1.gst-plugins-ugly
-        ];
-      };
-    };
-  };
   hardware = {
     graphics = {
       enable = true;
@@ -601,10 +432,179 @@ in
       "hyprland"
     ];
   };
+  services = {
+    xserver = {
+      videoDrivers = lib.mkDefault [ "amdgpu" ];
 
-  # Freedesktop Secret Service backend used by Doppler and other CLI tools.
-  # This enables only the keyring daemon, not the GNOME desktop environment.
-  services.gnome.gnome-keyring.enable = true;
+      enable = true;
+
+    };
+    openssh.enable = true;
+    tailscale = {
+      enable = true;
+      extraSetFlags = [ "--operator=shahid" ];
+    };
+
+    # networking.hostName = "nixos"; # Define your hostname.
+    # Pick only one of the below networking options.
+    # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+    # Set your time zone.
+    # time.timeZone = "Europe/Amsterdam";
+
+    # Configure network proxy if necessary
+    # networking.proxy.default = "http://user:password@proxy:port/";
+    # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+    # Select internationalisation properties.
+    # i18n.defaultLocale = "en_US.UTF-8";
+    # console = {
+    #   font = "Lat2-Terminus16";
+    #   keyMap = "us";
+    #   useXkbConfig = true; # use xkb.options in tty.
+    # };
+
+    # Enable the X11 windowing system.
+    # services.xserver.enable = true;
+
+    tumbler.enable = true;
+    gvfs.enable = true;
+    blueman.enable = true;
+    power-profiles-daemon.enable = true;
+    pulseaudio.enable = false;
+
+    pipewire = {
+      enable = true;
+      pulse.enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      jack.enable = true;
+      wireplumber.extraConfig = {
+        "10-bluez" = {
+          "monitor.bluez.properties" = {
+            "bluez5.enable-sbc-xq" = true;
+            "bluez5.enable-msbc" = true;
+            # Keep the PipeWire volume across Bluetooth reconnects instead of
+            # accepting the headset's often-maxed hardware volume.
+            "bluez5.enable-hw-volume" = false;
+            "bluez5.roles" = [
+              "a2dp_sink"
+              "a2dp_source"
+              "bap_sink"
+              "bap_source"
+              "hsp_hs"
+              "hsp_ag"
+              "hfp_hf"
+              "hfp_ag"
+            ];
+          };
+        };
+        "20-jieli-usb-speaker" = {
+          "monitor.alsa.rules" = [
+            {
+              matches = [
+                { "device.name" = "alsa_card.usb-Jieli_Technology_USB_Composite_Device_425031583436380E-00"; }
+              ];
+              actions = {
+                update-props = {
+                  "api.alsa.soft-mixer" = true;
+                  "device.profile" = "output:analog-stereo";
+                  "priority.session" = 1500; # Lower than BT so BT takes over when connected
+                };
+              };
+            }
+          ];
+        };
+        "30-bluetooth-priority" = {
+          "monitor.bluez.rules" = [
+            {
+              matches = [ { "device.name" = "~bluez_card.*"; } ];
+              actions = {
+                update-props = {
+                  "priority.session" = 2000; # Highest — auto-switches to BT when connected
+                };
+              };
+            }
+          ];
+        };
+      };
+    };
+
+    # Restart WirePlumber when USB speaker is plugged in so it initializes on boot
+    udev.extraRules = ''
+      SUBSYSTEM=="sound", ACTION=="add", ATTRS{idVendor}=="3654", ATTRS{idProduct}=="4755", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="wireplumber-usb-reset.service"
+    '';
+
+    libinput.enable = true;
+    libinput.touchpad.accelSpeed = "1.0";
+    upower.enable = true;
+    keyd = {
+      enable = true;
+      keyboards = {
+        default = {
+          ids = [ "*" ];
+          settings = {
+            main = { };
+            otherlayer = { };
+          };
+          extraConfig = ''
+            [ids]
+            *
+
+            [main]
+            capslock = overload(control, esc)
+            esc = capslock
+            ctrl+equal = page_up
+          '';
+        };
+      };
+    };
+
+    displayManager = {
+      defaultSession = "hyprland";
+
+      generic.environment = {
+        XCURSOR_THEME = "Banana";
+        XCURSOR_SIZE = "48";
+      };
+
+      sddm = {
+        enable = true;
+        package = pkgs.kdePackages.sddm;
+        autoNumlock = true;
+        # X11 greeter: setupScript/xrdb actually run (Wayland SDDM ignores them).
+        wayland.enable = false;
+        setupScript = ''
+          ${pkgs.xrdb}/bin/xrdb -merge - <<EOF
+          Xcursor.theme: Banana
+          Xcursor.size: 48
+          EOF
+          ${pkgs.xset}/bin/xsetroot -cursor_name left_ptr
+        '';
+        settings = {
+          General = {
+            DefaultSession = "hyprland.desktop";
+            RememberLastSession = false;
+            GreeterEnvironment = "XCURSOR_THEME=Banana,XCURSOR_SIZE=48";
+          };
+          Theme = {
+            CursorTheme = "Banana";
+            CursorSize = 48;
+          };
+        };
+        extraPackages = [
+          pkgs.gst_all_1.gst-plugins-base
+          pkgs.gst_all_1.gst-plugins-good
+          pkgs.gst_all_1.gst-plugins-bad
+          pkgs.gst_all_1.gst-plugins-ugly
+        ];
+      };
+    };
+
+    # Freedesktop Secret Service backend used by Doppler and other CLI tools.
+    # This enables only the keyring daemon, not the GNOME desktop environment.
+    gnome.gnome-keyring.enable = true;
+  };
 
   security = {
     sudo = {

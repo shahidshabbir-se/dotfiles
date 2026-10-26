@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   lua = lib.generators.mkLuaInline;
@@ -48,16 +53,66 @@ in
       fileManager._var = "nautilus";
 
       env = [
-        { _args = [ "XDG_MIME_APPS" (lua ''os.getenv("HOME") .. "/.config/mimeapps.list"'') ]; }
-        { _args = [ "TERMINAL" "ghostty" ]; }
-        { _args = [ "BROWSER" browser ]; }
-        { _args = [ "EDITOR" "nvim" ]; }
-        { _args = [ "NAUTILUS_4_EXTENSION_DIR" "/run/current-system/sw/lib/nautilus/extensions-4" ]; }
-        { _args = [ "XCURSOR_THEME" cursorTheme ]; }
-        { _args = [ "XCURSOR_SIZE" (toString cursorSize) ]; }
-        { _args = [ "HYPRCURSOR_SIZE" (toString cursorSize) ]; }
-        { _args = [ "HYPRCURSOR_THEME" cursorTheme ]; }
-        { _args = [ "GTK_THEME" "catppuccin-mocha-blue-standard" ]; }
+        {
+          _args = [
+            "XDG_MIME_APPS"
+            (lua ''os.getenv("HOME") .. "/.config/mimeapps.list"'')
+          ];
+        }
+        {
+          _args = [
+            "TERMINAL"
+            "ghostty"
+          ];
+        }
+        {
+          _args = [
+            "BROWSER"
+            browser
+          ];
+        }
+        {
+          _args = [
+            "EDITOR"
+            "nvim"
+          ];
+        }
+        {
+          _args = [
+            "NAUTILUS_4_EXTENSION_DIR"
+            "/run/current-system/sw/lib/nautilus/extensions-4"
+          ];
+        }
+        {
+          _args = [
+            "XCURSOR_THEME"
+            cursorTheme
+          ];
+        }
+        {
+          _args = [
+            "XCURSOR_SIZE"
+            (toString cursorSize)
+          ];
+        }
+        {
+          _args = [
+            "HYPRCURSOR_SIZE"
+            (toString cursorSize)
+          ];
+        }
+        {
+          _args = [
+            "HYPRCURSOR_THEME"
+            cursorTheme
+          ];
+        }
+        {
+          _args = [
+            "GTK_THEME"
+            "catppuccin-mocha-blue-standard"
+          ];
+        }
       ];
 
       config = {
@@ -122,7 +177,16 @@ in
             "easeOutBack"
             {
               type = "bezier";
-              points = [ [ 0.34 1.56 ] [ 0.64 1 ] ];
+              points = [
+                [
+                  0.34
+                  1.56
+                ]
+                [
+                  0.64
+                  1
+                ]
+              ];
             }
           ];
         }
@@ -131,7 +195,16 @@ in
             "easeInBack"
             {
               type = "bezier";
-              points = [ [ 0.36 0 ] [ 0.66 (-0.56) ] ];
+              points = [
+                [
+                  0.36
+                  0
+                ]
+                [
+                  0.66
+                  (-0.56)
+                ]
+              ];
             }
           ];
         }
@@ -140,7 +213,16 @@ in
             "easeInCubic"
             {
               type = "bezier";
-              points = [ [ 0.32 0 ] [ 0.67 0 ] ];
+              points = [
+                [
+                  0.32
+                  0
+                ]
+                [
+                  0.67
+                  0
+                ]
+              ];
             }
           ];
         }
@@ -149,21 +231,75 @@ in
             "easeInOutCubic"
             {
               type = "bezier";
-              points = [ [ 0.65 0 ] [ 0.35 1 ] ];
+              points = [
+                [
+                  0.65
+                  0
+                ]
+                [
+                  0.35
+                  1
+                ]
+              ];
             }
           ];
         }
       ];
 
       animation = [
-        { leaf = "global"; enabled = true; speed = 3; bezier = "default"; }
-        { leaf = "windowsIn"; enabled = true; speed = 3; bezier = "easeOutBack"; style = "popin"; }
-        { leaf = "windowsOut"; enabled = true; speed = 3; bezier = "easeInBack"; style = "popin"; }
-        { leaf = "fadeIn"; enabled = true; speed = 3; bezier = "easeInOutCubic"; }
-        { leaf = "fadeOut"; enabled = true; speed = 3; bezier = "easeInCubic"; }
-        { leaf = "workspaces"; enabled = true; speed = 3; bezier = "easeInOutCubic"; style = "slide"; }
-        { leaf = "layersIn"; enabled = true; speed = 3; bezier = "easeInOutCubic"; style = "fade"; }
-        { leaf = "layersOut"; enabled = true; speed = 3; bezier = "easeInCubic"; style = "fade"; }
+        {
+          leaf = "global";
+          enabled = true;
+          speed = 3;
+          bezier = "default";
+        }
+        {
+          leaf = "windowsIn";
+          enabled = true;
+          speed = 3;
+          bezier = "easeOutBack";
+          style = "popin";
+        }
+        {
+          leaf = "windowsOut";
+          enabled = true;
+          speed = 3;
+          bezier = "easeInBack";
+          style = "popin";
+        }
+        {
+          leaf = "fadeIn";
+          enabled = true;
+          speed = 3;
+          bezier = "easeInOutCubic";
+        }
+        {
+          leaf = "fadeOut";
+          enabled = true;
+          speed = 3;
+          bezier = "easeInCubic";
+        }
+        {
+          leaf = "workspaces";
+          enabled = true;
+          speed = 3;
+          bezier = "easeInOutCubic";
+          style = "slide";
+        }
+        {
+          leaf = "layersIn";
+          enabled = true;
+          speed = 3;
+          bezier = "easeInOutCubic";
+          style = "fade";
+        }
+        {
+          leaf = "layersOut";
+          enabled = true;
+          speed = 3;
+          bezier = "easeInCubic";
+          style = "fade";
+        }
       ];
 
       gesture = [
@@ -184,7 +320,9 @@ in
     # Keep these exec-once actions in this hook so they run after that setup.
     extraConfig = ''
       hl.on("hyprland.start", function()
-      ${lib.concatMapStringsSep "\n" (command: "  hl.exec_cmd(${builtins.toJSON command})") startupCommands}
+      ${lib.concatMapStringsSep "\n" (
+        command: "  hl.exec_cmd(${builtins.toJSON command})"
+      ) startupCommands}
       end)
     '';
   };
