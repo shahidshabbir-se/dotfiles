@@ -211,7 +211,6 @@ in
     alias -s ts=$EDITOR
     alias -s rs=$EDITOR
     alias -s go=$EDITOR
-    alias -s sh=$EDITOR
     alias -s nix=$EDITOR
     alias -s html=${if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"}
 
