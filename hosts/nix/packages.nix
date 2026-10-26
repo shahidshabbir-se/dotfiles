@@ -30,6 +30,8 @@ let
     gthumb
     vlc
     pulsemixer
+    mpvpaper
+    ffmpeg
   ];
 
   systemUtilityPackages = with pkgs; [
@@ -42,6 +44,8 @@ let
     time
     wmctrl
     zip
+    speedtest-cli
+    qrencode
   ];
 
   themePackages = with pkgs; [

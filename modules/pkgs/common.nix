@@ -22,6 +22,7 @@ with pkgs;
   nixfmt
   deadnix
   go
+  psmisc
   lazygit
   lazysql
   just
