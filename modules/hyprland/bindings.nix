@@ -1,3 +1,5 @@
+{ musicPlayer }:
+
 {
   config,
   inputs,
@@ -33,6 +35,17 @@ let
   shell = keys: command: plain keys (exec command);
   modShell = suffix: command: modBind suffix (exec command);
 
+  ghosttyFocusOrLaunch = pkgs.writeShellScript "ghostty-focus-or-launch" ''
+    set -eu
+
+    clients="$(hyprctl -j clients)"
+    if printf '%s' "$clients" | ${pkgs.jq}/bin/jq -e 'any(.[]; .class == "com.mitchellh.ghostty")' >/dev/null; then
+      hyprctl dispatch 'hl.dsp.focus({ window = "class:com.mitchellh.ghostty" })'
+    else
+      hyprctl dispatch 'hl.dsp.exec_cmd("[workspace 1] ghostty")'
+    fi
+  '';
+
   altTab = pkgs.writeShellScript "hypr-alt-tab" ''
     set -eu
 
@@ -67,8 +80,7 @@ let
 
   mainBindings = [
     # Apps
-    (modBind "RETURN" (focus "1"))
-    (modBind "RETURN" (modExec "terminal"))
+    (modShell "RETURN" "${ghosttyFocusOrLaunch}")
     (modBind "B" (focus "2"))
     (modBind "B" (lua "hl.dsp.exec_cmd(browser)"))
     (modBind "SHIFT + B" (focus "5"))
@@ -76,7 +88,6 @@ let
     (modShell "O" "obsidian")
     (modShell "E" "ghostty --title=yazi -e yazi")
     (modBind "Q" (lua "hl.dsp.window.close()"))
-    (modBind "E" (modExec "fileManager"))
     (modShell "SHIFT + E" "env NAUTILUS_4_EXTENSION_DIR=/run/current-system/sw/lib/nautilus/extensions-4 nautilus")
     (shell (key "F10") "ghostty --title=btop -e btop")
 
@@ -130,6 +141,10 @@ let
     (shell (key "F7") "playerctl previous && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
     (shell (key "F8") "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
     (shell (key "F9") "playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
+  ]
+  ++ lib.optionals (builtins.elem musicPlayer [ "spotify" "limusic" ]) [
+    (modBind "M" (focus "6"))
+    (modShell "M" musicPlayer)
   ]
   ++ builtins.concatLists (
     builtins.genList (

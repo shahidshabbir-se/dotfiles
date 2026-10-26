@@ -35,6 +35,10 @@ let
   inherit (pkgs.stdenv.hostPlatform) system;
 
   dotfileLink = path: mkOutOfStoreSymlink "${dotfilesDirectory}/${path}";
+
+  # Music player: "spotify" | "limusic" | null (or "nil")
+  musicPlayer = "nil";
+
   packageGroups = import ./packages.nix {
     inherit
       pkgs
@@ -63,7 +67,7 @@ in
     # Hyprland session
     ../../modules/hyprland/core.nix
     ../../modules/hyprland/display.nix
-    ../../modules/hyprland/bindings.nix
+    (import ../../modules/hyprland/bindings.nix { inherit musicPlayer; })
     ../../modules/hyprland/rules.nix
     ../../modules/hyprland/desktop.nix
     ../../modules/hypridle.nix
@@ -110,7 +114,12 @@ in
       ++ desktopPackages
       ++ mediaPackages
       ++ systemUtilityPackages
-      ++ themePackages;
+      ++ themePackages
+      ++ lib.optional (musicPlayer == "limusic") (
+        import ../../modules/pkgs/limusic.nix {
+          inherit pkgs lib;
+        }
+      );
 
     file = {
       ".hidden".text = ''
@@ -139,7 +148,10 @@ in
         icon = "solstice-microsoft-365-word";
         exec = "chromium --app=https://word.cloud.microsoft/";
         terminal = false;
-        categories = [ "Office" "WordProcessor" ];
+        categories = [
+          "Office"
+          "WordProcessor"
+        ];
       };
 
       microsoft-excel = {
@@ -147,7 +159,10 @@ in
         icon = "solstice-microsoft-365-excel";
         exec = "chromium --app=https://excel.cloud.microsoft/";
         terminal = false;
-        categories = [ "Office" "Spreadsheet" ];
+        categories = [
+          "Office"
+          "Spreadsheet"
+        ];
       };
 
       microsoft-powerpoint = {
@@ -155,7 +170,10 @@ in
         icon = "solstice-microsoft-365-powerpoint";
         exec = "chromium --app=https://powerpoint.cloud.microsoft/";
         terminal = false;
-        categories = [ "Office" "Presentation" ];
+        categories = [
+          "Office"
+          "Presentation"
+        ];
       };
     };
 
@@ -210,11 +228,18 @@ in
     atuin = import ../../modules/atuin.nix {
       inherit pkgs;
     };
-    # spicetify = import ../../modules/spicetify.nix {
-    #   inherit inputs lib pkgs;
-    # };
     ghostty = import ../../modules/ghostty.nix {
-      inherit config device pkgs inputs;
+      inherit
+        config
+        device
+        pkgs
+        inputs
+        ;
+    };
+  }
+  // lib.optionalAttrs (musicPlayer == "spotify") {
+    spicetify = import ../../modules/spicetify.nix {
+      inherit inputs lib pkgs;
     };
   };
 
