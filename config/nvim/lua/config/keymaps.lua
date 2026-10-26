@@ -96,4 +96,3 @@ map({ "n", "t" }, "<C-h>", herdr_navigate("left", "h"), { desc = "Navigate Left 
 map({ "n", "t" }, "<C-j>", herdr_navigate("down", "j"), { desc = "Navigate Down (Vim/Herdr)" })
 map({ "n", "t" }, "<C-k>", herdr_navigate("up", "k"), { desc = "Navigate Up (Vim/Herdr)" })
 map({ "n", "t" }, "<C-l>", herdr_navigate("right", "l"), { desc = "Navigate Right (Vim/Herdr)" })
-
