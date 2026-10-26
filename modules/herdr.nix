@@ -116,11 +116,26 @@ let
     hash = "sha256-iF0DLRn56eLGqY2iKTb3lX5iyVgl9CtSX5O2E5/pHjM=";
   };
 
+  barSrc = fetchPlugin {
+    owner = "jeffarese";
+    repo = "herdr-bar";
+    rev = "261de9b0441a6972941414bbf16eb4f5df27ac34";
+    hash = "sha256-/7FUkN25acdtie0rIO2T1o/ZKelhsWICY2CvRk5QYxQ=";
+  };
+
   floaxBin = pkgs.rustPlatform.buildRustPackage {
     pname = "herdr-floax";
     version = "0.2.0";
     src = floaxSrc;
     cargoHash = "sha256-/cjPrU0tx1NkhJLvEGpSVZUfzNDkqH4t7t+mR9r/Bco=";
+    doCheck = false;
+  };
+
+  barBin = pkgs.rustPlatform.buildRustPackage {
+    pname = "herdr-bar";
+    version = "0.11.0";
+    src = barSrc;
+    cargoHash = "sha256-2SVfEodG2c0H4iUQaYeTwpjeReULDA+8pMkMWY5Wk0s=";
     doCheck = false;
   };
 
@@ -157,6 +172,14 @@ let
     extraInstall = ''
       mkdir -p $out/target/release
       cp ${floaxBin}/bin/herdr-floax $out/target/release/herdr-floax
+    '';
+  };
+
+  barRoot = mkPluginRoot {
+    src = barSrc;
+    extraInstall = ''
+      mkdir -p $out/bin
+      cp ${barBin}/bin/herdr-bar $out/bin/herdr-bar
     '';
   };
 
@@ -272,6 +295,89 @@ let
   '';
 
   plugins = [
+    {
+      dir = "herdr-bar-261de9b0441a";
+      root = barRoot;
+      json = {
+        plugin_id = "herdr-bar";
+        name = "Bar";
+        version = "0.11.0";
+        min_herdr_version = "0.9.0";
+        description = "Cmd+K command bar with agent icons, fuzzy search, and optional automatic tab titles";
+        enabled = true;
+        platforms = [
+          "linux"
+          "macos"
+        ];
+        actions = [
+          {
+            id = "open";
+            title = "Open bar";
+            description = "Fuzzy-jump to any tab, pane, or agent";
+            contexts = [ "global" ];
+            command = [
+              "bin/herdr-bar"
+              "--open"
+            ];
+          }
+          {
+            id = "start-titles";
+            title = "Start tab watcher";
+            description = "Start task title and tab status updates enabled in the plugin config";
+            contexts = [ "global" ];
+            command = [
+              "bin/herdr-bar"
+              "--start-titles"
+              "--resume"
+            ];
+          }
+          {
+            id = "stop-titles";
+            title = "Stop tab watcher";
+            description = "Stop this server's title and status watcher, restoring bare tab names";
+            contexts = [ "global" ];
+            command = [
+              "bin/herdr-bar"
+              "--stop-titles"
+            ];
+          }
+        ];
+        panes = [
+          {
+            id = "bar";
+            title = "Bar";
+            description = "Fuzzy-jump to any tab, pane, or agent";
+            placement = "popup";
+            width = "74%";
+            height = "62%";
+            command = [ "bin/herdr-bar" ];
+          }
+        ];
+        startup = [
+          {
+            command = [
+              "bin/herdr-bar"
+              "--start-titles"
+            ];
+          }
+        ];
+        events = [
+          {
+            on = "pane.agent_detected";
+            command = [
+              "bin/herdr-bar"
+              "--start-titles"
+            ];
+          }
+        ];
+        source = {
+          kind = "github";
+          owner = "jeffarese";
+          repo = "herdr-bar";
+          resolved_commit = "261de9b0441a6972941414bbf16eb4f5df27ac34";
+        };
+      };
+    }
     {
       dir = "herdr-floax-0151ef56c880";
       root = floaxRoot;
@@ -1149,6 +1255,12 @@ let
     swap_pane_down = "prefix+shift+j"
     swap_pane_up = "prefix+shift+k"
     swap_pane_right = "prefix+shift+l"
+
+    [[keys.command]]
+    key = "ctrl+tab"
+    type = "plugin_action"
+    command = "herdr-bar.open"
+    description = "open command bar"
 
     [[keys.command]]
     key = "ctrl+h"
