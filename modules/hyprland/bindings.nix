@@ -103,7 +103,7 @@ let
 
     # Window management and layout
     (modBind "T" (lua ''hl.dsp.window.float({ action = "toggle" })''))
-    (modShell "F" "hyprctl dispatch fullscreen 0")
+    (modBind "F" (lua ''hl.dsp.window.fullscreen()''))
     (modBind "P" (lua "hl.dsp.window.pseudo()"))
     (modBind "SHIFT + J" (lua ''hl.dsp.layout("togglesplit")''))
 
