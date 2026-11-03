@@ -71,8 +71,15 @@ map({ "o", "x" }, "iq", smart_quote(true), { expr = true })
 map({ "o", "x" }, "aq", smart_quote(false), { expr = true })
 
 -- Herdr & Tmux pane / window navigation
-local function herdr_navigate(dir, wincmd)
+local function navigate(dir, wincmd)
   return function()
+    -- tmux can inherit Herdr's environment; let its plugin handle Vim splits and pane edges.
+    if vim.env.TMUX and vim.env.TMUX ~= "" then
+      local tmux_dir = { left = "Left", down = "Down", up = "Up", right = "Right" }
+      vim.cmd("TmuxNavigate" .. tmux_dir[dir])
+      return
+    end
+
     local cur_win = vim.api.nvim_get_current_win()
     vim.cmd("wincmd " .. wincmd)
 
@@ -84,15 +91,22 @@ local function herdr_navigate(dir, wincmd)
           herdr = "herdr"
         end
         vim.fn.system({ herdr, "pane", "focus", "--direction", dir, "--pane", vim.env.HERDR_PANE_ID })
-      elseif vim.env.TMUX and vim.env.TMUX ~= "" then
-        local tmux_dir = { left = "Left", down = "Down", up = "Up", right = "Right" }
-        pcall(vim.cmd, "TmuxNavigate" .. tmux_dir[dir])
       end
     end
   end
 end
 
-map({ "n", "t" }, "<C-h>", herdr_navigate("left", "h"), { desc = "Navigate Left (Vim/Herdr)" })
-map({ "n", "t" }, "<C-j>", herdr_navigate("down", "j"), { desc = "Navigate Down (Vim/Herdr)" })
-map({ "n", "t" }, "<C-k>", herdr_navigate("up", "k"), { desc = "Navigate Up (Vim/Herdr)" })
-map({ "n", "t" }, "<C-l>", herdr_navigate("right", "l"), { desc = "Navigate Right (Vim/Herdr)" })
+map({ "n", "t" }, "<C-h>", navigate("left", "h"), { desc = "Navigate Left (Vim/Herdr/Tmux)" })
+map({ "n", "t" }, "<C-j>", navigate("down", "j"), { desc = "Navigate Down (Vim/Herdr/Tmux)" })
+map({ "n", "t" }, "<C-k>", navigate("up", "k"), { desc = "Navigate Up (Vim/Herdr/Tmux)" })
+map({ "n", "t" }, "<C-l>", navigate("right", "l"), { desc = "Navigate Right (Vim/Herdr/Tmux)" })
+map({ "n", "t" }, "<C-\\>", function()
+  if vim.env.TMUX and vim.env.TMUX ~= "" then
+    local ok = pcall(vim.cmd, "TmuxNavigatePrevious")
+    if not ok then
+      vim.fn.system({ "tmux", "select-pane", "-l" })
+    end
+  else
+    vim.cmd("wincmd p")
+  end
+end, { desc = "Navigate Previous (Vim/Tmux)" })

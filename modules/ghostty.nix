@@ -3,11 +3,12 @@
   lib ? pkgs.lib,
   device,
   inputs,
+  multiplexer ? "herdr", # "herdr" | "tmux" | null
   ...
 }:
 let
   inherit (pkgs.stdenv.hostPlatform) system;
-  herdr = inputs.herdr.packages.${system}.default;
+  herdr = if inputs ? herdr then inputs.herdr.packages.${system}.default else null;
   fontSize = device.fontSize or 14.0;
 in
 {
@@ -22,12 +23,12 @@ in
     # Font
     font-family = [
       "SpaceMono Nerd Font"
-      "Herdr Agent Icons Max"
-    ];
+    ]
+    ++ lib.optional (multiplexer == "herdr") "Herdr Agent Icons Max";
     font-codepoint-map = [
       "U+2722,U+2733,U+2736,U+273B,U+273D=Noto Sans Symbols 2"
-      "U+E1A0-U+E1B0=Herdr Agent Icons Max"
-    ];
+    ]
+    ++ lib.optional (multiplexer == "herdr") "U+E1A0-U+E1B0=Herdr Agent Icons Max";
     font-size = fontSize;
     font-feature = [
       "+calt"
@@ -40,9 +41,6 @@ in
 
     # Shell + command
     shell-integration-features = "no-cursor,sudo,title";
-    command = [
-      "${herdr}/bin/herdr"
-    ];
 
     # Background
     background-opacity = 1.0;
@@ -73,7 +71,7 @@ in
       "ctrl+shift+r=reload_config"
     ]
 
-    # Ghostty eats alt/ctrl+1..9 for its own tabs. Pass them through to herdr.
+    # Ghostty eats alt/ctrl+1..9 for its own tabs. Pass them through to herdr / tmux.
     ++
       lib.concatMap
         (
@@ -129,5 +127,15 @@ in
             word = "nine";
           }
         ];
+  }
+  // lib.optionalAttrs (multiplexer == "herdr" && herdr != null) {
+    command = [
+      "${herdr}/bin/herdr"
+    ];
+  }
+  // lib.optionalAttrs (multiplexer == "tmux") {
+    command = [
+      "${pkgs.tmux}/bin/tmux new-session -A -s main"
+    ];
   };
 }

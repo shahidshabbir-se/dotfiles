@@ -39,6 +39,9 @@ let
   # Music player: "spotify" | "limusic" | null (or "nil")
   musicPlayer = "limusic";
 
+  # Terminal multiplexer: "herdr" | "tmux" | null (or "nil")
+  multiplexer = "herdr";
+
   packageGroups = import ./packages.nix {
     inherit
       pkgs
@@ -58,7 +61,6 @@ let
 in
 {
   imports = [
-    ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/session-paths.nix
     ../../modules/leaf.nix
@@ -91,7 +93,8 @@ in
     })
     (import ./vicinae.nix { inherit inputs system; })
     (import ./theme.nix { inherit theme gtkThemePackage; })
-  ];
+  ]
+  ++ lib.optional (multiplexer == "herdr") ../../modules/herdr.nix;
 
   home = {
     inherit username homeDirectory;
@@ -235,7 +238,13 @@ in
         device
         pkgs
         inputs
+        multiplexer
         ;
+    };
+  }
+  // lib.optionalAttrs (multiplexer == "tmux") {
+    tmux = import ../../modules/tmux.nix {
+      inherit pkgs lib;
     };
   }
   // lib.optionalAttrs (musicPlayer == "spotify") {
