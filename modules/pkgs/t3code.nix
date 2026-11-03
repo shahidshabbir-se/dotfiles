@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.0.40";
+  version = "0.1.6";
   pname = "t3code";
 
   desktopEntry = pkgs.writeText "t3code.desktop" ''
@@ -12,7 +12,7 @@ let
     Name=T3 Code
     Comment=T3 Code desktop build
     GenericName=Text Editor
-    Exec=t3code --no-sandbox %U
+    Exec=t3code %U
     Icon=t3code
     Type=Application
     Terminal=false
@@ -28,7 +28,7 @@ pkgs.stdenv.mkDerivation {
 
   src = pkgs.fetchurl {
     url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
-    sha256 = "sha256-i/X9RMt/rQxDGR1U/v35dKgifVBQXsuKvPdjJiCfJko=";
+    sha256 = "sha256-CeJQcgjHeTCbOWvoRq6h2UUUS9eAYGiZwvSByW3fNNA=";
     name = "t3code-${version}.AppImage";
   };
 
@@ -52,9 +52,8 @@ pkgs.stdenv.mkDerivation {
     freetype
     gdk-pixbuf
     glib
-    gtk2
     gtk3
-    libdbusmenu-gtk2
+    libdbusmenu-gtk3
     libdrm
     libGL
     libnotify
@@ -83,9 +82,6 @@ pkgs.stdenv.mkDerivation {
     zlib
   ];
 
-  # The bundled sharp binaries expect a non-standard libvips soname
-  # (8.17.3 vs the real 42.x), and the musl variant needs musl libc.
-  # Both are safe to ignore — sharp falls back gracefully at runtime.
   autoPatchelfIgnoreMissingDeps = [
     "libc.musl-x86_64.so.1"
     "libvips-cpp.so.8.17.3"
@@ -100,14 +96,18 @@ pkgs.stdenv.mkDerivation {
 
     mkdir -p $out/opt/t3code
 
-    # Extract the AppImage squashfs (second 'hsqs' magic at offset 188392)
-    unsquashfs -offset 188392 -dest $out/opt/t3code $src
+    # Extract the AppImage squashfs
+    offset=$(LC_ALL=C readelf -h "$src" | awk 'NR==13{e_shoff=$5} NR==18{e_shentsize=$5} NR==19{e_shnum=$5} END{print e_shoff+e_shentsize*e_shnum}')
+    unsquashfs -offset "$offset" -dest $out/opt/t3code $src
 
-    # Wrap the main binary
+    # Wrap the Electron binary
     mkdir -p $out/bin
+
     makeWrapper $out/opt/t3code/t3code $out/bin/t3code \
-      --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
+      --set ELECTRON_OZONE_PLATFORM_HINT "wayland" \
+      --set OZONE_PLATFORM "wayland" \
       --run 'export PATH="$HOME/.local/bin:$PATH"' \
+      --add-flags "--ozone-platform=wayland" \
       --add-flags "--disable-features=WaylandWpColorManagerV1,WaylandColorManagement" \
       --add-flags "--force-color-profile=srgb" \
       --add-flags "--enable-features=WaylandLinuxDrmSyncobj" \
@@ -119,7 +119,9 @@ pkgs.stdenv.mkDerivation {
 
     # Icon
     mkdir -p $out/share/pixmaps
+
     icon=$(find $out/opt/t3code -type f -name t3code.png -print -quit)
+
     if [ -n "$icon" ]; then
       cp "$icon" $out/share/pixmaps/t3code.png
     fi
