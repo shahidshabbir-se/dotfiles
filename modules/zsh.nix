@@ -162,9 +162,8 @@ in
     source ${dockerAliases}
     source ${omz}/plugins/docker-compose/docker-compose.plugin.zsh
 
-    # Prompt and local secrets
+    # Prompt configuration
     [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-    [[ -f ~/.secrets ]] && source ~/.secrets
 
     # Ctrl+W stops at hyphens
     WORDCHARS='*?_[]~=&;!#$%^(){}<>'
@@ -406,6 +405,9 @@ in
     export EDITOR="nvim"
     export BROWSER="${browser}"
     export _ZO_DOCTOR=0
+
+    # Load secrets last so they are available in the shell and can override defaults.
+    [[ -r "$HOME/.secrets" ]] && source "$HOME/.secrets"
 
     # Herdr tab titles
     for _f in ''${HOME}/.config/herdr/plugins/github/herdr-automatic-rename-*/shell/hook.zsh(N); do
