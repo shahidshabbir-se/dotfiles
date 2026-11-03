@@ -41,6 +41,8 @@ in
     enable = true;
     configType = "lua";
     xwayland.enable = true;
+    # NixOS programs.hyprland already registers this portal package.
+    portalPackage = null;
     systemd = {
       enable = true;
       variables = [ "--all" ];

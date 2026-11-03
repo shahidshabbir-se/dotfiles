@@ -326,7 +326,6 @@ in
   };
   boot = {
     consoleLogLevel = 3;
-    initrd.verbose = false;
     kernelParams = [
       "quiet"
       "logo.nologo"
@@ -425,7 +424,6 @@ in
     xdgOpenUsePortal = false;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      xdg-desktop-portal-hyprland
     ];
     config.common.default = [
       "gtk"
