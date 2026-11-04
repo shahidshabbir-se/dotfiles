@@ -58,17 +58,16 @@ in
       quickshell.enable = false;
     };
 
-    # configuration.nix
-    localsend = {
-      enable = true;
-      openFirewall = true;
-      package = pkgs.localsend.overrideAttrs (old: {
-        postPatch = (old.postPatch or "") + ''
-          substituteInPlace lib/config/theme.dart \
-            --replace-fail "    fontFamily = null;" "    fontFamily = checkPlatform([TargetPlatform.linux]) ? 'SF Pro Display' : null;"
-        '';
-      });
-    };
+    # localsend = {
+    #   enable = true;
+    #   openFirewall = true;
+    #   package = pkgs.localsend.overrideAttrs (old: {
+    #     postPatch = (old.postPatch or "") + ''
+    #       substituteInPlace lib/config/theme.dart \
+    #         --replace-fail "    fontFamily = null;" "    fontFamily = checkPlatform([TargetPlatform.linux]) ? 'SF Pro Display' : null;"
+    #     '';
+    #   });
+    # };
 
     dconf.enable = true;
     nix-ld.enable = true;

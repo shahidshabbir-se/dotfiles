@@ -118,7 +118,6 @@ in
       ++ mediaPackages
       ++ systemUtilityPackages
       ++ themePackages
-      ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
       ++ lib.optional (musicPlayer == "limusic") (
         import ../../modules/pkgs/limusic.nix {
           inherit pkgs lib;

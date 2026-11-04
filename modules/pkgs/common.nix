@@ -54,6 +54,7 @@ with pkgs;
   imagemagick
   jq
   jless
+  croc
   eza
   lsof
   moreutils
