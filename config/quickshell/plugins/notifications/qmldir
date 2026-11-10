@@ -1,4 +1,7 @@
 module qs.plugins.notifications
 Notifications 1.0 Notifications.qml
+Indicator 1.0 Indicator.qml
+singleton NotificationStore 1.0 NotificationStore.qml
+internal Center 1.0 Center.qml
 internal ToastStack 1.0 ToastStack.qml
 internal Toast 1.0 Toast.qml

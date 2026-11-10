@@ -1,5 +1,6 @@
 import QtQuick
 import qs.plugins.clock as ClockPlugin
+import qs.plugins.notifications as NotificationsPlugin
 
 // The static plugin registry from ADR 0003: adding a plugin means a folder and
 // one entry here. There is no discovery and no manifest.
@@ -10,8 +11,13 @@ QtObject {
         ClockPlugin.Clock {}
     }
 
+    readonly property Component notificationsEntry: Component {
+        NotificationsPlugin.Indicator {}
+    }
+
     readonly property var entries: ({
-        "clock": clockEntry
+        "clock": clockEntry,
+        "notifications": notificationsEntry
     })
 
     function entryFor(id) {
