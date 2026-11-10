@@ -46,6 +46,7 @@ let
     zip
     speedtest-cli
     qrencode
+    zed-editor-fhs
   ];
 
   themePackages = with pkgs; [
