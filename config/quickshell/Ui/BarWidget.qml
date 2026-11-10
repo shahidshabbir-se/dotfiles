@@ -1,19 +1,14 @@
 import QtQuick
 import qs.Commons as Commons
 
-Item {
+// A row-shaped bar cell. Keeping this a Row (rather than an Item with an
+// anchored inner Row) lets it nest inside BarSection and centerGroup without
+// Qt warning about anchors inside a positioner.
+Row {
     id: root
 
-    default property alias content: row.data
-
-    implicitWidth: row.implicitWidth + Commons.Style.spacingLg * 2
     implicitHeight: Commons.Style.barHeight
-
-    Row {
-        id: row
-
-        anchors.verticalCenter: parent.verticalCenter
-        x: Commons.Style.spacingLg
-        spacing: Commons.Style.spacingSm
-    }
+    spacing: Commons.Style.spacingSm
+    leftPadding: Commons.Style.spacingLg
+    rightPadding: Commons.Style.spacingLg
 }
