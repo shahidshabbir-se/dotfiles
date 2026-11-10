@@ -1,17 +1,22 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "../plugins/bar"
-import "../plugins/notifications"
+import qs.Registry
+import qs.plugins.bar as BarPlugin
+import qs.plugins.notifications as NotificationsPlugin
 
 Scope {
     id: root
 
-    Bar {
-        id: bar
+    Registry {
+        id: registry
     }
 
-    Notifications {}
+    BarPlugin.Bar {
+        registry: registry
+    }
+
+    NotificationsPlugin.Notifications {}
 
     IpcHandler {
         target: "shell"

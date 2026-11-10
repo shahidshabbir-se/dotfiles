@@ -1,18 +1,18 @@
 import QtQuick
-import "../Commons"
+import qs.Commons as Commons
 
 Item {
     id: root
 
     default property alias content: row.data
 
-    implicitWidth: row.implicitWidth + Style.spacingLg * 2
-    implicitHeight: Style.barHeight
+    implicitWidth: row.implicitWidth + Commons.Style.spacingLg * 2
+    implicitHeight: Commons.Style.barHeight
 
     Row {
         id: row
 
         anchors.centerIn: parent
-        spacing: Style.spacingSm
+        spacing: Commons.Style.spacingSm
     }
 }

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "wallpaper": {
+    "directory": "~/Pictures/Wallpapers",
+    "file": "night.png"
+  },
+  "bar": {
+    "position": "top",
+    "layout": {
+      "left": [],
+      "centerBegin": [],
+      "center": [{ "id": "clock", "format": "ddd HH:mm" }],
+      "centerEnd": [],
+      "tray": [],
+      "right": []
+    }
+  }
+}
