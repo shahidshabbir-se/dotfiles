@@ -7,7 +7,7 @@ import qs.Commons as Commons
 Row {
     id: root
 
-    implicitHeight: Commons.Style.barHeight
+    height: Commons.Style.barHeight
     spacing: Commons.Style.spacingSm
     leftPadding: Commons.Style.spacingLg
     rightPadding: Commons.Style.spacingLg
