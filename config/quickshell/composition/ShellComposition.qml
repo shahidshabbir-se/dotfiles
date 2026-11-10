@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Registry
 import qs.plugins.bar as BarPlugin
+import qs.plugins.clock as ClockPlugin
 import qs.plugins.notifications as NotificationsPlugin
 import qs.plugins.polkit as PolkitPlugin
 import qs.plugins.remoteSession as RemoteSessionPlugin
@@ -19,6 +20,8 @@ Scope {
     }
 
     NotificationsPlugin.Notifications {}
+
+    ClockPlugin.ClockService {}
 
     RemoteSessionPlugin.RemoteSession {}
 
