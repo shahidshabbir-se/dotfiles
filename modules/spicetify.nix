@@ -31,7 +31,7 @@ let
   # spicetify-nix can copy into Themes/Lucid/.
   lucidUserCss = pkgs.fetchurl {
     url = "https://spicetify-lucid.sanooj.uk/spice/user.css";
-    sha256 = "sha256-70N9VgIrroy+wDzmY2i5hgddOOVBtP4zyVT3mAB1qbo=";
+    sha256 = "sha256-2cdRiVcd7x3vcsuCsfTekhSRvez+HpZNq8cIcNPYa7Q=";
   };
   lucidThemeJs = pkgs.fetchurl {
     url = "https://spicetify-lucid.sanooj.uk/spice/theme.js";
