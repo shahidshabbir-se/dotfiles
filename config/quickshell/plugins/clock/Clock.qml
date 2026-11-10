@@ -25,6 +25,17 @@ Ui.BarWidget {
                 weight: Font.Medium
             }
         }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: CalendarState.toggleCalendar(root.barScreen)
+        }
+    }
+
+    CalendarPopup {
+        barScreen: root.barScreen
     }
 
     Timer {

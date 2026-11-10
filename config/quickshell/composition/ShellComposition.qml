@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Registry
 import qs.plugins.bar as BarPlugin
+import qs.plugins.clock as ClockPlugin
 import qs.plugins.notifications as NotificationsPlugin
 
 Scope {
@@ -17,6 +18,8 @@ Scope {
     }
 
     NotificationsPlugin.Notifications {}
+
+    ClockPlugin.ClockService {}
 
     IpcHandler {
         target: "shell"

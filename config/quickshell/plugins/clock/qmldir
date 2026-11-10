@@ -1,2 +1,5 @@
 module qs.plugins.clock
 Clock 1.0 Clock.qml
+singleton CalendarState 1.0 CalendarState.qml
+internal CalendarPopup 1.0 CalendarPopup.qml
+ClockService 1.0 ClockService.qml
