@@ -12,7 +12,8 @@ Item {
     Row {
         id: row
 
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        x: Commons.Style.spacingLg
         spacing: Commons.Style.spacingSm
     }
 }
