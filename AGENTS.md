@@ -1,0 +1,15 @@
+# dotfiles
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in `shahidshabbir-se/dotfiles`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical triage roles using the default label strings. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` and `docs/adr/`. See `docs/agents/domain.md`.
