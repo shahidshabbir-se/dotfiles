@@ -95,7 +95,7 @@ Scope {
             exclusiveZone: Style.barHeight
             aboveWindows: true
 
-            WlrLayershell.namespace: "quickshell-bar"
+            WlrLayershell.namespace: "qs-bar"
             WlrLayershell.layer: WlrLayer.Top
 
             Rectangle {

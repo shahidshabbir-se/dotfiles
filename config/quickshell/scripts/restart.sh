@@ -33,7 +33,7 @@ fi
 # Return only once the restarted process is alive and its IPC surface answers.
 for ((attempt = 1; attempt <= wait_ticks; attempt++)); do
   if "$systemctl_bin" --user is-active --quiet quickshell \
-    && "$quickshell_bin" ipc -p "$config_dir" call shell ping >/dev/null 2>&1; then
+    && [ "$("$quickshell_bin" ipc -p "$config_dir" call shell ping 2>/dev/null)" = "pong" ]; then
     echo "quickshell restarted and IPC is ready"
     exit 0
   fi

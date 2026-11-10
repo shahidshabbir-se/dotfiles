@@ -110,10 +110,8 @@ let
     # Shell / overlays
     (modShell "W" "ags run")
     (modShell "SHIFT + W" ''bash -c "kill -9 $(pgrep hyprpanel) || hyprpanel"'')
-    (shell (key "ALT + SHIFT + S") "qs ipc call screenshot toggle")
     (modShell "SPACE" "vicinae toggle")
     (shell (key "ALT + C") "vicinae 'vicinae://launch/clipboard/history?toggle=true'")
-    (modShell "TAB" "qs ipc call expose toggle")
     (shell (key "ALT + TAB") "${altTab} next")
     (shell (key "ALT + SHIFT + TAB") "${altTab} prev")
 

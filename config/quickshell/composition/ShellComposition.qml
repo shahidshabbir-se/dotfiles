@@ -13,8 +13,10 @@ Scope {
     IpcHandler {
         target: "shell"
 
-        function ping(): void {
-            console.log("quickshell: ping")
+        function ping(): string {
+            // Quickshell exits 0 for a missing target/function, so callers
+            // must compare this value instead of trusting the exit status.
+            return "pong"
         }
     }
 }

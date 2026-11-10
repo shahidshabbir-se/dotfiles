@@ -16,8 +16,9 @@ hypr() {
 systemctl --user is-active --quiet quickshell
 printf 'unit: active\n'
 
-"${QUICKSHELL_BIN:-quickshell}" ipc -p "$config_dir" call shell ping
-printf 'ipc: shell/ping answered\n'
+ping="$("${QUICKSHELL_BIN:-quickshell}" ipc -p "$config_dir" call shell ping 2>/dev/null)"
+[ "$ping" = "pong" ] || { echo "ipc: shell/ping did not return pong (got '$ping')" >&2; exit 1; }
+printf 'ipc: shell/ping answered pong\n'
 
 hypr -j monitors 2>/dev/null | "$jq_bin" -r '
   [ .[]

@@ -32,11 +32,16 @@ esac
 exit 0
 INNER
 
+  # Quickshell 0.3.1 exits 0 even when the target/function is missing, so the
+  # fake must do the same. Readiness is the printed value, not the exit code.
   cat >"$tmp/quickshell" <<'INNER'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"$QUICKSHELL_LOG"
 case " $* " in
-  *" call shell ping "*) exit @IPC_READY@ ;;
+  *" call shell ping "*)
+    if [ "@IPC_READY@" = 1 ]; then printf 'pong\n'; fi
+    exit 0
+    ;;
 esac
 exit 0
 INNER
@@ -69,32 +74,32 @@ else
   fi
 fi
 
-write_fakes no 1
+write_fakes no 0
 : >"$tmp/systemctl.log"
 : >"$tmp/quickshell.log"
-if run_restart >"$tmp/ready.out" 2>"$tmp/ready.err"; then
-  fail "restart fails when IPC never answers"
+if run_restart >"$tmp/not-ready.out" 2>"$tmp/not-ready.err"; then
+  fail "restart fails when ping prints nothing"
 else
   if grep -q 'reset-failed' "$tmp/systemctl.log" \
     && grep -q 'restart quickshell' "$tmp/systemctl.log" \
     && grep -q 'call shell ping' "$tmp/quickshell.log"; then
-    ok "restart resets, restarts, and waits for IPC"
+    ok "restart fails when ping prints nothing"
   else
-    fail "restart resets, restarts, and waits for IPC"
+    fail "restart fails when ping prints nothing"
   fi
 fi
 
-write_fakes no 0
+write_fakes no 1
 : >"$tmp/systemctl.log"
 : >"$tmp/quickshell.log"
 if run_restart >"$tmp/success.out" 2>"$tmp/success.err"; then
   if grep -q 'call shell ping' "$tmp/quickshell.log"; then
-    ok "restart returns after IPC ping"
+    ok "restart returns after pong"
   else
-    fail "restart returns after IPC ping"
+    fail "restart returns after pong"
   fi
 else
-  fail "restart returns after IPC ping"
+  fail "restart returns after pong"
 fi
 
 if ((fails)); then
