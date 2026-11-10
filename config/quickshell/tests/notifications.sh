@@ -7,12 +7,87 @@ busctl_bin="${BUSCTL_BIN:-busctl}"
 notify_send_bin="${NOTIFY_SEND_BIN:-notify-send}"
 wait_ticks="${NOTIFY_WAIT_TICKS:-50}"
 timeout_bin="${TIMEOUT_BIN:-timeout}"
+quickshell_bin="${QUICKSHELL_BIN:-quickshell}"
+jq_bin="${JQ_BIN:-jq}"
+ipc_wait_ticks="${IPC_WAIT_TICKS:-50}"
 
 fails=0
 ok() { printf 'ok - %s\n' "$1"; }
 fail() {
   printf 'not ok - %s\n' "$1"
   fails=$((fails + 1))
+}
+
+ipc() {
+  "$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications "$@" 2>/dev/null || true
+}
+
+normalize_json() {
+  "$jq_bin" -c 'if type == "string" then fromjson else . end'
+}
+
+status_json() {
+  ipc status | normalize_json
+}
+
+wait_status() {
+  local expression="$1"
+  local attempt
+  local current
+  for ((attempt = 1; attempt <= ipc_wait_ticks; attempt++)); do
+    if current="$(status_json 2>/dev/null)" \
+      && printf '%s' "$current" | "$jq_bin" -e "$expression" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  printf 'notifications: timed out waiting for status: %s\n' "$expression" >&2
+  return 1
+}
+
+wait_history_app() {
+  local app="$1"
+  local attempt
+  local current
+  for ((attempt = 1; attempt <= ipc_wait_ticks; attempt++)); do
+    if current="$(ipc history | normalize_json 2>/dev/null)" \
+      && printf '%s' "$current" | "$jq_bin" -e --arg app "$app" '.[0].appName == $app' >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  printf 'notifications: timed out waiting for history entry from %s\n' "$app" >&2
+  return 1
+}
+
+ensure_closed() {
+  local open
+  open="$(status_json 2>/dev/null | "$jq_bin" -r '.open' 2>/dev/null || true)"
+  if [[ "$open" == "true" ]]; then
+    ipc toggleCenter >/dev/null || true
+  fi
+}
+
+ensure_dnd_off() {
+  local dnd
+  dnd="$(status_json 2>/dev/null | "$jq_bin" -r '.dnd' 2>/dev/null || true)"
+  if [[ "$dnd" == "true" ]]; then
+    ipc toggleDnd >/dev/null || true
+  fi
+}
+
+cleanup_notifications() {
+  local state open dnd
+  state="$(status_json 2>/dev/null || true)"
+  [[ -n "$state" ]] || return 0
+  open="$(printf '%s' "$state" | "$jq_bin" -r '.open // false' 2>/dev/null || true)"
+  dnd="$(printf '%s' "$state" | "$jq_bin" -r '.dnd // false' 2>/dev/null || true)"
+  if [[ "$open" == "true" ]]; then
+    ipc toggleCenter >/dev/null || true
+  fi
+  if [[ "$dnd" == "true" ]]; then
+    ipc toggleDnd >/dev/null || true
+  fi
 }
 
 service="org.freedesktop.Notifications"
@@ -95,6 +170,108 @@ if command -v "$notify_send_bin" >/dev/null 2>&1; then
   fi
 else
   fail "notify-send is installed"
+fi
+
+# Notification center, unread count, DND, and IPC targets (ticket #6).
+if wait_status '.open != null and .dnd != null and .unread != null and .history != null and .toasts != null'; then
+  ok "notifications status answers over IPC"
+else
+  fail "notifications status answers over IPC"
+  printf 'the notifications IPC target did not answer; restart the shell with qs-restart\n' >&2
+  exit 1
+fi
+
+trap cleanup_notifications EXIT
+ensure_closed
+
+center_open="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications toggleCenter 2>/dev/null | normalize_json || true)"
+if printf '%s' "$center_open" | "$jq_bin" -e '.open == true and .unread == 0' >/dev/null 2>&1; then
+  ok "toggleCenter opens the center and clears unread"
+else
+  fail "toggleCenter opens the center and clears unread"
+fi
+
+center_close="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications toggleCenter 2>/dev/null | normalize_json || true)"
+if printf '%s' "$center_close" | "$jq_bin" -e '.open == false' >/dev/null 2>&1; then
+  ok "toggleCenter closes the center"
+else
+  fail "toggleCenter closes the center"
+fi
+
+ensure_closed
+ensure_dnd_off
+base_unread="$(status_json | "$jq_bin" -r '.unread')"
+center_id="$("$timeout_bin" 10 "$notify_send_bin" \
+  --print-id \
+  --app-name="Ticket 6 Center" \
+  --expire-time=10000 \
+  "Center summary" "Center body" 2>/dev/null || true)"
+if [[ "$center_id" =~ ^[0-9]+$ ]]; then
+  ok "a new notification reaches the shell for unread tracking"
+else
+  fail "a new notification reaches the shell for unread tracking"
+fi
+
+if wait_status '(.unread >= '"$((base_unread + 1))"') and (.history >= 1)' \
+  && wait_status '.toasts >= 1'; then
+  ok "unread and toast count update for a new notification"
+else
+  fail "unread and toast count update for a new notification"
+fi
+
+open_after_unread="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications toggleCenter 2>/dev/null | normalize_json || true)"
+if printf '%s' "$open_after_unread" | "$jq_bin" -e '.open == true and .unread == 0' >/dev/null 2>&1 \
+  && wait_status '.toasts == 0'; then
+  ok "opening the center clears unread and dismisses toasts"
+else
+  fail "opening the center clears unread and dismisses toasts"
+fi
+ensure_closed
+
+ensure_dnd_off
+dnd_on="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications toggleDnd 2>/dev/null | normalize_json || true)"
+if printf '%s' "$dnd_on" | "$jq_bin" -e '.dnd == true' >/dev/null 2>&1 \
+  && wait_status '.dnd == true and .toasts == 0'; then
+  ok "toggleDnd turns do-not-disturb on"
+else
+  fail "toggleDnd turns do-not-disturb on"
+fi
+
+base_history="$(status_json | "$jq_bin" -r '.history')"
+base_unread="$(status_json | "$jq_bin" -r '.unread')"
+dnd_id="$("$timeout_bin" 10 "$notify_send_bin" \
+  --print-id \
+  --app-name="Ticket 6 DND" \
+  --expire-time=10000 \
+  "DND summary" "DND body" 2>/dev/null || true)"
+if [[ "$dnd_id" =~ ^[0-9]+$ ]]; then
+  ok "a notification is accepted while do-not-disturb is on"
+else
+  fail "a notification is accepted while do-not-disturb is on"
+fi
+
+if wait_status '.dnd == true and (.history >= '"$((base_history + 1))"') and (.unread >= '"$((base_unread + 1))"')' \
+  && wait_history_app "Ticket 6 DND" \
+  && wait_status '.toasts == 0'; then
+  ok "do-not-disturb records history and unread without a toast"
+else
+  fail "do-not-disturb records history and unread without a toast"
+fi
+
+dnd_off="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications toggleDnd 2>/dev/null | normalize_json || true)"
+if printf '%s' "$dnd_off" | "$jq_bin" -e '.dnd == false' >/dev/null 2>&1; then
+  ok "toggleDnd turns do-not-disturb off"
+else
+  fail "toggleDnd turns do-not-disturb off"
+fi
+
+clear_result="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications clearHistory 2>/dev/null | normalize_json || true)"
+history_result="$("$timeout_bin" 10 "$quickshell_bin" ipc -p "$config_dir" call notifications history 2>/dev/null | normalize_json || true)"
+if printf '%s' "$clear_result" | "$jq_bin" -e '.history == 0 and .unread == 0' >/dev/null 2>&1 \
+  && printf '%s' "$history_result" | "$jq_bin" -e 'length == 0' >/dev/null 2>&1; then
+  ok "clearHistory empties history and unread"
+else
+  fail "clearHistory empties history and unread"
 fi
 
 if command -v swaync >/dev/null 2>&1; then
