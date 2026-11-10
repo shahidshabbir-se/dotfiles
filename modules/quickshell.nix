@@ -8,10 +8,16 @@
 let
   homeDirectory = config.home.homeDirectory;
   launchScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/launch.sh";
+  restartScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/restart.sh";
+
+  qsRestart = pkgs.writeShellScriptBin "qs-restart" ''
+    exec ${pkgs.bash}/bin/bash ${restartScript} "$@"
+  '';
 in
 {
   home.packages = with pkgs; [
     quickshell
+    jq
     qt6.qtdeclarative # qmllint / qmlformat
     # qylock session lock (lock-screen) needs these QML modules / codecs
     qt6.qtmultimedia
@@ -21,15 +27,14 @@ in
     gst_all_1.gst-plugins-good
     gst_all_1.gst-plugins-bad
     gst_all_1.gst-libav
+    qsRestart
   ];
 
   # Live-editable shell config (same pattern as nvim/zed).
-  xdg.configFile.quickshell.source =
-    config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
+  xdg.configFile.quickshell.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
 
-  # Best practice with home-manager Hyprland: session-scoped user unit.
-  # Restart=always covers hard crashes; hypridle after_sleep restarts qs when
-  # it survives sleep but loses Wayland outputs (placeholder screen).
+  # Session-scoped user unit. launch.sh owns monitor readiness; systemd owns
+  # crash restart. qs-restart is the one lock-aware lifecycle path.
   systemd.user.services.quickshell = {
     Unit = {
       Description = "Quickshell desktop shell";
@@ -37,10 +42,12 @@ in
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
 
     Service = {
-      Type = "simple";
+      Type = "exec";
       ExecStart = "${pkgs.bash}/bin/bash ${launchScript}";
       Restart = "always";
       RestartSec = 2;
