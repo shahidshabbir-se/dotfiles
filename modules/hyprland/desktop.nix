@@ -35,8 +35,7 @@ in
     cliphist
     wl-clipboard
 
-    # Notifications
-    swaynotificationcenter
+    # Notifications are owned by the Quickshell shell; libnotify is the client.
     libnotify
 
     # Media / Audio / Brightness

@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../plugins/bar"
+import "../plugins/notifications"
 
 Scope {
     id: root
@@ -9,6 +10,8 @@ Scope {
     Bar {
         id: bar
     }
+
+    Notifications {}
 
     IpcHandler {
         target: "shell"
