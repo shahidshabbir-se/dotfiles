@@ -1,0 +1,4 @@
+module notifications
+Notifications 1.0 Notifications.qml
+internal ToastStack 1.0 ToastStack.qml
+internal Toast 1.0 Toast.qml
