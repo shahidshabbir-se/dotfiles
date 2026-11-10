@@ -65,14 +65,20 @@ Row {
                 anchors.centerIn: parent
                 visible: !loader.item
 
-                Text {
-                    anchors.centerIn: parent
-                    color: Commons.Color.red
-                    text: "? " + (delegate.entry.id || "missing id") + " ?"
-                    font {
-                        family: Commons.Style.monoFontFamily
-                        pixelSize: Commons.Style.fontSizeSm
-                        weight: Font.Bold
+                Item {
+                    implicitWidth: errorLabel.implicitWidth
+                    implicitHeight: errorLabel.implicitHeight
+
+                    Text {
+                        id: errorLabel
+
+                        color: Commons.Color.red
+                        text: "? " + (delegate.entry.id || "missing id") + " ?"
+                        font {
+                            family: Commons.Style.monoFontFamily
+                            pixelSize: Commons.Style.fontSizeSm
+                            weight: Font.Bold
+                        }
                     }
                 }
             }
