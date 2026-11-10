@@ -38,7 +38,7 @@ case "$display_path" in
 esac
 if [ -z "${WAYLAND_DISPLAY:-}" ] || [ ! -S "$display_path" ]; then
   wl_socket="$("$hyprctl_bin" -j instances 2>/dev/null \
-    | "$jq_bin" -r 'if length == 0 then empty else max_by(.time).wl_socket end')"
+    | "$jq_bin" -r 'if length == 0 then empty else max_by(.time).wl_socket // empty end')"
   if [ -n "$wl_socket" ]; then
     export WAYLAND_DISPLAY="$wl_socket"
   fi
