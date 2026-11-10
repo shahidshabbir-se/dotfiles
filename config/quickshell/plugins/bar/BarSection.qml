@@ -32,7 +32,7 @@ Row {
                 ? root.registry.entryFor(delegate.entry.id)
                 : null
 
-            implicitWidth: loader.item ? loader.implicitWidth : errorWidget.implicitWidth
+            implicitWidth: loader.item ? loader.item.implicitWidth : errorWidget.implicitWidth
             implicitHeight: Commons.Style.barHeight
 
             Loader {

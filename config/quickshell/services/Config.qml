@@ -45,9 +45,12 @@ Item {
 
         onLoaded: root.reload()
         onFileChanged: {
-            root.reload();
+            // The change signal can arrive before the internal text updates.
+            // reload() forces a fresh read; textChanged then parses it.
+            fileView.reload();
             reread.restart();
         }
+        onTextChanged: root.reload()
         onLoadFailed: function (error) {
             console.error("shell.json: cannot read " + root.filePath + " (" + error + ")");
             root.rawText = "";
@@ -61,6 +64,9 @@ Item {
         id: reread
 
         interval: 50
-        onTriggered: root.reload()
+        onTriggered: {
+            fileView.reload();
+            root.reload();
+        }
     }
 }
