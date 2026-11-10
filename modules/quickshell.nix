@@ -10,7 +10,19 @@ let
   launchScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/launch.sh";
   restartScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/restart.sh";
 
+  # systemd user units start with a minimal PATH. Pin every binary the launch
+  # and restart scripts need instead of relying on the graphical session env.
+  runtimePath = lib.makeBinPath [
+    pkgs.quickshell
+    pkgs.jq
+    pkgs.hyprland
+    pkgs.systemd
+    pkgs.coreutils
+    pkgs.bash
+  ];
+
   qsRestart = pkgs.writeShellScriptBin "qs-restart" ''
+    export PATH=${runtimePath}:$PATH
     exec ${pkgs.bash}/bin/bash ${restartScript} "$@"
   '';
 in
@@ -48,6 +60,7 @@ in
 
     Service = {
       Type = "exec";
+      Environment = [ "PATH=${runtimePath}" ];
       ExecStart = "${pkgs.bash}/bin/bash ${launchScript}";
       Restart = "always";
       RestartSec = 2;
