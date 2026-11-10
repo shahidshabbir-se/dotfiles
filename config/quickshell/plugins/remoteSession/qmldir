@@ -1,0 +1,2 @@
+module qs.plugins.remoteSession
+RemoteSession 1.0 RemoteSession.qml

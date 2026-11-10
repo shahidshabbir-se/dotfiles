@@ -1,0 +1,4 @@
+module qs.plugins.polkit
+Agent 1.0 Agent.qml
+Polkit 1.0 Polkit.qml
+internal AuthDialog 1.0 AuthDialog.qml

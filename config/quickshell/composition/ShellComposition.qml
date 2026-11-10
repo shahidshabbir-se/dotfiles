@@ -4,6 +4,8 @@ import Quickshell.Io
 import qs.Registry
 import qs.plugins.bar as BarPlugin
 import qs.plugins.notifications as NotificationsPlugin
+import qs.plugins.polkit as PolkitPlugin
+import qs.plugins.remoteSession as RemoteSessionPlugin
 
 Scope {
     id: root
@@ -17,6 +19,10 @@ Scope {
     }
 
     NotificationsPlugin.Notifications {}
+
+    RemoteSessionPlugin.RemoteSession {}
+
+    PolkitPlugin.Polkit {}
 
     IpcHandler {
         target: "shell"
