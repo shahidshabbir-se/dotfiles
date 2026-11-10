@@ -185,13 +185,19 @@ Scope {
                 Ui.BarWidget {
                     visible: Config.errors.length > 0
 
-                    Text {
-                        anchors.centerIn: parent
-                        color: Commons.Color.red
-                        text: "config error"
-                        font {
-                            family: Commons.Style.monoFontFamily
-                            pixelSize: Commons.Style.fontSizeSm
+                    Item {
+                        implicitWidth: errorLabel.implicitWidth
+                        implicitHeight: errorLabel.implicitHeight
+
+                        Text {
+                            id: errorLabel
+
+                            color: Commons.Color.red
+                            text: "config error"
+                            font {
+                                family: Commons.Style.monoFontFamily
+                                pixelSize: Commons.Style.fontSizeSm
+                            }
                         }
                     }
                 }
