@@ -3,6 +3,8 @@ import Quickshell
 import Quickshell.Io
 import "../plugins/bar"
 import "../plugins/notifications"
+import "../plugins/polkit"
+import "../plugins/remoteSession"
 
 Scope {
     id: root
@@ -12,6 +14,10 @@ Scope {
     }
 
     Notifications {}
+
+    RemoteSession {}
+
+    Polkit {}
 
     IpcHandler {
         target: "shell"
