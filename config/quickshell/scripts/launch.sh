@@ -28,6 +28,22 @@ if [ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
   export HYPRLAND_INSTANCE_SIGNATURE="$signature"
 fi
 
+# The user manager can carry a stale WAYLAND_DISPLAY after a nested compositor
+# test or a second session. Hyprland's own instance list is authoritative.
+runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+display_path="${WAYLAND_DISPLAY:-}"
+case "$display_path" in
+  /*) ;;
+  *) display_path="$runtime_dir/${display_path:-wayland-0}" ;;
+esac
+if [ -z "${WAYLAND_DISPLAY:-}" ] || [ ! -S "$display_path" ]; then
+  wl_socket="$("$hyprctl_bin" -j instances 2>/dev/null \
+    | "$jq_bin" -r 'if length == 0 then empty else max_by(.time).wl_socket end')"
+  if [ -n "$wl_socket" ]; then
+    export WAYLAND_DISPLAY="$wl_socket"
+  fi
+fi
+
 has_real_monitor() {
   hypr -j monitors 2>/dev/null \
     | "$jq_bin" -e '
