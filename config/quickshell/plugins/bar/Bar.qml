@@ -2,20 +2,56 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import "../../Commons"
-import "../../Ui"
-import "../clock"
+import qs.Commons as Commons
+import qs.Ui as Ui
+import qs.services
 
 Scope {
     id: root
 
+    property var registry: null
+
+    readonly property string position: Config.position
     readonly property bool hasUsableScreen: {
         const screens = Quickshell.screens;
         for (let i = 0; i < screens.length; i++) {
-            if (Util.isRealScreen(screens[i]))
+            if (Commons.Util.isRealScreen(screens[i]))
                 return true;
         }
         return false;
+    }
+
+    function unknownEntries() {
+        const unknown = [];
+        const sections = [ "left", "centerBegin", "center", "centerEnd", "tray", "right" ];
+
+        for (let s = 0; s < sections.length; s++) {
+            const section = sections[s];
+            const entries = Config.layout[section] || [];
+
+            for (let e = 0; e < entries.length; e++) {
+                const id = entries[e].id;
+                if (!root.registry || !root.registry.entryFor(id))
+                    unknown.push({ section: section, id: id });
+            }
+        }
+        return unknown;
+    }
+
+    // The effective layout is the reload seam: the acceptance harness can edit
+    // shell.json and read this back without inspecting pixels.
+    IpcHandler {
+        target: "bar"
+
+        function layout(): string {
+            return JSON.stringify({
+                version: Config.version,
+                position: Config.position,
+                layout: Config.layout,
+                errors: Config.errors,
+                unknown: root.unknownEntries()
+            });
+        }
     }
 
     property bool hyprlandHasLitMonitor: false
@@ -76,37 +112,114 @@ Scope {
     Variants {
         model: Quickshell.screens
 
+        // qmllint disable uncreatable-type
         PanelWindow {
             id: bar
 
             required property var modelData
 
             screen: modelData
-            visible: Util.isRealScreen(modelData)
+            visible: Commons.Util.isRealScreen(modelData)
 
-            anchors {
-                top: true
-                left: true
-                right: true
-            }
+            anchors.top: root.position === "top"
+            anchors.bottom: root.position === "bottom"
+            anchors.left: true
+            anchors.right: true
 
-            implicitHeight: Style.barHeight
+            implicitHeight: Commons.Style.barHeight
             color: "transparent"
-            exclusiveZone: Style.barHeight
+            exclusiveZone: Commons.Style.barHeight
             aboveWindows: true
 
-            WlrLayershell.namespace: "quickshell-bar"
+            WlrLayershell.namespace: "qs-bar"
             WlrLayershell.layer: WlrLayer.Top
 
             Rectangle {
                 anchors.fill: parent
-                color: Color.background
+                color: Commons.Color.background
             }
 
-            BarWidget {
-                anchors.centerIn: parent
+            BarSection {
+                section: "left"
+                entries: Config.layout.left
+                registry: root.registry
+                barWindow: bar
+                barScreen: bar.screen
 
-                Clock {}
+                anchors.left: parent.left
+                anchors.leftMargin: Commons.Style.barPadding
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Row {
+                id: centerGroup
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: Commons.Style.spacingSm
+
+                BarSection {
+                    section: "centerBegin"
+                    entries: Config.layout.centerBegin
+                    registry: root.registry
+                    barWindow: bar
+                    barScreen: bar.screen
+                }
+
+                BarSection {
+                    section: "center"
+                    entries: Config.layout.center
+                    registry: root.registry
+                    barWindow: bar
+                    barScreen: bar.screen
+                }
+
+                BarSection {
+                    section: "centerEnd"
+                    entries: Config.layout.centerEnd
+                    registry: root.registry
+                    barWindow: bar
+                    barScreen: bar.screen
+                }
+
+                Ui.BarWidget {
+                    visible: Config.errors.length > 0
+
+                    Text {
+                        anchors.centerIn: parent
+                        color: Commons.Color.red
+                        text: "config error"
+                        font {
+                            family: Commons.Style.monoFontFamily
+                            pixelSize: Commons.Style.fontSizeSm
+                        }
+                    }
+                }
+            }
+
+            Row {
+                id: rightGroup
+
+                anchors.right: parent.right
+                anchors.rightMargin: Commons.Style.barPadding
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: Commons.Style.spacingSm
+
+                BarSection {
+                    section: "tray"
+                    entries: Config.layout.tray
+                    registry: root.registry
+                    barWindow: bar
+                    barScreen: bar.screen
+                }
+
+                BarSection {
+                    section: "right"
+                    entries: Config.layout.right
+                    registry: root.registry
+                    barWindow: bar
+                    barScreen: bar.screen
+                }
             }
         }
     }

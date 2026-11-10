@@ -1,13 +1,18 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "../plugins/bar"
+import qs.Registry
+import qs.plugins.bar as BarPlugin
 
 Scope {
     id: root
 
-    Bar {
-        id: bar
+    Registry {
+        id: registry
+    }
+
+    BarPlugin.Bar {
+        registry: registry
     }
 
     IpcHandler {

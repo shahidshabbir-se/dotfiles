@@ -1,2 +1,2 @@
-module composition
+module qs.composition
 ShellComposition 1.0 ShellComposition.qml

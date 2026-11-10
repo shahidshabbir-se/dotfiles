@@ -1,7 +1,7 @@
 //@ pragma IconTheme Papirus-Dark
 
 import Quickshell
-import "./composition"
+import qs.composition
 
 ShellRoot {
     ShellComposition {}
