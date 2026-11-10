@@ -104,6 +104,35 @@ _Avoid_: background picker, image picker
 _Avoid_: backgrounds folder, wallpaper library
 
 
+**Reference UI**:
+The Omarchy desktop running on the user's other machine, in Tokyo Night, at
+3440x1440 with a 1.33 scale.
+_Avoid_: target, upstream, screenshot
+
+**Reference capture**:
+A screenshot of one desktop surface taken from the reference UI under the
+capture protocol.
+_Avoid_: screenshot, mockup, comp
+
+**Visual parity**:
+Our surface matches its reference capture in geometry, colour, typography, and
+interaction state within the defined comparison threshold.
+_Avoid_: similarity, lookalike, inspired by
+
+**Visual harness**:
+The script that captures our surface, crops the measured region, and compares
+it with the reference capture.
+_Avoid_: screenshot test, visual test, pixel test
+
+**Design token**:
+A named colour, spacing, radius, or type value taken from the reference theme.
+_Avoid_: constant, magic value
+
+**Pixel audit**:
+The final full-desktop comparison against the reference UI.
+_Avoid_: final review, visual check
+
+
 ### Services the shell owns or defers to
 
 **Notification service**:

@@ -1,6 +1,6 @@
 # Quickshell shell — implementation plan
 
-Status: proposed. No code is written until this is confirmed.
+Status: superseded for visual direction by [0002-pixel-perfect-ui.md](./0002-pixel-perfect-ui.md).
 
 Related: [ADR 0001](../adr/0001-own-shell-not-omarchy-code.md) (own shell, no
 Omarchy code), [ADR 0002](../adr/0002-systemd-supervises-the-shell.md)

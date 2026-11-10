@@ -1,3 +1,7 @@
+> **Superseded for visual direction by [spec 0002](./0002-pixel-perfect-omarchy-ui.md).**
+> The management model, supervisor, config, and behaviour decisions remain;
+> the visual target is now pixel-perfect Omarchy parity.
+
 ## Problem Statement
 
 I like how Omarchy manages its Quickshell desktop: one long-lived process, the
