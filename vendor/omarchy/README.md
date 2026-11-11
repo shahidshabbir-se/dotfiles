@@ -53,8 +53,9 @@ tests, and docs) remains ours.
 
 ## Local modifications and patches
 
-At this pin the vendored files are unmodified. NixOS adaptation lives outside
-this directory:
+At this pin the vendored source files are unmodified except for the generated
+Tokyo Night shell surfaces described below. NixOS adaptation lives outside this
+directory:
 
 | Area | Location | What changes |
 |---|---|---|
@@ -62,6 +63,8 @@ this directory:
 | Quickshell patches | `modules/pkgs/quickshell/*.patch` | `load_qtquick_611.patch` (Omarchy's `OmarchyLoadPatch` and Qt 6.11 load interception) and `intercept-rescan-fix.patch` (removes a synchronous `scanDir()` that deadlocks plugin reload) |
 | Supervisor and PATH | `modules/quickshell.nix`, `config/quickshell/scripts/` | systemd unit, monitor readiness, `qs-restart`, and the binaries on the unit PATH |
 | User config | `config/omarchy/shell.json` | Our config, symlinked to `~/.config/omarchy/shell.json`; the vendored copy is the fallback |
+| Theme surfaces | `vendor/omarchy/themes/tokyo-night/shell.toml` | Generated from `default/themed/shell.toml.tpl` with this theme's `colors.toml` and `shell.lock.toml`; upstream ships no `shell.toml` for Tokyo Night (ticket #57) |
+| Theme state | `modules/quickshell.nix` | Home Manager symlinks `~/.local/state/omarchy/current/theme` to the vendored theme and writes `theme.name` = `tokyo-night` |
 | Helper gaps | `docs/known-broken-helpers.md` | Open, adapted, and not-needed helper work |
 
 Do not edit a vendored file in place without recording it. If a local patch to

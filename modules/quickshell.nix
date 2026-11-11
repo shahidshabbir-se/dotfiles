@@ -57,6 +57,17 @@ in
   # tracked config canonical instead of letting the shell fork its own copy.
   xdg.configFile.omarchy.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/omarchy";
 
+  # The running shell reads the active theme from
+  # ~/.local/state/omarchy/current: theme/ (colors.toml, shell.toml, ...) and
+  # theme.name. Home Manager owns both entries so a fresh activation lands on
+  # Tokyo Night without a live theme switch. Existing state is moved aside by
+  # home-manager.backupFileExtension ("hm-backup"), never deleted; a later
+  # `omarchy theme set` may repoint these until the next home-manager switch.
+  home.file = {
+    ".local/state/omarchy/current/theme".source = config.lib.file.mkOutOfStoreSymlink "${omarchyPath}/themes/tokyo-night";
+    ".local/state/omarchy/current/theme.name".text = "tokyo-night\n";
+  };
+
   # Session-scoped user unit. launch.sh owns monitor readiness; systemd owns
   # crash restart. qs-restart is the one lock-aware lifecycle path.
   systemd.user.services.quickshell = {
