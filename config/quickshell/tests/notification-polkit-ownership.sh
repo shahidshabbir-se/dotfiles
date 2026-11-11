@@ -267,7 +267,10 @@ if [[ -z "$journal" ]]; then
   journal="$("$journalctl_bin" --user -b _COMM=quickshell --no-pager -o cat 2>/dev/null || true)"
 fi
 
-if [[ -n "$journal" ]] && grep -Fq 'omarchy polkit agent registered' <<<"$journal"; then
+unit_active="$(systemctl --user is-active quickshell 2>/dev/null || true)"
+if [[ "$unit_active" != "active" ]]; then
+  skip "journal polkit registration check: shell is not running under systemd"
+elif [[ -n "$journal" ]] && grep -Fq 'omarchy polkit agent registered' <<<"$journal"; then
   ok "journal records the Omarchy polkit agent registration"
 else
   fail "journal records the Omarchy polkit agent registration"
