@@ -1,10 +1,30 @@
 # Omarchy fork + NixOS rewiring — plan
 
-Status: proposed. Supersedes spec #28 and the independent pixel-perfect plan.
+Status: in progress. Supersedes spec #28 and the independent pixel-perfect
+plan.
 
 Related: [ADR 0006](../adr/0006-fork-omarchy-shell.md),
 [spec 0003](../specs/0003-omarchy-fork-rewire.md),
-[visual reference](../visual-reference.md).
+[visual reference](../visual-reference.md),
+[vendored shell sync](../../vendor/omarchy/README.md),
+[known broken helpers](../known-broken-helpers.md).
+
+## Repository layout
+
+- Shipped shell: `vendor/omarchy/shell`, with `OMARCHY_PATH` at
+  `vendor/omarchy`. The supervisor starts it with
+  `quickshell -p "$OMARCHY_PATH/shell" -n`.
+- User config: `config/omarchy/shell.json`, symlinked to
+  `~/.config/omarchy/shell.json`.
+- Supervisor: `config/quickshell/scripts/` and `modules/quickshell.nix`
+  (rewired by ticket #56).
+- Legacy independent shell: `legacy/independent-shell/`. Its QML, config, and
+  QML tests are archived; it is not shipped.
+- Tests: supervisor tests stay in `config/quickshell/tests/`; legacy plugin
+  and live-harness tests also stay there and point at
+  `legacy/independent-shell/`.
+- Helper status and upstream sync: `docs/known-broken-helpers.md` and
+  `vendor/omarchy/README.md`.
 
 ## Target
 

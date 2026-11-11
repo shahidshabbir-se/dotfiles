@@ -1,3 +1,7 @@
+> **Status: superseded by [spec 0003](./0003-omarchy-fork-rewire.md).**
+> The independent QML is archived at `legacy/independent-shell`; the shipped
+> UI is the vendored Omarchy fork.
+
 ## Problem Statement
 
 The independent shell currently matches Omarchy's *management model* but not

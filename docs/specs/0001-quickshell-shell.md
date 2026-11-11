@@ -1,6 +1,7 @@
-> **Superseded for visual direction by [spec 0002](./0002-pixel-perfect-omarchy-ui.md).**
+> **Superseded for visual direction by [spec 0002](./0002-pixel-perfect-omarchy-ui.md)**
+> **and for the shipped shell by [spec 0003](./0003-omarchy-fork-rewire.md).**
 > The management model, supervisor, config, and behaviour decisions remain;
-> the visual target is now pixel-perfect Omarchy parity.
+> the independent QML is archived at `legacy/independent-shell`.
 
 ## Problem Statement
 

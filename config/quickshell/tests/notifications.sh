@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+
+# Legacy live harness for the archived independent shell (legacy/independent-shell).
+# It does not exercise the shipped vendor/omarchy fork.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config_dir="$(cd "$here/.." && pwd)"
+config_dir="${QUICKSHELL_CONFIG_DIR:-$(cd "$here/../../legacy/independent-shell" && pwd)}"
 busctl_bin="${BUSCTL_BIN:-busctl}"
 notify_send_bin="${NOTIFY_SEND_BIN:-notify-send}"
 wait_ticks="${NOTIFY_WAIT_TICKS:-50}"

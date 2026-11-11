@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+
+# Offscreen test for the archived independent remote-session plugin
+# (legacy/independent-shell/plugins/remoteSession).
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config_dir="$(cd "$here/.." && pwd)"
+legacy_plugins="$(cd "$here/../../legacy/independent-shell/plugins" && pwd)"
 qs="${QUICKSHELL_BIN:-quickshell}"
 jq_bin="${JQ_BIN:-jq}"
 timeout_seconds="${REMOTE_SESSION_TIMEOUT:-15}"
@@ -25,7 +28,7 @@ stop_shell() {
   fi
 }
 
-ln -s "$config_dir/plugins/remoteSession" "$tmp/remoteSession"
+ln -s "$legacy_plugins/remoteSession" "$tmp/remoteSession"
 cat >"$tmp/shell.qml" <<'INNER'
 import Quickshell
 import "remoteSession"

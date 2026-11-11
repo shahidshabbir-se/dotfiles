@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# Legacy live harness for the archived independent shell (legacy/independent-shell).
+# It does not exercise the shipped vendor/omarchy fork.
 set -euo pipefail
 
 # Live acceptance harness for ticket #27. Run inside a Hyprland session with the
@@ -6,7 +9,7 @@ set -euo pipefail
 # this script proves the IPC target, current-month open, and month navigation.
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config_dir="$(cd "$here/.." && pwd)"
+config_dir="${QUICKSHELL_CONFIG_DIR:-$(cd "$here/../../legacy/independent-shell" && pwd)}"
 timeout_bin="${TIMEOUT_BIN:-timeout}"
 quickshell_bin="${QUICKSHELL_BIN:-quickshell}"
 jq_bin="${JQ_BIN:-jq}"

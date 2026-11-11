@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
+
+# Legacy live harness for the archived independent shell (legacy/independent-shell).
+# It edits that tree's shell.json and does not exercise the shipped vendor/omarchy
+# fork.
 set -euo pipefail
 
 # Live acceptance harness for ticket #3. Run inside a Hyprland session with the
-# shell already active. It edits config/quickshell/shell.json, waits for IPC to
+# shell already active. It edits legacy/independent-shell/shell.json, waits for IPC to
 # report the new effective layout, and restores the file on exit.
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config_dir="$(cd "$here/.." && pwd)"
+config_dir="${QUICKSHELL_CONFIG_DIR:-$(cd "$here/../../legacy/independent-shell" && pwd)}"
 config_file="$config_dir/shell.json"
 quickshell_bin="${QUICKSHELL_BIN:-quickshell}"
 jq_bin="${JQ_BIN:-jq}"
