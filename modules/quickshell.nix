@@ -10,10 +10,17 @@ let
   launchScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/launch.sh";
   restartScript = "${homeDirectory}/dotfiles/config/quickshell/scripts/restart.sh";
 
+  # Omarchy's shell needs the patched Quickshell from modules/pkgs: nixpkgs'
+  # 0.3.1 lacks OmarchyLoadPatch and deadlocks on plugin reload.
+  patchedQuickshell = pkgs.callPackage ./pkgs/quickshell.nix { };
+
+  # The vendored Omarchy tree; see docs/adr/0006-fork-omarchy-shell.md.
+  omarchyPath = "${homeDirectory}/dotfiles/vendor/omarchy";
+
   # systemd user units start with a minimal PATH. Pin every binary the launch
   # and restart scripts need instead of relying on the graphical session env.
   runtimePath = lib.makeBinPath [
-    pkgs.quickshell
+    patchedQuickshell
     pkgs.jq
     pkgs.hyprland
     pkgs.systemd
@@ -21,14 +28,18 @@ let
     pkgs.bash
   ];
 
+  # Omarchy's helpers must win over any same-named system commands.
+  unitPath = "${omarchyPath}/bin:${runtimePath}";
+
   qsRestart = pkgs.writeShellScriptBin "qs-restart" ''
-    export PATH=${runtimePath}:$PATH
+    export PATH=${unitPath}:$PATH
+    export OMARCHY_PATH=${omarchyPath}
     exec ${pkgs.bash}/bin/bash ${restartScript} "$@"
   '';
 in
 {
   home.packages = with pkgs; [
-    quickshell
+    patchedQuickshell
     jq
     qt6.qtdeclarative # qmllint / qmlformat
     # qylock session lock (lock-screen) needs these QML modules / codecs
@@ -45,6 +56,10 @@ in
   # Live-editable shell config (same pattern as nvim/zed).
   xdg.configFile.quickshell.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
 
+  # Omarchy's shell reads ~/.config/omarchy/shell.json; this symlink keeps our
+  # tracked config canonical instead of letting the shell fork its own copy.
+  xdg.configFile.omarchy.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/omarchy";
+
   # Session-scoped user unit. launch.sh owns monitor readiness; systemd owns
   # crash restart. qs-restart is the one lock-aware lifecycle path.
   systemd.user.services.quickshell = {
@@ -60,7 +75,10 @@ in
 
     Service = {
       Type = "exec";
-      Environment = [ "PATH=${runtimePath}" ];
+      Environment = [
+        "PATH=${unitPath}"
+        "OMARCHY_PATH=${omarchyPath}"
+      ];
       ExecStart = "${pkgs.bash}/bin/bash ${launchScript}";
       Restart = "always";
       RestartSec = 2;

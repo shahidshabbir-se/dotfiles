@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-config_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+script_path="$(readlink -f "${BASH_SOURCE[0]}")"
+repo_root="$(cd "$(dirname "$script_path")/../../.." && pwd)"
+
+# The shell, helpers, and theme tree all live in the vendored Omarchy fork.
+export OMARCHY_PATH="${OMARCHY_PATH:-$repo_root/vendor/omarchy}"
+export PATH="$OMARCHY_PATH/bin:$PATH"
+
 hyprctl_bin="${HYPRCTL_BIN:-hyprctl}"
 jq_bin="${JQ_BIN:-jq}"
 quickshell_bin="${QUICKSHELL_BIN:-quickshell}"
@@ -78,4 +84,5 @@ if ! hyprland_ready; then
   exit 1
 fi
 
-exec "$quickshell_bin" -p "$config_dir" -n
+# Omarchy's shell root is the vendored tree, never our legacy config dir.
+exec "$quickshell_bin" -p "$OMARCHY_PATH/shell" -n
