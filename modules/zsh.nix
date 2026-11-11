@@ -116,6 +116,8 @@ in
     bl = "bun run lint";
     bf = "bun run format";
     bd = "bun run debug";
+    bc = "bun run check";
+    bcf = "bun run check:fix";
 
     # npm
     na = "npm install";
