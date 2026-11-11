@@ -2,6 +2,8 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "$here/../../.." && pwd)"
+shell_dir="$repo_root/vendor/omarchy/shell"
 script="$here/../scripts/restart.sh"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -32,14 +34,14 @@ esac
 exit 0
 INNER
 
-  # Quickshell 0.3.1 exits 0 even when the target/function is missing, so the
-  # fake must do the same. Readiness is the printed value, not the exit code.
+  # Omarchy's shell ping prints "ok" and exits 0. Readiness is the printed
+  # value, not the exit code: a missing target also exits 0.
   cat >"$tmp/quickshell" <<'INNER'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"$QUICKSHELL_LOG"
 case " $* " in
   *" call shell ping "*)
-    if [ "@IPC_READY@" = 1 ]; then printf 'pong\n'; fi
+    if [ "@IPC_READY@" = 1 ]; then printf 'ok\n'; fi
     exit 0
     ;;
 esac
@@ -51,6 +53,7 @@ INNER
 }
 
 run_restart() {
+  OMARCHY_PATH="" \
   SYSTEMCTL_LOG="$tmp/systemctl.log" \
   QUICKSHELL_LOG="$tmp/quickshell.log" \
   XDG_SESSION_ID=test-session \
@@ -82,7 +85,7 @@ if run_restart >"$tmp/not-ready.out" 2>"$tmp/not-ready.err"; then
 else
   if grep -q 'reset-failed' "$tmp/systemctl.log" \
     && grep -q 'restart quickshell' "$tmp/systemctl.log" \
-    && grep -q 'call shell ping' "$tmp/quickshell.log"; then
+    && grep -q "ipc -p $shell_dir call shell ping" "$tmp/quickshell.log"; then
     ok "restart fails when ping prints nothing"
   else
     fail "restart fails when ping prints nothing"
@@ -93,13 +96,13 @@ write_fakes no 1
 : >"$tmp/systemctl.log"
 : >"$tmp/quickshell.log"
 if run_restart >"$tmp/success.out" 2>"$tmp/success.err"; then
-  if grep -q 'call shell ping' "$tmp/quickshell.log"; then
-    ok "restart returns after pong"
+  if grep -q "ipc -p $shell_dir call shell ping" "$tmp/quickshell.log"; then
+    ok "restart returns after Omarchy ping answers ok"
   else
-    fail "restart returns after pong"
+    fail "restart returns after Omarchy ping answers ok"
   fi
 else
-  fail "restart returns after pong"
+  fail "restart returns after Omarchy ping answers ok"
 fi
 
 if ((fails)); then

@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-config_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+script_path="$(readlink -f "${BASH_SOURCE[0]}")"
+repo_root="$(cd "$(dirname "$script_path")/../../.." && pwd)"
+
+# IPC targets Omarchy's shell tree, not our legacy config dir.
+export OMARCHY_PATH="${OMARCHY_PATH:-$repo_root/vendor/omarchy}"
+export PATH="$OMARCHY_PATH/bin:$PATH"
+
 loginctl_bin="${LOGINCTL_BIN:-loginctl}"
 systemctl_bin="${SYSTEMCTL_BIN:-systemctl}"
 quickshell_bin="${QUICKSHELL_BIN:-quickshell}"
@@ -31,9 +37,10 @@ fi
 "$systemctl_bin" --user restart quickshell
 
 # Return only once the restarted process is alive and its IPC surface answers.
+# Omarchy's shell/ping returns "ok"; an exit code alone proves nothing.
 for ((attempt = 1; attempt <= wait_ticks; attempt++)); do
   if "$systemctl_bin" --user is-active --quiet quickshell \
-    && [ "$("$quickshell_bin" ipc -p "$config_dir" call shell ping 2>/dev/null)" = "pong" ]; then
+    && [ "$("$quickshell_bin" ipc -p "$OMARCHY_PATH/shell" call shell ping 2>/dev/null)" = "ok" ]; then
     echo "quickshell restarted and IPC is ready"
     exit 0
   fi
