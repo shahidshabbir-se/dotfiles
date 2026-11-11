@@ -1,3 +1,5 @@
+> **Status: superseded by ADR-0006.** The fork uses Omarchy's plugin host instead of the static registry.
+
 # A static plugin registry, not a manifest host
 
 Every built-in plugin is registered in one `Registry.qml` keyed by id, instead

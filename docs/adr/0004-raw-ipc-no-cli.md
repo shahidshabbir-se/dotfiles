@@ -1,3 +1,5 @@
+> **Status: superseded by ADR-0006.** The fork uses Omarchy's IPC wrapper.
+
 # Raw Quickshell IPC, with one restart script
 
 Hyprland bindings call `quickshell ipc call <target> <method>` directly rather

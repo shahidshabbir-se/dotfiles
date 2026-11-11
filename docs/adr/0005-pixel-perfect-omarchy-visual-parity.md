@@ -1,3 +1,5 @@
+> **Status: superseded by ADR-0006.** Visual parity now comes from the fork, not independent reimplementation.
+
 # Pixel-perfect Omarchy visual parity, with our own code
 
 We keep the independent shell, but Omarchy's UI becomes a hard visual

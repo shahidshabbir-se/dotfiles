@@ -133,6 +133,27 @@ The final full-desktop comparison against the reference UI.
 _Avoid_: final review, visual check
 
 
+**Vendored shell**:
+Omarchy's `shell/`, themes, config defaults, and helpers copied into
+`vendor/omarchy` at a pinned upstream commit.
+_Avoid_: upstream, dependency, submodule
+
+**Upstream pin**:
+The exact Omarchy commit the vendored shell came from; updates are deliberate
+merges, not automatic.
+_Avoid_: latest, branch, version
+
+**Rewire**:
+Adapting the vendored shell to our supervisor, config paths, theme state, and
+NixOS helper commands without rewriting its QML.
+_Avoid_: port, translate, rebuild
+
+**Helper adaptation**:
+Replacing an Arch-specific `omarchy-*` command with a NixOS equivalent or a
+recorded known-broken entry.
+_Avoid_: stub, shim, workaround
+
+
 ### Services the shell owns or defers to
 
 **Notification service**:

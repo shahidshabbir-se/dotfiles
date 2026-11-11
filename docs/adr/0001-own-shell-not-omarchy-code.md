@@ -1,3 +1,5 @@
+> **Status: superseded by ADR-0006.** The management model survives; the shell now vendors Omarchy QML.
+
 # Build our own shell; borrow only Omarchy's management model
 
 We want the way Omarchy manages its Quickshell desktop — one long-lived
