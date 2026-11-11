@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Save incoming Taildrop files and announce them
 # omarchy:args=[--once] [directory]

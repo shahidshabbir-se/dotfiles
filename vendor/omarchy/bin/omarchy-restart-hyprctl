@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Reload the Hyprland configuration, from inside or outside the session.
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Superwhisper dictation and its desktop integration
 # omarchy:requires-sudo=true

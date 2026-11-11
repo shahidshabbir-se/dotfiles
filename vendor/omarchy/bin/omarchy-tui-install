@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Create a desktop launcher for a terminal UI app
 # omarchy:args=[name command window-style icon-url-or-name]

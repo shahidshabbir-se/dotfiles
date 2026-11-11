@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove the Hermes desktop app along with the Hermes runtime it installed.
 # omarchy:requires-sudo=true

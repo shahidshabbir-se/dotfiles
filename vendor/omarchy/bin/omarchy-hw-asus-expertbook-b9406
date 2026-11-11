@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Detect ASUS ExpertBook B9406 series laptops on Intel Panther Lake.
 

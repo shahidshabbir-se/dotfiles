@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Copy subscription account logins to another Omarchy machine over SSH
 # omarchy:args=[--replace] <ssh-host> [claude|codex|grok...]

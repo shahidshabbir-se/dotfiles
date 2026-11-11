@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Shrink the NVIDIA N1x firmware's GPU memory reservation to 4 GiB
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Match the Dell XPS 13 DX13260 with an Intel Panther Lake GPU.
 

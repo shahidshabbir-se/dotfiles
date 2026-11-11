@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or set the glyph forms for Chinese, Japanese, and Korean text
 # omarchy:args=[jp|kr|sc|tc|hk|default]

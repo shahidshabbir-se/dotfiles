@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Check whether Omarchy has turned off system sleep on this machine.
 # omarchy:hidden=true

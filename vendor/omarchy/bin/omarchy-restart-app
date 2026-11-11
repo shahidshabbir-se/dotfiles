@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Restart an application by killing it and relaunching via uwsm.
 # omarchy:args=<application-name> [application-args...]

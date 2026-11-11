@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Run Claude, Codex, or Grok as the selected subscription account
 # omarchy:args=<claude|codex|grok> [args...]

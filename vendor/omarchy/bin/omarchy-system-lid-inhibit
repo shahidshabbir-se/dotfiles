@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Keep logind from suspending on lid close while a display it misses is in use
 # omarchy:group=system

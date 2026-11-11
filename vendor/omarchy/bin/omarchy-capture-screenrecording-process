@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Check or signal the current user's recording processes
 # omarchy:args=[--pid <pid>] [--signal INT|KILL]

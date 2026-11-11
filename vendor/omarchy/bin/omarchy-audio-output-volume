@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Adjust output volume and show the Omarchy OSD
 # omarchy:args=<raise|lower|mute-toggle|+N|-N>
@@ -20,19 +20,38 @@ if [[ -z $sink ]]; then
   exit 1
 fi
 
-# pactl reports the same percentage scale wpctl does (both are the raw volume
-# over PA_VOLUME_NORM), so the OSD reads identically either way.
-# pactl translates its labels and yes/no; parse them in the C locale.
+# pactl is the pulseaudio client; NixOS does not put it on PATH unless the
+# pulse compatibility layer is installed. wpctl is the native WirePlumber client
+# and understands the same percentage scale, so either backend drives the same
+# OSD. pactl translates its labels and yes/no; parse them in the C locale.
+if command -v pactl >/dev/null 2>&1; then
+  audio_backend=pactl
+elif command -v wpctl >/dev/null 2>&1; then
+  audio_backend=wpctl
+else
+  echo "omarchy-audio-output-volume: neither pactl nor wpctl is on PATH" >&2
+  exit 1
+fi
+
 volume_percent() {
-  LC_ALL=C pactl get-sink-volume "$sink" 2>/dev/null |
-    awk 'NR == 1 {
-      for (i = 1; i <= NF; i++)
-        if ($i ~ /%$/) {sub("%", "", $i); print $i; exit}
-    }'
+  if [[ $audio_backend == pactl ]]; then
+    LC_ALL=C pactl get-sink-volume "$sink" 2>/dev/null |
+      awk 'NR == 1 {
+        for (i = 1; i <= NF; i++)
+          if ($i ~ /%$/) {sub("%", "", $i); print $i; exit}
+      }'
+  else
+    wpctl get-volume "$sink" 2>/dev/null |
+      awk '$1 == "Volume:" { printf "%.0f\n", $2 * 100; exit }'
+  fi
 }
 
 volume_muted() {
-  [[ $(LC_ALL=C pactl get-sink-mute "$sink" 2>/dev/null) == *yes ]]
+  if [[ $audio_backend == pactl ]]; then
+    [[ $(LC_ALL=C pactl get-sink-mute "$sink" 2>/dev/null) == *yes ]]
+  else
+    wpctl get-volume "$sink" 2>/dev/null | grep -q MUTED
+  fi
 }
 
 case "$action" in
@@ -51,7 +70,11 @@ if [[ $action == "mute-toggle" ]]; then
   fi
   printf '%s\n' "$now" >"$debounce_file"
 
-  pactl set-sink-mute "$sink" toggle
+  if [[ $audio_backend == pactl ]]; then
+    pactl set-sink-mute "$sink" toggle
+  else
+    wpctl set-mute "$sink" toggle
+  fi
 elif [[ $action =~ ^([+-])([0-9]+)$ ]]; then
   direction="${BASH_REMATCH[1]}"
   step="${BASH_REMATCH[2]}"
@@ -70,8 +93,13 @@ elif [[ $action =~ ^([+-])([0-9]+)$ ]]; then
     ((next >= 0)) || next=0
   fi
 
-  pactl set-sink-mute "$sink" 0
-  pactl set-sink-volume "$sink" "${next}%"
+  if [[ $audio_backend == pactl ]]; then
+    pactl set-sink-mute "$sink" 0
+    pactl set-sink-volume "$sink" "${next}%"
+  else
+    wpctl set-mute "$sink" 0
+    wpctl set-volume "$sink" "${next}%"
+  fi
 else
   echo "Unknown volume action: $action"
   exit 1

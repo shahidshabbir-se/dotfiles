@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Add a feature to Chromium's --enable-features in the user's flags file
 # omarchy:args=<feature>

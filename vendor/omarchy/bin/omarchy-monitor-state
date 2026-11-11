@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print monitor panel state for the shell
 # omarchy:group=monitor

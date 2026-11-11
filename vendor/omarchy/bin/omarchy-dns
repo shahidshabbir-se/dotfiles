@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or configure the system DNS provider
 # omarchy:args=[Cloudflare|Google|DHCP|Custom]
@@ -253,6 +253,15 @@ fi
 
 if ! provider=$(provider_from_arg "$1"); then
   usage
+  exit 1
+fi
+
+# NixOS generates resolved.conf and the NetworkManager drop-ins from
+# configuration.nix; writing these files here would be reverted on the next
+# activation. Keep the read-only `omarchy dns` query useful, but refuse the
+# mutation instead of making a half-applied change.
+if [[ -e /etc/NIXOS ]]; then
+  echo "omarchy-dns: DNS providers are declared in configuration.nix on NixOS; nothing was changed." >&2
   exit 1
 fi
 

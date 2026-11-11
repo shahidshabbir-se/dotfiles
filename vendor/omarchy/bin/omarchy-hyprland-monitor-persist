@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Save a monitor's scale, and optionally its mode, position and rotation, for that monitor
 # omarchy:args=OUTPUT SCALE [MODE] [POSITION] [TRANSFORM]

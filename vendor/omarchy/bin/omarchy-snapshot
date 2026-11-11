@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Create or restore system snapshots with snapper
 # omarchy:args=<create|restore>

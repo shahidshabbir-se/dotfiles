@@ -1,4 +1,4 @@
-#!/bin/bash -p
+#!/usr/bin/env bash
 
 # omarchy:summary=Manage sleep and idle inhibition during an update
 # omarchy:args=<start|stop>

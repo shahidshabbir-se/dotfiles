@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Allow Chromium to sign in to Google accounts by adding the required OAuth credentials
 

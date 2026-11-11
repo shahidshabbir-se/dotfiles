@@ -26,6 +26,31 @@ let
     pkgs.systemd
     pkgs.coreutils
     pkgs.bash
+    # Tools the vendored helpers on the default bar call. NixOS does not put
+    # most of these on a non-login PATH, and systemd user units start with a
+    # minimal environment, so name them here instead of relying on the
+    # graphical session (see docs/helper-adaptation.md).
+    pkgs.pulseaudio # pactl
+    pkgs.pipewire # pw-link
+    pkgs.wireplumber # wpctl
+    pkgs.networkmanager # nmcli
+    pkgs.bluez # bluetoothctl
+    pkgs.util-linux # rfkill
+    pkgs.iproute2 # ip
+    pkgs.curl
+    pkgs.qrencode
+    pkgs.upower
+    pkgs.power-profiles-daemon # powerprofilesctl
+    pkgs.brightnessctl
+    pkgs.ddcutil
+    pkgs.gtk3 # gtk-launch for the menu app library
+    pkgs.procps # top, pgrep, ps
+    pkgs.findutils
+    pkgs.gawk # the helpers parse command output with awk
+    pkgs.gnugrep
+    pkgs.gnused
+    pkgs.fontconfig # fc-match
+    pkgs.libxkbcommon # xkbcli
   ];
 
   # Omarchy's helpers must win over any same-named system commands.

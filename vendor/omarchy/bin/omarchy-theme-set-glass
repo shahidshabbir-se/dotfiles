@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Ask terminals and GTK apps for blur behind them while windows are glassy
 # omarchy:args=[theme-dir]

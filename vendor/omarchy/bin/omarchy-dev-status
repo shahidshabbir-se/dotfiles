@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show the current Omarchy dev-link state
 # omarchy:group=dev

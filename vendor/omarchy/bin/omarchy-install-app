@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install a packaged app, surfacing the install in a floating terminal
 # omarchy:args=<display-name> <packages>

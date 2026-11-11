@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove all the named packages from the system if they're installed (otherwise ignore).
 # omarchy:args=<packages...>

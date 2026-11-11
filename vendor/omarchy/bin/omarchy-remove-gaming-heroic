@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Heroic Games Launcher and its game libraries, configs, and caches.
 # omarchy:requires-sudo=true

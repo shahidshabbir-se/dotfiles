@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Ollama along with every model it pulled.
 # omarchy:requires-sudo=true

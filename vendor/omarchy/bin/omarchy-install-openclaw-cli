@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install OpenClaw for the default agent as the self-updating copy under ~/.openclaw
 # omarchy:args=<--check|--now>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Record N1x hardware and boot evidence to /var/log/omarchy-n1x-probe.log, on demand.
 # omarchy:requires-sudo=true

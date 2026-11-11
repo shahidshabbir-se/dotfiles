@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Restart system time synchronization
 # omarchy:requires-sudo=true

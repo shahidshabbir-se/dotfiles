@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Get or set the default dictation backend
 # omarchy:args=[backend]

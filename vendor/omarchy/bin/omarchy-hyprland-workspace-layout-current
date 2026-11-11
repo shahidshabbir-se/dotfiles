@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the layout of a workspace: dwindle, scrolling, or floating
 # omarchy:args=[workspace-id]

@@ -1,10 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Returns a list of all the available power profiles on the system.
 # omarchy:args=[--active-state]
 
 if [[ ${1:-} != "" && ${1:-} != "--active-state" ]]; then
   echo "Usage: omarchy-powerprofiles-list [--active-state]" >&2
+  exit 1
+fi
+
+if ! command -v powerprofilesctl >/dev/null 2>&1; then
+  echo "omarchy-powerprofiles-list: powerprofilesctl is required but is not on PATH; add the power-profiles-daemon package on NixOS." >&2
   exit 1
 fi
 

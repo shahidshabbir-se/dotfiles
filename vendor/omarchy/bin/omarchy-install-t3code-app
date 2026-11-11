@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install the T3 Code desktop app from its AppImage release
 # omarchy:args=<stable|nightly>

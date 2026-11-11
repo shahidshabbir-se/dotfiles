@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show, set, or adjust a Hyprland monitor's scaling (the focused one by default)
 # omarchy:args=[--monitor NAME] [up|down|SCALE]

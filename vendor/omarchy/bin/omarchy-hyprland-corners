@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or set window corners: theme, sharp, or rounded
 # omarchy:args=[theme|sharp|rounded]

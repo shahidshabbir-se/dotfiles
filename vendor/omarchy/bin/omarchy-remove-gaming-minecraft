@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove the Minecraft launcher along with its worlds, mods, and caches.
 # omarchy:requires-sudo=true

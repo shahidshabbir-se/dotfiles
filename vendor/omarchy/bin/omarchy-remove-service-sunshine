@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Sunshine and close Omarchy-managed Moonlight streaming ports.
 # omarchy:requires-sudo=true

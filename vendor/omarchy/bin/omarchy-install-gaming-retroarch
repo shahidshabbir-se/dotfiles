@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install RetroArch with the full libretro core set plus FBNeo and a ~/Games ROM directory.
 

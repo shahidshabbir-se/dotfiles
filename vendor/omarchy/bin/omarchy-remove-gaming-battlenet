@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Battle.net, its Proton prefix, installed games, and desktop entry.
 

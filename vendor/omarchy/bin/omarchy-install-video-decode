@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Let mpv and Chromium decode video on the video chip of Snapdragon laptops
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Retry a system package update that hit a conflict
 # omarchy:hidden=true

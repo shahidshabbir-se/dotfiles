@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Create a desktop launcher for a RetroArch game
 # omarchy:args=[core path-to-game]

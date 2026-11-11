@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=List the kernel's Snapdragon device trees for the UKI
 # omarchy:args=[--install]

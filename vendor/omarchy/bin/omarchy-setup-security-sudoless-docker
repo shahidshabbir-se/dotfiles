@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Enable sudoless Docker by adding your user to the docker group (root-equivalent!)
 # omarchy:requires-sudo=true

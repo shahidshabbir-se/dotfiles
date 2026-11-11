@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Check whether the default route runs over connected Wi-Fi
 # omarchy:group=network

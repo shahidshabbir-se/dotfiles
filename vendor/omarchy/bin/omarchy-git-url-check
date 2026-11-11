@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Check that a git URL names a repository, not a transport helper
 # omarchy:args=<git-url>

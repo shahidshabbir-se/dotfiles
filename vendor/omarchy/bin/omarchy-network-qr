@@ -1,10 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Generate a Wi-Fi QR matrix for the shell
 # omarchy:group=network
 # omarchy:args=[--meta] [interface]
 
 set -euo pipefail
+
+if ! command -v qrencode >/dev/null 2>&1; then
+  echo "omarchy-network-qr: qrencode is required to render the Wi-Fi QR code; add the qrencode package on NixOS." >&2
+  exit 1
+fi
 
 # --meta is opt-in so pre-existing consumers of the bare matrix (cloned
 # network widgets from before the share card became its own plugin) keep

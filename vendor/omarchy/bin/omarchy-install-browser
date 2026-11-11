@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install a supported browser
 # omarchy:args=<chromium|chrome|brave|brave-origin|edge|firefox|zen>

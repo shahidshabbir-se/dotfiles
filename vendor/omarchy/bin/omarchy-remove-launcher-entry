@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove or uninstall the selected launcher entry
 # omarchy:args=<desktop-id> <name>

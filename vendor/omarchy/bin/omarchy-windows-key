@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the OEM Windows product key stored in firmware
 # omarchy:requires-sudo=true

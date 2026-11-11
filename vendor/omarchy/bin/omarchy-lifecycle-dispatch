@@ -1,4 +1,4 @@
-#!/bin/bash -p
+#!/usr/bin/env bash
 
 # omarchy:summary=Run a fixed lifecycle operation through the platform's own packages
 # omarchy:args=[--resolve] <operation> [arguments...]

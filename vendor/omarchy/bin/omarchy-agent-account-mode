@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Switch Claude, Codex, or Grok accounts automatically near a limit, or only notify
 # omarchy:args=[claude|codex|grok] [manual|auto] [threshold]

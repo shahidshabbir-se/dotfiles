@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install a packaged app and launch it once it finishes
 # omarchy:args=<display-name> <packages> <desktop-id>

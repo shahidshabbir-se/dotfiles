@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Log out, reboot, or shut down after closing applications
 # omarchy:args=<logout|reboot|shutdown>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Adjust keyboard backlight brightness using available steps.
 # omarchy:args=[--no-osd] <up|down|cycle|off|restore>
@@ -10,6 +10,11 @@ if [[ ${1:-} == "--no-osd" ]]; then
 fi
 
 direction="${1:-up}"
+
+if ! command -v brightnessctl >/dev/null 2>&1; then
+  echo "omarchy-brightness-keyboard: brightnessctl is required but is not on PATH; add the brightnessctl package on NixOS." >&2
+  exit 1
+fi
 
 # Find keyboard backlight device (look for *kbd_backlight* pattern in leds class).
 device=""

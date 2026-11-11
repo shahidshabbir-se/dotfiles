@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Run a command while holding the Omarchy update lock
 # omarchy:args=<held|run> [command] [args...]

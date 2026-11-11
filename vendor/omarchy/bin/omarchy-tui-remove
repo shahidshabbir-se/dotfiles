@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove a terminal UI desktop launcher
 # omarchy:args=[name]

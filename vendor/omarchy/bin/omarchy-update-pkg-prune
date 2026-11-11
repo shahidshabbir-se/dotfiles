@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Prune superseded versions from the pacman package cache
 # omarchy:requires-sudo=true

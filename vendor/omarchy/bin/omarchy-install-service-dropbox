@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install and start the Dropbox service. Must then be authenticated via the web.
 # omarchy:requires-sudo=true

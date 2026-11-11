@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Arrange monitors by placing each at a position in the layout
 # omarchy:args=NAME=XxY [NAME=XxY...] | --resized NAME OLD_MODE OLD_SCALE NEW_MODE NEW_SCALE

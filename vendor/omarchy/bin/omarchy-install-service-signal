@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install Signal and launch it.
 # omarchy:requires-sudo=true

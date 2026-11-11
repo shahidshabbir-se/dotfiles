@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=List Omarchy's default mise tools, or opt this user out of or back into them
 # omarchy:args=<list|declares <tool>|disable|enable>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Set up the OpenSSH server, open the firewall, and authorize an SSH key
 # omarchy:args=[--key=<public-key>] [--gh-keys <github-username>]

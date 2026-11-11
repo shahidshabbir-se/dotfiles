@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install and configure Voxtype dictation
 # omarchy:requires-sudo=true

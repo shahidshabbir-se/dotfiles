@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the most likely display backlight device.
 # omarchy:examples=omarchy-hw-display

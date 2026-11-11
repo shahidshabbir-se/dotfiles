@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Build and install an Omarchy package from a local checkout
 # omarchy:group=dev

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Verify the platform's boot chain after the update's package changes
 # omarchy:hidden=true

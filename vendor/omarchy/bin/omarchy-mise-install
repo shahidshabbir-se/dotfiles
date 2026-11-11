@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install a small mise-backed wrapper for a given tool.
 # omarchy:args=<package> [command-name [bin-name]]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Prompt for required reboot or service restarts after updates
 # omarchy:args=[--services-only|--reboot-only]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Restore the preinstalled Omarchy applications (web apps, TUIs, and selected packages).
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Check whether Hyprland's animations are off, by the toggle or because the session renders on the CPU
 # omarchy:hidden=true

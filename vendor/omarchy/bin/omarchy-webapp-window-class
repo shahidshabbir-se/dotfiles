@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the window class Chromium gives a web app opened at a URL
 # omarchy:args=<url>

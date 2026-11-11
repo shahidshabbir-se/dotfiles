@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove fingerprint authentication from sudo, polkit, and lock screen
 # omarchy:requires-sudo=true

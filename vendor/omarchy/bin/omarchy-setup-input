@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Select input methods for Japanese, Korean, or Chinese typing
 # omarchy:args=[mozc|hangul|pinyin|chewing|cangjie5]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Rename a Claude, Codex, or Grok subscription account
 # omarchy:args=[claude|codex|grok] <account> <name>

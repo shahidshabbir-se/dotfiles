@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install Spotify, as its web player where Spotify has no Linux client.
 # omarchy:requires-sudo=true

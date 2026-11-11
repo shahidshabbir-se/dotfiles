@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the CPU line of the About box, split in two when it overruns the box.
 # omarchy:args=[name|details]

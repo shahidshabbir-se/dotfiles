@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or adjust DDC/CI display brightness for a Hyprland monitor.
 # omarchy:args=<monitor> [+N%|N%-|N%]
@@ -8,6 +8,11 @@ monitor="${1:-}"
 step="${2:-}"
 
 [[ -n $monitor ]] || exit 1
+
+if ! command -v ddcutil >/dev/null 2>&1; then
+  echo "omarchy-brightness-display-ddc: ddcutil is required for external display brightness; add the ddcutil package on NixOS." >&2
+  exit 1
+fi
 
 cache_dir="${XDG_RUNTIME_DIR:-/tmp}/omarchy-brightness-display-ddc"
 cache_name="${monitor//[^[:alnum:]_.-]/_}"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove the Amp desktop app along with its configuration and caches.
 # omarchy:requires-sudo=true

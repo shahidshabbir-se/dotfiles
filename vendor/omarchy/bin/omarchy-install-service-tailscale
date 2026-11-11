@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install the Tailscale mesh VPN service and a web app for the Tailscale Admin Console.
 # omarchy:requires-sudo=true

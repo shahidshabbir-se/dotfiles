@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove the Perplexity desktop app along with its runtime caches.
 # omarchy:requires-sudo=true

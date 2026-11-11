@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Scale text everywhere — omarchy shell, GTK apps, and terminals
 # omarchy:args=[size|reset]
