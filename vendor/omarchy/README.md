@@ -53,9 +53,8 @@ tests, and docs) remains ours.
 
 ## Local modifications and patches
 
-At this pin the vendored source files are unmodified except for the generated
-Tokyo Night shell surfaces described below. NixOS adaptation lives outside this
-directory:
+At this pin the vendored source files carry the local modifications described
+below. NixOS adaptation otherwise lives outside this directory:
 
 | Area | Location | What changes |
 |---|---|---|
@@ -65,6 +64,9 @@ directory:
 | User config | `config/omarchy/shell.json` | Our config, symlinked to `~/.config/omarchy/shell.json`; the vendored copy is the fallback |
 | Theme surfaces | `vendor/omarchy/themes/tokyo-night/shell.toml` | Generated from `default/themed/shell.toml.tpl` with this theme's `colors.toml` and `shell.lock.toml`; upstream ships no `shell.toml` for Tokyo Night (ticket #57) |
 | Theme state | `modules/quickshell.nix` | Home Manager symlinks `~/.local/state/omarchy/current/theme` to the vendored theme and writes `theme.name` = `tokyo-night` |
+| Helper shebangs | `vendor/omarchy/bin` | 558 `#!/bin/bash` shebangs rewritten to `#!/usr/bin/env bash` for NixOS (ticket #58) |
+| Helper adaptations | `vendor/omarchy/bin` | Focused audio/network/bluetooth/battery/brightness/DNS adaptations and a local `uwsm-app` shim (ticket #58); see `docs/helper-adaptation.md` |
+| App library launch | `vendor/omarchy/shell/services/AppLibrary.qml` | Launches with `gtk-launch` directly instead of `uwsm-app -- gtk-launch` (ticket #58) |
 | Helper gaps | `docs/known-broken-helpers.md` | Open, adapted, and not-needed helper work |
 
 Do not edit a vendored file in place without recording it. If a local patch to
