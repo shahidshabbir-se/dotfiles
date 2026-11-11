@@ -8,7 +8,7 @@ ticket compares one of our surfaces with one capture from this pack.
 - Theme: Tokyo Night.
 - Resolution: 3440x1440 physical pixels.
 - Scale: 1.33.
-- Bar: top, default Omarchy layout from `config/omarchy/shell.json`.
+- Bar: top, default Omarchy layout from `config/quickshell/user/shell.json`.
 - Same fonts installed on both machines; the shell uses the fontconfig
   `monospace` alias.
 - Hide unrelated windows before capturing.

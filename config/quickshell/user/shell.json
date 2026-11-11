@@ -1,6 +1,6 @@
 {
   "bar": {
-    "background": "none",
+    "background": "glassy",
     "layout": {
       "center": [
         {
@@ -85,10 +85,6 @@
     },
     "position": "top"
   },
-  "disabledPlugins": [
-    "omarchy.idle",
-    "omarchy.lock"
-  ],
   "dock": {
     "pinned": [
       "org.gnome.Nautilus",
@@ -106,5 +102,9 @@
     "screensaver": 150
   },
   "plugins": [],
-  "version": 1
+  "version": 1,
+  "disabledPlugins": [
+    "omarchy.idle",
+    "omarchy.lock"
+  ]
 }

@@ -8,7 +8,7 @@ set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo="$(cd "$here/../../.." && pwd)"
 jq_bin="${JQ_BIN:-jq}"
-config="$repo/config/omarchy/shell.json"
+config="$repo/config/quickshell/user/shell.json"
 theme="$repo/config/quickshell/themes/tokyo-night"
 shell_toml="$theme/shell.toml"
 activation="${ACTIVATION_PACKAGE:-}"

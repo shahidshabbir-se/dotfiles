@@ -4,7 +4,7 @@ The desktop shell is a fork of Omarchy: its QML is vendored under
 `config/quickshell/shell`, and our integration rewires it to the systemd
 supervisor, config ownership, monitor readiness, and NixOS helper commands.
 `OMARCHY_PATH` points at `config/quickshell`; the user shell config is
-`config/omarchy/shell.json`. The old independent shell is archived at
+`config/quickshell/user/shell.json`. The old independent shell is archived at
 `legacy/independent-shell` and is not shipped.
 
 ## Language
@@ -81,9 +81,9 @@ Settings written inline on a widget's layout entry.
 _Avoid_: config block, settings object
 
 **Shell config**:
-`config/omarchy/shell.json`, our user state for the fork: layout and widget
-options. It is symlinked to `~/.config/omarchy/shell.json` and is the copy the
-shell reads; the vendored `config/quickshell/config/omarchy/shell.json` is the
+`config/quickshell/user/shell.json`, our user state for the fork: layout and widget
+options. It is symlinked to `~/.config/quickshell/user/shell.json` and is the copy the
+shell reads; the vendored `config/quickshell/config/quickshell/user/shell.json` is the
 fallback. The legacy independent shell's config is
 `legacy/independent-shell/shell.json`.
 _Avoid_: settings file, config.json, preferences

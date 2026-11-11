@@ -84,5 +84,18 @@ if ! hyprland_ready; then
   exit 1
 fi
 
+# Bar settings can rewrite shell.json without carrying our disabledPlugins
+# list. Re-add it before the shell starts so Omarchy idle/lock never return.
+config_file="$HOME/.config/omarchy/shell.json"
+if [ -f "$config_file" ] && command -v "$jq_bin" >/dev/null 2>&1; then
+  tmp_config="$(mktemp)"
+  if "$jq_bin" '.disabledPlugins = (((.disabledPlugins // []) + ["omarchy.idle", "omarchy.lock"]) | unique)' \
+      "$config_file" >"$tmp_config" 2>/dev/null; then
+    mv "$tmp_config" "$config_file"
+  else
+    rm -f "$tmp_config"
+  fi
+fi
+
 # Omarchy's shell root is the vendored tree, never our legacy config dir.
 exec "$quickshell_bin" -p "$OMARCHY_PATH/shell" -n

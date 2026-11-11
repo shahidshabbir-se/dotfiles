@@ -29,7 +29,8 @@ Only these paths are copied from the upstream checkout at the pin:
 
 - `shell/` -> `config/quickshell/shell/` (the shipped Quickshell config)
 - `themes/tokyo-night/` -> `config/quickshell/themes/tokyo-night/`
-- `config/omarchy/` -> `config/quickshell/config/omarchy/` (fallback user config)
+- `config/omarchy/` -> `config/quickshell/config/omarchy/` (upstream fallback config)
+- `config/quickshell/user/` -> symlinked to `~/.config/omarchy` (our user shell.json, shell.toml, and plugins)
 - `default/` -> `config/quickshell/default/` (templates, theme defaults, input
   methods, and data used by the shell and helpers)
 - `bin/` -> `config/quickshell/bin/` (the `omarchy-*` helper commands)
@@ -61,7 +62,7 @@ below. NixOS adaptation otherwise lives outside this directory:
 | Quickshell build | `modules/pkgs/quickshell.nix` | Pins `0.3.2.r7.g2b4501a` and applies the two patches below; ticket #56 wires it into the shell unit |
 | Quickshell patches | `modules/pkgs/quickshell/*.patch` | `load_qtquick_611.patch` (Omarchy's `OmarchyLoadPatch` and Qt 6.11 load interception) and `intercept-rescan-fix.patch` (removes a synchronous `scanDir()` that deadlocks plugin reload) |
 | Supervisor and PATH | `modules/quickshell.nix`, `config/quickshell/scripts/` | systemd unit, monitor readiness, `qs-restart`, and the binaries on the unit PATH |
-| User config | `config/omarchy/shell.json` | Our config, symlinked to `~/.config/omarchy/shell.json`; the vendored copy is the fallback |
+| User config | `config/quickshell/user/shell.json` | Our config, symlinked to `~/.config/omarchy/shell.json`; the vendored copy is the fallback |
 | Theme surfaces | `config/quickshell/themes/tokyo-night/shell.toml` | Generated from `default/themed/shell.toml.tpl` with this theme's `colors.toml` and `shell.lock.toml`; upstream ships no `shell.toml` for Tokyo Night (ticket #57) |
 | Theme state | `modules/quickshell.nix` | Home Manager symlinks `~/.local/state/omarchy/current/theme` to the vendored theme and writes `theme.name` = `tokyo-night` |
 | Helper shebangs | `config/quickshell/bin` | 558 `#!/bin/bash` shebangs rewritten to `#!/usr/bin/env bash` for NixOS (ticket #58) |

@@ -80,7 +80,7 @@ in
 
   # Omarchy's shell reads ~/.config/omarchy/shell.json; this symlink keeps our
   # tracked config canonical instead of letting the shell fork its own copy.
-  xdg.configFile.omarchy.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/omarchy";
+  xdg.configFile.omarchy.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell/user";
 
   # The running shell reads the active theme from
   # ~/.local/state/omarchy/current: theme/ (colors.toml, shell.toml, ...) and

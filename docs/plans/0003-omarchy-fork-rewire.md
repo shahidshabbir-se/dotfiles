@@ -14,7 +14,7 @@ Related: [ADR 0006](../adr/0006-fork-omarchy-shell.md),
 - Shipped shell: `config/quickshell/shell`, with `OMARCHY_PATH` at
   `config/quickshell`. The supervisor starts it with
   `quickshell -p "$OMARCHY_PATH/shell" -n`.
-- User config: `config/omarchy/shell.json`, symlinked to
+- User config: `config/quickshell/user/shell.json`, symlinked to
   `~/.config/omarchy/shell.json`.
 - Supervisor: `config/quickshell/scripts/` and `modules/quickshell.nix`
   (rewired by ticket #56).

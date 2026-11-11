@@ -12,7 +12,7 @@ set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$here/../../.." && pwd)"
 shell_dir="$repo_root/config/quickshell/shell"
-shell_config="$repo_root/config/omarchy/shell.json"
+shell_config="$repo_root/config/quickshell/user/shell.json"
 hypr_bindings="$repo_root/modules/hyprland/bindings.nix"
 
 busctl_bin="${BUSCTL_BIN:-busctl}"
@@ -75,10 +75,10 @@ plugin_manifest() {
 # ---------------------------------------------------------------- static checks
 
 if ! "$jq_bin" -e '.version == 1' "$shell_config" >/dev/null 2>&1; then
-  fail "config/omarchy/shell.json is version 1 JSON"
+  fail "config/quickshell/user/shell.json is version 1 JSON"
   summary
 fi
-ok "config/omarchy/shell.json is version 1 JSON"
+ok "config/quickshell/user/shell.json is version 1 JSON"
 
 disabled="$("$jq_bin" -c '(.disabledPlugins // []) | sort' "$shell_config")"
 if [[ "$disabled" == '["omarchy.idle","omarchy.lock"]' ]]; then
