@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Set the Omarchy package channel.
 # omarchy:args=<stable|rc|edge|dev>

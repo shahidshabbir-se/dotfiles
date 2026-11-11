@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Turn Bluetooth on or off, remembered across reboots
 # omarchy:group=bluetooth
@@ -17,6 +17,11 @@
 # `bluetoothctl power on` fails outright while the block is set.
 
 POWER_WAIT_SECONDS=${OMARCHY_BLUETOOTH_POWER_WAIT_SECONDS:-2}
+
+if ! command -v bluetoothctl >/dev/null 2>&1 || ! command -v rfkill >/dev/null 2>&1; then
+  echo "omarchy-bluetooth-power: bluetoothctl and rfkill are required but are not on PATH; add the bluez and util-linux packages on NixOS." >&2
+  exit 1
+fi
 
 controllers() {
   timeout 2s bluetoothctl list 2>/dev/null | awk '{print $2}'

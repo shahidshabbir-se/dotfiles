@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Point Omarchy at a local checkout after reboot
 # omarchy:group=dev

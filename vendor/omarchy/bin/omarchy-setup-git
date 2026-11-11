@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Set the name and email for your git commits, and sign in to GitHub
 # omarchy:args=[--name <name>] [--email <email>]

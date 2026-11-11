@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Choose which Claude, Codex, or Grok account new sessions use
 # omarchy:args=[claude|codex|grok] [account|next]

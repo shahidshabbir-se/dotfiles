@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# omarchy:summary=NixOS shim for UWSM's application launcher
+# omarchy:hidden=true
+
+# Omarchy's helpers launch applications through `uwsm-app -- <command>`, and
+# UWSM's app launcher puts the command in an app-graphical.slice scope. This
+# fork does not run UWSM: systemd owns our graphical session, so executing the
+# command directly is enough and keeps the launchers working.
+#
+# Only the argument form the vendored helpers use is supported. An unknown
+# option is refused rather than guessed, so a future upstream call site fails
+# visibly instead of silently dropping a flag.
+while (( $# > 0 )); do
+  case "$1" in
+    --) shift; break ;;
+    -h | --help)
+      echo "Usage: uwsm-app -- <command> [args...]"
+      exit 0
+      ;;
+    -*)
+      echo "uwsm-app (NixOS shim): unsupported option: $1" >&2
+      exit 2
+      ;;
+    *) break ;;
+  esac
+done
+
+if (( $# == 0 )); then
+  echo "uwsm-app (NixOS shim): no command given. Usage: uwsm-app -- <command> [args...]" >&2
+  exit 2
+fi
+
+exec "$@"

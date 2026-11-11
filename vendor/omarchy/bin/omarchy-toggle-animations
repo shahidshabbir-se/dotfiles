@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Toggle animations, blur and shadows, which are slow without a GPU
 # omarchy:args=[toggle|on|off]

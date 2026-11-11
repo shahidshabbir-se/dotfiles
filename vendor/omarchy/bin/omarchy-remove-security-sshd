@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Disable the OpenSSH server, remove standard firewall rules, and optionally remove authorized keys
 # omarchy:requires-sudo=true

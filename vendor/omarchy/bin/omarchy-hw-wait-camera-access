@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Wait at login until this user can open the camera media devices
 # omarchy:hidden=true

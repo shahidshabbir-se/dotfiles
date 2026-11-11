@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Review and optionally remove orphaned system packages after updates
 # omarchy:args=[-y]

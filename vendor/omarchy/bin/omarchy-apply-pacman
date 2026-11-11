@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Restore channel and regional pacman defaults in an installed target
 # omarchy:args=<stable|rc|edge> [target-root] | --render <stable|rc|edge> <output-dir> [target-root]

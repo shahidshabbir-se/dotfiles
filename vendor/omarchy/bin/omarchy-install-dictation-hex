@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install and configure Hex dictation
 # omarchy:requires-sudo=true

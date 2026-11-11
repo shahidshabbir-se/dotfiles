@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Forget an added Claude, Codex, or Grok account
 # omarchy:args=[claude|codex|grok] <account>

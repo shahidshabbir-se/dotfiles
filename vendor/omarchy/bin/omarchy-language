@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or set the Omarchy language and the session's locale
 # omarchy:args=[<code>|list|locale [<code>]|seed <code>]

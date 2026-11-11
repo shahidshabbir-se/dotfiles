@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the sink whose volume and mute a given output really uses
 # omarchy:args=[sink-name]
@@ -18,9 +18,27 @@ set -uo pipefail
 # Callers that need to describe some *other* output -- an output switcher naming
 # the next one in the rotation -- pass that sink explicitly.
 
-sink="${1:-$(pactl get-default-sink 2>/dev/null)}"
+# NixOS: pactl is the pulseaudio client and is not guaranteed on PATH; wpctl is
+# the native WirePlumber client. Read the default sink with whichever exists.
+default_sink_name() {
+  if command -v pactl >/dev/null 2>&1; then
+    pactl get-default-sink 2>/dev/null
+  elif command -v wpctl >/dev/null 2>&1; then
+    wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null |
+      awk -F'"' '/node\.name/ { print $2; exit }'
+  fi
+}
+
+sink="${1:-$(default_sink_name)}"
 
 if [[ -z $sink || $sink == alsa_output.* ]]; then
+  printf '%s\n' "$sink"
+  exit 0
+fi
+
+# Without pactl there is no sink-input graph to follow. The node itself is the
+# best answer, and its volume is what wpctl already controls.
+if ! command -v pactl >/dev/null 2>&1; then
   printf '%s\n' "$sink"
   exit 0
 fi

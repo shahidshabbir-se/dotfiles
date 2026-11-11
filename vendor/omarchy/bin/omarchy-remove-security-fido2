@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove FIDO2 authentication from sudo and polkit
 # omarchy:requires-sudo=true

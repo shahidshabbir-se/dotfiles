@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Control a Bluetooth device
 # omarchy:group=bluetooth
@@ -6,6 +6,11 @@
 # omarchy:examples=omarchy bluetooth device connect 00:11:22:33:44:55
 
 set -e
+
+if ! command -v bluetoothctl >/dev/null 2>&1; then
+  echo "omarchy-bluetooth-device: bluetoothctl is required but is not on PATH; add the bluez package on NixOS." >&2
+  exit 1
+fi
 
 usage() {
   echo "Usage: omarchy-bluetooth-device [pair|connect|disconnect|forget] <address>" >&2

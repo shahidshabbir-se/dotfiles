@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or adjust brightness on the focused display.
 # omarchy:args=[--no-osd] [--monitor name] [+N%|N%-|N%|off|on]
@@ -26,6 +26,10 @@ done
 
 # Get the brightness of the passed display
 backlight_brightness() {
+  if ! command -v brightnessctl >/dev/null 2>&1; then
+    echo "omarchy-brightness-display: brightnessctl is required but is not on PATH; add the brightnessctl package on NixOS." >&2
+    return 1
+  fi
   brightnessctl -d "$1" -m 2>/dev/null | awk -F, '{ gsub("%", "", $4); print $4; found=1 } END{ exit !found }'
 }
 

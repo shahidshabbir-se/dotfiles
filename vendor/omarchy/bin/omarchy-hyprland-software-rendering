@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Turn off animations, blur and shadows for a Hyprland session that renders on the CPU
 # omarchy:hidden=true

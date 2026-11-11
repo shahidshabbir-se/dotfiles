@@ -1,6 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Switch between audio outputs while preserving the mute status
+
+# NixOS does not always expose the pulseaudio client on PATH. Cycling outputs
+# needs the sink list, descriptions, and port availability, which wpctl has no
+# equivalent listing for; fail with the reason instead of cycling to nowhere.
+if ! command -v pactl >/dev/null 2>&1; then
+  echo "omarchy-audio-output-switch: pactl is required to list audio outputs; install the pulseaudio client on NixOS." >&2
+  exit 1
+fi
 
 # Skip the physical sink an active speaker tuning fronts: rotating onto it would
 # silently bypass the tuning rather than pick a different output.

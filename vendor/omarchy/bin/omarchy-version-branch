@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the active Omarchy dev-link git branch
 # omarchy:hidden=true

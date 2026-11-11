@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=List Claude, Codex, and Grok subscription accounts and their limits
 # omarchy:args=[claude|codex|grok] [--json]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or set a Hyprland monitor's rotation (the focused one by default)
 # omarchy:args=[--monitor NAME] [0|90|180|270]

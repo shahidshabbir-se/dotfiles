@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Upgrade a legacy Omarchy install to the package-backed Omarchy quattro layout.
 # omarchy:args=[--yes] [--reboot] [--dev] [--channel stable|rc|edge] [--user USER]

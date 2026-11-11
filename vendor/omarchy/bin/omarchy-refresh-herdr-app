@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Overwrite the Herdr desktop app's keys with the Omarchy default (backs up your version).
 

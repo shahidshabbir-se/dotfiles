@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Returns a formatted battery status string with percentage and power draw/charge.
 # omarchy:args=[--shell]
@@ -39,6 +39,11 @@ format_duration() {
 # that BAT*: Apple Silicon reports battery_macsmc_battery. Match on the class,
 # then take the first one that powers the machine: a wireless mouse or keyboard
 # is a battery_ device too, and UPower marks it "power supply: no".
+if ! command -v upower >/dev/null 2>&1; then
+  echo "omarchy-battery-status: upower is required but is not on PATH; add the upower package on NixOS." >&2
+  exit 1
+fi
+
 battery=""
 battery_info=""
 while read -r candidate; do

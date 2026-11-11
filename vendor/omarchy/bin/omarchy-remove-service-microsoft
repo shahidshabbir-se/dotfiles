@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove the Microsoft Outlook, Word, Excel, PowerPoint, Teams, and OneDrive web apps.
 

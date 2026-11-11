@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Manage persistent state files for Omarchy toggles and settings.
 # omarchy:args=<set|clear> <state-name-or-pattern>

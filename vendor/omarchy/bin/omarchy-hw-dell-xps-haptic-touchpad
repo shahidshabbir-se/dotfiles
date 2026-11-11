@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Match Dell XPS systems with the Synaptics haptic touchpad.
 

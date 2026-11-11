@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove preinstalled Omarchy applications (web apps, TUIs, and selected packages).
 

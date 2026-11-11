@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove the xpadneo Xbox controller driver and undo its module/blacklist config.
 # omarchy:group=remove

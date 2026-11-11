@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Launch Slack with live Omarchy theme support
 # omarchy:args=[slack-arguments...]

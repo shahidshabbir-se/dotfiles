@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Configure, inspect, or switch input methods
 # omarchy:args=<status|cycle [back]|configure --seed|--defaults>

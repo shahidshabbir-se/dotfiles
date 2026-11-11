@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install T3 Code and point it at the Omarchy palette
 # omarchy:args=[stable|nightly] [--no-launch]

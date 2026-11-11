@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Enable or disable background intros
 # omarchy:args=<enable|disable|toggle|status>

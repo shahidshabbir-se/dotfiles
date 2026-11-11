@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Steam and all of its game libraries, configs, and caches.
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Open a captive portal's sign-in window, pausing any Tailscale exit node until online
 # omarchy:group=network

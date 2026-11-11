@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install herdr's status and session-restore integration for agents mise just installed
 # omarchy:hidden=true

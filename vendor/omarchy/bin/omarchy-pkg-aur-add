@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Add the named packages to the system from the AUR if they're missing. Returns false if it couldn't be done.
 # omarchy:args=<packages...>

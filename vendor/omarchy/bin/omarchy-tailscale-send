@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Send files to a machine on your tailnet with Taildrop
 # omarchy:args=<machine> [file...]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove Grok Bot along with its settings and data.
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install support for using Xbox controllers with Steam/RetroArch/etc.
 # omarchy:group=install

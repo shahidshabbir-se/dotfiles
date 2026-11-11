@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Run open models on this machine for your agents
 # omarchy:args=<use|list|status|start|stop|remove> [args]

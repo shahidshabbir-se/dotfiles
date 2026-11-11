@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Set up FIDO2 authentication for sudo and polkit
 # omarchy:requires-sudo=true

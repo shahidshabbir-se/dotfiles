@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Match against the device tree's top-level compatible strings (whole string, case-insensitive).
 # omarchy:args=<compatibles...>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Reset Omarchy user configs and shipped defaults in $HOME (destructive)
 

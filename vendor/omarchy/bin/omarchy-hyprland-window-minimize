@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Minimize a window to the dock
 # omarchy:args=[window-address]

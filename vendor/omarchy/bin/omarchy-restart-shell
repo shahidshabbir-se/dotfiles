@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Restart the Omarchy shell
 # omarchy:examples=omarchy restart shell

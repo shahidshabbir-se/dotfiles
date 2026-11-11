@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove T3 Code along with its configuration and workspaces.
 # omarchy:requires-sudo=true

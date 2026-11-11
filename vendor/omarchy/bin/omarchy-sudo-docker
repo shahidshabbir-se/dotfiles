@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Succeed when Docker needs sudo, fail when it can be used directly
 # omarchy:args=[--configured]

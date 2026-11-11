@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Run a pacman transaction for the Omarchy update flow, shielded from desktop session teardown.
 # omarchy:args=<pacman-args>

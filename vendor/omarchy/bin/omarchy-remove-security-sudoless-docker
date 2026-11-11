@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Disable sudoless Docker by removing your user from the docker group
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Update system firmware using fwupd. Ensures the fwupd EFI binary is installed
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Export the current theme's gum styling into the environment
 # omarchy:hidden=true

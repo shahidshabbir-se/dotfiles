@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show, list, or set the kernel Limine boots by default
 # omarchy:args=[get|list|set <kernel>]

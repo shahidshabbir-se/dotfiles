@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Check or mark completed Omarchy setup tasks
 # omarchy:args=<check|mark|ensure> <name>

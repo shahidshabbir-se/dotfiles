@@ -1,7 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Set and remember the power profile for AC or battery use
 # omarchy:args=[autodetect|ac|battery] [power-saver|balanced|performance]
+
+if ! command -v powerprofilesctl >/dev/null 2>&1; then
+  echo "omarchy-powerprofiles-set: powerprofilesctl is required but is not on PATH; add the power-profiles-daemon package on NixOS." >&2
+  exit 1
+fi
 
 action="${1:-autodetect}"
 requested_profile="${2:-}"

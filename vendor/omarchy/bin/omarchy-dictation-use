@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:hidden=true
 # omarchy:summary=Save a configured dictation backend after stopping the previous backend

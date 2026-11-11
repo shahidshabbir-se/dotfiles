@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Create a desktop launcher for a web app
 # omarchy:args=[name url icon-url-or-name [custom-exec] [mime-types]]

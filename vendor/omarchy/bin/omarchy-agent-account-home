@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the config home of the active Claude, Codex, or Grok account
 # omarchy:args=<claude|codex|grok>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or set the layout of workspaces without one of their own: dwindle, scrolling, or floating
 # omarchy:args=[dwindle|scrolling|floating]

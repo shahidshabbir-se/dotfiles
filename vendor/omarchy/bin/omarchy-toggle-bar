@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Toggle bar visibility without killing the Omarchy shell (on hides the bar, off shows it)
 # omarchy:args=[toggle|on|off]

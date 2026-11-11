@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Match against the computer's DMI product name or product family (case-insensitive).
 # omarchy:args=<pattern>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install VS Code and configure Omarchy defaults for secrets, updates, and theme
 

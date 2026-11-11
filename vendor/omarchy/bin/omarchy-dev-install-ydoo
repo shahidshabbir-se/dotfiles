@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install and enable ydotool mouse automation for Omarchy development
 # omarchy:requires-sudo=true

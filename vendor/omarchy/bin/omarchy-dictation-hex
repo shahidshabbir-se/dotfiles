@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Record dictation using Hex
 # omarchy:args=<start|stop|toggle>

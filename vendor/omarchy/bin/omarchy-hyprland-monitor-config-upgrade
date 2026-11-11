@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Move an older monitors.lua over to the new template
 # omarchy:hidden=true

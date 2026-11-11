@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Reinstall Omarchy packages and reset default configs
 # omarchy:requires-sudo=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Clear the shell update indicator after an update
 # omarchy:hidden=true

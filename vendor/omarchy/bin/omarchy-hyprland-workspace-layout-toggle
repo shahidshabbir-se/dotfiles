@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Cycle the current active workspace through the dwindle, scrolling, and floating layouts
 # omarchy:args=[back]

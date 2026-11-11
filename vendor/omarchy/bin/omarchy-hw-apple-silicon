@@ -1,4 +1,4 @@
-#!/bin/bash -p
+#!/usr/bin/env bash
 
 # omarchy:summary=Detect whether the computer is an Apple Silicon Mac (the old name of omarchy-hw-aarch64-apple).
 # omarchy:hidden=true

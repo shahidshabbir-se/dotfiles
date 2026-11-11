@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Remove a supported browser and clean up Omarchy browser defaults
 # omarchy:args=<chrome|brave|brave-origin|edge|firefox|zen>

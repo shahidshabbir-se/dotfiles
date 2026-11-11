@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Dismiss a notification by summary substring. Used by the first-run notifications to dismiss them after clicking for action.
 # omarchy:args=<summary>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install Lutris with Wine + DXVK for running Windows games (Battle.net, EA, Ubisoft Connect, etc.)
 # omarchy:requires-sudo=true

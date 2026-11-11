@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Configure the dock shown on floating workspaces
 # omarchy:group=dock

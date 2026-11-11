@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print the identity of the monitor on a connector
 # omarchy:args=OUTPUT

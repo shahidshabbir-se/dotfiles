@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Show or pin the Wi-Fi band for the active connection
 # omarchy:group=network
@@ -6,6 +6,14 @@
 # omarchy:examples=omarchy network band | omarchy network band 5 | omarchy network band auto
 
 set -euo pipefail
+
+# iw reads the associated SSID and frequency; nmcli has no equivalent for the
+# per-link radio reading, and without it the band row would silently stay
+# empty. Say so once instead.
+if ! command -v iw >/dev/null 2>&1; then
+  echo "omarchy-network-band: iw is required to read the active Wi-Fi band; add the iw package on NixOS." >&2
+  exit 1
+fi
 
 # NetworkManager 1.44+ accepts a third band value, so 5GHz and 6GHz can be
 # pinned apart. Pinning the band rather than a BSSID keeps working when the AP

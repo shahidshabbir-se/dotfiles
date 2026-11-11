@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install, launch, stop, inspect, or remove the Windows VM
 # omarchy:args=<install|remove|launch|stop|status> [options]

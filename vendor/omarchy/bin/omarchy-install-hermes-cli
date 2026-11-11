@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install Hermes Desktop for the default agent; its runtime provides the hermes command
 # omarchy:args=<--check|--now|--retire-mise>

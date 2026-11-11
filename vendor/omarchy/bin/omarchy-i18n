@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Print a user-facing string in the current language
 # omarchy:args=[--count <n>] <key> [args...] | --number <value>

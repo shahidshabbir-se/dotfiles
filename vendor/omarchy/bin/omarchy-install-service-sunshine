@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # omarchy:summary=Install Sunshine and open Moonlight streaming ports for LAN and Tailscale.
 # omarchy:requires-sudo=true
