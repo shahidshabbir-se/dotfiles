@@ -1,6 +1,9 @@
 # Quickshell shell — implementation plan
 
-Status: superseded for visual direction by [0002-pixel-perfect-ui.md](./0002-pixel-perfect-ui.md).
+Status: superseded by [0002-pixel-perfect-ui.md](./0002-pixel-perfect-ui.md)
+for visual direction and by
+[0003-omarchy-fork-rewire.md](./0003-omarchy-fork-rewire.md) for the shipped
+shell. The independent QML is archived at `legacy/independent-shell`.
 
 Related: [ADR 0001](../adr/0001-own-shell-not-omarchy-code.md) (own shell, no
 Omarchy code), [ADR 0002](../adr/0002-systemd-supervises-the-shell.md)

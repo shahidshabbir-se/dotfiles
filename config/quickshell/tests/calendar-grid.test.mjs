@@ -4,7 +4,7 @@ import { test } from "node:test";
 import vm from "node:vm";
 
 const source = readFileSync(
-    new URL("../plugins/clock/Calendar.js", import.meta.url),
+    new URL("../../../legacy/independent-shell/plugins/clock/Calendar.js", import.meta.url),
     "utf8"
 );
 const context = {};

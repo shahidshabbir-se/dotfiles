@@ -25,6 +25,6 @@ depend on someone else's fork and release cadence.
 - We own every QML file, every helper script, and every bug.
 - There is no runtime plugin loading and no third-party plugin marketplace;
   plugins are built into the shell.
-- The deleted `config/quickshell` tree from commit `7f606dd^` is reference
-  material only; it is not restored. The new shell is built in Omarchy's
-  shape, not from the old composition.
+- The independent `config/quickshell` QML is archived at
+  `legacy/independent-shell/` as reference material only. The shipped shell is
+  the fork in `vendor/omarchy/shell`.

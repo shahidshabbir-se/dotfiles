@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+
+# Offscreen test for the archived independent polkit plugin
+# (legacy/independent-shell/plugins/polkit).
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config_dir="$(cd "$here/.." && pwd)"
+legacy_plugins="$(cd "$here/../../legacy/independent-shell/plugins" && pwd)"
 qs="${QUICKSHELL_BIN:-quickshell}"
 jq_bin="${JQ_BIN:-jq}"
 timeout_seconds="${POLKIT_TEST_TIMEOUT:-20}"
@@ -40,7 +43,7 @@ fail() {
   exit 1
 }
 
-ln -s "$config_dir/plugins/polkit" "$tmp/polkit"
+ln -s "$legacy_plugins/polkit" "$tmp/polkit"
 cat >"$tmp/shell.qml" <<'INNER'
 import Quickshell
 import Quickshell.Io

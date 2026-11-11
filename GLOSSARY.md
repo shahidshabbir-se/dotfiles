@@ -1,9 +1,11 @@
 # Quickshell Desktop
 
-Our own Quickshell-based desktop shell: independent QML in `config/quickshell`,
-shaped like Omarchy's shell (one long-lived process, declarative layout,
-supervised lifecycle, IPC) but containing none of its code and loading no
-external plugins.
+The desktop shell is a fork of Omarchy: its QML is vendored under
+`vendor/omarchy/shell`, and our integration rewires it to the systemd
+supervisor, config ownership, monitor readiness, and NixOS helper commands.
+`OMARCHY_PATH` points at `vendor/omarchy`; the user shell config is
+`config/omarchy/shell.json`. The old independent shell is archived at
+`legacy/independent-shell` and is not shipped.
 
 ## Language
 
@@ -16,12 +18,15 @@ _Avoid_: bar, desktop, compositor, status bar
 
 **Composition**:
 The top-level wiring that instantiates the shell, its services, and its bar.
+The shipped fork uses Omarchy's `shell.qml`; this term describes the legacy
+independent shell's `composition/` layer.
 _Avoid_: root, shell file
 
 **Plugin**:
-A built-in capability under `plugins/<id>/` that the registry maps to an entry
-component. It ships with the shell; nothing is discovered or loaded from
-outside the tree.
+A capability under `vendor/omarchy/shell/plugins/<id>/` with Omarchy's
+`manifest.json`. The fork's plugin host mounts first-party plugins; local
+plugins live under `~/.config/omarchy/plugins/`. The legacy independent shell
+had built-in plugins mapped by its static registry.
 _Avoid_: feature, addon, extension, module, third-party plugin
 
 **Plugin entry**:
@@ -29,12 +34,15 @@ The QML component the registry returns for a plugin id.
 _Avoid_: facade, entry point, loader
 
 **Registry**:
-`Registry.qml`, the single static map from plugin id to entry component.
+Omarchy's `PluginRegistry.qml`, the manifest-driven host for first-party and
+local plugins. The legacy independent shell used a static `Registry.qml` keyed
+by plugin id.
 _Avoid_: loader, host, plugin manager, discovery
 
 **Shared module**:
-Code under `shared/` that a second plugin already needs. Code moves there only
-after the second need appears.
+Omarchy's `Commons/` and `Ui/` modules that more than one plugin imports. The
+legacy independent shell had its own `Commons/` and `Ui/`; those moved to
+`legacy/independent-shell`.
 _Avoid_: utils, common, helpers
 
 ### Surfaces
@@ -73,8 +81,11 @@ Settings written inline on a widget's layout entry.
 _Avoid_: config block, settings object
 
 **Shell config**:
-`shell.json`, the canonical user state for the shell: layout and widget
-options. Live-editable from the repo and reloaded when it changes.
+`config/omarchy/shell.json`, our user state for the fork: layout and widget
+options. It is symlinked to `~/.config/omarchy/shell.json` and is the copy the
+shell reads; the vendored `vendor/omarchy/config/omarchy/shell.json` is the
+fallback. The legacy independent shell's config is
+`legacy/independent-shell/shell.json`.
 _Avoid_: settings file, config.json, preferences
 
 ### Appearance
@@ -92,7 +103,9 @@ A wallpaper image applied through awww.
 _Avoid_: static background, image wallpaper
 
 **Video wallpaper**:
-A wallpaper video played through mpvpaper.
+A wallpaper video. The shipped fork's transition path calls Omarchy's OWE
+renderer, which this repo does not package; that path is a known gap. The
+independent shell used mpvpaper.
 _Avoid_: animated background, live wallpaper
 
 **Wallpaper picker**:
@@ -133,9 +146,15 @@ The final full-desktop comparison against the reference UI.
 _Avoid_: final review, visual check
 
 
+**Legacy independent shell**:
+The QML we wrote before the fork, archived at `legacy/independent-shell`. It is
+reference material only and is not loaded by the supervisor.
+_Avoid_: old shell, previous shell
+
 **Vendored shell**:
 Omarchy's `shell/`, themes, config defaults, and helpers copied into
-`vendor/omarchy` at a pinned upstream commit.
+`vendor/omarchy` at a pinned upstream commit. This is the shipped shell; see
+`vendor/omarchy/README.md` for the sync procedure.
 _Avoid_: upstream, dependency, submodule
 
 **Upstream pin**:

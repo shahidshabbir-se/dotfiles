@@ -1,7 +1,9 @@
 # Pixel-perfect Omarchy UI — plan
 
-Status: proposed. Supersedes the visual assumptions of
-[0001-quickshell-shell.md](./0001-quickshell-shell.md).
+Status: superseded by
+[0003-omarchy-fork-rewire.md](./0003-omarchy-fork-rewire.md). The independent
+QML is archived at `legacy/independent-shell`; the shipped UI is the vendored
+Omarchy fork.
 
 Related: [ADR 0005](../adr/0005-pixel-perfect-omarchy-visual-parity.md),
 [visual reference protocol](../visual-reference.md),
