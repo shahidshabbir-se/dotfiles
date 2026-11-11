@@ -113,8 +113,8 @@ let
     (modShell "SPACE" "vicinae toggle")
     # Notification history (Super+N) and do-not-disturb (Super+Shift+N) through
     # the vendored Omarchy shell, which owns org.freedesktop.Notifications.
-    (modShell "N" "quickshell ipc -p ${homeDirectory}/dotfiles/vendor/omarchy/shell call notifications showHistory")
-    (modShell "SHIFT + N" "quickshell ipc -p ${homeDirectory}/dotfiles/vendor/omarchy/shell call notifications toggleDnd")
+    (modShell "N" "quickshell ipc -p ${homeDirectory}/dotfiles/config/quickshell/shell call notifications showHistory")
+    (modShell "SHIFT + N" "quickshell ipc -p ${homeDirectory}/dotfiles/config/quickshell/shell call notifications toggleDnd")
     (shell (key "ALT + C") "vicinae 'vicinae://launch/clipboard/history?toggle=true'")
     (shell (key "ALT + TAB") "${altTab} next")
     (shell (key "ALT + SHIFT + TAB") "${altTab} prev")

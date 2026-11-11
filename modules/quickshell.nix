@@ -15,7 +15,7 @@ let
   patchedQuickshell = pkgs.callPackage ./pkgs/quickshell.nix { };
 
   # The vendored Omarchy tree; see docs/adr/0006-fork-omarchy-shell.md.
-  omarchyPath = "${homeDirectory}/dotfiles/vendor/omarchy";
+  omarchyPath = "${homeDirectory}/dotfiles/config/quickshell";
 
   # systemd user units start with a minimal PATH. Pin every binary the launch
   # and restart scripts need instead of relying on the graphical session env.

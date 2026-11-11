@@ -21,7 +21,7 @@ with the notice preserved.
 
 ## References
 
-- [Vendored shell README](../../vendor/omarchy/README.md): pin, copied paths,
+- [Vendored shell README](../../config/quickshell/README.md): pin, copied paths,
   local patches, and the exact upstream sync procedure.
 - [Known broken helpers](../known-broken-helpers.md): the helper gaps and their
   status.

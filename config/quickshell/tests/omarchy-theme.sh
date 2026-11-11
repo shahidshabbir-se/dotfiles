@@ -9,7 +9,7 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo="$(cd "$here/../../.." && pwd)"
 jq_bin="${JQ_BIN:-jq}"
 config="$repo/config/omarchy/shell.json"
-theme="$repo/vendor/omarchy/themes/tokyo-night"
+theme="$repo/config/quickshell/themes/tokyo-night"
 shell_toml="$theme/shell.toml"
 activation="${ACTIVATION_PACKAGE:-}"
 
@@ -109,7 +109,7 @@ if [[ -n "$activation" ]]; then
   name_file="$home_files/.local/state/omarchy/current/theme.name"
 
   resolved_theme="$(readlink -f "$theme_link" 2>/dev/null || true)"
-  if [[ -L "$theme_link" && "$resolved_theme" == */vendor/omarchy/themes/tokyo-night ]]; then
+  if [[ -L "$theme_link" && "$resolved_theme" == */config/quickshell/themes/tokyo-night ]]; then
     ok "activation links theme to the vendored Tokyo Night tree"
   else
     fail "activation links theme to the vendored Tokyo Night tree"

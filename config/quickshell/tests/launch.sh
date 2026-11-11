@@ -4,7 +4,7 @@ set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 config_dir="$(cd "$here/.." && pwd)"
 repo_root="$(cd "$config_dir/../.." && pwd)"
-shell_dir="$repo_root/vendor/omarchy/shell"
+shell_dir="$repo_root/config/quickshell/shell"
 script="$config_dir/scripts/launch.sh"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -81,12 +81,12 @@ if run_launch >"$tmp/real.out" 2>"$tmp/real.err"; then
   else
     fail "launch execs the vendored Omarchy shell with -n"
   fi
-  if grep -qx "omarchy: $repo_root/vendor/omarchy" "$tmp/quickshell.log"; then
+  if grep -qx "omarchy: $repo_root/config/quickshell" "$tmp/quickshell.log"; then
     ok "launch exports OMARCHY_PATH as the vendored tree"
   else
     fail "launch exports OMARCHY_PATH as the vendored tree"
   fi
-  if grep -q "path: $repo_root/vendor/omarchy/bin:" "$tmp/quickshell.log"; then
+  if grep -q "path: $repo_root/config/quickshell/bin:" "$tmp/quickshell.log"; then
     ok "launch puts the vendored bin first on PATH"
   else
     fail "launch puts the vendored bin first on PATH"

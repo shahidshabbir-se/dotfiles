@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Legacy live harness for the archived independent shell (legacy/independent-shell).
-# It edits that tree's shell.json and does not exercise the shipped vendor/omarchy
+# It edits that tree's shell.json and does not exercise the shipped config/quickshell
 # fork.
 set -euo pipefail
 

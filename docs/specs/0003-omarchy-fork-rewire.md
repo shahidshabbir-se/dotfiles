@@ -58,17 +58,17 @@ NixOS. Verify the live desktop against the local reference pack.
 
 ## Implementation Decisions
 
-- **Vendored tree.** Copy Omarchy's `shell/`, `themes/tokyo-night`, `config/omarchy/`, `default/`, and `bin/` into `vendor/omarchy/` at a pinned commit (currently `255acd9b9`), with the MIT `LICENSE`, `version`, and a README recording the source, local patches, and sync procedure. The shipped shell is `vendor/omarchy/shell`.
+- **Vendored tree.** Copy Omarchy's `shell/`, `themes/tokyo-night`, `config/omarchy/`, `default/`, and `bin/` into `config/quickshell/` at a pinned commit (currently `255acd9b9`), with the MIT `LICENSE`, `version`, and a README recording the source, local patches, and sync procedure. The shipped shell is `config/quickshell/shell`.
 - **Patched Quickshell.** Build `0.3.2.r7.g2b4501a` from upstream source with Omarchy's `OmarchyLoadPatch` and the plugin-rescan fix. Package it in `modules/pkgs/quickshell/`; do not use nixpkgs' 0.3.1 for the shipped shell.
 - **Supervisor remains ours.** Keep the systemd user unit and `launch.sh` monitor-readiness logic. Point `ExecStart` at `quickshell -p "$OMARCHY_PATH/shell" -n`; derive `WAYLAND_DISPLAY` from Hyprland; keep `qs-restart` lock and readiness checks, expecting Omarchy's `shell ping` value `"ok"`.
 - **Config ownership.** `config/omarchy/shell.json` is our user config and is symlinked to `~/.config/omarchy/shell.json`. The vendored `config/omarchy/shell.json` remains the fallback. Keep `OMARCHY_PATH` as the vendored tree.
-- **Theme state.** Point `~/.local/state/omarchy/current/theme` at `vendor/omarchy/themes/tokyo-night`; generate or vendor its `shell.toml` from Omarchy's template.
+- **Theme state.** Point `~/.local/state/omarchy/current/theme` at `config/quickshell/themes/tokyo-night`; generate or vendor its `shell.toml` from Omarchy's template.
 - **Keep Hypridle and Qylock.** Add `omarchy.idle` and `omarchy.lock` to `disabledPlugins`. The Omarchy power panel must not start a second lock service.
-- **Helpers.** Put `vendor/omarchy/bin` on the unit PATH. Patch shebangs for NixOS. Replace Arch-specific commands (`pacman`, `/usr/bin`, `/usr/share/omarchy`) with NixOS equivalents as surfaces are exercised; record any remaining broken helper.
+- **Helpers.** Put `config/quickshell/bin` on the unit PATH. Patch shebangs for NixOS. Replace Arch-specific commands (`pacman`, `/usr/bin`, `/usr/share/omarchy`) with NixOS equivalents as surfaces are exercised; record any remaining broken helper.
 - **Notifications and polkit.** Use Omarchy's notification service and polkit agent; remove the independent shell's duplicate services from the shipped path.
 - **Legacy independent QML.** Archive the independent QML at `legacy/independent-shell/`; it is superseded and not shipped. Keep `config/quickshell/scripts` and the non-QML tests in place for the supervisor, with legacy tests pointing at the archived tree.
 - **Reference pack.** Use `/home/shahid/Pictures/omarchy-reference/` to compare the live deployment with real Omarchy. It is evidence, not shipped code.
-- **Upstream sync.** Record the pinned commit, copied paths, local patches, rebuild, and live verification in `vendor/omarchy/README.md`; updates are explicit copies at a chosen commit, not automatic. Record helper gaps in `docs/known-broken-helpers.md`.
+- **Upstream sync.** Record the pinned commit, copied paths, local patches, rebuild, and live verification in `config/quickshell/README.md`; updates are explicit copies at a chosen commit, not automatic. Record helper gaps in `docs/known-broken-helpers.md`.
 
 ## Testing Decisions
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Legacy live harness for the archived independent shell (legacy/independent-shell).
-# It does not exercise the shipped vendor/omarchy fork.
+# It does not exercise the shipped config/quickshell fork.
 set -euo pipefail
 
 # Live acceptance harness for ticket #27. Run inside a Hyprland session with the

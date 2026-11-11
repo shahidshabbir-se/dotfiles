@@ -4,7 +4,7 @@ set -euo pipefail
 script_path="$(readlink -f "${BASH_SOURCE[0]}")"
 repo_root="$(cd "$(dirname "$script_path")/../../.." && pwd)"
 
-export OMARCHY_PATH="${OMARCHY_PATH:-$repo_root/vendor/omarchy}"
+export OMARCHY_PATH="${OMARCHY_PATH:-$repo_root/config/quickshell}"
 export PATH="$OMARCHY_PATH/bin:$PATH"
 
 hyprctl_bin="${HYPRCTL_BIN:-hyprctl}"

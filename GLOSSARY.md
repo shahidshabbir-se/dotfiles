@@ -1,9 +1,9 @@
 # Quickshell Desktop
 
 The desktop shell is a fork of Omarchy: its QML is vendored under
-`vendor/omarchy/shell`, and our integration rewires it to the systemd
+`config/quickshell/shell`, and our integration rewires it to the systemd
 supervisor, config ownership, monitor readiness, and NixOS helper commands.
-`OMARCHY_PATH` points at `vendor/omarchy`; the user shell config is
+`OMARCHY_PATH` points at `config/quickshell`; the user shell config is
 `config/omarchy/shell.json`. The old independent shell is archived at
 `legacy/independent-shell` and is not shipped.
 
@@ -23,7 +23,7 @@ independent shell's `composition/` layer.
 _Avoid_: root, shell file
 
 **Plugin**:
-A capability under `vendor/omarchy/shell/plugins/<id>/` with Omarchy's
+A capability under `config/quickshell/shell/plugins/<id>/` with Omarchy's
 `manifest.json`. The fork's plugin host mounts first-party plugins; local
 plugins live under `~/.config/omarchy/plugins/`. The legacy independent shell
 had built-in plugins mapped by its static registry.
@@ -83,7 +83,7 @@ _Avoid_: config block, settings object
 **Shell config**:
 `config/omarchy/shell.json`, our user state for the fork: layout and widget
 options. It is symlinked to `~/.config/omarchy/shell.json` and is the copy the
-shell reads; the vendored `vendor/omarchy/config/omarchy/shell.json` is the
+shell reads; the vendored `config/quickshell/config/omarchy/shell.json` is the
 fallback. The legacy independent shell's config is
 `legacy/independent-shell/shell.json`.
 _Avoid_: settings file, config.json, preferences
@@ -153,8 +153,8 @@ _Avoid_: old shell, previous shell
 
 **Vendored shell**:
 Omarchy's `shell/`, themes, config defaults, and helpers copied into
-`vendor/omarchy` at a pinned upstream commit. This is the shipped shell; see
-`vendor/omarchy/README.md` for the sync procedure.
+`config/quickshell` at a pinned upstream commit. This is the shipped shell; see
+`config/quickshell/README.md` for the sync procedure.
 _Avoid_: upstream, dependency, submodule
 
 **Upstream pin**:

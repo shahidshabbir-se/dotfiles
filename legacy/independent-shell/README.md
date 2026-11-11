@@ -5,7 +5,7 @@ before [ADR 0006](../../docs/adr/0006-fork-omarchy-shell.md) replaced it with
 the vendored Omarchy fork.
 
 It is **not shipped**. The shipped shell is
-[`vendor/omarchy/shell`](../../vendor/omarchy/shell), started by the systemd
+[`config/quickshell/shell`](../../config/quickshell/shell), started by the systemd
 user unit through `config/quickshell/scripts/launch.sh`. Nothing in the
 supervisor or the NixOS configuration should load this tree.
 

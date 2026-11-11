@@ -27,4 +27,4 @@ depend on someone else's fork and release cadence.
   plugins are built into the shell.
 - The independent `config/quickshell` QML is archived at
   `legacy/independent-shell/` as reference material only. The shipped shell is
-  the fork in `vendor/omarchy/shell`.
+  the fork in `config/quickshell/shell`.

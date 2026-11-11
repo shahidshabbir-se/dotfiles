@@ -4,7 +4,7 @@
 #
 # These do not need a live Hyprland session or a running desktop bus. They
 # prove that:
-#   - the bash shebangs in vendor/omarchy/bin work without /bin/bash;
+#   - the bash shebangs in config/quickshell/bin work without /bin/bash;
 #   - the menu, audio, network, bluetooth, battery/power, and brightness
 #     helpers exist and run their status/help path;
 #   - the adaptation does not reach for Arch-only paths (pacman, /usr/bin)
@@ -17,7 +17,7 @@ set -uo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$here/../../.." && pwd)"
-omarchy_path="${OMARCHY_PATH:-$repo_root/vendor/omarchy}"
+omarchy_path="${OMARCHY_PATH:-$repo_root/config/quickshell}"
 bin="$omarchy_path/bin"
 timeout_bin="${TIMEOUT_BIN:-timeout}"
 

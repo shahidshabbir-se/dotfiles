@@ -5,7 +5,7 @@ script_path="$(readlink -f "${BASH_SOURCE[0]}")"
 repo_root="$(cd "$(dirname "$script_path")/../../.." && pwd)"
 
 # IPC targets Omarchy's shell tree, not our legacy config dir.
-export OMARCHY_PATH="${OMARCHY_PATH:-$repo_root/vendor/omarchy}"
+export OMARCHY_PATH="${OMARCHY_PATH:-$repo_root/config/quickshell}"
 export PATH="$OMARCHY_PATH/bin:$PATH"
 
 loginctl_bin="${LOGINCTL_BIN:-loginctl}"

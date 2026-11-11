@@ -6,13 +6,13 @@ plan.
 Related: [ADR 0006](../adr/0006-fork-omarchy-shell.md),
 [spec 0003](../specs/0003-omarchy-fork-rewire.md),
 [visual reference](../visual-reference.md),
-[vendored shell sync](../../vendor/omarchy/README.md),
+[vendored shell sync](../../config/quickshell/README.md),
 [known broken helpers](../known-broken-helpers.md).
 
 ## Repository layout
 
-- Shipped shell: `vendor/omarchy/shell`, with `OMARCHY_PATH` at
-  `vendor/omarchy`. The supervisor starts it with
+- Shipped shell: `config/quickshell/shell`, with `OMARCHY_PATH` at
+  `config/quickshell`. The supervisor starts it with
   `quickshell -p "$OMARCHY_PATH/shell" -n`.
 - User config: `config/omarchy/shell.json`, symlinked to
   `~/.config/omarchy/shell.json`.
@@ -26,7 +26,7 @@ Related: [ADR 0006](../adr/0006-fork-omarchy-shell.md),
   `legacy/independent-shell/tests/` so it cannot be mistaken for the shipped
   Omarchy ownership test.
 - Helper status and upstream sync: `docs/known-broken-helpers.md` and
-  `vendor/omarchy/README.md`.
+  `config/quickshell/README.md`.
 
 ## Target
 

@@ -11,7 +11,7 @@ set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$here/../../.." && pwd)"
-shell_dir="$repo_root/vendor/omarchy/shell"
+shell_dir="$repo_root/config/quickshell/shell"
 shell_config="$repo_root/config/omarchy/shell.json"
 hypr_bindings="$repo_root/modules/hyprland/bindings.nix"
 
@@ -155,8 +155,8 @@ else
   ok "no binding calls the retired notifications toggleCenter"
 fi
 
-if grep -Fq "vendor/omarchy/shell call notifications showHistory" "$hypr_bindings" \
-  && grep -Fq "vendor/omarchy/shell call notifications toggleDnd" "$hypr_bindings"; then
+if grep -Fq "config/quickshell/shell call notifications showHistory" "$hypr_bindings" \
+  && grep -Fq "config/quickshell/shell call notifications toggleDnd" "$hypr_bindings"; then
   ok "notification bindings target the vendored Omarchy shell"
 else
   fail "notification bindings target the vendored Omarchy shell"
@@ -247,7 +247,7 @@ else
     fail "a quickshell process owns $notification_service (pid ${pid:-unknown}, exe ${exe:-unknown}, cmdline ${cmdline:-unknown})"
   fi
 
-  if [[ "$cmdline" == *"vendor/omarchy/shell"* ]]; then
+  if [[ "$cmdline" == *"config/quickshell/shell"* ]]; then
     ok "the notification owner is the vendored Omarchy shell"
   else
     fail "the notification owner is the vendored Omarchy shell (cmdline ${cmdline:-unknown})"

@@ -1,8 +1,8 @@
 # Helper adaptation for the vendored Omarchy shell
 
 This note records the local modifications ticket #58 makes to
-`vendor/omarchy/bin` and the helper path the systemd unit uses. It complements
-[the vendored tree README](../vendor/omarchy/README.md) and
+`config/quickshell/bin` and the helper path the systemd unit uses. It complements
+[the vendored tree README](../config/quickshell/README.md) and
 [the known broken list](known-broken-helpers.md); those two files are owned by
 the upstream-sync ticket and are not edited here.
 
@@ -13,7 +13,7 @@ their own tickets.
 
 ## Shebangs
 
-Every top-level script in `vendor/omarchy/bin` used `#!/bin/bash` or
+Every top-level script in `config/quickshell/bin` used `#!/bin/bash` or
 `#!/bin/bash -p`. NixOS has no `/bin/bash`, so the kernel cannot exec them even
 when the directory is first on `PATH`.
 
@@ -39,7 +39,7 @@ as an open gap in `docs/known-broken-helpers.md`.
 | Surface | Helper | Arch assumption | NixOS adaptation |
 |---|---|---|---|
 | Menu | `shell/services/AppLibrary.qml` | `uwsm-app -- gtk-launch` | Run `gtk-launch` directly; UWSM is not the session manager here. |
-| Menu | all vendored launchers | `uwsm-app -- <command>` | New `vendor/omarchy/bin/uwsm-app` shim executes the command directly and rejects unknown options. |
+| Menu | all vendored launchers | `uwsm-app -- <command>` | New `config/quickshell/bin/uwsm-app` shim executes the command directly and rejects unknown options. |
 | Menu | `omarchy-menu`, `omarchy-menu-select` | none found | They only need `OMARCHY_PATH` and `jq`, both on the unit path. |
 | Audio | `omarchy-audio-output-sink` | `pactl get-default-sink` | Falls back to `wpctl inspect @DEFAULT_AUDIO_SINK@`; without `pactl` it returns the node itself instead of following a DSP sink. |
 | Audio | `omarchy-audio-output-volume` | `pactl` get/set/mute | Uses `pactl` when present, otherwise `wpctl` for get-volume, mute, and set-volume. |
@@ -87,7 +87,7 @@ needed.
 helper invocation is under `timeout`, expected exit codes are explicit, and any
 stderr containing a bad interpreter, `/usr/bin/`, `pacman`, `omarchy-pkg-`, or
 a bare `command not found` fails the check. It also scans every file in
-`vendor/omarchy/bin` for an approved shebang and runs `bash -n` over the
+`config/quickshell/bin` for an approved shebang and runs `bash -n` over the
 modified helpers.
 
 Run it from the repository root:
@@ -97,7 +97,7 @@ bash config/quickshell/tests/helpers.sh
 ```
 
 The shell still needs a live session to prove the panel UI end to end; see
-`vendor/omarchy/README.md` for that procedure.
+`config/quickshell/README.md` for that procedure.
 
 ## Remaining gaps reported for the tracked list
 

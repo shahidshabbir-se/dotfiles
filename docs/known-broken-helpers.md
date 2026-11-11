@@ -1,7 +1,7 @@
 # Known broken helpers
 
 Helper status for the vendored Omarchy fork at
-`vendor/omarchy` pin `255acd9b9f752478365a1207f499e5d558bf7f75`.
+`config/quickshell` pin `255acd9b9f752478365a1207f499e5d558bf7f75`.
 Everything here is about the NixOS integration, not about Omarchy's upstream
 code.
 
@@ -23,8 +23,8 @@ new failure, add it here before calling the surface done.
 
 | Helper / gap | Surface | Evidence in the vendored tree | Status | Notes |
 |---|---|---|---|---|
-| Bash shebangs | All `vendor/omarchy/bin` scripts | 558 scripts used `/bin/bash` or `#!/bin/bash -p` | adapted | Rewritten to `#!/usr/bin/env bash` for NixOS (#58). |
-| `/usr/bin/python3` shebangs | 29 scripts in `vendor/omarchy/bin`; `InputMethodState.qml` | `grep -rl '^#!/usr/bin/python3' vendor/omarchy/bin`; `grep '/usr/bin/python3' vendor/omarchy/shell` | open | NixOS has no `/usr/bin/python3`. Patch shebangs to the Nix store interpreter, or wrap the scripts, when packaging `vendor/omarchy/bin`. The affected set includes 23 `omarchy-agent-usage-*` collectors, `omarchy-agent-account-state`, `omarchy-agent-account-transfer`, `omarchy-file-select`, `omarchy-dev-notification-demo`, `omarchy-dev-font`, and `omarchy-hw-software-rendering`. |
+| Bash shebangs | All `config/quickshell/bin` scripts | 558 scripts used `/bin/bash` or `#!/bin/bash -p` | adapted | Rewritten to `#!/usr/bin/env bash` for NixOS (#58). |
+| `/usr/bin/python3` shebangs | 29 scripts in `config/quickshell/bin`; `InputMethodState.qml` | `grep -rl '^#!/usr/bin/python3' config/quickshell/bin`; `grep '/usr/bin/python3' config/quickshell/shell` | open | NixOS has no `/usr/bin/python3`. Patch shebangs to the Nix store interpreter, or wrap the scripts, when packaging `config/quickshell/bin`. The affected set includes 23 `omarchy-agent-usage-*` collectors, `omarchy-agent-account-state`, `omarchy-agent-account-transfer`, `omarchy-file-select`, `omarchy-dev-notification-demo`, `omarchy-dev-font`, and `omarchy-hw-software-rendering`. |
 | Agent usage collectors | `omarchy.agents`, in the default bar | `bin/omarchy-agent-usage-update`, `bin/omarchy-agent-usage-*`, `shell/plugins/agents/collectors.py` | open | All Python collectors die on the shebang above. They also need the agent CLIs and credentials to produce records; an empty panel without those is expected, not a failure of the shell. |
 | Clipboard `capture.sh` | `omarchy.clipboard` overlay | `shell/plugins/clipboard/capture.sh`, `Clipboard.qml` | open | `capture.sh` needs `wl-paste`, `setpriv`, `timeout`, `sha256sum`, `jq`, `perl` with core `Encode`/`JSON::PP`, and the vendored `omarchy-language`. `wl-clipboard` is installed in `modules/hyprland/desktop.nix`, but it is not on the systemd unit's pinned PATH. `setpriv` and `perl` are also not guaranteed there. The shebang is `#!/bin/bash`, which NixOS provides. |
 | `.webp` decode in the shell background | Wallpaper layer | `shell/plugins/background/Background.qml` lists `.webp`; `Image` decodes the path | open | The repo installs `webp-pixbuf-loader`, which is a GTK loader and does not give Qt's `Image` a WebP plugin. Add the Qt image-format plugin (for example `qt6.qtimageformats`) to the shell environment, and check the AVIF/HEIC entries used by the image picker and Dropbox panel at the same time. Without it, WebP wallpapers fail to load or fall into the recovery path. |
@@ -68,4 +68,4 @@ When a live run exercises a helper:
    run against that surface. A package appearing in the store is not proof.
 3. Keep **not-needed** entries, with the replacement named; do not delete them
    because a future sync may re-enable the surface.
-4. Re-run the smoke checks in `vendor/omarchy/README.md` after a sync.
+4. Re-run the smoke checks in `config/quickshell/README.md` after a sync.

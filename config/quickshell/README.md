@@ -7,7 +7,7 @@ of reimplementing its UI. See
 [spec 0003](../../docs/specs/0003-omarchy-fork-rewire.md), and
 [plan 0003](../../docs/plans/0003-omarchy-fork-rewire.md).
 
-The shipped shell is `vendor/omarchy/shell`. The old independent shell is
+The shipped shell is `config/quickshell/shell`. The old independent shell is
 archived at `legacy/independent-shell` and is not loaded by the supervisor.
 
 ## Upstream pin
@@ -17,7 +17,7 @@ archived at `legacy/independent-shell` and is not loaded by the supervisor.
 | Source | https://github.com/omacom/omarchy |
 | Branch at capture | `quattro` |
 | Commit | `255acd9b9f752478365a1207f499e5d558bf7f75` |
-| Version | `4.0.0.alpha` (`vendor/omarchy/version`) |
+| Version | `4.0.0.alpha` (`config/quickshell/version`) |
 | Captured | 2026-11-11 |
 
 The pin is a commit, not a branch. Do not follow `quattro` automatically; a
@@ -27,12 +27,12 @@ new upstream commit is a deliberate sync.
 
 Only these paths are copied from the upstream checkout at the pin:
 
-- `shell/` -> `vendor/omarchy/shell/` (the shipped Quickshell config)
-- `themes/tokyo-night/` -> `vendor/omarchy/themes/tokyo-night/`
-- `config/omarchy/` -> `vendor/omarchy/config/omarchy/` (fallback user config)
-- `default/` -> `vendor/omarchy/default/` (templates, theme defaults, input
+- `shell/` -> `config/quickshell/shell/` (the shipped Quickshell config)
+- `themes/tokyo-night/` -> `config/quickshell/themes/tokyo-night/`
+- `config/omarchy/` -> `config/quickshell/config/omarchy/` (fallback user config)
+- `default/` -> `config/quickshell/default/` (templates, theme defaults, input
   methods, and data used by the shell and helpers)
-- `bin/` -> `vendor/omarchy/bin/` (the `omarchy-*` helper commands)
+- `bin/` -> `config/quickshell/bin/` (the `omarchy-*` helper commands)
 - `LICENSE` and `version`
 
 The rest of the upstream repository is not copied. `OMARCHY_PATH` in the
@@ -62,17 +62,17 @@ below. NixOS adaptation otherwise lives outside this directory:
 | Quickshell patches | `modules/pkgs/quickshell/*.patch` | `load_qtquick_611.patch` (Omarchy's `OmarchyLoadPatch` and Qt 6.11 load interception) and `intercept-rescan-fix.patch` (removes a synchronous `scanDir()` that deadlocks plugin reload) |
 | Supervisor and PATH | `modules/quickshell.nix`, `config/quickshell/scripts/` | systemd unit, monitor readiness, `qs-restart`, and the binaries on the unit PATH |
 | User config | `config/omarchy/shell.json` | Our config, symlinked to `~/.config/omarchy/shell.json`; the vendored copy is the fallback |
-| Theme surfaces | `vendor/omarchy/themes/tokyo-night/shell.toml` | Generated from `default/themed/shell.toml.tpl` with this theme's `colors.toml` and `shell.lock.toml`; upstream ships no `shell.toml` for Tokyo Night (ticket #57) |
+| Theme surfaces | `config/quickshell/themes/tokyo-night/shell.toml` | Generated from `default/themed/shell.toml.tpl` with this theme's `colors.toml` and `shell.lock.toml`; upstream ships no `shell.toml` for Tokyo Night (ticket #57) |
 | Theme state | `modules/quickshell.nix` | Home Manager symlinks `~/.local/state/omarchy/current/theme` to the vendored theme and writes `theme.name` = `tokyo-night` |
-| Helper shebangs | `vendor/omarchy/bin` | 558 `#!/bin/bash` shebangs rewritten to `#!/usr/bin/env bash` for NixOS (ticket #58) |
-| Helper adaptations | `vendor/omarchy/bin` | Focused audio/network/bluetooth/battery/brightness/DNS adaptations and a local `uwsm-app` shim (ticket #58); see `docs/helper-adaptation.md` |
-| App library launch | `vendor/omarchy/shell/services/AppLibrary.qml` | Launches with `gtk-launch` directly instead of `uwsm-app -- gtk-launch` (ticket #58) |
+| Helper shebangs | `config/quickshell/bin` | 558 `#!/bin/bash` shebangs rewritten to `#!/usr/bin/env bash` for NixOS (ticket #58) |
+| Helper adaptations | `config/quickshell/bin` | Focused audio/network/bluetooth/battery/brightness/DNS adaptations and a local `uwsm-app` shim (ticket #58); see `docs/helper-adaptation.md` |
+| App library launch | `config/quickshell/shell/services/AppLibrary.qml` | Launches with `gtk-launch` directly instead of `uwsm-app -- gtk-launch` (ticket #58) |
 | Helper gaps | `docs/known-broken-helpers.md` | Open, adapted, and not-needed helper work |
 
 Do not edit a vendored file in place without recording it. If a local patch to
 the vendored tree becomes necessary:
 
-1. Add it under `vendor/omarchy/patches/NNN-short-name.patch`.
+1. Add it under `config/quickshell/patches/NNN-short-name.patch`.
 2. List it in the table above with the reason and the commit that introduced it.
 3. Apply it after every sync, before rebuilding or restarting the shell.
 
@@ -98,22 +98,22 @@ syncing.
 
    ```bash
    for path in shell themes/tokyo-night config/omarchy default bin; do
-     diff -ruN "vendor/omarchy/$path" "$tmp/omarchy/$path" || true
+     diff -ruN "config/quickshell/$path" "$tmp/omarchy/$path" || true
    done | less
    ```
 
 4. Copy the five directories and the two upstream metadata files. `rsync
    --delete` makes the vendored tree exactly match the new pin; local patches
-   under `vendor/omarchy/patches/` are not touched by this command:
+   under `config/quickshell/patches/` are not touched by this command:
 
    ```bash
    for path in shell themes/tokyo-night config/omarchy default bin; do
-     rsync -a --delete "$tmp/omarchy/$path/" "vendor/omarchy/$path/"
+     rsync -a --delete "$tmp/omarchy/$path/" "config/quickshell/$path/"
    done
-   cp "$tmp/omarchy/LICENSE" "$tmp/omarchy/version" vendor/omarchy/
+   cp "$tmp/omarchy/LICENSE" "$tmp/omarchy/version" config/quickshell/
    ```
 
-5. Reapply any local patches from `vendor/omarchy/patches/` in numeric order.
+5. Reapply any local patches from `config/quickshell/patches/` in numeric order.
    Resolve conflicts by updating the patch, not by editing vendored files
    silently.
 6. Update the pin table, the version, and the captured date in this README.
@@ -178,7 +178,7 @@ either patch does.
 Set the path the shell and helpers use:
 
 ```bash
-export OMARCHY_PATH="$HOME/dotfiles/vendor/omarchy"
+export OMARCHY_PATH="$HOME/dotfiles/config/quickshell"
 ```
 
 1. The supervisor owns the process:
@@ -204,7 +204,7 @@ export OMARCHY_PATH="$HOME/dotfiles/vendor/omarchy"
 
    ```bash
    readlink -f "$HOME/.local/state/omarchy/current/theme"
-   # -> $HOME/dotfiles/vendor/omarchy/themes/tokyo-night
+   # -> $HOME/dotfiles/config/quickshell/themes/tokyo-night
    test -f "$HOME/.local/state/omarchy/current/theme/shell.toml"
    ```
 

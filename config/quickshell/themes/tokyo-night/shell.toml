@@ -1,6 +1,6 @@
 # Tokyo Night shell surfaces for the NixOS fork. Generated with
-# vendor/omarchy/bin/omarchy-theme-set-templates from
-# vendor/omarchy/default/themed/shell.toml.tpl using this theme's colors.toml
+# config/quickshell/bin/omarchy-theme-set-templates from
+# config/quickshell/default/themed/shell.toml.tpl using this theme's colors.toml
 # and shell.lock.toml. Regenerate rather than hand-editing colours.
 # Omarchy shell surfaces. Colors derive from colors.toml; sizes and the
 # typographic scale come from the keys below. Themes can ship

@@ -3,7 +3,7 @@ set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$here/../../.." && pwd)"
-shell_dir="$repo_root/vendor/omarchy/shell"
+shell_dir="$repo_root/config/quickshell/shell"
 script="$here/../scripts/restart.sh"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT

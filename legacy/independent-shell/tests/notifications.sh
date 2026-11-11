@@ -2,7 +2,7 @@
 
 # Live harness for the archived independent shell (legacy/independent-shell).
 # It is kept outside config/quickshell/tests because it does not exercise the
-# shipped vendor/omarchy fork; the Omarchy ownership test lives there instead.
+# shipped config/quickshell fork; the Omarchy ownership test lives there instead.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
