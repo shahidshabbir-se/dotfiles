@@ -53,9 +53,6 @@ in
     qsRestart
   ];
 
-  # Live-editable shell config (same pattern as nvim/zed).
-  xdg.configFile.quickshell.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/quickshell";
-
   # Omarchy's shell reads ~/.config/omarchy/shell.json; this symlink keeps our
   # tracked config canonical instead of letting the shell fork its own copy.
   xdg.configFile.omarchy.source = config.lib.file.mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/omarchy";

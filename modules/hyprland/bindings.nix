@@ -111,9 +111,10 @@ let
     (modShell "W" "ags run")
     (modShell "SHIFT + W" ''bash -c "kill -9 $(pgrep hyprpanel) || hyprpanel"'')
     (modShell "SPACE" "vicinae toggle")
-    # Notification center (Super+N) and do-not-disturb (Super+Shift+N).
-    (modShell "N" "quickshell ipc -p ${homeDirectory}/dotfiles/config/quickshell call notifications toggleCenter")
-    (modShell "SHIFT + N" "quickshell ipc -p ${homeDirectory}/dotfiles/config/quickshell call notifications toggleDnd")
+    # Notification history (Super+N) and do-not-disturb (Super+Shift+N) through
+    # the vendored Omarchy shell, which owns org.freedesktop.Notifications.
+    (modShell "N" "quickshell ipc -p ${homeDirectory}/dotfiles/vendor/omarchy/shell call notifications showHistory")
+    (modShell "SHIFT + N" "quickshell ipc -p ${homeDirectory}/dotfiles/vendor/omarchy/shell call notifications toggleDnd")
     (shell (key "ALT + C") "vicinae 'vicinae://launch/clipboard/history?toggle=true'")
     (shell (key "ALT + TAB") "${altTab} next")
     (shell (key "ALT + SHIFT + TAB") "${altTab} prev")
