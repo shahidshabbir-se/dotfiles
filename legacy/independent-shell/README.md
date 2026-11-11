@@ -30,10 +30,12 @@ same relative depth.
     `notifications-history.test.mjs`, and `remote-session-format.test.mjs`
     import the archived JavaScript modules by relative path.
   - `polkit.sh` and `remote-session.sh` run the archived plugins offscreen.
-  - `calendar.sh`, `layout-ipc.sh`, and `notifications.sh` are live harnesses
-    for the archived shell. They target `legacy/independent-shell` by default
-    and only work if that shell is started manually; they do not test the
-    shipped fork.
+  - `calendar.sh` and `layout-ipc.sh` are live harnesses for the archived
+    shell. They target `legacy/independent-shell` by default and only work if
+    that shell is started manually; they do not test the shipped fork.
+  - `tests/notifications.sh` is the archived independent shell's live
+    notification harness, moved here so it cannot be mistaken for the shipped
+    Omarchy ownership test.
 - It is reference material for the supervisor tests (`launch.sh`,
   `restart.sh`) and for any behaviour the fork must preserve.
 

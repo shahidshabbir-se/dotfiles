@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# Legacy live harness for the archived independent shell (legacy/independent-shell).
-# It does not exercise the shipped vendor/omarchy fork.
+# Live harness for the archived independent shell (legacy/independent-shell).
+# It is kept outside config/quickshell/tests because it does not exercise the
+# shipped vendor/omarchy fork; the Omarchy ownership test lives there instead.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config_dir="${QUICKSHELL_CONFIG_DIR:-$(cd "$here/../../legacy/independent-shell" && pwd)}"
+config_dir="${QUICKSHELL_CONFIG_DIR:-$(cd "$here/.." && pwd)}"
 busctl_bin="${BUSCTL_BIN:-busctl}"
 notify_send_bin="${NOTIFY_SEND_BIN:-notify-send}"
 wait_ticks="${NOTIFY_WAIT_TICKS:-50}"

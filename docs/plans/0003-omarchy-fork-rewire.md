@@ -20,9 +20,11 @@ Related: [ADR 0006](../adr/0006-fork-omarchy-shell.md),
   (rewired by ticket #56).
 - Legacy independent shell: `legacy/independent-shell/`. Its QML, config, and
   QML tests are archived; it is not shipped.
-- Tests: supervisor tests stay in `config/quickshell/tests/`; legacy plugin
-  and live-harness tests also stay there and point at
-  `legacy/independent-shell/`.
+- Tests: supervisor and ownership tests stay in `config/quickshell/tests/`;
+  legacy plugin tests stay there and point at `legacy/independent-shell/`.
+  The archived live notification harness lives in
+  `legacy/independent-shell/tests/` so it cannot be mistaken for the shipped
+  Omarchy ownership test.
 - Helper status and upstream sync: `docs/known-broken-helpers.md` and
   `vendor/omarchy/README.md`.
 
