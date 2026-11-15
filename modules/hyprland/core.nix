@@ -121,10 +121,17 @@ in
         general = {
           gaps_in = 5;
           gaps_out = 10;
-          border_size = 0;
+          border_size = 2;
           col = {
-            active_border = "rgba(ffffff35)";
-            inactive_border = "rgba(ffffff10)";
+            # Omarchy look'n'feel with the Tokyo Night palette
+            # (omarchy themes/tokyo-night/colors.toml). That theme defines no
+            # hyprland_active_border/hyprland_inactive_border tokens, so the
+            # omarchy template falls back to the accent for the active border
+            # and adds `aa` alpha to the inactive one. Its inactive fallback is
+            # a neutral grey (rgba(595959aa)); we use Tokyo Night's muted tone
+            # instead so both borders stay inside the palette.
+            active_border = "#7aa2f7"; # accent
+            inactive_border = "rgba(414868aa)"; # muted
           };
           resize_on_border = true;
           allow_tearing = false;
@@ -132,7 +139,7 @@ in
         };
 
         decoration = {
-          rounding = 8;
+          rounding = 0;
           active_opacity = 1.0;
           inactive_opacity = 1.0;
           blur = {

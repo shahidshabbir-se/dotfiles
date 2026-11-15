@@ -37,7 +37,7 @@ let
   dotfileLink = path: mkOutOfStoreSymlink "${dotfilesDirectory}/${path}";
 
   # Music player: "spotify" | "limusic" | null (or "nil")
-  musicPlayer = "nil";
+  musicPlayer = "spotify";
 
   # Terminal multiplexer: "herdr" | "tmux" | null (or "nil")
   multiplexer = "herdr";
