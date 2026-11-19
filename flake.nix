@@ -226,6 +226,7 @@
       # ───────────────────────────────────────────────
       mkNixos =
         {
+          hostName,
           device,
           hardwareConfig,
         }:
@@ -239,6 +240,7 @@
           modules = [
             hardwareConfig
             ./configuration.nix
+            { networking.hostName = hostName; }
 
             vicinae.nixosModules.default
             qylock.nixosModules.default
@@ -437,11 +439,13 @@
       # ───────────────────────────────────────────────
       nixosConfigurations = {
         laptop = mkNixos {
+          hostName = "comet";
           device = devices.thinkpad-e14;
           hardwareConfig = ./hardware-laptop.nix;
         };
 
         pc = mkNixos {
+          hostName = "pulsar";
           device = devices.pc;
           hardwareConfig = ./hardware-pc.nix;
         };
