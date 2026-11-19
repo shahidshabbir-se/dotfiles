@@ -120,6 +120,9 @@ let
     (shell (key "ALT + TAB") "${altTab} next")
     (shell (key "ALT + SHIFT + TAB") "${altTab} prev")
 
+    # Dictation (Hex; Hyprland needs its own bind for Wayland)
+    (plain (key "ALT + SPACE") (lua ''hl.dsp.global("anomaly.hex:dictation")''))
+
     # Directional focus
     (modBind "LEFT" (lua ''hl.dsp.focus({ direction = "left" })''))
     (modBind "RIGHT" (lua ''hl.dsp.focus({ direction = "right" })''))

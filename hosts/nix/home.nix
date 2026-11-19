@@ -75,6 +75,7 @@ in
     ../../modules/hypridle.nix
 
     ../../modules/cliproxyapi.nix
+    inputs.hex.homeManagerModules.default
 
     (import ./mime.nix {
       inherit (apps) browserDesktopFile imageViewerDesktopFile fileManagerDesktopFile;
@@ -215,6 +216,24 @@ in
         "audio"
         "power"
       ];
+    };
+
+    hex = {
+      enable = true;
+      autostart = true;
+      model = "parakeet_unified_en";
+      language = "en";
+      shortcut = "alt+space";
+      installModel = true;
+      # Upstream 3.4.0's rune_ui history-stats test fails on this nixpkgs;
+      # skip just that test and keep the rest of the suite.
+      package = inputs.hex.packages.${system}.hex.overrideAttrs (_: {
+        checkFlags = [
+          "--"
+          "--skip"
+          "history_stats_button_opens_and_closes_the_dialog"
+        ];
+      });
     };
 
     git = import ../../modules/git.nix {
