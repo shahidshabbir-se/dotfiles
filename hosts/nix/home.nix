@@ -74,7 +74,6 @@ in
     ../../modules/hyprland/desktop.nix
     ../../modules/hypridle.nix
 
-    # ../../modules/quickshell.nix
     ../../modules/cliproxyapi.nix
 
     (import ./mime.nix {
@@ -204,6 +203,20 @@ in
   };
 
   programs = {
+    omashell = {
+      enable = true;
+      systemd = {
+        enable = true;
+        target = "graphical-session.target";
+      };
+      settings.bar.right = [
+        "bluetooth"
+        "network"
+        "audio"
+        "power"
+      ];
+    };
+
     git = import ../../modules/git.nix {
       inherit
         config

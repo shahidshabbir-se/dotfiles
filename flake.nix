@@ -34,6 +34,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    omashell = {
+      url = "github:shahidshabbir-se/omashell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     vicinae-extensions = {
       url = "github:vicinaehq/extensions";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -242,7 +247,10 @@
             (mkHomeManagerConfig {
               inherit device;
               homeFile = ./hosts/nix/home.nix;
-              extraSharedModules = [ vicinae.homeManagerModules.default ];
+              extraSharedModules = [
+                vicinae.homeManagerModules.default
+                inputs.omashell.homeManagerModules.default
+              ];
             })
           ];
         };

@@ -96,24 +96,27 @@ let
     (modShell "ALT + R" "reboot")
     (modShell "ALT + Q" "hyprctl keyword monitor ${d.connector},${toString d.width}x${toString d.height}@${toString d.refreshRate},auto,${toString d.scale} && sleep 1 && sudo systemctl restart display-manager.service")
     (modShell "SHIFT + L" "${qylock}/bin/qylock-lock sword")
-    (modShell "CTRL + S" "sh ${homeDirectory}/dotfiles/scripts/screenshot-capture.sh copysave area ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png")
+    (modShell "CTRL + S" "omashell ipc call omashell captureScreenshot")
     (modShell "R" "kooha")
     (modShell "SHIFT + R" "killall kooha")
     (modShell "SHIFT + Q" "${exitScript}")
 
     # Window management and layout
     (modBind "T" (lua ''hl.dsp.window.float({ action = "toggle" })''))
-    (modBind "F" (lua ''hl.dsp.window.fullscreen()''))
+    (modBind "F" (lua "hl.dsp.window.fullscreen()"))
     (modBind "P" (lua "hl.dsp.window.pseudo()"))
     (modBind "SHIFT + J" (lua ''hl.dsp.layout("togglesplit")''))
 
     # Shell / overlays
     (modShell "W" "ags run")
     (modShell "SHIFT + W" ''bash -c "kill -9 $(pgrep hyprpanel) || hyprpanel"'')
-    (shell (key "ALT + SHIFT + S") "qs ipc call screenshot toggle")
+    (modShell "CTRL + B" "omashell ipc call omashell toggleBluetooth")
+    (modShell "CTRL + N" "omashell ipc call omashell toggleNetwork")
+    (modShell "CTRL + A" "omashell ipc call omashell toggleAudio")
+    (modShell "CTRL + M" "omashell ipc call omashell toggleMusic")
     (modShell "SPACE" "vicinae toggle")
     (shell (key "ALT + C") "vicinae 'vicinae://launch/clipboard/history?toggle=true'")
-    (modShell "TAB" "qs ipc call expose toggle")
+    (modShell "TAB" "omashell ipc call omashell toggleNotifications")
     (shell (key "ALT + TAB") "${altTab} next")
     (shell (key "ALT + SHIFT + TAB") "${altTab} prev")
 
@@ -142,10 +145,16 @@ let
     (shell (key "F8") "playerctl play-pause && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
     (shell (key "F9") "playerctl next && sleep 0.3 && ${homeDirectory}/dotfiles/scripts/music-notify.sh")
   ]
-  ++ lib.optionals (builtins.elem musicPlayer [ "spotify" "limusic" ]) [
-    (modBind "M" (focus "6"))
-    (modShell "M" musicPlayer)
-  ]
+  ++
+    lib.optionals
+      (builtins.elem musicPlayer [
+        "spotify"
+        "limusic"
+      ])
+      [
+        (modBind "M" (focus "6"))
+        (modShell "M" musicPlayer)
+      ]
   ++ builtins.concatLists (
     builtins.genList (
       index:

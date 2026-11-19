@@ -59,9 +59,8 @@ let
     esac
   '';
 
-  # Quickshell often survives DPMS/suspend but loses real outputs and sits on a
-  # Qt placeholder screen (bar gone, no crash → Restart=always never fires).
-  # Wait for a real monitor, then bounce the service.
+  # Omashell can survive DPMS/suspend but lose its output surface. Wait for a
+  # real monitor, then restart its session service.
   restoreShell = pkgs.writeShellScript "hypridle-restore-shell" ''
     set -eu
     hypr=${pkgs.hyprland}/bin/hyprctl
@@ -79,7 +78,7 @@ let
       ${pkgs.coreutils}/bin/sleep 0.5
     done
 
-    ${pkgs.systemd}/bin/systemctl --user try-restart quickshell.service || true
+    ${pkgs.systemd}/bin/systemctl --user try-restart omashell.service || true
   '';
 
   afterSleep = pkgs.writeShellScript "hypridle-after-sleep" ''

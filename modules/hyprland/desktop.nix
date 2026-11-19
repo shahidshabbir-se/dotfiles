@@ -24,10 +24,6 @@ in
     # Launcher / Menus
     wofi
 
-    # Screenshot (grim is pulled in by grimblast but keep it on PATH for scripts)
-    grim
-    grimblast
-    slurp
     wf-recorder
     tesseract
 

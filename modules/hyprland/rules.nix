@@ -5,17 +5,17 @@ let
     "logout_dialog"
     "quickshell"
     "quickshell-volume-osd"
-    "qs-bar"
-    "qs-launcher"
-    "qs-lockfade"
-    "qs-notify"
-    "qs-nowplaying"
-    "qs-osd"
-    "qs-passprompt"
-    "qs-pet"
-    "qs-theme"
-    "qs-toasts"
-    "qs-wifi"
+    "omashell-notifications"
+    "omashell-notifications-panel"
+    "omashell-network-qr"
+    "omashell-world-clock"
+    "omashell-weather"
+    "omashell-power"
+    "omashell-network"
+    "omashell-speed-test"
+    "omashell-calendar"
+    "omashell-bluetooth"
+    "omashell-audio"
     "vicinae"
   ];
 
@@ -123,22 +123,6 @@ let
     {
       name = "swash-center";
       match.class = "^(dev\\.lemmy\\.swash)$";
-      center = true;
-    }
-
-    {
-      name = "screenshot-float";
-      match.class = "^(qs-screenshot-rec)$";
-      float = true;
-    }
-    {
-      name = "screenshot-size";
-      match.class = "^(qs-screenshot-rec)$";
-      size = "1280 720";
-    }
-    {
-      name = "screenshot-center";
-      match.class = "^(qs-screenshot-rec)$";
       center = true;
     }
 

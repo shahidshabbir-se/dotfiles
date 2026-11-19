@@ -36,6 +36,7 @@ let
 
   systemUtilityPackages = with pkgs; [
     fastfetch
+    kdePackages.qtdeclarative
     pavucontrol
     glycin-loaders
     libnotify

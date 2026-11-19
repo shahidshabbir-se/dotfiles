@@ -267,6 +267,44 @@
         "type": "github"
       }
     },
+    "omashell": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "omasnap-src": "omasnap-src"
+      },
+      "locked": {
+        "lastModified": 1794931000,
+        "narHash": "sha256-DvYSG01yUMMErXoMDk7YaGz5MVF/qI8zF296BPEpKnA=",
+        "owner": "shahidshabbir-se",
+        "repo": "omashell",
+        "rev": "b0e086d326aa33de3b55fe21454668ddbe5afa1a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shahidshabbir-se",
+        "repo": "omashell",
+        "type": "github"
+      }
+    },
+    "omasnap-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794517796,
+        "narHash": "sha256-4mNe+ZOaBV/nrSd9Wos+eBR+vb/1HQOrD5J2mlJ2uck=",
+        "owner": "omacom",
+        "repo": "omasnap",
+        "rev": "6150151846b0ddc2ca8e6b107324de8b0c7240ae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "omacom",
+        "ref": "v1.26.2",
+        "repo": "omasnap",
+        "type": "github"
+      }
+    },
     "qylock": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -296,6 +334,7 @@
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_2",
+        "omashell": "omashell",
         "qylock": "qylock",
         "spicetify-nix": "spicetify-nix",
         "vicinae": "vicinae",
