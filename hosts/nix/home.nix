@@ -210,6 +210,7 @@ in
         enable = true;
         target = "graphical-session.target";
       };
+      settings.clipboard.enabled = true;
       settings.bar.right = [
         "bluetooth"
         "network"

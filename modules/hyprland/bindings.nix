@@ -115,7 +115,7 @@ let
     (modShell "CTRL + A" "omashell ipc call omashell toggleAudio")
     (modShell "CTRL + M" "omashell ipc call omashell toggleMusic")
     (modShell "SPACE" "vicinae toggle")
-    (shell (key "ALT + C") "vicinae 'vicinae://launch/clipboard/history?toggle=true'")
+    (shell (key "ALT + C") "omashell ipc call omashell toggleClipboard")
     (modShell "TAB" "omashell ipc call omashell toggleNotifications")
     (shell (key "ALT + TAB") "${altTab} next")
     (shell (key "ALT + SHIFT + TAB") "${altTab} prev")
