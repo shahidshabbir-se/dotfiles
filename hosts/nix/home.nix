@@ -218,7 +218,6 @@ in
           "network"
           "audio"
           "display"
-          "wallpaper"
           "power"
         ];
       } // lib.optionalAttrs (device ? displayProfile) {
