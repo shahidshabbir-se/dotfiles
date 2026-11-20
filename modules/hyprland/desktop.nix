@@ -31,6 +31,9 @@ in
     cliphist
     wl-clipboard
 
+    # Color picker
+    hyprpicker
+
     # Notifications
     swaynotificationcenter
     libnotify

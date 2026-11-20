@@ -101,6 +101,9 @@ let
     (modShell "SHIFT + R" "killall kooha")
     (modShell "SHIFT + Q" "${exitScript}")
 
+    # Color picker (copies the hex value to the clipboard)
+    (modShell "G" "${homeDirectory}/dotfiles/scripts/color-picker.sh")
+
     # Window management and layout
     (modBind "T" (lua ''hl.dsp.window.float({ action = "toggle" })''))
     (modBind "F" (lua "hl.dsp.window.fullscreen()"))
