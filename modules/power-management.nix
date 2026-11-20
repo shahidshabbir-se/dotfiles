@@ -46,11 +46,22 @@ let
   applyChargeThreshold = pkgs.writeShellScript "apply-battery-charge-threshold" ''
     set -eu
     found=false
+    end=${toString (power.chargeEndThreshold or 100)}
 
     for threshold in /sys/class/power_supply/BAT*/charge_control_end_threshold; do
       [ -e "$threshold" ] || continue
       found=true
-      printf '%s\n' ${toString (power.chargeEndThreshold or 100)} > "$threshold"
+      start_file="''${threshold%/*}/charge_control_start_threshold"
+      if [ -r "$start_file" ]; then
+        read -r start < "$start_file"
+        if [ "$start" -ge "$end" ]; then
+          # ThinkPad firmware requires the start threshold to be below the end.
+          start=$((end - 5))
+          if [ "$start" -lt 1 ]; then start=$((end - 1)); fi
+          printf '%s\n' "$start" > "$start_file"
+        fi
+      fi
+      printf '%s\n' "$end" > "$threshold"
     done
 
     if [ "$found" = false ]; then
