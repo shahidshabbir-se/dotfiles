@@ -298,11 +298,11 @@
         "omasnap-src": "omasnap-src"
       },
       "locked": {
-        "lastModified": 1795188161,
-        "narHash": "sha256-s/DZDwq79PhM40QoDXBG8vcXBcoZPppx4GAC7fivBBQ=",
+        "lastModified": 1795188517,
+        "narHash": "sha256-p6slTp1a9BPlxDCqBlv9bfRqMcu+tTQEqV67RiwFh4g=",
         "owner": "shahidshabbir-se",
         "repo": "omashell",
-        "rev": "db79e8d3e0eec057a41622e04e953fef056606c3",
+        "rev": "df6fef6442fedae556caddf81cc8787e0433798f",
         "type": "github"
       },
       "original": {
