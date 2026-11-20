@@ -127,7 +127,7 @@
             refreshRate = 60;
           };
 
-          fontSize = 14.0;
+          fontSize = 12.0;
         };
 
         pc = {

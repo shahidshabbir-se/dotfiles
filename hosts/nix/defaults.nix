@@ -39,7 +39,7 @@ in
 
   cursor = {
     name = "Qogir";
-    size = if device.type == "laptop" then 36 else 24;
+    size = 24;
     package = pkgs.qogir-icon-theme;
   };
 }

@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  device,
   ...
 }:
 
@@ -164,7 +165,7 @@ in
         input = {
           kb_layout = "us";
           follow_mouse = 1;
-          sensitivity = 0.8;
+          sensitivity = if device.type == "laptop" then 0.5 else 0.8;
           numlock_by_default = true;
           touchpad = {
             natural_scroll = true;
