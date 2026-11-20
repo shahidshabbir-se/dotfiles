@@ -119,13 +119,24 @@
             };
           };
 
-          display = {
-            connector = "eDP-1";
-            width = 1920;
-            height = 1080;
-            scale = 1.3333;
-            refreshRate = 60;
-          };
+          displayProfile = "hosts/nix/comet/display.json";
+          display =
+            let
+              profile = builtins.fromJSON (builtins.readFile ./hosts/nix/comet/display.json);
+              valid = with builtins;
+                isAttrs profile
+                && (profile.version or null) == 1
+                && (profile.connector or null) == "eDP-1"
+                && isInt (profile.width or null) && profile.width > 0
+                && isInt (profile.height or null) && profile.height > 0
+                && (isInt (profile.refreshRate or null) || isFloat (profile.refreshRate or null))
+                && profile.refreshRate > 0
+                && (isInt (profile.scale or null) || isFloat (profile.scale or null))
+                && profile.scale > 0
+                && elem (profile.transform or 0) [ 0 1 2 3 ];
+            in
+              if valid then builtins.removeAttrs profile [ "version" ]
+              else throw "Invalid display profile: hosts/nix/comet/display.json";
 
           fontSize = 12.0;
         };

@@ -210,13 +210,18 @@ in
         enable = true;
         target = "graphical-session.target";
       };
-      settings.clipboard.enabled = true;
-      settings.bar.right = [
-        "bluetooth"
-        "network"
-        "audio"
-        "power"
-      ];
+      settings = {
+        clipboard.enabled = true;
+        bar.right = [
+          "bluetooth"
+          "network"
+          "audio"
+          "display"
+          "power"
+        ];
+      } // lib.optionalAttrs (device ? displayProfile) {
+        display.profilePath = "${dotfilesDirectory}/${device.displayProfile}";
+      };
     };
 
     hex = {

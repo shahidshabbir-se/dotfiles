@@ -11,6 +11,8 @@ let
     mode = "${toString d.width}x${toString d.height}@${toString d.refreshRate}";
     position = "auto";
     scale = d.scale;
+  } // lib.optionalAttrs (d ? transform) {
+    inherit (d) transform;
   } // lib.optionalAttrs hasHdr {
     bitdepth = 10;
     cm = hdr.cm or "hdredid";

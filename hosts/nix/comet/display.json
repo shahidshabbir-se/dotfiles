@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "connector": "eDP-1",
+  "width": 1920,
+  "height": 1080,
+  "refreshRate": 60,
+  "scale": 1.333333,
+  "transform": 0
+}
