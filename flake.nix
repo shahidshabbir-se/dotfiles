@@ -104,7 +104,7 @@
             acProfile = "performance";
             batteryProfile = "power-saver";
             hibernateDelay = "2h";
-            resumeDevice = "/dev/disk/by-uuid/361fb99a-9f91-4765-a37d-27fc19d07e57";
+            resumeDevice = "/dev/disk/by-uuid/7764b75a-54d9-4185-b3aa-afad7c46271e";
             chargeEndThreshold = 80;
 
             idle = {
