@@ -100,6 +100,7 @@ in
 
     # NixOS
     nsp = "sudo nixos-rebuild switch --flake ~/dotfiles#pc";
+    nsl = "sudo nixos-rebuild switch --flake ~/dotfiles#laptop";
 
     # Git
     ggr = "git log --oneline --graph --decorate --all";
