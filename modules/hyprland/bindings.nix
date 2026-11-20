@@ -117,6 +117,7 @@ let
     (modShell "CTRL + N" "omashell ipc call omashell toggleNetwork")
     (modShell "CTRL + A" "omashell ipc call omashell toggleAudio")
     (modShell "CTRL + M" "omashell ipc call omashell toggleMusic")
+    (modShell "CTRL + W" "omashell ipc call omashell toggleWallpaper")
     (modShell "SPACE" "vicinae toggle")
     (shell (key "ALT + C") "omashell ipc call omashell toggleClipboard")
     (modShell "TAB" "omashell ipc call omashell toggleNotifications")
