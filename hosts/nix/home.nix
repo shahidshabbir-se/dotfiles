@@ -225,15 +225,8 @@ in
       language = "en";
       shortcut = "alt+space";
       installModel = true;
-      # Upstream 3.4.0's rune_ui history-stats test fails on this nixpkgs;
-      # skip just that test and keep the rest of the suite.
-      package = inputs.hex.packages.${system}.hex.overrideAttrs (_: {
-        checkFlags = [
-          "--"
-          "--skip"
-          "history_stats_button_opens_and_closes_the_dialog"
-        ];
-      });
+      # Use the prebuilt upstream release rather than compiling Hex locally.
+      package = import ../../modules/pkgs/hex.nix { inherit pkgs lib inputs; };
     };
 
     git = import ../../modules/git.nix {
