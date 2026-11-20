@@ -95,6 +95,24 @@
       # ───────────────────────────────────────────────
       # ▶ Device Profiles
       # ───────────────────────────────────────────────
+      loadDisplayProfile = path: connector:
+        let
+          profile = builtins.fromJSON (builtins.readFile path);
+          valid = with builtins;
+            isAttrs profile
+            && (profile.version or null) == 1
+            && (profile.connector or null) == connector
+            && isInt (profile.width or null) && profile.width > 0
+            && isInt (profile.height or null) && profile.height > 0
+            && (isInt (profile.refreshRate or null) || isFloat (profile.refreshRate or null))
+            && profile.refreshRate > 0
+            && (isInt (profile.scale or null) || isFloat (profile.scale or null))
+            && profile.scale > 0
+            && elem (profile.transform or 0) [ 0 1 2 3 ];
+        in
+          if valid then builtins.removeAttrs profile [ "version" "exactRule" ]
+          else throw "Invalid display profile: ${toString path}";
+
       devices = {
         thinkpad-e14 = {
           name = "ThinkPad E14";
@@ -120,23 +138,7 @@
           };
 
           displayProfile = "hosts/nix/comet/display.json";
-          display =
-            let
-              profile = builtins.fromJSON (builtins.readFile ./hosts/nix/comet/display.json);
-              valid = with builtins;
-                isAttrs profile
-                && (profile.version or null) == 1
-                && (profile.connector or null) == "eDP-1"
-                && isInt (profile.width or null) && profile.width > 0
-                && isInt (profile.height or null) && profile.height > 0
-                && (isInt (profile.refreshRate or null) || isFloat (profile.refreshRate or null))
-                && profile.refreshRate > 0
-                && (isInt (profile.scale or null) || isFloat (profile.scale or null))
-                && profile.scale > 0
-                && elem (profile.transform or 0) [ 0 1 2 3 ];
-            in
-              if valid then builtins.removeAttrs profile [ "version" ]
-              else throw "Invalid display profile: hosts/nix/comet/display.json";
+          display = loadDisplayProfile ./hosts/nix/comet/display.json "eDP-1";
 
           fontSize = 12.0;
         };
@@ -158,13 +160,8 @@
             };
           };
 
-          display = {
-            connector = "DP-4";
-            width = 3440;
-            height = 1440;
-            scale = 1.33;
-            refreshRate = 250;
-          };
+          displayProfile = "hosts/nix/pulsar/display.json";
+          display = loadDisplayProfile ./hosts/nix/pulsar/display.json "DP-4";
 
           # HDR luminance tuning: https://github.com/hyprwm/Hyprland/discussions/14682
           # Panel-reported values (drm_info | grep -i luminance):

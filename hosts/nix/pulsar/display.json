@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "connector": "DP-4",
+  "width": 3440,
+  "height": 1440,
+  "refreshRate": 250,
+  "scale": 1.25,
+  "transform": 0,
+  "exactRule": true
+}

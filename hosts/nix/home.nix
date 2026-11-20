@@ -213,6 +213,7 @@ in
       settings = {
         clipboard.enabled = true;
         bar.right = [
+          "music"
           "bluetooth"
           "network"
           "audio"
