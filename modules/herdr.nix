@@ -83,46 +83,11 @@ let
     '';
   };
 
-  lastWorkspaceSrc = fetchPlugin {
-    owner = "third774";
-    repo = "herdr-last-workspace";
-    rev = "8b55ebf15deaa52b49ff1c2500aab0c19c729420";
-    hash = "sha256-HaNQx4uGYVGP3L3ljFHEDEE53Fs17fC7ypZFDnVjOHk=";
-  };
-
   vimNavSrc = fetchPlugin {
     owner = "paulbkim-dev";
     repo = "vim-herdr-navigation";
     rev = "79679dacc791f70fc34de8b29a3cf9706c0f5b2f";
     hash = "sha256-iF0DLRn56eLGqY2iKTb3lX5iyVgl9CtSX5O2E5/pHjM=";
-  };
-
-  lastWorkspaceBin = pkgs.rustPlatform.buildRustPackage {
-    pname = "herdr-last-workspace";
-    version = "0.1.0";
-    src = lastWorkspaceSrc;
-    cargoHash = "sha256-l9y7crYh2rd9CQdr7E5WuLd65Qlc6R2Yi2dZC/z4nNM=";
-    doCheck = false;
-  };
-
-  mkPluginRoot =
-    {
-      src,
-      extraInstall ? "",
-    }:
-    pkgs.runCommand "herdr-plugin-root" { } ''
-      mkdir -p $out
-      cp -a ${src}/. $out/
-      chmod -R u+w $out
-      ${extraInstall}
-    '';
-
-  lastWorkspaceRoot = mkPluginRoot {
-    src = lastWorkspaceSrc;
-    extraInstall = ''
-      mkdir -p $out/target/release
-      cp ${lastWorkspaceBin}/bin/herdr-last-workspace $out/target/release/herdr-last-workspace
-    '';
   };
 
   yaziPopupRoot = pkgs.runCommand "herdr-yazi-popup" { } ''
@@ -413,58 +378,6 @@ let
           owner = "qu8n";
           repo = "herdr-automatic-rename";
           resolved_commit = "081489b4d961d0d9c0c8b6a02d472e5cfe125ad5";
-        };
-      };
-    }
-    {
-      dir = "third774.last-workspace-5de7aeab3665";
-      root = lastWorkspaceRoot;
-      json = {
-        plugin_id = "third774.last-workspace";
-        name = "Last Workspace";
-        version = "0.1.0";
-        min_herdr_version = "0.7.0";
-        description = "Toggle between the current and previously focused Herdr workspace.";
-        enabled = true;
-        platforms = [
-          "linux"
-          "macos"
-        ];
-        actions = [
-          {
-            id = "toggle";
-            title = "Last workspace";
-            contexts = [
-              "global"
-              "workspace"
-            ];
-            command = [
-              "./target/release/herdr-last-workspace"
-              "toggle"
-            ];
-          }
-        ];
-        events = [
-          {
-            on = "workspace.closed";
-            command = [
-              "./target/release/herdr-last-workspace"
-              "closed"
-            ];
-          }
-          {
-            on = "workspace.focused";
-            command = [
-              "./target/release/herdr-last-workspace"
-              "focused"
-            ];
-          }
-        ];
-        source = {
-          kind = "github";
-          owner = "third774";
-          repo = "herdr-last-workspace";
-          resolved_commit = "8b55ebf15deaa52b49ff1c2500aab0c19c729420";
         };
       };
     }
@@ -961,12 +874,6 @@ let
     type = "plugin_action"
     command = "vim-herdr-navigation.right"
     description = "navigate right (vim/herdr)"
-
-    [[keys.command]]
-    key = "prefix+ctrl+l"
-    type = "plugin_action"
-    command = "third774.last-workspace.toggle"
-    description = "last workspace"
 
     [[keys.command]]
     key = "prefix+t"
