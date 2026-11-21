@@ -1,0 +1,18 @@
+id = "herdr.clock"
+name = "Clock"
+version = "1.0.0"
+min_herdr_version = "0.7.0"
+description = "tmux clock popup showing current time; any key dismisses"
+platforms = ["linux", "macos"]
+
+[[panes]]
+id = "clock"
+title = "clock"
+placement = "overlay"
+command = ["python3", "clock.py"]
+
+[[actions]]
+id = "show"
+title = "Show clock"
+contexts = ["workspace", "global"]
+command = ["bash", "show.sh"]

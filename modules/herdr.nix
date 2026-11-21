@@ -33,20 +33,6 @@ let
         ;
     };
 
-  floaxSrc = fetchPlugin {
-    owner = "Tyru5";
-    repo = "herdr-floax";
-    rev = "d6b283110c2e455fb3782595549895a840585e2b";
-    hash = "sha256-3plrwzhZPD1jCsw2j/Mkjz80AMkSNzb+PUuf5+6CFaI=";
-  };
-
-  clockSrc = fetchPlugin {
-    owner = "Tyru5";
-    repo = "herdr-clock";
-    rev = "2d5e45f0983ac73fcdbc242a7b1601f2be05c622";
-    hash = "sha256-pOhmBUYRAyAEZpGB4d9p1jf6eb4RNiGK4S3ZDEd/Uqw=";
-  };
-
   automaticRenameSrc = fetchPlugin {
     owner = "qu8n";
     repo = "herdr-automatic-rename";
@@ -97,13 +83,6 @@ let
     '';
   };
 
-  yaziSrc = fetchPlugin {
-    owner = "speardragon";
-    repo = "herdr-yazi";
-    rev = "54aa4e6dff480189630fa3593146cdcc2768ade9";
-    hash = "sha256-5bAy+xD1mLYJOUYvLWeU2pgZpYAeo+hxdNSlaM9pCkA=";
-  };
-
   lastWorkspaceSrc = fetchPlugin {
     owner = "third774";
     repo = "herdr-last-workspace";
@@ -116,37 +95,6 @@ let
     repo = "vim-herdr-navigation";
     rev = "79679dacc791f70fc34de8b29a3cf9706c0f5b2f";
     hash = "sha256-iF0DLRn56eLGqY2iKTb3lX5iyVgl9CtSX5O2E5/pHjM=";
-  };
-
-  barSrc = fetchPlugin {
-    owner = "jeffarese";
-    repo = "herdr-bar";
-    rev = "261de9b0441a6972941414bbf16eb4f5df27ac34";
-    hash = "sha256-/7FUkN25acdtie0rIO2T1o/ZKelhsWICY2CvRk5QYxQ=";
-  };
-
-  floaxBin = pkgs.rustPlatform.buildRustPackage {
-    pname = "herdr-floax";
-    version = "0.2.0";
-    src = floaxSrc;
-    cargoHash = "sha256-/cjPrU0tx1NkhJLvEGpSVZUfzNDkqH4t7t+mR9r/Bco=";
-    doCheck = false;
-  };
-
-  barBin = pkgs.rustPlatform.buildRustPackage {
-    pname = "herdr-bar";
-    version = "0.11.0";
-    src = barSrc;
-    cargoHash = "sha256-2SVfEodG2c0H4iUQaYeTwpjeReULDA+8pMkMWY5Wk0s=";
-    doCheck = false;
-  };
-
-  clockBin = pkgs.rustPlatform.buildRustPackage {
-    pname = "herdr-clock";
-    version = "0.1.0";
-    src = clockSrc;
-    cargoHash = "sha256-FlLGUw1fBjOW5g0YHbCzEPluEim7iZwZGoCfSJkUdC0=";
-    doCheck = false;
   };
 
   lastWorkspaceBin = pkgs.rustPlatform.buildRustPackage {
@@ -169,36 +117,6 @@ let
       ${extraInstall}
     '';
 
-  floaxRoot = mkPluginRoot {
-    src = floaxSrc;
-    extraInstall = ''
-      mkdir -p $out/target/release
-      cp ${floaxBin}/bin/herdr-floax $out/target/release/herdr-floax
-    '';
-  };
-
-  barRoot = mkPluginRoot {
-    src = barSrc;
-    extraInstall = ''
-      mkdir -p $out/bin
-      cp ${barBin}/bin/herdr-bar $out/bin/herdr-bar
-    '';
-  };
-
-  clockRoot = mkPluginRoot {
-    src = clockSrc;
-    extraInstall = ''
-      mkdir -p $out/target/release
-      cp ${clockBin}/bin/herdr-clock $out/target/release/herdr-clock
-      substituteInPlace $out/herdr-plugin.toml \
-        --replace-fail 'placement = "popup"' 'placement = "overlay"' \
-        --replace-fail 'width = "60%"' "" \
-        --replace-fail 'height = "40%"' ""
-      substituteInPlace $out/scripts/show-clock.sh \
-        --replace-fail '--entrypoint clock' '--entrypoint clock --placement overlay'
-    '';
-  };
-
   lastWorkspaceRoot = mkPluginRoot {
     src = lastWorkspaceSrc;
     extraInstall = ''
@@ -207,21 +125,21 @@ let
     '';
   };
 
-  yaziFloatRoot = pkgs.runCommand "herdr-yazi-float" { } ''
-        mkdir -p $out
-        cat > $out/herdr-plugin.toml << 'EOF'
-    id = "herdr.yazi-float"
-    name = "Yazi float"
+  yaziPopupRoot = pkgs.runCommand "herdr-yazi-popup" { } ''
+    mkdir -p $out
+    cat > $out/herdr-plugin.toml << 'EOF'
+    id = "herdr.yazi-popup"
+    name = "Yazi popup"
     version = "1.0.0"
     min_herdr_version = "0.7.0"
-    description = "Open Yazi zoomed like a popup so Kitty image previews work"
+    description = "Open Yazi in a small popup"
     platforms = ["linux", "macos"]
 
     [[panes]]
     id = "yazi"
     title = "yazi"
-    placement = "split"
-    command = ["bash", "run-yazi.sh"]
+    placement = "popup"
+    command = ["yazi"]
 
     [[actions]]
     id = "open"
@@ -229,221 +147,37 @@ let
     contexts = ["workspace"]
     command = ["bash", "open.sh"]
     EOF
-        cat > $out/run-yazi.sh << 'EOF'
+    cat > $out/open.sh << 'EOF'
     #!/usr/bin/env bash
     set -u
-    cd "''${HERDR_YAZI_CWD:-$PWD}" 2>/dev/null || cd "$HOME" 2>/dev/null || true
-    exec yazi
-    EOF
-        cat > $out/open.sh << 'EOF'
-    #!/usr/bin/env bash
-    set -uo pipefail
-
-    LABEL="yazi"
     herdr="''${HERDR_BIN_PATH:-herdr}"
-
-    if ! command -v jq >/dev/null 2>&1; then
-      "$herdr" notification show "herdr.yazi-float needs 'jq' installed" >/dev/null 2>&1 || \
-        echo "herdr.yazi-float: 'jq' is required (brew install jq / apt install jq)" >&2
-      exit 1
-    fi
-
-    ws="''${HERDR_WORKSPACE_ID:-}"
-    if [ -z "$ws" ]; then
-      ws="$("$herdr" pane current 2>/dev/null | jq -r '.result.pane.workspace_id // empty')"
-    fi
-
-    open_pane() {
-      local target="''${HERDR_PANE_ID:-}"
-      [ -z "$target" ] && target="$("$herdr" pane current 2>/dev/null | jq -r '.result.pane.pane_id // empty')"
-
-      local cwd=""
-      if [ -n "$target" ]; then
-        cwd="$("$herdr" pane get "$target" 2>/dev/null | jq -r '.result.pane.cwd // empty')"
-      fi
-      [ -z "$cwd" ] && cwd="$("$herdr" pane current 2>/dev/null | jq -r '.result.pane.cwd // empty')"
-
-      set -- plugin pane open --plugin herdr.yazi-float --entrypoint yazi \
-          --placement split --direction right --focus
-      [ -n "$target" ] && set -- "$@" --target-pane "$target"
-      [ -n "$cwd" ] && set -- "$@" --env "HERDR_YAZI_CWD=$cwd"
-      local out pid
-      out="$("$herdr" "$@" 2>/dev/null)"
-      pid="$(printf '%s' "$out" | jq -r '.result.plugin_pane.pane.pane_id // empty')"
-      [ -n "$pid" ] && "$herdr" pane zoom "$pid" --on >/dev/null 2>&1
-      exit 0
-    }
-
-    found=""
-    if [ -n "$ws" ]; then
-      found="$("$herdr" pane list --workspace "$ws" 2>/dev/null \
-        | jq -r --arg L "$LABEL" '
-            .result.panes[]? | select(.label == $L)
-            | "\(.focused) \(.pane_id)"' 2>/dev/null | head -n1)"
-    fi
-
-    [ -z "$found" ] && open_pane
-
-    focused="''${found%% *}"
-    pid="''${found#* }"
-
-    if [ "$focused" = "true" ]; then
-      exec "$herdr" plugin pane close "$pid"
-    else
-      exec "$herdr" pane zoom "$pid" --on
-    fi
+    cwd="$("$herdr" pane current 2>/dev/null | jq -r '.result.pane.cwd // empty')"
+    set -- plugin pane open --plugin herdr.yazi-popup --entrypoint yazi \
+      --placement popup --width 70% --height 70%
+    [ -n "$cwd" ] && set -- "$@" --cwd "$cwd"
+    exec "$herdr" "$@"
     EOF
-        chmod +x $out/run-yazi.sh $out/open.sh
+    chmod +x $out/open.sh
   '';
 
   plugins = [
     {
-      dir = "herdr-bar-261de9b0441a";
-      root = barRoot;
+      dir = "herdr.clock";
+      root = ../config/herdr-clock;
       json = {
-        plugin_id = "herdr-bar";
-        name = "Bar";
-        version = "0.11.0";
-        min_herdr_version = "0.9.0";
-        description = "Cmd+K command bar with agent icons, fuzzy search, and optional automatic tab titles";
-        enabled = true;
-        platforms = [
-          "linux"
-          "macos"
-        ];
-        actions = [
-          {
-            id = "open";
-            title = "Open bar";
-            description = "Fuzzy-jump to any tab, pane, or agent";
-            contexts = [ "global" ];
-            command = [
-              "bin/herdr-bar"
-              "--open"
-            ];
-          }
-          {
-            id = "start-titles";
-            title = "Start tab watcher";
-            description = "Start task title and tab status updates enabled in the plugin config";
-            contexts = [ "global" ];
-            command = [
-              "bin/herdr-bar"
-              "--start-titles"
-              "--resume"
-            ];
-          }
-          {
-            id = "stop-titles";
-            title = "Stop tab watcher";
-            description = "Stop this server's title and status watcher, restoring bare tab names";
-            contexts = [ "global" ];
-            command = [
-              "bin/herdr-bar"
-              "--stop-titles"
-            ];
-          }
-        ];
-        panes = [
-          {
-            id = "bar";
-            title = "Bar";
-            description = "Fuzzy-jump to any tab, pane, or agent";
-            placement = "popup";
-            width = "74%";
-            height = "62%";
-            command = [ "bin/herdr-bar" ];
-          }
-        ];
-        startup = [
-          {
-            command = [
-              "bin/herdr-bar"
-              "--start-titles"
-            ];
-          }
-        ];
-        events = [
-          {
-            on = "pane.agent_detected";
-            command = [
-              "bin/herdr-bar"
-              "--start-titles"
-            ];
-          }
-        ];
-        source = {
-          kind = "github";
-          owner = "jeffarese";
-          repo = "herdr-bar";
-          resolved_commit = "261de9b0441a6972941414bbf16eb4f5df27ac34";
-        };
-      };
-    }
-    {
-      dir = "herdr-floax-0151ef56c880";
-      root = floaxRoot;
-      json = {
-        plugin_id = "herdr-floax";
-        name = "herdr-floax";
-        version = "0.2.0";
+        plugin_id = "herdr.clock";
+        name = "Clock";
+        version = "1.0.0";
         min_herdr_version = "0.7.0";
-        description = "Toggle a floating scratch shell (sized popup) for the current workspace, à la tmux-floax.";
+        description = "tmux clock popup showing current time; any key dismisses";
         enabled = true;
-        platforms = [
-          "linux"
-          "macos"
-        ];
-        actions = [
-          {
-            id = "toggle";
-            title = "Toggle floating pane";
-            description = "Open, reveal, or dismiss the floating scratch shell for this workspace.";
-            command = [
-              "bash"
-              "scripts/toggle-floating.sh"
-            ];
-          }
-        ];
-        panes = [
-          {
-            id = "floating";
-            title = "⌂ floax";
-            placement = "split";
-            command = [ "./target/release/herdr-floax" ];
-          }
-        ];
-        source = {
-          kind = "github";
-          owner = "Tyru5";
-          repo = "herdr-floax";
-          resolved_commit = "d6b283110c2e455fb3782595549895a840585e2b";
-        };
-      };
-    }
-    {
-      dir = "herdr-clock-b348ca23523e";
-      root = clockRoot;
-      json = {
-        plugin_id = "herdr-clock";
-        name = "herdr-clock";
-        version = "0.1.0";
-        min_herdr_version = "0.7.5";
-        description = "Pop up a big tmux-style clock showing the current local time; any key dismisses.";
-        enabled = true;
-        platforms = [
-          "linux"
-          "macos"
-        ];
+        platforms = [ "linux" "macos" ];
         actions = [
           {
             id = "show";
             title = "Show clock";
-            description = "Pop up the current time (tmux clock-mode); press any key to dismiss.";
-            command = [
-              "bash"
-              "scripts/show-clock.sh"
-            ];
+            contexts = [ "workspace" "global" ];
+            command = [ "bash" "show.sh" ];
           }
         ];
         panes = [
@@ -451,15 +185,10 @@ let
             id = "clock";
             title = "clock";
             placement = "overlay";
-            command = [ "./target/release/herdr-clock" ];
+            command = [ "python3" "clock.py" ];
           }
         ];
-        source = {
-          kind = "github";
-          owner = "Tyru5";
-          repo = "herdr-clock";
-          resolved_commit = "2d5e45f0983ac73fcdbc242a7b1601f2be05c622";
-        };
+        source = { kind = "local"; };
       };
     }
     {
@@ -688,52 +417,6 @@ let
       };
     }
     {
-      dir = "ray.file-explorer-921f378e3e1b";
-      root = yaziSrc;
-      json = {
-        plugin_id = "ray.file-explorer";
-        name = "Yazi Explorer";
-        version = "1.1.0";
-        min_herdr_version = "0.7.0";
-        description = "Open Yazi (terminal file manager) in a herdr pane";
-        enabled = true;
-        platforms = [
-          "linux"
-          "macos"
-        ];
-        actions = [
-          {
-            id = "open";
-            title = "Open file explorer";
-            contexts = [ "workspace" ];
-            command = [
-              "bash"
-              "-c"
-              "DIR=\"$(bash \"$HERDR_PLUGIN_ROOT/bin/resolve-dir.sh\")\"; exec \"\${HERDR_BIN_PATH:-herdr}\" plugin pane open --plugin ray.file-explorer --entrypoint explorer --placement popup --cwd \"$DIR\""
-            ];
-          }
-        ];
-        panes = [
-          {
-            id = "explorer";
-            title = "Explorer";
-            placement = "popup";
-            command = [
-              "bash"
-              "-c"
-              "exec yazi"
-            ];
-          }
-        ];
-        source = {
-          kind = "github";
-          owner = "speardragon";
-          repo = "herdr-yazi";
-          resolved_commit = "54aa4e6dff480189630fa3593146cdcc2768ade9";
-        };
-      };
-    }
-    {
       dir = "third774.last-workspace-5de7aeab3665";
       root = lastWorkspaceRoot;
       json = {
@@ -850,14 +533,14 @@ let
       };
     }
     {
-      dir = "herdr.yazi-float";
-      root = yaziFloatRoot;
+      dir = "herdr.yazi-popup";
+      root = yaziPopupRoot;
       json = {
-        plugin_id = "herdr.yazi-float";
-        name = "Yazi float";
+        plugin_id = "herdr.yazi-popup";
+        name = "Yazi popup";
         version = "1.0.0";
         min_herdr_version = "0.7.0";
-        description = "Open Yazi zoomed like a popup so Kitty image previews work";
+        description = "Open Yazi in a small popup";
         enabled = true;
         platforms = [
           "linux"
@@ -878,11 +561,8 @@ let
           {
             id = "yazi";
             title = "yazi";
-            placement = "split";
-            command = [
-              "bash"
-              "run-yazi.sh"
-            ];
+            placement = "popup";
+            command = [ "yazi" ];
           }
         ];
         source = {
@@ -1259,12 +939,6 @@ let
     swap_pane_right = "prefix+shift+l"
 
     [[keys.command]]
-    key = "ctrl+tab"
-    type = "plugin_action"
-    command = "herdr-bar.open"
-    description = "open command bar"
-
-    [[keys.command]]
     key = "ctrl+h"
     type = "plugin_action"
     command = "vim-herdr-navigation.left"
@@ -1295,21 +969,15 @@ let
     description = "last workspace"
 
     [[keys.command]]
-    key = "prefix+f"
-    type = "plugin_action"
-    command = "herdr-floax.toggle"
-    description = "Toggle floating pane"
-
-    [[keys.command]]
     key = "prefix+t"
     type = "plugin_action"
-    command = "herdr-clock.show"
+    command = "herdr.clock.show"
     description = "Show clock"
 
     [[keys.command]]
     key = "ctrl+y"
     type = "plugin_action"
-    command = "herdr.yazi-float.open"
+    command = "herdr.yazi-popup.open"
     description = "open file explorer"
 
     [ui.toast]
