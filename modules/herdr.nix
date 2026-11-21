@@ -13,7 +13,9 @@ let
 
   # Built from upstream master via the herdr flake input; bump with
   # `nix flake update herdr`.
-  herdr = inputs.herdr.packages.${system}.default;
+  herdr = inputs.herdr.packages.${system}.default.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ../patches/herdr-global-workspace-shortcuts.patch ];
+  });
 
   fetchPlugin =
     {

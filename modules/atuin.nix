@@ -24,8 +24,18 @@
   settings = {
     auto_sync = true;
     sync_frequency = "5m";
+
+    search_mode = "daemon-fuzzy";
+    filter_mode = "global";
+    filter_mode_shell_up_key_binding = "global";
+
     style = "full"; # Display style: minimal | compact | full
     enter_accept = true;
     keymap_mode = "vim-normal";
+
+    daemon = {
+      enabled = true;
+      autostart = true;
+    };
   };
 }

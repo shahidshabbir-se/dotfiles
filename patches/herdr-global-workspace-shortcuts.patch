@@ -1,0 +1,36 @@
+--- a/src/client/shell/endpoint_navigation.rs
++++ b/src/client/shell/endpoint_navigation.rs
+@@ -114,7 +114,7 @@
+         }
+         if matches!(
+             action,
+-            KeybindAction::PreviousWorkspace | KeybindAction::NextWorkspace
++            KeybindAction::PreviousWorkspace | KeybindAction::NextWorkspace | KeybindAction::SwitchWorkspace(_)
+         ) {
+             let workspaces = self
+                 .endpoints
+@@ -150,6 +150,8 @@
+                 endpoint_id == &self.active_endpoint_id && Some(workspace_id.as_str()) == focused
+             });
+             let next = match (current, action) {
++                (_, KeybindAction::SwitchWorkspace(index)) if index < workspaces.len() => index,
++                (_, KeybindAction::SwitchWorkspace(_)) => return true,
+                 (Some(index), KeybindAction::PreviousWorkspace) => {
+                     (index + workspaces.len() - 1) % workspaces.len()
+                 }
+--- a/src/client/shell/input.rs
++++ b/src/client/shell/input.rs
+@@ -975,6 +975,13 @@
+         use crate::input::{KeybindAction, KeybindMatch};
+ 
+         match binding {
++            KeybindMatch::Action(KeybindAction::SwitchWorkspace(index)) if self.multi_endpoint_active() => {
++                self.endpoints.iter()
++                    .filter(|endpoint| endpoint.status == ClientEndpointStatus::Online)
++                    .filter_map(|endpoint| endpoint.snapshot.as_deref())
++                    .map(|snapshot| render::workspace_entries(snapshot, &HashSet::new()).len())
++                    .sum::<usize>() > *index
++            }
+             KeybindMatch::Action(KeybindAction::SwitchWorkspace(index)) => {
+                 self.snapshot.as_deref().is_some_and(|snapshot| {
+                     self.navigation_workspace_entries(snapshot)
