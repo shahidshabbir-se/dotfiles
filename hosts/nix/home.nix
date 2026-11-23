@@ -118,6 +118,7 @@ in
       ++ mediaPackages
       ++ systemUtilityPackages
       ++ themePackages
+      ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
       ++ lib.optional (musicPlayer == "limusic") (
         import ../../modules/pkgs/limusic.nix {
           inherit pkgs lib;
@@ -220,21 +221,22 @@ in
           "display"
           "power"
         ];
-      } // lib.optionalAttrs (device ? displayProfile) {
+      }
+      // lib.optionalAttrs (device ? displayProfile) {
         display.profilePath = "${dotfilesDirectory}/${device.displayProfile}";
       };
     };
 
-    hex = {
-      enable = true;
-      autostart = true;
-      model = "parakeet_unified_en";
-      language = "en";
-      shortcut = "alt+space";
-      installModel = true;
-      # Use the prebuilt upstream release rather than compiling Hex locally.
-      package = import ../../modules/pkgs/hex.nix { inherit pkgs lib inputs; };
-    };
+    # hex = {
+    #   enable = true;
+    #   autostart = true;
+    #   model = "parakeet_unified_en";
+    #   language = "en";
+    #   shortcut = "alt+space";
+    #   installModel = true;
+    #   # Use the prebuilt upstream release rather than compiling Hex locally.
+    #   package = import ../../modules/pkgs/hex.nix { inherit pkgs lib inputs; };
+    # };
 
     git = import ../../modules/git.nix {
       inherit

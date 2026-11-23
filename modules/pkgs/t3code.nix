@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.1.6";
+  version = "0.1.11";
   pname = "t3code";
 
   desktopEntry = pkgs.writeText "t3code.desktop" ''
@@ -27,8 +27,10 @@ pkgs.stdenv.mkDerivation {
   inherit pname version;
 
   src = pkgs.fetchurl {
-    url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
-    sha256 = "sha256-CeJQcgjHeTCbOWvoRq6h2UUUS9eAYGiZwvSByW3fNNA=";
+    # NOTE: upstream names the stable AppImage without the version; the tag in
+    # the URL is what pins the release.
+    url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-x86_64.AppImage";
+    sha256 = "sha256-i6oGp7uqP3KdaUZvshHtcAbWpuTYALns2s2DH9FoaxQ=";
     name = "t3code-${version}.AppImage";
   };
 

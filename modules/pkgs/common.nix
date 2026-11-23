@@ -10,9 +10,7 @@ with pkgs;
   # Development
   gh
   acli
-  render-cli
   gh-dash
-  jujutsu
   watchman
   postgresql
   redis
