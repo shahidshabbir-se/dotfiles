@@ -13,7 +13,7 @@ let
   desktopPackages = with pkgs; [
     chromium
     obsidian
-    anydesk
+    # anydesk
     # Headless office engine for the docx/xlsx/pptx agent skills (conversion,
     # formula recalc, tracked-change accept). "libreoffice-qt" is the smaller
     # build (Qt VCL only, no GTK plugins). The skills only need headless
@@ -29,8 +29,8 @@ let
     cava
     gthumb
     vlc
-    pulsemixer
-    mpvpaper
+    # pulsemixer
+    # mpvpaper
     ffmpeg
   ];
 
@@ -45,9 +45,7 @@ let
     time
     wmctrl
     zip
-    speedtest-cli
-    qrencode
-    zed-editor-fhs
+    # speedtest-cli
   ];
 
   themePackages = with pkgs; [
