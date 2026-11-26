@@ -17,6 +17,7 @@
   # ▶ Zsh Integration
   # ───────────────────────────────────────────────
   enableZshIntegration = true;
+  flags = [ "--bind-ai-resume" ]; # Ctrl+] opens the thread resume picker.
 
   # ───────────────────────────────────────────────
   # ▶ Atuin Settings
@@ -37,5 +38,7 @@
       enabled = true;
       autostart = true;
     };
+
+    threads.capture = true;
   };
 }
