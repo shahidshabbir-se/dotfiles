@@ -37,7 +37,7 @@ let
   dotfileLink = path: mkOutOfStoreSymlink "${dotfilesDirectory}/${path}";
 
   # Music player: "spotify" | "limusic" | null (or "nil")
-  musicPlayer = "spotify";
+  musicPlayer = "nil";
 
   # Terminal multiplexer: "herdr" | "tmux" | null (or "nil")
   multiplexer = "herdr";
@@ -117,7 +117,7 @@ in
       ++ mediaPackages
       ++ systemUtilityPackages
       ++ themePackages
-      ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
+      # ++ [ (import ../../modules/pkgs/t3code.nix { inherit pkgs lib; }) ]
       ++ lib.optional (musicPlayer == "limusic") (
         import ../../modules/pkgs/limusic.nix {
           inherit pkgs lib;
@@ -144,41 +144,6 @@ in
 
   xdg = {
     enable = true;
-
-    desktopEntries = {
-      microsoft-word = {
-        name = "Microsoft Word";
-        icon = "solstice-microsoft-365-word";
-        exec = "chromium --app=https://word.cloud.microsoft/";
-        terminal = false;
-        categories = [
-          "Office"
-          "WordProcessor"
-        ];
-      };
-
-      microsoft-excel = {
-        name = "Microsoft Excel";
-        icon = "solstice-microsoft-365-excel";
-        exec = "chromium --app=https://excel.cloud.microsoft/";
-        terminal = false;
-        categories = [
-          "Office"
-          "Spreadsheet"
-        ];
-      };
-
-      microsoft-powerpoint = {
-        name = "Microsoft PowerPoint";
-        icon = "solstice-microsoft-365-powerpoint";
-        exec = "chromium --app=https://powerpoint.cloud.microsoft/";
-        terminal = false;
-        categories = [
-          "Office"
-          "Presentation"
-        ];
-      };
-    };
 
     configFile = {
       "chromium-flags.conf".text = ''
