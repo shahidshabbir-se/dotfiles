@@ -1,4 +1,4 @@
-{ lib, pkgs, device, ... }:
+{ lib, device, ... }:
 
 let
   d = device.display;
@@ -27,13 +27,9 @@ let
     max_luminance = hdr.maxLuminance or 1000;
     vrr = 0;
   };
-
-  fixHdrScreensharePlugin = pkgs.callPackage ../pkgs/hyprland-fix-hdr-screenshare.nix { };
 in
 {
   wayland.windowManager.hyprland = {
-    plugins = lib.mkIf hasHdr [ fixHdrScreensharePlugin ];
-
     settings = {
       monitor = [ monitor ];
 
@@ -42,7 +38,7 @@ in
           cm_enabled = true;
           cm_sdr_eotf = "2";
           cm_auto_hdr = 0;
-          # Keep this disabled: the HDR screencopy plugin requires the mirror path.
+          # Disable Hyprland's unmodified-copy path as an HDR capture workaround.
           keep_unmodified_copy = 0;
           # This avoids blur artifacts on HDR/10-bit displays.
           use_shader_blur_blend = device.type == "desktop";
