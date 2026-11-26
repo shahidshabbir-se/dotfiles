@@ -404,7 +404,7 @@ in
 
     # Environment
     export TERM="xterm-256color"
-    export TMPDIR=$HOME/tmp
+    # Keep the session's TMPDIR so Atuin can find its daemon socket.
     export EDITOR="nvim"
     export BROWSER="${browser}"
     export _ZO_DOCTOR=0
