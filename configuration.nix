@@ -473,7 +473,9 @@ in
       pulse.enable = true;
       alsa.enable = true;
       alsa.support32Bit = true;
-      jack.enable = true;
+      # JACK emulation: `jack.enable` is deprecated (global LD_LIBRARY_PATH impurity).
+      # Native JACK clients get it per-app instead: `pw-jack <app>`,
+      # with `environment.systemPackages = [ pkgs.pipewire.jack ];`.
       wireplumber.extraConfig = {
         "10-bluez" = {
           "monitor.bluez.properties" = {
