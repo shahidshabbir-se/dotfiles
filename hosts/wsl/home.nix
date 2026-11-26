@@ -29,7 +29,6 @@ in
 {
   imports = [
     ../../modules/session-paths.nix
-    ../../modules/leaf.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

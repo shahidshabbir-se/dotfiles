@@ -1,12 +1,19 @@
 #  ███╗   ██╗██╗██╗  ██╗    ██╗  ██╗ ██████╗ ███╗   ███╗███████╗
 #  ████╗  ██║██║╚██╗██╔╝    ██║  ██║██╔═══██╗████╗ ████║██╔════╝
-#  ██╔██╗ ██║██║ ╚███╔╝     ███████║██║   ██║██╔████╔██║█████╗  
-#  ██║╚██╗██║██║ ██╔██╗     ██╔══██║██║   ██║██║╚██╔╝██║██╔══╝  
+#  ██╔██╗ ██║██║ ╚███╔╝     ███████║██║   ██║██╔████╔██║█████╗
+#  ██║╚██╗██║██║ ██╔██╗     ██╔══██║██║   ██║██║╚██╔╝██║██╔══╝
 #  ██║ ╚████║██║██╔╝ ██╗    ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗
 #  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
 #  https://github.com/shahidshabbir-se/dotfiles
 
-{ config, pkgs, lib, inputs, device, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  device,
+  ...
+}:
 
 let
   homeDirectory = "/Users/shahid";
@@ -22,7 +29,6 @@ in
     ../../modules/herdr.nix
     ../../modules/node.nix
     ../../modules/session-paths.nix
-    ../../modules/leaf.nix
     ../../modules/nvim.nix
   ];
 
@@ -51,7 +57,6 @@ in
   xdg.configFile.yazi.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/yazi";
   # xdg.configFile.zed.source = mkOutOfStoreSymlink "${homeDirectory}/dotfiles/config/zed";
 
-
   # ───────────────────────────────────────────────
   # ▶ Dotfiles Mapping
   # ───────────────────────────────────────────────
@@ -62,7 +67,13 @@ in
   # ───────────────────────────────────────────────
   programs = {
     git = import ../../modules/git.nix {
-      inherit config pkgs homeDirectory userGmail userGithub;
+      inherit
+        config
+        pkgs
+        homeDirectory
+        userGmail
+        userGithub
+        ;
     };
     delta = import ../../modules/delta.nix { inherit pkgs; };
     zsh = import ../../modules/zsh.nix { inherit config pkgs lib; };
@@ -74,7 +85,14 @@ in
     aerospace = import ../../modules/aerospace.nix;
     spicetify = import ../../modules/spicetify.nix { inherit inputs pkgs lib; };
     # wezterm = import ../../modules/wezterm.nix { inherit pkgs device; };
-    ghostty = import ../../modules/ghostty.nix { inherit config pkgs device inputs; };
+    ghostty = import ../../modules/ghostty.nix {
+      inherit
+        config
+        pkgs
+        device
+        inputs
+        ;
+    };
     # alacritty = import ../../modules/alacritty.nix { inherit pkgs; };
   };
 }

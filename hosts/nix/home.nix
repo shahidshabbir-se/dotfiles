@@ -63,7 +63,6 @@ in
   imports = [
     ../../modules/node.nix
     ../../modules/session-paths.nix
-    ../../modules/leaf.nix
     ../../modules/nvim.nix
 
     # Hyprland session
